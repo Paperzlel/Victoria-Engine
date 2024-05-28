@@ -10,7 +10,7 @@ Currently I want to use this engine to learn C, OpenGL and eventually Vulkan. My
 5. ???
 
 ## Building the engine
-This engine uses clang and MSVC. You'll need to get clang from llvm.org, and get Visual Studio Build Tools from their website.
+This engine uses clang and MSVC, as well as GLFW and GLAD for OpenGL. You'll need to get clang from llvm.org, and get Visual Studio Build Tools from their website. GLFW and GLAD are included in the engine, in engine/src/open-gl/include. 
 For Visual Studio Build Tools, all you actually need is the Windows Universal C Runtime, MSVC v143 for whatever version you use, and the Windows 10 SDK (latest).
 The SDK is the most important because it allows you to use standard libraries in the engine with clang, so get that over anything.
 

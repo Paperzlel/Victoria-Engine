@@ -1,4 +1,5 @@
 {
+    "terminal.integrated.shell.windows": "c:/Program Files/PowerShell/7/pwsh.exe",
     "todohighlight.isEnable": true,
     "todohighlight.keywords": [
         {
@@ -24,6 +25,7 @@
         "isWholeLine": false,
     },
     "files.associations": {
+        "*.embeddedhtml": "html",
         "test.h": "c",
         "vulkan.h": "c",
         "vulkan_core.h": "c",
@@ -32,7 +34,8 @@
         "typeinfo": "c",
         "windowsx.h": "c",
         "vulkan_platform.h": "c",
-        "renderer_frontend.h": "c"
+        "renderer_frontend.h": "c",
+        "application.h": "c"
     },
     "C_Cpp.default.compilerPath": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\Llvm\\bin\\clang.exe"
 }
