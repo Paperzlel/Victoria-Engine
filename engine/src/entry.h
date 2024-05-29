@@ -7,7 +7,6 @@ static RendererObject object;
 
 //Run main here instead of in the .c file in testbed so that we don't get linker errors
 int main(void) {
-    VDEBUG("Here's a message that this works too!");
     object.isActive = FALSE;
     object.type = RENDERER_OPENGL;
 

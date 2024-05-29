@@ -17,6 +17,7 @@ b8 FrontendInitializeRendering(RendererObject* object) {
         return FALSE;
     }
     object->isActive = TRUE;
+    VINFO("Renderer initialized!");
     return TRUE;
 }
 
@@ -25,8 +26,8 @@ b8 FrontendRenderFrame(RendererObject* object) {
         VFATAL("OpenGL is not being used!");
         return FALSE;
     }
-    //TODO: Hook up object context
-    if (!BackendRenderFrame(object->context.window, 800, 600)) {
+
+    if (!BackendRenderFrame(&object->context, 800, 600)) {
         VFATAL("Backend could not render the frame!");
         return FALSE;
     }
@@ -34,5 +35,5 @@ b8 FrontendRenderFrame(RendererObject* object) {
 }
 
 void FrontendShutdownRendering(RendererObject* object) {
-    BackendShutdownRendering(object->context.window);
+    BackendShutdownRendering(&object->context);
 }

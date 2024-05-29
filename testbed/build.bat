@@ -12,7 +12,7 @@ FOR /R %%f in (*.c) do (
 SET assembly=testbed
 SET compilerFlags=-g -Wall -Werror
 REM -Wall -Werror
-SET includeFlags=-Isrc -I../engine/src/
+SET includeFlags=-Isrc -I../engine/src/ -I../include
 SET linkerFlags=-L../bin/ -lengine.lib -L../lib/ -lglfw3dll
 SET defines=-D_DEBUG -DVIMPORT
 
