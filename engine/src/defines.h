@@ -61,9 +61,11 @@ typedef char b8;
 #define FALSE 0
 
 
-/* String variable. Used instead of const char* because I prefer this*/
+/* String variable */
 typedef const char* string;
 
+/* Maximum number of characters allowed in a log entry */
+#define MAX_LOG_ENTRY 32000
 
 #if defined(__clang__) || defined(__gcc__)
 #define STATIC_ASSERT _Static_assert

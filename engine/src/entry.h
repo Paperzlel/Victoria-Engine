@@ -1,25 +1,29 @@
 #pragma once
 
 #include "core/logger.h"
+#include "core/application.h"
+#include "core/vmemory.h"
+
 #include "renderer/renderer-frontend.h"
 
-static RendererObject object;
+static ApplicationState appState;
+static RendererObject renderObj;
 
-//Run main here instead of in the .c file in testbed so that we don't get linker errors
 int main(void) {
-    object.isActive = FALSE;
-    object.type = RENDERER_OPENGL;
+    renderObj.type = RENDERER_OPENGL;
 
-    if (!FrontendInitializeRendering(&object)) {
-        VFATAL("Frontend could not begin to render!");
+    if (!ApplicationInitialize(&appState, &renderObj)) {
+        VFATAL("Application failed to initialize.");
         return -1;
     }
-    while (object.isActive) {
-        if (!FrontendRenderFrame(&object)) {
-            object.isActive = FALSE;
+
+    while (!renderObj.context.windowShouldClose) {
+        if (!FrontendRenderFrame(&renderObj)) {
+            renderObj.isActive = FALSE;
             break;
         }
+        LogMemoryUsage();
     }
-    FrontendShutdownRendering(&object);
+    FrontendShutdownRendering(&renderObj);
     return 0;
 } 

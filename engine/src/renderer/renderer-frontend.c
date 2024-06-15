@@ -4,11 +4,11 @@
 
 b8 FrontendInitializeRendering(RendererObject* object) {
     if (object->isActive) {
-        VERROR("OpenGL is already active!");
+        VERROR("Renderer is already active!");
         return FALSE;
     }
 
-    if (!(object->type == RENDERER_OPENGL)) {
+    if (object->type != RENDERER_OPENGL) {
         VFATAL("OpenGL not selected! Please choose a valid renderer.");
         return FALSE;
     }
@@ -17,18 +17,18 @@ b8 FrontendInitializeRendering(RendererObject* object) {
         return FALSE;
     }
     object->isActive = TRUE;
-    VINFO("Renderer initialized!");
+    VINFO("Renderer initialized.");
     return TRUE;
 }
 
 b8 FrontendRenderFrame(RendererObject* object) {
-    if (!(object->type == RENDERER_OPENGL)) {
+    if (object->type != RENDERER_OPENGL) {
         VFATAL("OpenGL is not being used!");
         return FALSE;
     }
 
     if (!BackendRenderFrame(&object->context, 800, 600)) {
-        VFATAL("Backend could not render the frame!");
+        VFATAL("Backend failed to render the frame!");
         return FALSE;
     }
     return TRUE;
@@ -36,4 +36,8 @@ b8 FrontendRenderFrame(RendererObject* object) {
 
 void FrontendShutdownRendering(RendererObject* object) {
     BackendShutdownRendering(&object->context);
+}
+
+f32 GetDeltaTime(RendererObject* object) {
+    return object->context.deltaTime;
 }

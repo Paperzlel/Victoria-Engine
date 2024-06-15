@@ -1,6 +1,8 @@
 #include "opengl-shaders.h"
 
 #include "core/logger.h"
+#include "core/vmemory.h"
+#include "core/vstring.h"
 
 #include <glad/glad.h>
 
@@ -16,13 +18,31 @@
  * shaders to use, anyway.
  */
 
-char* GLGetShaderContent(ShaderObject* object) {
-    FILE* fptr;
+// NOTE: We could load the layout data through parsing the number of location values there are
+char* GLGetShaderContent(Shader* shader, ShaderType type) {
+    char* shaderPart;
+    if (type == FRAGMENT_SHADER) {
+        shaderPart = "fs";
+    }
+    if (type == VERTEX_SHADER) {
+        shaderPart= "vs";
+    }
+
+    //TODO: Make general engine calls to find CWD and set folder locations.
+    char subfolders[512] = "assets/";
+    string totalFilePath = "C:/Programs/C-and-C++/Victoria-Engine/";
+
+    //Format the total file path to point directly to the file we want to load
+    FormatString(&totalFilePath, "%s%s%s.%s", totalFilePath, subfolders, shader->name, shaderPart);
+
+    FILE* fptr = 0;
     f64 size = 0;
     char* shaderFileContent;
 
-    /* Read file to get size*/
-    fptr = fopen(object->filepath, "rb");
+    // NOTE: reading from totalFilePath is temporary as I haven't yet got a way to load textures in a custom manner.
+
+    /* Read file to get size */
+    fptr = fopen(totalFilePath, "rb");
     if (fptr == NULL) {
         return "";
     }
@@ -30,85 +50,137 @@ char* GLGetShaderContent(ShaderObject* object) {
     size = ftell(fptr)+1;
     fclose(fptr);
 
-    //TODO: Custom memory allocation
-    fptr = fopen(object->filepath, "r");
-    shaderFileContent = memset(malloc(size), '\0', size);
+
+    fptr = fopen(totalFilePath, "r");
+    
+    // Memory allocation and freeing
+    void* allocSize = VAllocate(size, MEMORY_TAG_FILE);
+    shaderFileContent = VSetMemory(allocSize, '\0', size);
     fread(shaderFileContent, 1, size-1, fptr);
     fclose(fptr);
+    VFree(allocSize, size, MEMORY_TAG_FILE);
 
-    //TODO: Return shader file content to struct
     return shaderFileContent;
 }
 
-b8 GLCompileShader(ShaderObject* object) {
-    u32 shader;
-    if (!object) {
-        VERROR("Shader is null!");
+b8 GLCompileShader(Shader* shader, ShaderType type, u8 index) {
+    if (!shader) {
+        VERROR("Shader is null, cannot compile.");
         return FALSE;
     }
 
-    if (object->type == VERTEX_SHADER) {
-        shader = glCreateShader(GL_VERTEX_SHADER);
-    } else if (object->type == FRAGMENT_SHADER) {
-        shader = glCreateShader(GL_FRAGMENT_SHADER);
+    if (type == VERTEX_SHADER) {
+        shader->vertexShader = glCreateShader(GL_VERTEX_SHADER);
+
+        glShaderSource(shader->vertexShader, 1, &shader->contents[index], NULL);
+        glCompileShader(shader->vertexShader);
+
+        if (!GLShaderCheckCompileProblems(&shader->vertexShader, type)) {
+            return FALSE;
+        }
+    } else if (type == FRAGMENT_SHADER) {
+        shader->fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+
+        glShaderSource(shader->fragmentShader, 1, &shader->contents[index], NULL);
+        glCompileShader(shader->fragmentShader);
+
+        if (!GLShaderCheckCompileProblems(&shader->fragmentShader, type)) {
+            return FALSE;
+        }
     } else {
         VERROR("Unsupported shader type!");
         return FALSE;
     }
-
-    glShaderSource(shader, 1, &object->content, NULL);
-    glCompileShader(shader);
-
-    //TODO: Maybe add a max log size to defines.h?
-    int success;
-    char infoLog[32000];
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(shader, 32000, NULL, infoLog);
-        VERROR("Shader compilation failed: \n%s\n", infoLog);
-        return FALSE;
-    }
-
-    object->GLShader = shader;
     return TRUE;
 }
 
-b8 GLShaderInitializeShaderProgram(u32* shaderProgram) {
+void GLAttachShaderToProgram(u32* shaderProgram, Shader* shader, ShaderType type) {
+    if (type == VERTEX_SHADER) {
+        glAttachShader(*shaderProgram, shader->vertexShader);
+    }
+    if (type == FRAGMENT_SHADER) {
+        glAttachShader(*shaderProgram, shader->fragmentShader);
+    }
+}  
+
+b8 GLRegisterNewShader(Shader* shader, u32* shaderProgram) {
+    //TODO: Add functions to find length of an array
+    i32 noOfElements = 2;
+
+    // Loop over each iteration of the vertex/fragment shader
+    for (i32 i = 0; i < noOfElements; i++) {
+        ShaderType type;
+        // Arbitrary assignment of shader types
+        if (i == 0) {
+            type = VERTEX_SHADER;
+        }
+        if (i == 1) {
+            type = FRAGMENT_SHADER;
+        }
+        shader->contents[i] = GLGetShaderContent(shader, type);
+        if (!GLCompileShader(shader, type, i)) {
+            return FALSE;
+        }
+        GLAttachShaderToProgram(shaderProgram, shader, type);
+        if (StringContains(shader->contents[i], "uniform")) {
+            shader->hasUniform = TRUE;
+        }
+    }
+    return TRUE;
+}
+
+void GLDeleteShaders(Shader* shader) {
+    for (i32 i = 0; i < 2; i++) {
+        if (i == 0) {
+            glDeleteShader(shader->vertexShader);
+        }
+        if (i == 1) {
+            glDeleteShader(shader->fragmentShader);
+        }
+    }
+}
+
+b8 GLInitializeShaderProgram(u32* shaderProgram) {
     *shaderProgram = glCreateProgram();
-    //TODO: Temporary code. Checks to see if the dereferencing is working. Also find a way to check for bugs
     return TRUE;
 }
 
-b8 RegisterNewShaderObject(ShaderObject* object, u32* shaderProgram) {
-    object->content = GLGetShaderContent(object);
-    //TODO: String comparison file
-    //if (object.content == "") {
-    //    VERROR("Shader has no file contents!");
-    //    return FALSE;
-    //}
-
-    if (!GLCompileShader(object)) {
-        VERROR("Shader could not be compiled!");
-        return FALSE;
-    }
-
-    // Attach shader to shader program
-    glAttachShader(*shaderProgram, object->GLShader);
-    //Delete shader once it is no longer needed to save memory
-    glDeleteShader(object->GLShader);
-    return TRUE;
-}
 
 b8 GLLinkShaderProgram(u32* shaderProgram) {
     glLinkProgram(*shaderProgram);
 
-    int success;
-    char infoLog[32000];
-    glGetProgramiv(*shaderProgram, GL_LINK_STATUS, &success);
-    if(!success) {
-        glGetProgramInfoLog(*shaderProgram, 32000, NULL, infoLog);
-        VERROR("Shader program failed to link! \n%s\n", infoLog);
+    if (!GLShaderCheckCompileProblems(shaderProgram, SHADER_PROGRAM)) {
+        // No need for extra error flags
         return FALSE;
     }
+    return TRUE;
+}
+
+b8 GLShaderCheckCompileProblems(u32* loc, ShaderType type) {
+    string shaderTypes[2] = {"FRAGMENT_SHADER", "VERTEX_SHADER"};
+    int success;
+    char infoLog[MAX_LOG_ENTRY];
+    // Check shader program linking
+    if (type == SHADER_PROGRAM) {
+        glGetProgramiv(*loc, GL_LINK_STATUS, &success);
+        if (!success) {
+            glGetProgramInfoLog(*loc, MAX_LOG_ENTRY, NULL, infoLog);
+            VERROR("Shader program linking error: \n%s", infoLog);
+            return FALSE;
+        }
+    // Check shader compilation
+    } else if (type == FRAGMENT_SHADER || type == VERTEX_SHADER) {
+        glGetShaderiv(*loc, GL_COMPILE_STATUS, &success);
+        if (!success) {
+            glGetShaderInfoLog(*loc, MAX_LOG_ENTRY, NULL, infoLog);
+            VERROR("Shader compile error: \nTYPE: %s,\nLOG: %s\n", shaderTypes[type], infoLog);
+            return FALSE;
+        }
+    // Type is invalid as there are no other ShaderTypes supported
+    } else {
+        VERROR("ShaderType is of invalid type. Please enter a valid ShaderType.");
+        return FALSE;
+    }
+    // If all checks are passed
     return TRUE;
 }

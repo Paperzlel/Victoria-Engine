@@ -12,9 +12,23 @@ typedef enum LogLevel {
 } LogLevel;
 
 //TODO: Create methods once platform-agnostic
+/* 
+ * @brief The method we call to begin logging
+ * @return TRUE if it succeeded, FALSE if it did not.
+ */
 b8 InitialiseLogging();
+
+/* 
+ * @brief The method to shutdown our logging system.
+ */
 void ShutdownLogging();
 
+/*
+ * @brief Method to log a message to our console. Please use the macros (i.e. VINFO) instead of this method to save manually typing out each command
+ * @param level The significance/danger the error has for our engine
+ * @param message The message we want to send to the console
+ * @param ... Optional extra arguments for the message parameter
+ */
 VAPI void LogMessage(LogLevel level, string message, ...);
 
 /* Logging defines. 
@@ -22,7 +36,7 @@ VAPI void LogMessage(LogLevel level, string message, ...);
  * TODO: Add configurable logging (i.e. release doesn't output debug and so forth)
  */
 
-#define VFATAL(message, ...) LogMessage(LOG_LEVEL_FATAL,message, ##__VA_ARGS__);
+#define VFATAL(message, ...) LogMessage(LOG_LEVEL_FATAL, message, ##__VA_ARGS__);
 
 #define VERROR(message, ...) LogMessage(LOG_LEVEL_ERROR, message, ##__VA_ARGS__);
 

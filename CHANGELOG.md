@@ -1,12 +1,65 @@
 # CHANGELOG
 Each changelog will have a version number and its progress marker number (e.g. 01, 02, and so on) listed.
 
+## 0.0.5 (04):
+### Additions:
+- Assets:
+    - Added `test_shader.fs` and `test_shader.vs`.
+        - Renaming of assets. Nothing major to add.
+- Engine:
+    - Core:
+        - Added `vmemory.c` and `vmemory.h`.
+            - Memory management components, will be expanded upon when needed.
+        - Added `vstring.c` and `vstring.h`.
+            - String methods. Will also be expanded upon for greater user when needed.
+    - Maths:
+        - Added `maths` folder, `vmaths.c` and `vmaths.h`.
+            - Maths-related methods. Will be expanded upon for more methods and types in the future.
+        
+    - Renderer:
+        - OpenGL:
+            - Added `opengl-arrays.c`, `opengl-arrays.h`, `opengl-buffers.c`, `opengl-buffers.h` and `opengl-types.inl`.
+                - Created for a more streamlined approach to loading of OpenGL components rather than calling directly from code.
+        - Added `renderer-types.inl`.
+            - Consolidating structs to one place to avoid messy dependencies.
+### Modifications:
+- Engine:
+    - Core:
+        - Added the `ApplicationInitialize` method to `application.c` and application.h`.
+            - Functionality changes, part of a movement to call application-layer code from the entrypoint rather than renderer-based code, as more features that require being initialized/shutdown are made.
+        - Added documentation to `logger.c` and `logger.h`.
+            - Readability changes to code to prevent it becoming more messy.
+    - Renderer:
+        - OpenGL:
+            - Refactored `opengl-backend.c` and `opengl-backend.h` to accomodate for the new files.
+                - Mainly for readability and stability, more changes will occur when needed.
+            - Refactored `opengl-shaders.c` and `opengl-shaders.h` to accomodate for the new files.
+                - New functionality was available from the new files added, so they have been updated to use those methods instead of direct calls.
+        - Changed logging outputs in `renderer-frontend.c`.
+            - These reflect the changes of where each function is called.
+        - Added a new function in `renderer-frontend.h`.
+            - `GetDeltaTime` method returns the time between each frame being rendered, as of testing ~60fps.
+    - Added new define in `defines.h`.
+        - `MAX_LOG_ENTRY` is a cap on how many characters a log entry can have, at 32000 at the moment.
+    - `entry.h` now calls application-layer code instead of the renderer directly.
+        - Part of a previously mentioned shift in the way we call code. More edits to this file are likely to reflect this change.
+- Testbed:
+    - Removed newline character in `entry.c`.
+        - Cleanup. Will probably exist in the future.
+### Removals:
+- Assets:
+    - Removed `test_shader.frag.glsl` and `test_shader.vert.glsl`.
+        - Renaming change to reflect how we now load shaders.
+
+
 ## 0.0.4.1 (03):
 ### Modifications:
 - General:
     - Updated `CHANGELOG.md`.
         - Fixed formatting of the changelog not being how it was intended to look.
         - Meant to be a quick release rather than an official version but it's worth noting regardless.
+        - Future updates to the changelog will be omitted from itself.
+
 
 ## 0.0.4 (03):
 ### Additions:
