@@ -108,3 +108,11 @@ STATIC_ASSERT(sizeof(f64) == 8, "Expected f64 to be 8 bytes.");
 #define VAPI
 #endif
 #endif
+
+#ifdef _MSC_VER
+#define VINLINE __forceinline
+#define VNOINLINE __declspec(noinline)
+#else
+#define VINLINE static inline
+#define VNOINLINE
+#endif

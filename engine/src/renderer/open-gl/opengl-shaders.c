@@ -55,11 +55,10 @@ char* GLGetShaderContent(Shader* shader, ShaderType type) {
     
     // Memory allocation and freeing
     void* allocSize = VAllocate(size, MEMORY_TAG_FILE);
-    shaderFileContent = VSetMemory(allocSize, '\0', size);
+    shaderFileContent = VZero(allocSize, size, MEMORY_TAG_APPLICATION);
     fread(shaderFileContent, 1, size-1, fptr);
     fclose(fptr);
-    VFree(allocSize, size, MEMORY_TAG_FILE);
-
+    //TODO: Currently freeing memory here messes up the file contents. We need to find a way to free the filepointer memory afterwards
     return shaderFileContent;
 }
 
@@ -117,6 +116,7 @@ b8 GLRegisterNewShader(Shader* shader, u32* shaderProgram) {
         if (i == 1) {
             type = FRAGMENT_SHADER;
         }
+        shader->contents[i] = "";
         shader->contents[i] = GLGetShaderContent(shader, type);
         if (!GLCompileShader(shader, type, i)) {
             return FALSE;

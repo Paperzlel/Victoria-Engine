@@ -37,3 +37,4 @@ typedef enum BufferType {
  */
 b8 RegisterNewBufferObject(u32* obj, BufferType type);
 
+void DeleteBufferObject(u32* obj);

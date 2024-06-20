@@ -1,43 +1,31 @@
 #include "renderer-frontend.h"
 
-//TODO: Add a method to switch renderers.
+#include "renderer-backend.h"
 
-b8 FrontendInitializeRendering(RendererObject* object) {
-    if (object->isActive) {
-        VERROR("Renderer is already active!");
+#include "core/logger.h"
+#include "core/vmemory.h"
+
+static RendererBackend* backend = 0;
+
+b8 FrontendInitializeRendering(string applicationName) {
+    backend = VAllocate(sizeof(RendererBackend), MEMORY_TAG_RENDERER);
+
+    CreateRendererBackend(RENDERER_OPENGL, backend);
+
+    //TODO: Custom window sizing
+    if (!backend->initialize(backend, 800, 600, applicationName)) {
+        VFATAL("Rendering backend failed to initialize.");
         return FALSE;
     }
 
-    if (object->type != RENDERER_OPENGL) {
-        VFATAL("OpenGL not selected! Please choose a valid renderer.");
-        return FALSE;
-    }
-    if (!BackendInitializeGLFW(&object->context, 800, 600)) {
-        VFATAL("GLFW failed to initialize!");
-        return FALSE;
-    }
-    object->isActive = TRUE;
-    VINFO("Renderer initialized.");
     return TRUE;
 }
 
-b8 FrontendRenderFrame(RendererObject* object) {
-    if (object->type != RENDERER_OPENGL) {
-        VFATAL("OpenGL is not being used!");
-        return FALSE;
-    }
-
-    if (!BackendRenderFrame(&object->context, 800, 600)) {
-        VFATAL("Backend failed to render the frame!");
-        return FALSE;
-    }
-    return TRUE;
+void FrontendShutdownRendering() {
+    backend->shutdown(backend);
+    VFree(backend, sizeof(backend), MEMORY_TAG_RENDERER);
 }
 
-void FrontendShutdownRendering(RendererObject* object) {
-    BackendShutdownRendering(&object->context);
-}
-
-f32 GetDeltaTime(RendererObject* object) {
-    return object->context.deltaTime;
+i8 FrontendRenderFrame() {
+    return backend->drawFrame(backend);
 }

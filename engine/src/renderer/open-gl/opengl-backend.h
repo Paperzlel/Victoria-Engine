@@ -5,15 +5,16 @@
 #include "maths/vmaths.h"
 
 #include "opengl-types.inl"
+#include "renderer/renderer-types.inl"
 
 
-b8 BackendInitializeGLFW(OpenGLContext* context, i32 width, i32 height);
+b8 GLBackendInitialize(RendererBackend* backend, i32 width, i32 height, string applicationName);
 
-b8 BackendRenderFrame(OpenGLContext* context, i32 width, i32 height);
+i8 GLBackendRenderFrame(RendererBackend* backend);
 
-b8 BackendShutdownRendering(OpenGLContext* context);
+void GLBackendShutdownRendering(RendererBackend* backend);
 
-void BackendFramebufferSizeCallback(GLFWwindow* window, i32 width, i32 height);
+void GLBackendFramebufferSizeCallback(GLFWwindow* window, i32 width, i32 height);
 
 //TODO: Better input mapping, this is temporary.
-void ProcessInput(GLFWwindow* window);
+void GLProcessInput(GLFWwindow* window);

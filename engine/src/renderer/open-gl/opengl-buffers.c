@@ -14,3 +14,7 @@ b8 RegisterNewBufferObject(u32* obj, BufferType type) {
     glBindBuffer(type, *obj);
     return TRUE;
 }
+
+void DeleteBufferObject(u32* obj) {
+    glDeleteBuffers(1, obj);
+}

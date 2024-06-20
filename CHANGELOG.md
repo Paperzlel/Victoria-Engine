@@ -1,6 +1,72 @@
 # CHANGELOG
 Each changelog will have a version number and its progress marker number (e.g. 01, 02, and so on) listed.
 
+## 0.0.6 (05):
+### Additions:
+- Assets:
+    - Added `container.jpg`.
+        - Test texture, not staying around for long.
+- Engine:
+    - Maths:
+        - Added `maths-types.h`.
+            - Header file for all the main maths objects, like vectors, matrices, quaternions, and so forth.
+    - Renderer:
+        - Added `renderer-backend.c` and `renderer-backend.h`.
+            - New files to handle a more renderer-agnostic way of running functions.
+        - OpenGL:
+            - Added `opengl-textures.c` and `opengl-textures.h`.
+                - Handling texture creation, assignment and destruction.
+            - Re-added `glad.c`.
+                - Part of the replacement of these files so the user doesn't have to get these when building for the first time.
+    - Systems:
+        - Added `geometry-system.h`, `texture-system.c` and `texture-system.h`.
+            - Not fully in use yet and require more robust systems, but here as scaffolding for later features.
+        - This is a new folder for systems that are neither core to the application nor renderer-specific, so they will reside here.
+    - Third-Party:
+        - Added `stb_image.h`.
+            - Handling image loading.
+        - This is a new folder for files that are not mine in any way but must be compiled with the engine in order to function.
+- Include:
+    - Added back the GLAD/GLFW source files.
+        - I changed my mind on whether to leave these out and decided it's worth keeping the source files but not the .lib/.dll files, those will have to be included manually. Updated the README on how to obtain these.
+### Modifications:
+- .vscode:
+    - Auotmated file association changes in `settings.json`.
+- Assets:
+    - Changed `test_shader.fs` and `test_shader.vs` to use texture sampling instead of colour coordinates.
+        - Testing new systems. Will change frequently, feel free to ignore.
+- Engine:
+    - Updated `engine.md`.
+        - Documentation update, mainly for contributing/forking.
+    - Added new definitions to `defines.h`.
+        - Added `VINLINE` and `VNOINLINE` to allow for some code that would flag as a compiler error to work regardless.
+    - Edited `entry.h` to use updated functions and remove the while loop from the entrypoint.
+        - Application now loops on the application layer so that less systems need to be defined with `VAPI`.
+    - Core:
+        - Additional functionality to `application.c`.
+            - The application now loads here instead of the renderer, allowing for lower-level code to remain low-level and reducing user access to renderer code (this is a good thing).
+    - Maths:
+        - Added vec2 methods to `vmaths.c`.
+            - Scaffolding for later. Not currently significant.
+    - Renderer:
+        - Changed code to use the new backend calls in `renderer-frontend.c`.
+            - Backend is now much cleaner and simpler to use. 
+        - Removed the old `RendererObject` in favour of `RendererBackend` in `renderer-types.inl`.
+            - Cleaner code, as well as the ability to use function pointers to make renderer-agnostic code.
+        - Modified rendering a frame to use an i8 instead of a b8.
+            - This is to allow us to shutdown the application without referencing application-layer code in the renderer.
+        - OpenGL:
+            - Added texture logic to `opengl-backend.c`, as well as a static context.
+                - The former is more functionality (although much will change in the future), the latter is a change to reflect the "burying" of lower-level code in the engine rather than constantly passing context in the application layer.
+            - Added buffer deletion to `opengl-buffers.c`.
+                - Moving code to our definitions instead of GLAD's.
+            - Fixed a memory error when freeing memory during file reading in `opengl-shaders.c`.
+                - This bug is an indication of a lack of memory knowledge on my part.
+            - Moved around struct ordering in `opengl-types.inl`.
+                - Code change to remove the former `RenderObject` which has now been absorbed into `OpenGLContext`.
+- General:
+    - Updated `.gitignore` to remove the `include` and `glad.c` ignores.
+        - Part of the revert to including GLFW and GLAD with the engine.
 ## 0.0.5 (04):
 ### Additions:
 - Assets:

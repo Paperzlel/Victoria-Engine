@@ -2,10 +2,10 @@
 
 #include "defines.h"
 #include "logger.h"
-#include "renderer/renderer-frontend.h"
 
 typedef struct ApplicationState {
     b8 isInitialized;
+    b8 isRunning;
     f32 deltaTime;
 } ApplicationState;
 
@@ -14,5 +14,8 @@ typedef struct ApplicationState {
  * @param state A pointer to the current application state
  * @param renderObj A pointer to the current rendering object
  */
-VAPI b8 ApplicationInitialize(ApplicationState* state, RendererObject* renderObj);
+VAPI b8 ApplicationInitialize(ApplicationState* state);
 
+VAPI b8 ApplicationRun(ApplicationState* state);
+
+VAPI void ApplicationShutdown();

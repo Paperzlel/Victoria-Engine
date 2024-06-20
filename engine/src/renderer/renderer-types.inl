@@ -2,8 +2,6 @@
 
 #include "defines.h"
 
-#include "open-gl/opengl-types.inl"
-
 /* File to hold all the structs relating to rendering */
 
 typedef enum RendererBackendType {
@@ -12,8 +10,9 @@ typedef enum RendererBackendType {
     // etc.
 } RendererBackendType;
 
-typedef struct RendererObject {
-    u8 type;
-    b8 isActive;
-    OpenGLContext context;
-} RendererObject;
+
+typedef struct RendererBackend {
+    b8 (*initialize)(struct RendererBackend* backend, i32 width, i32 height, string applicationName);
+    void (*shutdown)(struct RendererBackend* backend);
+    i8 (*drawFrame)(struct RendererBackend* backend);
+} RendererBackend;
