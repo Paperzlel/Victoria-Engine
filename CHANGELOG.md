@@ -1,6 +1,53 @@
 # CHANGELOG
 Each changelog will have a version number and its progress marker number (e.g. 01, 02, and so on) listed.
 
+
+## 0.0.7 (06):
+### Additions:
+- Engine:
+    - Containers:
+        - Added the `array.c` and `array.h` files.
+            - Used for uniform containing, and is scaffolding to later features.
+    - Systems:
+        - Added `file-system.c` and `file-system.h`.
+            - Used to make file handling possible for more systems, at this point in time just our shaders. Images are loaded by `stbi_image` which uses file handling regardless.
+## Modifications:
+- Assets:
+    - Changed `test_shader.fs` to use both the colour range and the texture coordinates.
+    - Changed `test_shader.vs` to use a transform coordinate to determine position.
+        - Both of these changes are part of me testing the newer systems, they're likely to change frequently and once a better resource management system is in place these will be gone
+- Engine:
+    - Core:
+        - Added memory usage logging to `application.c`.
+            - Addition from a previously unused function that was not implemented after we changed from direct render calls to the application layer.
+        - Removed include from `application.h`.
+            - Pointless include as we only need it in the C file rather than here.
+        - Removed the `MemoryTagTypes` parameter from `VZero`.
+            - Change to reflect that zeroing out memory was not always removing the memory from the platform and that the memory was still in use.
+        - Added method `VReallocate` to `vmemory.c`.
+            - Allows us to move memory around rather than implicitly copy it everywhere.
+        - Added method `StringSplit` to `vstring.c`.
+            - Allows us to have a string taken down into its constituent parts based on a delimiter, those being held in a new `StringArray` type.
+    - Maths:
+        - Added a `vec4` type to `maths-types.h`.
+            - New type which will be used for multiple operations.
+        - Added operations for `vec2`, `vec3`, `vec4`, and `mat4` to `vmaths.h`.
+            - Needed for later when doing the more complex rendering/world space/camera systems.
+        - Added more general maths functions to `vmaths.c`.
+            - Needed in some of the maths operations, as well as being generally useful for users.
+    - Renderer:
+        - OpenGL:
+            - Added some transformation handling to `opengl-backend.c`.
+                - Temporary, but useful for testing out the new matrix operations.
+            - Changed `opengl-shaders.c` to use the new filesystem instead of using standard libraries
+                - Mainly to reduce the number of standard library functions accessible to the rest of the engine.
+            - Added the new methods `GLListAllUniforms` and `GLUseUniform` to `opengl-shaders.c`.
+                - Partial completion of the new uniform features. Currently not fully usable as we need a way to pre-define a uniform's behaviour within the application without allowing open access to the renderer.
+    - Systems:
+        - Removed the two structs listed in `geometry-system.h`.
+            - These files aren't yet used and so we're going to ignore them for now.
+
+
 ## 0.0.6 (05):
 ### Additions:
 - Assets:
@@ -67,6 +114,8 @@ Each changelog will have a version number and its progress marker number (e.g. 0
 - General:
     - Updated `.gitignore` to remove the `include` and `glad.c` ignores.
         - Part of the revert to including GLFW and GLAD with the engine.
+
+
 ## 0.0.5 (04):
 ### Additions:
 - Assets:
@@ -222,6 +271,7 @@ Each changelog will have a version number and its progress marker number (e.g. 0
 - Testbed:
     - Removed `main.c`.
         - Now renamed to `entry.c`.
+
 
 ## 0.0.2 (01 (listed as #1 in commit history)):
 ### Additions:

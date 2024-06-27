@@ -73,7 +73,7 @@ typedef const char* string;
 #define STATIC_ASSERT static_assert
 #endif
 
-// Ensure all types are of the correct size, this is so that we don't pass incorrect values when using them.
+// Ensure all types are of the correct size, this is so that we don't pass incorrect values when using them
 STATIC_ASSERT(sizeof(u8) == 1, "Expected u8 to be 1 byte.");
 STATIC_ASSERT(sizeof(u16) == 2, "Expected u16 to be 2 bytes.");
 STATIC_ASSERT(sizeof(u32) == 4, "Expected u32 to be 4 bytes.");

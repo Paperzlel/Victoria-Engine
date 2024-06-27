@@ -2,6 +2,9 @@
 
 #include "defines.h"
 
+//TODO: Change string header file to a darray-types header file
+#include "core/vstring.h"
+
 /* File for containing all the structures we use across our OpenGL code. */
 
 #include <glad/glad.h>
@@ -20,12 +23,22 @@ typedef enum ColourRange {
 } ColourRange;
 
 typedef struct Shader {
+    // Unique shader ID TODO: Add functionality
     u32 ID;
-    u32 vertexShader;
+    // Name of the shader, passed down from any materials loaded
+    string name;
+    // The fragment shader 
     u32 fragmentShader;
+    // The vertex shader
+    u32 vertexShader;
+    // The contents of both shaders
     string contents[2];
-    string name; // Passed down from the texture
+    // Whether a uniform was detected
     b8 hasUniform;
+    //Array of listed uniforms
+    StringArray uniforms;
+    //Array of listed uniform types
+    StringArray uniformTypes;
 } Shader;
 
 typedef struct Texture {
@@ -45,7 +58,7 @@ typedef struct OpenGLContext {
     u32 vertexBufferObj;
     u32 vertexArrayObj;
     u32 elementBufferObj;
-    //TODO: Move to spearate program
+    //TODO: Move to separate program
     Texture texture;
     f32 deltaTime;
     b8 windowShouldClose;

@@ -31,15 +31,23 @@ typedef union Vector3Union {
     };
 } vec3;
 
-/* A 2x2 matrix */
-typedef union mat2Union {
-    f32 data[4];
-} mat2;
-
-/* A 3x3 matrix*/
-typedef union mat3Union {
-    f32 data[9];
-} mat3;
+typedef union Vector4Union {
+    f32 elements[4];
+    struct {
+        union {
+            f32 x, r;
+        };
+        union {
+            f32 y, g;
+        };
+        union {
+            f32 z, b;
+        };
+        union {
+            f32 w, a;
+        };
+    };
+} vec4;
 
 /* A 4x4 matrix */
 typedef union mat4Union {

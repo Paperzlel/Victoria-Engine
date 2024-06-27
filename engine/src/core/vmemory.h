@@ -18,6 +18,8 @@ typedef enum MemoryTagTypes {
     MEMORY_TAG_NODE, // Or something
     MEMORY_TAG_NONE,
     MEMORY_TAG_RENDERER,
+    MEMORY_TAG_MATERIAL,
+    MEMORY_TAG_MISC,
     //TODO: Add more tags
     MEMORY_TAG_MAX
 } MemoryTagTypes;
@@ -36,6 +38,16 @@ b8 MemoryInitialize();
  */
 void* VAllocate(u64 size, MemoryTagTypes type);
 
+/* 
+ * @brief Method to re-allocate memory to a new size
+ * @param *memory A pointer to the memory to resize
+ * @param oldSize The previously allocated memory size
+ * @param newSize The new memory size
+ * @param type The type of memory we are allocating
+ * @return A pointer to the new memory size
+ */
+void* VReallocate(void* memory, u64 oldSize, u64 newSize, MemoryTagTypes type);
+
 /*
  * @brief A method to set all of the data in a given block to zero
  * @param block The block of memory to zero out
@@ -43,7 +55,7 @@ void* VAllocate(u64 size, MemoryTagTypes type);
  * @param type The type of memory that is being zeroed out (tracking purposes)
  * @return A void pointer for the now zeroed-out memory
  */
-void* VZero(void* block, u64 size, MemoryTagTypes type);
+void* VZero(void* block, u64 size);
 
 /*
  * @brief A method to free previously allocated memory from the engine

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "defines.h"
-#include "logger.h"
 
 typedef struct ApplicationState {
     b8 isInitialized;

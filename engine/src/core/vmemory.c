@@ -13,17 +13,26 @@ u64 previousMemoryUsage = 0;
 
 void* VAllocate(u64 size, MemoryTagTypes type) {
     if (type == MEMORY_TAG_NONE) {
-        VWARN("Memory has undefined tag type. Please redefine its memory type");
+        VWARN("Memory has undefined tag type. Please redefine its memory type.");
     }
     stats.totalMemoryUsage += size;
     return malloc(size);
 }
 
-void* VZero(void* block, u64 size, MemoryTagTypes type) {
+void* VReallocate(void* memory, u64 oldSize, u64 newSize, MemoryTagTypes type) {
     if (type == MEMORY_TAG_NONE) {
-        VWARN("VZero called with undefined tag type. Please redefine its memory type");
+        VWARN("Memory has unknown tag type. Please redefine its memory type");
     }
-    stats.totalMemoryUsage -= size;
+
+    if (oldSize > newSize) {
+        stats.totalMemoryUsage -= (oldSize - newSize);
+    } else {
+        stats.totalMemoryUsage += (newSize - oldSize);
+    }
+    return realloc(memory, newSize);
+}
+
+void* VZero(void* block, u64 size) {
     return memset(block, 0, size);
 }
 

@@ -130,16 +130,19 @@ i8 GLBackendRenderFrame(RendererBackend* backend) {
     // Texture bindings
     glBindTexture(TEXTURE_2D, context.texture.texID);
 
+    //TODO: Temp code. Remove later
+    mat4 translation;
+    vec3 scaleVec = {0.5f, 0.5f, 0.5f};
+    translation = Mat4EulerZ(90.0f * DEG_TO_RAD_MULTIPLIER * glfwGetTime());
+    translation = Mat4Mul(translation, Mat4ScaleMat(scaleVec));
+
     // Uniform detection
     glUseProgram(context.shaderProgram);
-    //f32 greenValue = (vsin(startFrame) / 2.0f) + 0.5f;
-    //i32 vertexColourLoc = glGetUniformLocation(context.shaderProgram, "ourColour");
-    //glUniform4f(vertexColourLoc, 0.0f, greenValue, 0.0f, 1.0f);
+    u32 transformLoc = glGetUniformLocation(context.shaderProgram, "transform");
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, translation.data);
     
     // Draw objects
-    //glUseProgram(context.shaderProgram);
     glBindVertexArray(context.vertexArrayObj);
-    //glDrawArrays(GL_TRIANGLES, 0, 3);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
     glfwSwapBuffers(context.window);
