@@ -5,6 +5,7 @@
 #include "opengl-textures.h"
 
 #include "core/vmemory.h"
+#include "maths/vmaths.h"
 
 static OpenGLContext context;
 
@@ -131,15 +132,22 @@ i8 GLBackendRenderFrame(RendererBackend* backend) {
     glBindTexture(TEXTURE_2D, context.texture.texID);
 
     //TODO: Temp code. Remove later
-    mat4 translation;
-    vec3 scaleVec = {0.5f, 0.5f, 0.5f};
-    translation = Mat4EulerZ(90.0f * DEG_TO_RAD_MULTIPLIER * glfwGetTime());
-    translation = Mat4Mul(translation, Mat4ScaleMat(scaleVec));
+    mat4 model = Mat4Identity();
+    model = Mat4EulerX(-5.0f * DEG_TO_RAD_MULTIPLIER);
+    mat4 view = Mat4Identity();
+    view = Mat4Translate((vec3){0.0f,0.0f,-3.0f});
+    mat4 projection = Mat4Identity();
+    projection = Mat4Perspective(75.0f, 800.0f / 600.0f, 0.1f, 100.0f);
 
     // Uniform detection
     glUseProgram(context.shaderProgram);
-    u32 transformLoc = glGetUniformLocation(context.shaderProgram, "transform");
-    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, translation.data);
+    u32 modelLoc = glGetUniformLocation(context.shaderProgram, "model");
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model.data);
+    u32 viewLoc = glGetUniformLocation(context.shaderProgram, "view");
+    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, view.data);
+    u32 projectionLoc = glGetUniformLocation(context.shaderProgram, "projection");
+    glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, projection.data);
+    
     
     // Draw objects
     glBindVertexArray(context.vertexArrayObj);

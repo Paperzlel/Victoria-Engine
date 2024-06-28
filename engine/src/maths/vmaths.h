@@ -835,12 +835,12 @@ VINLINE vec4 Mat4MulByVector4(mat4 mat, vec4 vector) {
  * @param vectorB The translation vector
  * @return A translated vec4
  */
-VINLINE vec4 Mat4Translate(vec4 vectorA, vec3 vectorB) {
+VINLINE mat4 Mat4Translate(vec3 vector) {
     mat4 mulMat = Mat4Identity();
-    mulMat.data[3] = vectorB.x;
-    mulMat.data[7] = vectorB.y;
-    mulMat.data[11] = vectorB.z;
-    return Mat4MulByVector4(mulMat, vectorA);
+    mulMat.data[3] = vector.x;
+    mulMat.data[7] = vector.y;
+    mulMat.data[11] = vector.z;
+    return mulMat;
 }
 
 /* 
@@ -905,6 +905,11 @@ VINLINE vec4 Mat4Scale(vec4 vector, vec3 scale) {
     return Mat4MulByVector4(outMat, vector);
 }
 
+/* 
+ * @brief Method to get a mat4 multiplier for a given scale
+ * @param scaleVec The scale vector
+ * @return A `mat4` that when multiplied against with a `vec4` will scale it appropriately
+ */
 VINLINE mat4 Mat4ScaleMat(vec3 scaleVec) {
     mat4 outMat = Mat4Identity();
     outMat.data[0] = scaleVec.x;
@@ -912,3 +917,52 @@ VINLINE mat4 Mat4ScaleMat(vec3 scaleVec) {
     outMat.data[10] = scaleVec.z;
     return outMat;
 }
+
+/*
+ * @brief Method to generate an orthographic view matrix from a given set of values
+ * @param top The upper screen limit of the matrix
+ * @param bottom The lower screen limit of the matrix
+ * @param left The left screen limit
+ * @param right The right screen limit
+ * @param near The near clipping plane
+ * @param far The far clipping plane
+ * @return A orthographic projection matrix valid for the given coordinates
+ */
+VINLINE mat4 Mat4Orthographic(f32 top, f32 bottom, f32 left, f32 right, f32 near, f32 far) {
+    mat4 outMat = Mat4Identity();
+
+    f32 rl = right - left;
+    f32 tb = top - bottom;
+    f32 fn = far - near;
+
+    outMat.data[0] = 2.0f / rl;
+    outMat.data[5] = 2.0f / tb;
+    outMat.data[10] = -2.0f / fn;
+
+    outMat.data[3] = -((right + left) / rl);
+    outMat.data[7] = -((top + bottom) / tb);
+    outMat.data[11] = -((far + near) / fn);
+    return outMat;
+}
+
+/* 
+ * @brief Method to generate a perspective view matrix from a given set of values
+ * @param fov The field of view of the camera
+ * @param aspectRatio The aspect ratio of the screen, i.e. `16:9` or `4:3`.
+ * @param near The near clipping plane
+ * @param far The far clipping plane
+ */
+VINLINE mat4 Mat4Perspective(f32 fov, f32 aspectRatio, f32 near, f32 far) {
+    f32 halfTanFov = vtan(fov * 0.5f);
+
+    mat4 outMat;
+    VZero(outMat.data, sizeof(f32) * 16);
+
+    outMat.data[0] = 1.0f / (aspectRatio * halfTanFov);
+    outMat.data[5] = 1.0f / halfTanFov;
+    outMat.data[10] = -((far + near) / (far - near));
+    outMat.data[11] = -1.0f;
+    outMat.data[14] = -((2.0f * far * near) / (far - near));
+    return outMat;
+}
+

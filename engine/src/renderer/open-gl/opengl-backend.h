@@ -2,7 +2,6 @@
 
 #include "defines.h"
 #include "core/logger.h"
-#include "maths/vmaths.h"
 
 #include "opengl-types.inl"
 #include "renderer/renderer-types.inl"
