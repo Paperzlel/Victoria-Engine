@@ -1,0 +1,19 @@
+{
+    "version": "2.0.0",
+    "tasks" : [
+        {
+            "label": "Build Engine",
+            "type": "shell",
+            "windows" : {
+                "command": "${workspaceFolder}/build.bat",
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
