@@ -3,14 +3,14 @@
     "configurations": [
         {
             "name": "Launch (Windows)",
-            "type": "cppdbg",
+            "type": "cppvsdbg",
             "request": "launch",
             "program": "${workspaceFolder}/bin/victoria.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/bin/",
             "environment": [],
-            "externalConsole": false
+            "console": "integratedTerminal"
         },
         {
             "name": "Launch (Linux)",
