@@ -1,10 +1,14 @@
 #include "core/io/logger.h"
 #include "core/error/error_macros.h"
+#include "core/variant/variant.h"
 
 int main(void) {
     PRINT("Hello World!");
     PRINT_DEBUG("The number is %i", 12);
     PRINT_ERR("oops");
-    ERR_FAIL_COND_MSG_R(true, "testing :P", 0);
+
+    Variant x = 3;
+    PRINT("The number x is: %i", (int32)x);
+
     return 0;
 }

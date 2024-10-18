@@ -1,6 +1,15 @@
 #ifndef TYPEDEFS_H
 #define TYPEDEFS_H
 
+typedef signed char int8;
+
+typedef signed short int16;
+
+typedef signed int int32;
+
+typedef signed long long int64;
+
+
 typedef unsigned char uint8;
 
 typedef unsigned short uint16;
@@ -9,6 +18,10 @@ typedef unsigned int uint32;
 
 typedef unsigned long long uint64;
 
+static_assert(sizeof(int8) == 1, "Expected a signed 8-bit integer to have 1 byte.");
+static_assert(sizeof(int16) == 2, "Expected a signed 16-bit integer to have 2 bytes.");
+static_assert(sizeof(int32) == 4, "Expected a signed 32-bit integer to have 4 bytes.");
+static_assert(sizeof(int64) == 8, "Expected a signed 64-bit integer to have 8 bytes.");
 static_assert(sizeof(uint8) == 1, "Expected an unsigned 8-bit integer to have 1 byte.");
 static_assert(sizeof(uint16) == 2, "Expected an unsigned 16-bit integer to have 2 bytes.");
 static_assert(sizeof(uint32) == 4, "Expected an unsigned 32-bit integer to have 4 bytes.");
