@@ -2,6 +2,7 @@
 #define VARIANT_H
 
 #include "core/typedefs.h"
+#include "array.h"
 
 class Variant {
 public:
@@ -11,6 +12,7 @@ public:
         INT,
         FLOAT,
 
+        ARRAY,
         VARIANT_MAX
     };
 private:
@@ -31,7 +33,8 @@ private:
             false,
             false,
             false,
-            
+            true,
+
         };
 
         if (needs_freeing[type]) {
@@ -78,6 +81,7 @@ public:
     Variant(bool p_bool);
     Variant(float p_float);
     Variant(double p_double);
+    Variant(const Array &p_array);
 
     Variant() { type = NIL; }
     ~Variant() {
@@ -85,5 +89,22 @@ public:
     }
 };
 
+Variant &Array::Iterator::operator*() const {
+    return *_p;
+}
+
+Variant *Array::Iterator::operator->() const {
+    return _p;
+}
+
+Array::Iterator &Array::Iterator::operator++() {
+    _p++;
+    return *this;
+}
+
+Array::Iterator &Array::Iterator::operator--() {
+    _p--;
+    return *this;
+}
 
 #endif // VARIANT_H

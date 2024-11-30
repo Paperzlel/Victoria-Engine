@@ -2,6 +2,9 @@
 
 void Variant::_clear_internals() {
     switch (type) {
+        case ARRAY: {
+            reinterpret_cast<Array *>(_data._mem)->~Array();
+        } break;
         default: {
 
         } break;
@@ -24,6 +27,7 @@ const char *Variant::get_value_as_string() {
 
 void Variant::operator=(const Variant &p_var) {
     type = p_var.type;
+    _data._ptr = nullptr;
     switch(p_var.type) {
         case NIL: {
             _data._ptr = nullptr;
@@ -36,6 +40,9 @@ void Variant::operator=(const Variant &p_var) {
         } break;
         case FLOAT: {
             _data._float = p_var._data._float;
+        } break;
+        case ARRAY: {
+            *reinterpret_cast<Array *>(_data._mem) = *reinterpret_cast<const Array *>(p_var._data._mem);
         } break;
         default:
             break;
@@ -65,6 +72,15 @@ bool Variant::hash_compare(const Variant &p_other, int recursion_count) const {
         } break;
         case FLOAT: {
             return _data._float == p_other._data._float;
+        } break;
+        case ARRAY: {
+            const Array &l = *(reinterpret_cast<const Array *>(_data._mem));
+            const Array &r = *(reinterpret_cast<const Array *>(p_other._data._mem));
+            if (!l.is_equal(r)) {
+                return false;
+            }
+
+            return true;
         } break;
         default:
             return false; //TODO: Maybe make this a little fairer?
@@ -308,4 +324,9 @@ Variant::Variant(float p_float) {
 Variant::Variant(double p_double) {
     _data._float = p_double;
     type = FLOAT;
+}
+
+Variant::Variant(const Array &p_array) {
+    *reinterpret_cast<Array *>(_data._mem) = p_array;
+    type = ARRAY;
 }

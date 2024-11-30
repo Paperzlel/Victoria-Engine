@@ -58,6 +58,18 @@ void _err_print_index_err(const char *file, const char *function, int line, int 
     }                                                                                                                                                       \
 
 /**
+ * @brief Macro to throw an exception whenever an index is out of bounds. To be used in scenarios where an index can be out of bounds, but the return value is non-void and cannot be cast to 0.
+ * @param m_index The index being requested
+ * @param m_size The number of elements in the array
+ */
+#define ERR_OUT_OF_BOUNDS_FATAL(m_index, m_size)                                                                        \
+    if (m_index < 0 || m_index > m_size) {                                                                              \
+        _err_print_index_err(__FILE__, FUNCTION_STR, __LINE__, m_index, m_size, "Index given was out of bounds.");      \
+        DEBUG_BREAK();                                                                                                  \
+    }                                                                                                                   \
+
+
+/**
  * Error messages that report when the given condition is true
  */
 

@@ -40,9 +40,14 @@ static_assert(sizeof(uint64) == 8, "Expected an unsigned 64-bit integer to have 
 #endif
 
 // Inline variables
+#ifndef DEBUG
 #ifdef _MSC_VER
 #define FORCE_INLINE __forceinline
 #define NO_INLINE __declspec(noinline)
+#else
+#define FORCE_INLINE __attribute__((always_inline)) inline
+#define NO_INLINE
+#endif
 #else
 #define FORCE_INLINE inline
 #define NO_INLINE
