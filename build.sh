@@ -1,18 +1,24 @@
 #!/bin/bash
-set echo on
 
-mkdir -p bin
+# Check if clang is supported, and abort if it is not.
+if ! [ -x "$(command -v clang++)" ]
+then
+echo "Clang++ is not installed on your operating system. Please install from the LLVM projects' website (https://releases.llvm.org/download.html) in order to be able to continue with compilation. Build cannot proceed, exiting..." && exit
+fi
 
-cppFiles=$(find . -type f -name "*.cpp")
+echo "Building executable..."
 
-cFiles=$(find . -type f -name "*.c")
+if ! [ -x "$(command -v make)" ]
+then 
+    echo "Make is not supported on your machine. Please install a valid version of Make in order to compile properly." && exit
+fi
 
-cwd="$PWD"
+make -f Makefile.linux.mak all IS_DEBUG=yes
 
-compilerFlags="-g -fPIC"
-includeFlags="-I$cwd"
-linkerFlags="-lxcb -lX11 -lX11-xcb -lxkbcommon -L/usr/X11R6/lib -Wl,-rpath,."
-defines="-DDEBUG"
+ERRORLEVEL=$?
+if [ $ERRORLEVEL -ne 0 ]
+then
+echo "ERROR: "$ERRORLEVEL && exit
+fi 
 
-echo "Building the executable..."
-clang++ $cppFiles -x c++ $cFiles $compilerFlags -o bin/victoria $defines $includeFlags $linkerFlags
+echo "All binaries built successfully."

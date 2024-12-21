@@ -5,7 +5,7 @@
             "label": "Build Engine",
             "type": "shell",
             "windows" : {
-                "command": "${workspaceFolder}/build.bat",
+                "command": "${workspaceFolder}\\build.bat",
             },
             "linux" : {
                 "command": "${workspaceFolder}/build.sh",
@@ -17,6 +17,19 @@
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "label": "Clean Binaries",
+            "type": "shell",
+            "windows": {
+                "command": "${workspaceFolder}\\clean.bat"
+            },
+            "linux": {
+                "command": "${workspaceFolder}/clean.sh"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
         }
     ]
 }

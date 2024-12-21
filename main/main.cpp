@@ -6,7 +6,6 @@
 
 int main(void) {
     PRINT("Hello World!");
-    PRINT_DEBUG("The number is %i", 12);
     PRINT_ERR("oops");
 
     Variant x = 3;
@@ -17,7 +16,6 @@ int main(void) {
     y.append(2.2);
     y.append(true);
 
-    x = y;
     for (const int i : y) {
         PRINT("%i", (int32)y[i]);
     }

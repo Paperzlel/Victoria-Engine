@@ -12,8 +12,23 @@
             ],
             "windowsSdkVersion": "10.0.19041.0",
             "compilerPath": "c:\\Program Files\\LLVM\\bin\\clang.exe",
-            "cStandard": "c11",
-            "cppStandard": "c++11",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "clang-x64"
+        },
+        {
+            "name" : "Linux",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+                "DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
             "intelliSenseMode": "clang-x64"
         }
     ],

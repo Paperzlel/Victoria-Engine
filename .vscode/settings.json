@@ -1,5 +1,4 @@
 {
-    "terminal.integrated.shell.windows": "c:/Program Files/PowerShell/7/pwsh.exe",
     "todohighlight.isEnable": true,
     "todohighlight.keywords": [
         {

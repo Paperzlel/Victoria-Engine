@@ -281,7 +281,7 @@ Error Vector<T>::_resize(uint64 n_size) {
             }
         } else {
             // Zero out the memory so that garbage data isn't read
-            StaticAllocator::vzero(_ptr, n_size);
+            StaticAllocator::vzero(_ptr + p_element_count, n_size - p_size);
         }
         p_size = n_size;
 
