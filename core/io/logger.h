@@ -1,28 +1,22 @@
-#ifndef LOGGER_H
-#define LOGGER_H
+#pragma once
+
+#include <stdarg.h>
 
 class Logger {
-protected:
-    static Logger *singleton;
-
 public:
     static const int MAX_BUF_LEN = 32000;
 
-    static Logger *get_singleton();
-
-    void logv(bool is_error, const char *message, __builtin_va_list va_list);
-
+    enum ErrorType {
+        ERROR_ERR,
+        ERROR_WARNING,
+        ERROR_DEBUG,
+        ERROR_SHADER,
+    };
+    
+    virtual void logv(bool is_error, const char *message, va_list arg_ptr);
+    virtual void log_error(const char *file, const char *function, int line, const char *err_msg, const char *err_details, ErrorType type);
+    
     void logf(bool is_error, const char *message, ...);
 
-    void log_debug_v(const char *file, const char *function, int line, const char *message, ...);
-
-    Logger();
+    virtual ~Logger() {}
 };
-
-#define PRINT(message, ...) Logger::get_singleton()->logf(false, message, ##__VA_ARGS__)
-
-#define PRINT_DEBUG(message, ...) Logger::get_singleton()->log_debug_v(__FILE__, __FUNCTION__, __LINE__, message, ##__VA_ARGS__)
-
-#define PRINT_ERR(message, ...) Logger::get_singleton()->logf(true, message, ##__VA_ARGS__)
-
-#endif //LOGGER_H

@@ -1,5 +1,4 @@
-#ifndef ARRAY_H
-#define ARRAY_H
+#pragma once
 
 #include "core/typedefs.h"
 
@@ -67,5 +66,3 @@ public:
 
     ~Array();
 };
-
-#endif // ARRAY_H

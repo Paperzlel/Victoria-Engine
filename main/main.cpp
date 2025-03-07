@@ -1,47 +1,32 @@
-#include "core/io/logger.h"
-#include "core/error/error_macros.h"
-#include "core/variant/variant.h"
-#include "core/variant/array.h"
-#include "core/data/vector.h"
-#include "core/data/event.h"
+#include "main.h"
 
-void test_func_1(int arg) {
-    PRINT_DEBUG("The number was: %i", arg);
-}
+#include "platform/windows/display_manager_windows.h"
+#include "platform/windows/os_windows.h"
 
-void test_func_2(int arg2) {
-    PRINT("This fired second and the number was %i", arg2);
-}
+static bool should_quit = false;
+
+static DisplayManager *display_manager = nullptr;
 
 int main(void) {
-    PRINT("Hello World!");
-    PRINT_ERR("oops");
+    OSWindows os(nullptr);
 
-    Variant x = 3;
-    PRINT("The number x is: %i", (int32)x);
+    os.initialize();
 
-    Array y;
-    y.append(1);
-    y.append(2.2);
-    y.append(true);
+    display_manager = new DisplayManagerWindows;
 
-    for (const int i : y) {
-        PRINT("%i", (int32)y[i]);
-    }
+    display_manager->create_window("Victoria Engine Window", 100, 100, 1280, 720);
 
-    Vector<int> vec = {1, 2, 3, 4, 5};
-    for (const int item : vec) {
-        PRINT("item is: %i", item);
-    }
+    os.run();
 
-    Event<int> ev;
-    ev.connect(test_func_1, false);
-    ev.connect(test_func_2, false);
-
-    ev.fire(42);
-
-    ev.disconnect(test_func_1);
-    ev.disconnect(test_func_2);
+    display_manager->finalize();
 
     return 0;
+}
+
+bool iteration() {
+    return should_quit;
+}
+
+void set_should_quit(bool p_value) {
+    should_quit = p_value;
 }

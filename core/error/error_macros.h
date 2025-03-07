@@ -1,8 +1,14 @@
-#ifndef ERROR_MACROS_H
-#define ERROR_MACROS_H
+#pragma once
 
 #include "error_types.h"
 #include "core/typedefs.h"
+
+enum ErrorType {
+    ERROR_ERR,
+    ERROR_WARNING,
+    ERROR_DEBUG,
+    ERROR_SHADER,
+};
 
 /** 
  * @brief Prints an error to the console.
@@ -11,11 +17,9 @@
  * @param line The line number the macro is on
  * @param message The message to display to the console
  */
-void _err_print_err(const char *file, const char *function, int line, const char *err_msg, const char *msg = "");
-void _err_print_err(const char *file, const char *function, int line, const char *err_msg, const char *msg);
+void _err_print_err(const char *file, const char *function, int line, const char *err_msg, const char *msg = "", ErrorType p_type = ERROR_ERR);
 
-void _err_print_index_err(const char *file, const char *function, int line, int m_index, int m_size, const char *err_msg, const char *msg = "");
-void _err_print_index_err(const char *file, const char *function, int line, int m_index, int m_size, const char *err_msg, const char *msg);
+void _err_print_index_err(const char *file, const char *function, int line, int m_index, int m_size, const char *err_msg, const char *msg = "", ErrorType p_type = ERROR_ERR);
 
 #ifdef _MSC_VER
 #define DEBUG_BREAK() __debugbreak()
@@ -138,5 +142,3 @@ void _err_print_index_err(const char *file, const char *function, int line, int 
         DEBUG_BREAK();                                                                                                              \
     }                                                                                                                               \
 
-
-#endif //ERROR_MACROS_H

@@ -1,6 +1,4 @@
-#ifndef ERROR_TYPES_H
-#define ERROR_TYPES_H
-
+#pragma once
 enum Error {
     OK,
     FAILED,
@@ -18,5 +16,3 @@ enum Error {
 
 /* @brief String for each error message, in a more human-readable format */
 extern const char *error_messages[];
-
-#endif // ERROR_TYPES_H

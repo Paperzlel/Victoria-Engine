@@ -1,5 +1,4 @@
-#ifndef VECTOR_H
-#define VECTOR_H
+#pragma once
 
 #include "core/typedefs.h"
 #include "core/error/error_macros.h"
@@ -504,5 +503,3 @@ template <typename T>
 Vector<T>::~Vector() {
     _unref();
 }
-
-#endif // VECTOR_H

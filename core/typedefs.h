@@ -1,5 +1,4 @@
-#ifndef TYPEDEFS_H
-#define TYPEDEFS_H
+#pragma once
 
 typedef signed char int8;
 
@@ -63,5 +62,3 @@ static_assert(sizeof(uint64) == 8, "Expected an unsigned 64-bit integer to have 
 #define CLAMP(value, min, max) (value <= min) ? min : (value >= max) ? max : value
 
 #define _STR(v_x) #v_x 
-
-#endif

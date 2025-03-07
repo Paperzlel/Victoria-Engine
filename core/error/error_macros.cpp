@@ -1,14 +1,22 @@
 #include "error_macros.h"
 
-#include "core/io/logger.h"
+#include "core/os/os.h"
 
-void _err_print_err(const char *file, const char *function, int line, const char *err_msg, const char *msg) {
-    //TODO: string comparison functions.
-    Logger::get_singleton()->logf(true, "In file %s <function %s, line %i>: \n\tError occured: %s \n\tError message: %s", file, function, line, err_msg, msg);
+#include <string.h>
+
+void _err_print_err(const char *file, const char *function, int line, const char *err_msg, const char *msg, ErrorType p_type) {
+    if (OS::get_singleton()) {
+        OS::get_singleton()->print_error(file, function, line, err_msg, msg, p_type);
+    }
 }
 
-void _err_print_index_err(const char *file, const char *function, int line, int m_index, int m_size, const char *err_msg, const char *msg) {
-    //TODO: string comparison functions.
-    Logger::get_singleton()->logf(true, "In file %s <function %s, line %i>: \n\tIndex error occured (m_index = %i when m_size = %i) \n\tError message: %s %s", file, \
-        function, line, m_index, m_size, err_msg, msg);
+void _err_print_index_err(const char *file, const char *function, int line, int m_index, int m_size, const char *err_msg, const char *msg, ErrorType p_type) {
+    if (OS::get_singleton()) {
+        char buf[Logger::MAX_BUF_LEN];
+        memset(buf, 0, Logger::MAX_BUF_LEN);
+
+        sprintf(buf, "m_index was %i when m_size was %i. %s", m_index, m_size, err_msg);
+
+        OS::get_singleton()->print_error(file, function, line, buf, msg, p_type);
+    }
 }

@@ -1,5 +1,4 @@
-#ifndef EVENT_H
-#define EVENT_H
+#pragma once
 
 #include "core/typedefs.h"
 #include "core/error/error_macros.h"
@@ -73,6 +72,3 @@ Error Event<Args...>::disconnect(Event::listener list) {
     listeners.remove_at(loc);
     return OK;
 }
-
-
-#endif // EVENT_H

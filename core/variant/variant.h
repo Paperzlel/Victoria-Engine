@@ -1,5 +1,4 @@
-#ifndef VARIANT_H
-#define VARIANT_H
+#pragma once
 
 #include "core/typedefs.h"
 #include "array.h"
@@ -106,5 +105,3 @@ Array::Iterator &Array::Iterator::operator--() {
     _p--;
     return *this;
 }
-
-#endif // VARIANT_H
