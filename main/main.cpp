@@ -1,18 +1,18 @@
 #include "main.h"
 
-#include "platform/windows/display_manager_windows.h"
-#include "platform/windows/os_windows.h"
+#include "platform/linux/display_manager_x11.h"
+#include "platform/linux/os_linux.h"
 
 static bool should_quit = false;
 
 static DisplayManager *display_manager = nullptr;
 
 int main(void) {
-    OSWindows os(nullptr);
+    OSLinux os;
 
     os.initialize();
 
-    display_manager = new DisplayManagerWindows;
+    display_manager = new DisplayManagerX11;
 
     display_manager->create_window("Victoria Engine Window", 100, 100, 1280, 720);
 

@@ -2,6 +2,7 @@
 
 #include "core/os/os.h"
 
+#include <stdio.h>
 #include <string.h>
 
 void _err_print_err(const char *file, const char *function, int line, const char *err_msg, const char *msg, ErrorType p_type) {

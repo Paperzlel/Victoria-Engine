@@ -29,4 +29,6 @@
         "initializer_list": "cpp",
         "xutility": "cpp"
     },
+    "markdown.preview.fontFamily": "\"JetBrains Mono\"",
+    "editor.fontFamily": "'JetBrains Mono'",
 }
