@@ -2,9 +2,10 @@
 #if PLATFORM_WINDOWS
 
 #include "logger_windows.h"
-#include "core/os/display_manager.h"
+#include "display_manager_windows.h"
 #include "main/main.h"
 
+static DisplayManager *display_manager = nullptr;
 
 /**
  * @brief Method that makes a message box with information appear, and pauses the current thread.
@@ -86,7 +87,7 @@ void OSWindows::initialize() {
 void OSWindows::run() {
     while (true) {
         DisplayManager::get_singleton()->process_events();
-        if (iteration()) {
+        if (Main::iteration()) {
             break;
         }
     }
@@ -102,6 +103,8 @@ OSWindows::OSWindows(HINSTANCE hInstance) {
     bool use_vt = SetConsoleMode(hOut, dwMode);
 
     _logger = new WindowsLogger(use_vt);
+
+    display_manager = new DisplayManagerWindows;
 }
 
 OSWindows::~OSWindows() {

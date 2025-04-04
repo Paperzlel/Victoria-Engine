@@ -15,6 +15,8 @@
 #error "Require a POSIX-compliant system of a high enough version!"
 #endif
 
+static DisplayManager *display_manager = nullptr;
+
 /**
  * @brief Creates an alert box to display an important message to the user. Please note that this feature is not supported properly on Linux, as there
  * is no equivalent to `MessageBox` for the X11/Wayland API without using a third-party library or creating our own.
@@ -95,7 +97,7 @@ void OSLinux::run() {
 
     while (true) {
         DisplayManager::get_singleton()->process_events();
-        if (iteration()) {
+        if (Main::iteration()) {
             break;
         }
     }
@@ -106,6 +108,7 @@ void OSLinux::run() {
  */
 OSLinux::OSLinux() {
     _logger = new LinuxLogger();
+    display_manager = new DisplayManagerX11;
 }
 
 /**

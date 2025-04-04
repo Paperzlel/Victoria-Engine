@@ -109,7 +109,7 @@ LRESULT DisplayManagerWindows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
         case WM_CLOSE: {
             window->notification_callback.fire(NOTIFICATION_WM_WINDOW_CLOSE, window_id);
             OS::get_singleton()->set_exit_code(0);
-            set_should_quit(true);
+            Main::set_should_quit(true);
             return 0;
         }
         case WM_DESTROY: {
@@ -126,6 +126,8 @@ DisplayManagerWindows::DisplayManagerWindows() {
     if (!hInstance) {
         hInstance = GetModuleHandleA(NULL);
     }
+
+    create_window("Victoria Engine Window", 100, 100, 1280, 720);
 }
 
 DisplayManagerWindows::~DisplayManagerWindows() {
