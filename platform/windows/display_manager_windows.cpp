@@ -63,12 +63,28 @@ uint8 DisplayManagerWindows::create_window(const char *p_name, uint16 x, uint16 
 
     new_win->notification_callback.connect(_notification_callback, false);
 
+    if (gl_manager_windows) {
+        uint8 id = gl_manager_windows->create_window(new_win->hWnd, hInstance);
+
+        if (id == (uint8)-1) {
+            delete gl_manager_windows;
+            OS::get_singleton()->print_error(__FILE__, __FUNCTION__, __LINE__, "GLWindow was unable to be created.");
+            return ERR_CANT_CREATE;
+        }
+
+        gl_manager_windows->set_active_window(id);
+        new_win->id = id;
+    }
+
     window = new_win;
     return new_win->id;
 }
 
 void DisplayManagerWindows::destroy_window(uint8 p_id) {
     if (window->id == p_id) {
+        if (gl_manager_windows) {
+            gl_manager_windows->destroy_window(p_id);
+        }
         DestroyWindow(window->hWnd);
     }
 }
@@ -87,7 +103,9 @@ void DisplayManagerWindows::process_events() {
 }
 
 void DisplayManagerWindows::swap_buffers() {
-
+    if (gl_manager_windows) {
+        gl_manager_windows->swap_buffers();
+    }
 }
 
 void DisplayManagerWindows::finalize() {
@@ -116,6 +134,13 @@ LRESULT DisplayManagerWindows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
             PostQuitMessage(0);
             return 0;
         }
+        case WM_SIZE: {
+            uint32 width = LOWORD(lParam);
+            uint32 height = HIWORD(lParam);
+            if (gl_manager_windows) {
+                gl_manager_windows->resize_viewport(width, height);
+            }
+        } break;
     }
 
     return DefWindowProc(hWnd, uMsg, wParam, lParam);
@@ -126,12 +151,17 @@ DisplayManagerWindows::DisplayManagerWindows() {
     if (!hInstance) {
         hInstance = GetModuleHandleA(NULL);
     }
+    
+    gl_manager_windows = new GLManagerWindows;
 
     create_window("Victoria Engine Window", 100, 100, 1280, 720);
+
+    Error err = gl_manager_windows->initialize();
+    ERR_FAIL_COND_MSG(err != OK, error_messages[err]);
 }
 
 DisplayManagerWindows::~DisplayManagerWindows() {
-    
+    delete gl_manager_windows;
 }
 
 #endif // PLATFORM_WINDOWS

@@ -6,6 +6,8 @@
 #include "core/data/event.h"
 #include "core/os/display_manager.h"
 
+#include "gl_manager_windows.h"
+
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <windowsx.h>
@@ -14,6 +16,7 @@ class DisplayManagerWindows : public DisplayManager {
 private:
 
     HINSTANCE hInstance = nullptr;
+    GLManagerWindows *gl_manager_windows = nullptr;
 
     struct WindowData {
         uint8 id;
