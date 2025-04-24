@@ -3,6 +3,8 @@
 #include "core/typedefs.h"
 #if PLATFORM_LINUX
 
+#include "gl_manager_x11.h"
+
 #include "core/os/display_manager.h"
 #include "core/data/event.h"
 
@@ -17,6 +19,8 @@ private:
 
     int screen_id = 0;
 
+    GLManagerX11 *gl_manager_x11 = nullptr;
+
     struct WindowData {
         uint8 id;
         Window win;
@@ -30,6 +34,13 @@ private:
 
     WindowData *window = nullptr;
 public:
+
+    Display *get_display() const { return display; }
+
+    Screen *get_screen() const { return screen; }
+
+    int get_screen_id() const { return screen_id; }
+
 
     virtual uint8 create_window(const char *p_name, uint16 x, uint16 y, uint16 width, uint16 height) override;
     virtual void destroy_window(uint8 p_id) override;
