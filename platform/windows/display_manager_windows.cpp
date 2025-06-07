@@ -23,7 +23,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
  * @param height The height of the window
  * @return The ID of the current window
  */
-uint8 DisplayManagerWindows::create_window(const char *p_name, uint16 x, uint16 y, uint16 width, uint16 height) {
+uint8 DisplayManagerWindows::create_window(const String &p_name, uint16 x, uint16 y, uint16 width, uint16 height) {
     LPCSTR class_name = "victoria_engine_window_class";
 
     WNDCLASSA wc = { 0 };

@@ -2,6 +2,7 @@
 
 #include "core/typedefs.h"
 #include "core/error/error_macros.h"
+#include "core/string/vstring.h"
 
 class DisplayManager {
 protected:
@@ -21,7 +22,7 @@ public:
 
     static void _notification_callback(WindowNotification notification, uint8 window_id);
 
-    virtual uint8 create_window(const char *p_name, uint16 x, uint16 y, uint16 width, uint16 height) = 0;
+    virtual uint8 create_window(const String &p_name, uint16 x, uint16 y, uint16 width, uint16 height) = 0;
     virtual void destroy_window(uint8 p_id) = 0;
 
     virtual void process_events() = 0;

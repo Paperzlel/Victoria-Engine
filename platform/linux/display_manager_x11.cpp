@@ -14,7 +14,7 @@
  * @param height The number of pixels tall the window will be
  * @returns The ID of the created window (NOTE: For now, this will remain to be 0 until multiple windows are supported)
  */
-uint8 DisplayManagerX11::create_window(const char *p_name, uint16 x, uint16 y, uint16 width, uint16 height) {
+uint8 DisplayManagerX11::create_window(const String &p_name, uint16 x, uint16 y, uint16 width, uint16 height) {
     XVisualInfo *visual = nullptr;
     if (gl_manager_x11) {
         visual = gl_manager_x11->get_visual_info();
