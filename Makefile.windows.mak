@@ -14,7 +14,7 @@ endif
 # Linker flags
 LINKER_FLAGS := -luser32 -lopengl32 -lgdi32
 ifeq ($(IS_DEBUG), yes)
-	LINKER_FLAGS := $(LINKER_FLAGS) -g
+	LINKER_FLAGS := $(LINKER_FLAGS) -g -lmsvcrtd -lvcruntimed -lucrtd
 endif
 
 # Include flags

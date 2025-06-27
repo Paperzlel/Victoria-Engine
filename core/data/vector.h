@@ -3,6 +3,7 @@
 #include "core/typedefs.h"
 #include "core/error/error_macros.h"
 #include "core/os/static_allocator.h"
+#include "atomic_counter.h"
 
 #include <list>
 
@@ -12,14 +13,21 @@
 template <typename T>
 class Vector {
 private:
+    friend class String;
+
+    Refcount refc;
     // The size of the array in bytes
     uint64 p_size = 0;
     // The number of elements in the array
     uint64 p_element_count = 0;
-    // The size of a single element in bytes
-    uint8 data_size = 0;
     // The internal pointer that makes up the actual array in memory
     T *_ptr = nullptr;
+
+    FORCE_INLINE void _ref(const Vector &p_from);
+    FORCE_INLINE void _unref();
+    FORCE_INLINE void _copy_on_write();
+    FORCE_INLINE Error _resize(uint64 n_size);
+    FORCE_INLINE Error _realloc(uint64 n_size);
 public:
 
     /**
@@ -40,12 +48,10 @@ public:
     FORCE_INLINE void set(T &item, uint64 p_index) {
         ERR_OUT_OF_BOUNDS_FATAL(p_index, p_element_count);
         // Since the data is set up so that data isn't unique - not normally a problem for basic (atomic) data, but for Strings (data types with a nested vector) it has a whole load of problems. To fix this, we need to copy over data properly, into the block itself
+        _copy_on_write();
         _ptr[p_index] = item;
     }
 
-    FORCE_INLINE void _ref(const Vector &p_from);
-    FORCE_INLINE void _unref();
-    FORCE_INLINE Error _resize(uint64 n_size);
     // Iterator structure, is used by a C++ for loop in order to find an element at a given point in the vector. Its operators are used to find the adjacent values in memory.
     struct Iterator {
         FORCE_INLINE T &operator*() const { return *element_ptr; }
@@ -108,7 +114,6 @@ public:
      * @param p_from The other vector to copy into the current vector
      */
     inline void operator=(const Vector &p_from) {
-        data_size = p_from.data_size;
         _ref(p_from);
     }
 
@@ -145,6 +150,18 @@ public:
      */
     FORCE_INLINE const T *ptr() const { return _ptr; }
 
+    /**
+     * @brief Obtains the current refcount object.
+     */
+    FORCE_INLINE Refcount &get_refc() const { return ((Vector<T> *)(this))->refc; }
+
+    /**
+     * @brief Resizes the vector to a new number of elements. Differs from `_resize` in that it automatically calculates the number of 
+     * bytes per-element.
+     * @param p_new_size The new number of elements in the vector
+     */
+    FORCE_INLINE Error resize(int p_new_size) { return _resize(p_new_size * sizeof(T)); }
+
     FORCE_INLINE void append(T item);
     FORCE_INLINE void remove_at(uint64 index);
     FORCE_INLINE void insert_at(T item, uint64 index);
@@ -162,7 +179,7 @@ public:
      * @brief Class constructor for a `Vector` class. By default, it does nothing but obtain the stride value of the vector (the number of bytes between two datatypes), as this value may not be set properly at other points of initialization.
      * @returns An instance of the `Vector` class.
      */
-    FORCE_INLINE Vector() { data_size = sizeof(T); }
+    FORCE_INLINE Vector() {}
     FORCE_INLINE Vector(const Vector &p_from);
 
     /**
@@ -170,7 +187,6 @@ public:
      * @param p_init The initializer list to construct the vector from
      */
     FORCE_INLINE Vector(std::initializer_list<T> p_init) {
-        data_size = sizeof(T);
         ERR_FAIL_COND(_resize(p_init.size() * data_size) != OK);
 
         p_element_count = 0;
@@ -197,6 +213,8 @@ void Vector<T>::_ref(const Vector &p_from) {
 
     _unref();
     _ptr = nullptr;
+    p_size = 0;
+    p_element_count = 0;
 
     if (!p_from._ptr) {
         return;
@@ -204,6 +222,10 @@ void Vector<T>::_ref(const Vector &p_from) {
 
     Error err = _resize(p_from.p_size);
     ERR_FAIL_COND(err);
+
+    if (p_from.get_refc().get() > 0) {
+        p_from.get_refc().ref();
+    }
     // NOTE: This seems like a hack, but it's done for good reason. Without copying the memory into the location - just assigning it normally - we would get a free_base error when running, as the memory would be referenced in two places and still in use - not good. As a result, we copy it in - letting the STL know that it's being used, and that it should be freed when it is ready to be killed.
     if (!std::is_trivially_copyable<T>::value) {
         for (int i = 0; i < p_element_count; i++) {
@@ -223,6 +245,11 @@ void Vector<T>::_unref() {
         return;
     }
 
+    if (refc.unrefval() > 0) {
+        _ptr = nullptr;
+        return;
+    }
+
     if (!std::is_trivially_destructible<T>::value) {
         uint64 current_size = size();
 
@@ -235,6 +262,26 @@ void Vector<T>::_unref() {
     StaticAllocator::vfree(_ptr, p_size);
 }
 
+template<typename T>
+void Vector<T>::_copy_on_write() {
+    if (refc.get() > 1) {
+        T *new_data = (T *)StaticAllocator::vallocate(p_size);
+        ERR_COND_FATAL(new_data);
+
+        if (!std::is_trivially_copyable<T>::value) {
+            for (int i = 0; i < p_element_count; i++) {
+                new (&new_data[i]) T(_ptr[i]);
+            }
+        } else {
+            StaticAllocator::vcopy_memory(new_data, _ptr, p_size);
+        }
+
+        _unref();
+        _ptr = new_data;
+        refc.set(1);
+    }
+}
+
 /**
  * @brief Changes the size of the current vector to a new given size. Sets `p_size` and `p_element_count` itself in order to prevent any potential errors otherwise.
  * @param n_size The new size of the vector in bytes
@@ -244,10 +291,8 @@ template <typename T>
 Error Vector<T>::_resize(uint64 n_size) {
     ERR_FAIL_COND_R(n_size < 0, ERR_INVALID_PARAMETER);
 
-    // Manual set of `data_size` to prevent divide by zero errors (which can occur when using an allocator and a vector)
-    data_size = sizeof(T);
     uint64 current_size = get_ptr_size();
-    uint64 n_element_count = n_size / data_size;
+    uint64 n_element_count = n_size / sizeof(T);
 
     if (current_size == n_size) {
         return OK; // no need for changes
@@ -256,8 +301,13 @@ Error Vector<T>::_resize(uint64 n_size) {
     if (n_size == 0) {
         _unref();
         _ptr = nullptr;
+        p_size = 0;
+        p_element_count = 0;
         return OK;
     }
+
+    // copy data to a new alloc beforehand
+    _copy_on_write();
 
     if (current_size < n_size) {
         // Allocate if the current size is 0
@@ -265,17 +315,18 @@ Error Vector<T>::_resize(uint64 n_size) {
             T *n_data = (T *)StaticAllocator::vallocate(n_size);
             ERR_COND_NULL_R(n_data, ERR_OUT_OF_MEMORY);
             _ptr = n_data;
+            refc.set(1);
         } else {
-            // Safety check against data before assignment
-            T *n_data = (T *)StaticAllocator::vreallocate(_ptr, current_size, n_size);
-            ERR_COND_NULL_R(n_data, ERR_OUT_OF_MEMORY);
-            _ptr = n_data;
+            Error err = _realloc(n_size);
+            if (err) {
+                return err;
+            }
         }
 
 
         // Check if the classes can't be constructed easily, if not call constructors (because this happens before raw assignment, it prevents data being wiped)
         if (!std::is_trivially_constructible<T>::value) {
-            for (int i = (current_size / data_size); i < n_element_count; i++) {
+            for (int i = (current_size / sizeof(T)); i < n_element_count; i++) {
                 new (&_ptr[i]) T;
             }
         } else {
@@ -294,14 +345,24 @@ Error Vector<T>::_resize(uint64 n_size) {
             }
         }
 
-        T *n_data = (T *)StaticAllocator::vreallocate(_ptr, p_size, n_size);
-        ERR_COND_NULL_R(n_data, ERR_OUT_OF_MEMORY);
-
-        _ptr = n_data;
+        Error err = _realloc(n_size);
+        if (err) {
+            return err;
+        }
         p_size = n_size;
     }
     p_element_count = n_element_count;
 
+    return OK;
+}
+
+template<typename T>
+Error Vector<T>::_realloc(uint64 n_size) {
+    T *n_data = (T *)StaticAllocator::vreallocate(_ptr, p_size, n_size);
+    ERR_COND_NULL_R(n_data, ERR_OUT_OF_MEMORY);
+    
+    refc.set(1); // Reset refcount due to unique size
+    _ptr = n_data;
     return OK;
 }
 
@@ -368,7 +429,7 @@ void Vector<T>::remove_at(uint64 index) {
         greater_arr.append(this->operator[](i));
     }
 
-    uint64 new_size = (p_element_count - 1) * data_size;
+    uint64 new_size = (p_element_count - 1) * sizeof(T);
 
     ERR_FAIL_COND(_resize(new_size) != OK);
 
@@ -403,11 +464,7 @@ void Vector<T>::remove_at(uint64 index) {
  */
 template <typename T>
 void Vector<T>::insert_at(T item, uint64 index) {
-    if (data_size == 0) {
-        data_size = sizeof(T);
-    }
-
-    ERR_FAIL_COND(_resize(get_ptr_size() + data_size) != OK);
+    ERR_FAIL_COND(_resize(get_ptr_size() + sizeof(T)) != OK);
     for (int i = size() - 1; i > index; i--) {
         _ptr[i] = _ptr[i - 1];
     }
@@ -441,11 +498,7 @@ T Vector<T>::pop_front() {
  */
 template <typename T>
 void Vector<T>::push_back(T item) {
-    if (data_size == 0) {
-        data_size = sizeof(T);
-    }
-
-    Error err = _resize(get_ptr_size() + data_size);
+    Error err = _resize(get_ptr_size() + sizeof(T));
     ERR_FAIL_COND(err);
     set(item, size() - 1);
 }
@@ -492,7 +545,6 @@ int Vector<T>::find(T item) const {
  */
 template <typename T>
 Vector<T>::Vector(const Vector &p_from) {
-    data_size = sizeof(T);
     _ref(p_from);
 }
 
