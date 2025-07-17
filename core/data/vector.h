@@ -187,7 +187,7 @@ public:
      * @param p_init The initializer list to construct the vector from
      */
     FORCE_INLINE Vector(std::initializer_list<T> p_init) {
-        ERR_FAIL_COND(_resize(p_init.size() * data_size) != OK);
+        ERR_FAIL_COND(_resize(p_init.size() * sizeof(T)) != OK);
 
         p_element_count = 0;
         for (const T &element : p_init) {
