@@ -18,7 +18,7 @@ public:
     bool ref_init();
     bool reference();
     bool unreference();
-    uint64 get_refcount() const;
+    u64 get_refcount() const;
     bool is_referenced() const { return init_rc.get() != 1; }
 
     Instance();

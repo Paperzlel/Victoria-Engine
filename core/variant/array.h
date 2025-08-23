@@ -33,35 +33,34 @@ public:
     Iterator begin();
     Iterator end();
 
-    Variant &operator[](uint64 p_index);
-
-    const Variant &operator[](uint64 p_index) const;
+    Variant &operator[](u64 p_index);
+    const Variant &operator[](u64 p_index) const;
 
     void operator=(const Array &p_other);
 
     bool operator==(const Array &p_other);
     bool operator!=(const Array &p_other);
 
-    uint64 size() const;
+    u64 size() const;
     bool is_empty() const;
     bool is_read_only() const;
     void set_read_only(bool p_bool) const;
 
-    void append(Variant p_item);
-    void remove_at(uint64 p_index);
-    void insert(uint64 p_index, Variant &p_item);
+    void append(const Variant &p_item);
+    void remove_at(u64 p_index);
+    void insert(u64 p_index, const Variant &p_item);
 
     Variant pop_front();
     Variant pop_back();
-    void push_front(Variant p_item);
-    void push_back(Variant p_item);
+    void push_front(const Variant &p_item);
+    void push_back(const Variant &p_item);
 
     void clear();
-    void fill(Variant p_item);
+    void fill(const Variant &p_item);
 
     bool is_equal(const Array &p_other) const;
 
-    Array(Array &p_from);
+    Array(const Array &p_from);
     Array();
 
     ~Array();

@@ -61,8 +61,8 @@ void OSWindows::printerr(const char *message, ...) {
     va_end(arg_ptr);
 }
 
-uint64 OSWindows::get_current_time_usec() {
-    uint64 ticks;
+u64 OSWindows::get_current_time_usec() {
+    u64 ticks;
     QueryPerformanceCounter((LARGE_INTEGER *)&ticks);
     return ticks;
 }

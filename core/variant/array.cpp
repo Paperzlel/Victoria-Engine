@@ -1,5 +1,6 @@
 #include "array.h"
 
+#include "core/data/atomic_counter.h"
 #include "core/data/vector.h"
 #include "core/variant/variant.h"
 
@@ -7,8 +8,7 @@ class ArrayData {
 public:
     Vector<Variant> _array;
     bool read_only = false;
-    // HACK: this variable really shouldn't need to exist (something like Godot's RefCounted should be used instead) but this allows us to double check if a block has been deleted and so prevent a heap corruption.
-    bool freed = false;
+    Refcount ref_count;
 };
 
 
@@ -32,15 +32,11 @@ void Array::_unref() const {
     }
     
     // Already freed the data, no need to do it again.
-    if (_data->freed) {
-        _data = nullptr;
+    if (_data->ref_count.unref()) {
+        delete _data;
         return;
     }
 
-    delete _data;
-
-    // the fact that I can still assign after delete makes no sense but I'll take it.
-    _data->freed = true;
     _data = nullptr;
 }
 
@@ -52,11 +48,11 @@ Array::Iterator Array::end() {
     return Iterator(_data->_array.ptrw() + _data->_array.size());
 }
 
-Variant &Array::operator[](uint64 p_index) {
+Variant &Array::operator[](u64 p_index) {
     return _data->_array[p_index];
 }
 
-const Variant &Array::operator[](uint64 p_index) const {
+const Variant &Array::operator[](u64 p_index) const {
     return _data->_array[p_index];
 }
 
@@ -76,7 +72,7 @@ bool Array::operator!=(const Array &p_other) {
     return !is_equal(p_other);
 }
 
-uint64 Array::size() const {
+u64 Array::size() const {
     return _data->_array.size();
 }
 
@@ -92,17 +88,17 @@ void Array::set_read_only(bool p_bool) const {
     _data->read_only = p_bool;
 }
 
-void Array::append(Variant p_item) {
+void Array::append(const Variant &p_item) {
    push_back(p_item);
 }
 
-void Array::remove_at(uint64 p_index) {
+void Array::remove_at(u64 p_index) {
     ERR_FAIL_COND_MSG(_data->_array.is_empty(), "Cannot remove an item from an empty array.");
     ERR_FAIL_COND_MSG(_data->read_only, "Can't remove elements from a read-only array.");
     _data->_array.remove_at(p_index);
 }
 
-void Array::insert(uint64 p_index, Variant &p_item) {
+void Array::insert(u64 p_index, const Variant &p_item) {
     ERR_FAIL_COND_MSG(_data->read_only, "Can't add elements to a read-only array.");
     _data->_array.insert_at(p_item, p_index);
 }
@@ -119,12 +115,12 @@ Variant Array::pop_back() {
     return _data->_array.pop_back();
 }
 
-void Array::push_front(Variant p_item) {
+void Array::push_front(const Variant &p_item) {
     ERR_FAIL_COND_MSG(_data->read_only, "Can't add elements to a read-only array.");
     _data->_array.push_front(p_item);
 }
 
-void Array::push_back(Variant p_item) {
+void Array::push_back(const Variant &p_item) {
     ERR_FAIL_COND_MSG(_data->read_only, "Can't add elements to a read-only array.");
     _data->_array.push_back(p_item);
 }
@@ -135,7 +131,7 @@ void Array::clear() {
     _data->_array.clear();
 }
 
-void Array::fill(Variant p_item) {
+void Array::fill(const Variant &p_item) {
     ERR_FAIL_COND_MSG(_data->_array.is_empty(), "Cannot fill an empty array.");
     for (int i = 0; i < _data->_array.size(); i++) {
         _data->_array[i] = p_item;
@@ -167,7 +163,7 @@ bool Array::is_equal(const Array &p_other) const {
 
 
 
-Array::Array(Array &p_from) {
+Array::Array(const Array &p_from) {
     _data = nullptr;
     _ref(p_from);
 }
@@ -175,6 +171,7 @@ Array::Array(Array &p_from) {
 Array::Array() {
     // NOTE: This new allocation only lasts for a singular Array - this means that when we copy one to the other, the ArrayData will still be in use elsewhere prior to being freed. Because of this, we need to have our "freed" variable to let us know if the data has been handled properly
     _data = new ArrayData;
+    _data->ref_count.set(1);
 }
 
 Array::~Array() {

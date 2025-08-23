@@ -3,6 +3,8 @@
 #include "core/os/display_manager.h"
 #include "core/os/os.h"
 
+#include "core/variant/variant.h"
+
 #include "thirdparty/glad/glad.h"
 
 static bool should_quit = false;
@@ -33,6 +35,21 @@ void Main::set_should_quit(bool p_value) {
 
 Error Main::setup(int argc, char *argv[]) {
     OS::get_singleton()->initialize();
+
+    int x;
+    Array z;
+    z.append(x);
+    z.append("Hello, World!");
+    z.append(3.141);
+
+    ByteArray ba;
+    ba.append(0xf);
+    ba.append(12);
+    ba.append(255);
+
+    z.append(ba);
+
+    OS::get_singleton()->print(Variant(z).stringify());
 
     return OK;
 }

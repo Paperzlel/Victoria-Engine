@@ -11,7 +11,7 @@ DisplayManager *DisplayManager::get_singleton() {
  * @param notification The type of event we need to process
  * @param window_id The current window's ID
  */
-void DisplayManager::_notification_callback(WindowNotification notification, uint8 window_id) {
+void DisplayManager::_notification_callback(WindowNotification notification, u8 window_id) {
     switch (notification) {
         case NOTIFICATION_WM_WINDOW_CLOSE: {
             singleton->destroy_window(window_id);

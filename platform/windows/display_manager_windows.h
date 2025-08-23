@@ -19,10 +19,10 @@ private:
     GLManagerWindows *gl_manager_windows = nullptr;
 
     struct WindowData {
-        uint8 id;
+        u8 id;
         HWND hWnd;
-        Event<WindowNotification, uint8> notification_callback;
-        uint16 x, y, width, height;
+        Event<WindowNotification, u8> notification_callback;
+        u16 x, y, width, height;
     };
 
     WindowData *window = nullptr;
@@ -30,8 +30,8 @@ public:
 
     LRESULT WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-    virtual uint8 create_window(const String &p_name, uint16 x, uint16 y, uint16 width, uint16 height) override;
-    virtual void destroy_window(uint8 p_id) override;
+    virtual u8 create_window(const String &p_name, u16 x, u16 y, u16 width, u16 height) override;
+    virtual void destroy_window(u8 p_id) override;
 
     virtual void process_events() override;
     virtual void swap_buffers() override;

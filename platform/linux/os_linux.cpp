@@ -73,10 +73,10 @@ void OSLinux::printerr(const char *message, ...) {
     va_end(arg_ptr);
 }
 
-uint64 OSLinux::get_current_time_usec() {
+u64 OSLinux::get_current_time_usec() {
     timespec t;
     clock_gettime(CLOCK_MONOTONIC_RAW, &t);
-    return (uint64) (t.tv_nsec / 1000) + t.tv_sec * 1000000; // Return it to 1us rather than ns
+    return (u64) (t.tv_nsec / 1000) + t.tv_sec * 1000000; // Return it to 1us rather than ns
 }
 
 double OSLinux::get_os_running_time() {

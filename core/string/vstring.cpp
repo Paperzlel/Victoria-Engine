@@ -137,7 +137,7 @@ void String::copy_from(const char *p_str) {
     char *dest = ptrw();
 
     for (int i = 0; i <= len; i++) {
-        uint8 c = p_str[i];
+        u8 c = p_str[i];
         if (c == 0 && i < len) {
             dest[i] = ' ';
         } else {

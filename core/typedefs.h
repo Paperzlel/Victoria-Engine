@@ -1,30 +1,36 @@
 #pragma once
 
-typedef signed char int8;
+#include "core/error/error_types.h"
 
-typedef signed short int16;
+typedef signed char i8;
 
-typedef signed int int32;
+typedef signed short i16;
 
-typedef signed long long int64;
+typedef signed int i32;
+
+typedef signed long long i64;
 
 
-typedef unsigned char uint8;
+typedef unsigned char u8;
 
-typedef unsigned short uint16;
+typedef unsigned short u16;
 
-typedef unsigned int uint32;
+typedef unsigned int u32;
 
-typedef unsigned long long uint64;
+typedef unsigned long long u64;
 
-static_assert(sizeof(int8) == 1, "Expected a signed 8-bit integer to have 1 byte.");
-static_assert(sizeof(int16) == 2, "Expected a signed 16-bit integer to have 2 bytes.");
-static_assert(sizeof(int32) == 4, "Expected a signed 32-bit integer to have 4 bytes.");
-static_assert(sizeof(int64) == 8, "Expected a signed 64-bit integer to have 8 bytes.");
-static_assert(sizeof(uint8) == 1, "Expected an unsigned 8-bit integer to have 1 byte.");
-static_assert(sizeof(uint16) == 2, "Expected an unsigned 16-bit integer to have 2 bytes.");
-static_assert(sizeof(uint32) == 4, "Expected an unsigned 32-bit integer to have 4 bytes.");
-static_assert(sizeof(uint64) == 8, "Expected an unsigned 64-bit integer to have 8 bytes.");
+typedef float f32;
+
+typedef double f64;
+
+static_assert(sizeof(i8) == 1, "Expected a signed 8-bit integer to have 1 byte.");
+static_assert(sizeof(i16) == 2, "Expected a signed 16-bit integer to have 2 bytes.");
+static_assert(sizeof(i32) == 4, "Expected a signed 32-bit integer to have 4 bytes.");
+static_assert(sizeof(i64) == 8, "Expected a signed 64-bit integer to have 8 bytes.");
+static_assert(sizeof(u8) == 1, "Expected an unsigned 8-bit integer to have 1 byte.");
+static_assert(sizeof(u16) == 2, "Expected an unsigned 16-bit integer to have 2 bytes.");
+static_assert(sizeof(u32) == 4, "Expected an unsigned 32-bit integer to have 4 bytes.");
+static_assert(sizeof(u64) == 8, "Expected an unsigned 64-bit integer to have 8 bytes.");
 
 // Platform detection
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
@@ -52,6 +58,10 @@ static_assert(sizeof(uint64) == 8, "Expected an unsigned 64-bit integer to have 
 #define NO_INLINE
 #endif
 
+#if PLATFORM_LINUX
+typedef __SIZE_TYPE__ size_t;
+#endif
+
 // Debug toggling
 #ifdef DEBUG
 #define DEBUG_ENABLED
@@ -59,6 +69,23 @@ static_assert(sizeof(uint64) == 8, "Expected an unsigned 64-bit integer to have 
 #define RELEASE_ENABLED
 #endif
 
+#ifdef TESTS
+#define TESTS_ENABLED
+#endif
+
 #define CLAMP(value, min, max) (value <= min) ? min : (value >= max) ? max : value
 
 #define _STR(v_x) #v_x 
+
+
+// http://loungecpp.wikidot.com/tips-and-tricks:indices 
+// Expands a variadic macro into its constituent parts
+
+template<u64... Is>
+struct Indicies {};
+
+template<u64 N, u64... Is>
+struct BuildIndicies : BuildIndicies<N - 1, N - 1, Is...> {};
+
+template<u64... Is>
+struct BuildIndicies<0, Is...> : Indicies<Is...> {};

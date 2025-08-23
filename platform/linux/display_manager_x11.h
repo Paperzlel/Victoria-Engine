@@ -22,14 +22,14 @@ private:
     GLManagerX11 *gl_manager_x11 = nullptr;
 
     struct WindowData {
-        uint8 id;
+        u8 id;
         Window win;
         XSetWindowAttributes window_attribs;
         Atom wm_close_atom;
 
-        Event<WindowNotification, uint8> notification_callback;
+        Event<WindowNotification, u8> notification_callback;
 
-        uint16 x, y, width, height;
+        u16 x, y, width, height;
     };
 
     WindowData *window = nullptr;
@@ -42,8 +42,8 @@ public:
     int get_screen_id() const { return screen_id; }
 
 
-    virtual uint8 create_window(const String &p_name, uint16 x, uint16 y, uint16 width, uint16 height) override;
-    virtual void destroy_window(uint8 p_id) override;
+    virtual u8 create_window(const String &p_name, u16 x, u16 y, u16 width, u16 height) override;
+    virtual void destroy_window(u8 p_id) override;
 
     virtual void process_events() override;
     virtual void swap_buffers() override;

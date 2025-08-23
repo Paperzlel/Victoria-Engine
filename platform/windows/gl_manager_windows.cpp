@@ -119,7 +119,7 @@ int GLManagerWindows::_configure_pixel_format(HDC hDC) {
     return chosen_pfd;
 }
 
-uint8 GLManagerWindows::create_window(HWND hWnd, HINSTANCE hInstance) {
+u8 GLManagerWindows::create_window(HWND hWnd, HINSTANCE hInstance) {
     HDC hDC = GetDC(hWnd);
 
     if (hDC == NULL) {
@@ -145,7 +145,7 @@ uint8 GLManagerWindows::create_window(HWND hWnd, HINSTANCE hInstance) {
     return win_data->id;
 }
 
-void GLManagerWindows::destroy_window(uint8 p_id) {
+void GLManagerWindows::destroy_window(u8 p_id) {
     if (!_active_window) {
         return;
     }
@@ -155,7 +155,7 @@ void GLManagerWindows::destroy_window(uint8 p_id) {
     }
 }
 
-uint8 GLManagerWindows::get_active_window() {
+u8 GLManagerWindows::get_active_window() {
     if (!_active_window) {
         return -1;
     }
@@ -163,8 +163,8 @@ uint8 GLManagerWindows::get_active_window() {
     return _active_window->id;
 }
 
-void GLManagerWindows::set_active_window(uint8 p_id) {
-    if (p_id == (uint8)-1) {
+void GLManagerWindows::set_active_window(u8 p_id) {
+    if (p_id == (u8)-1) {
         return;
     }
 
@@ -223,7 +223,7 @@ void GLManagerWindows::swap_buffers() const {
     }
 }
 
-void GLManagerWindows::resize_viewport(uint16 width, uint16 height) const {
+void GLManagerWindows::resize_viewport(u16 width, u16 height) const {
     if (!_active_window || height == 0) {
         return;
     }

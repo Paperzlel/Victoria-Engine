@@ -17,7 +17,7 @@ private:
      */
     struct GLWindow {
         // The current ID of the window
-        uint8 id;
+        u8 id;
 
         // A pointer to the X11 window struct
         Window *win;
@@ -49,10 +49,10 @@ public:
 
     XVisualInfo *get_visual_info();
 
-    uint8 create_window(Window *win);
-    void destroy_window(uint8 p_id);
+    u8 create_window(Window *win);
+    void destroy_window(u8 p_id);
 
-    void set_active_window(uint8 p_id);
+    void set_active_window(u8 p_id);
     void release_active_window();
 
     bool is_using_vsync() const;
@@ -62,7 +62,7 @@ public:
     void finalize();
     void swap_buffers() const;
 
-    void resize_viewport(uint16 width, uint16 height) const;
+    void resize_viewport(u16 width, u16 height) const;
 
     GLManagerX11();
     ~GLManagerX11() {}

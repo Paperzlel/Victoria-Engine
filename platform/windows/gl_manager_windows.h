@@ -14,9 +14,9 @@ private:
      * @brief Struct that contains all the core information our OpenGL functions need to know about a given window.
      */
     struct GLWindow {
-        uint8 id;
+        u8 id;
         // The display ID is the ID that links a given window to a given display. When looking for an OpenGL context, the display ID lets the code know which context to apply itself to.
-        uint8 display_id;
+        u8 display_id;
 
         HDC hDC;
         HWND hWnd;
@@ -32,11 +32,11 @@ private:
     Error _create_context(GLWindow &win);
 public:
 
-    uint8 create_window(HWND hWnd, HINSTANCE hInstance);
-    void destroy_window(uint8 p_id);
+    u8 create_window(HWND hWnd, HINSTANCE hInstance);
+    void destroy_window(u8 p_id);
 
-    uint8 get_active_window();
-    void set_active_window(uint8 p_id);
+    u8 get_active_window();
+    void set_active_window(u8 p_id);
     void release_active_window();
 
     bool is_using_vsync() const;
@@ -46,7 +46,7 @@ public:
     void finalize();
     void swap_buffers() const;
 
-    void resize_viewport(uint16 width, uint16 height) const;
+    void resize_viewport(u16 width, u16 height) const;
 
     GLManagerWindows() {}
     ~GLManagerWindows() {}

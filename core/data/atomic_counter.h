@@ -68,14 +68,14 @@ public:
 
 class Refcount {
 
-	AtomicCounter<uint64> refc;
+	AtomicCounter<u64> refc;
 public:
 
 	FORCE_INLINE bool ref() {
         return refc.conditional_increment() != 0;
     }
 
-    FORCE_INLINE uint64 refval() {
+    FORCE_INLINE u64 refval() {
         return refc.conditional_increment();
     }
 
@@ -83,19 +83,19 @@ public:
         return refc.decrement() == 0;
     }
 
-    FORCE_INLINE uint64 unrefval() {
+    FORCE_INLINE u64 unrefval() {
         return refc.decrement();
     }
 
-    FORCE_INLINE void set(uint64 p_value) {
+    FORCE_INLINE void set(u64 p_value) {
         refc.set(p_value);
     }
 
-    FORCE_INLINE uint64 get() const {
+    FORCE_INLINE u64 get() const {
         return refc.get();
     }
 
-    FORCE_INLINE void init(uint64 p_value = 1) {
+    FORCE_INLINE void init(u64 p_value = 1) {
         refc.set(p_value);
     }
 };

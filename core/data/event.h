@@ -49,7 +49,7 @@ void Event<Args...>::connect(Event::listener list, bool priority) {
  */
 template <typename... Args>
 void Event<Args...>::fire(Args... p_args) {
-    uint64 list_size = listeners.size();
+    u64 list_size = listeners.size();
     if (!list_size) {
         return;
     }

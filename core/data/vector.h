@@ -8,7 +8,7 @@
 #include <list>
 
 /**
- * @brief Our core vector class. Acts as an implementation of `std::vector`, which we use over the latter to keep our code lightweight and readable for end-users. This class consists of one pointer which acts as the raw vector to access and retrieve values from, and several `uint64`s that keep count of its size, elements and the standalone data size. For situations where one may alternate between datatypes, please refer to the `Array` class, which can be found under `core/variant/array.h`. 
+ * @brief Our core vector class. Acts as an implementation of `std::vector`, which we use over the latter to keep our code lightweight and readable for end-users. This class consists of one pointer which acts as the raw vector to access and retrieve values from, and several `u64`s that keep count of its size, elements and the standalone data size. For situations where one may alternate between datatypes, please refer to the `Array` class, which can be found under `core/variant/array.h`. 
  */
 template <typename T>
 class Vector {
@@ -17,17 +17,17 @@ private:
 
     Refcount refc;
     // The size of the array in bytes
-    uint64 p_size = 0;
+    u64 p_size = 0;
     // The number of elements in the array
-    uint64 p_element_count = 0;
+    u64 p_element_count = 0;
     // The internal pointer that makes up the actual array in memory
     T *_ptr = nullptr;
 
     FORCE_INLINE void _ref(const Vector &p_from);
     FORCE_INLINE void _unref();
     FORCE_INLINE void _copy_on_write();
-    FORCE_INLINE Error _resize(uint64 n_size);
-    FORCE_INLINE Error _realloc(uint64 n_size);
+    FORCE_INLINE Error _resize(u64 n_size);
+    FORCE_INLINE Error _realloc(u64 n_size);
 public:
 
     /**
@@ -35,7 +35,7 @@ public:
      * @param p_index The index into the vector we want to retrieve from
      * @returns An item of type `T`
      */
-    FORCE_INLINE T &get(uint64 p_index) const {
+    FORCE_INLINE T &get(u64 p_index) const {
         ERR_OUT_OF_BOUNDS_FATAL(p_index, p_element_count);
         return _ptr[p_index];
     }
@@ -45,7 +45,7 @@ public:
      * @param p_index The given index to set it at
      * @param item The given item to set
      */
-    FORCE_INLINE void set(T &item, uint64 p_index) {
+    FORCE_INLINE void set(T &item, u64 p_index) {
         ERR_OUT_OF_BOUNDS_FATAL(p_index, p_element_count);
         // Since the data is set up so that data isn't unique - not normally a problem for basic (atomic) data, but for Strings (data types with a nested vector) it has a whole load of problems. To fix this, we need to copy over data properly, into the block itself
         _copy_on_write();
@@ -125,7 +125,7 @@ public:
      * @brief Gets the number of elements within the vector.
      * @returns A value for the number of elements in the vector
      */
-    FORCE_INLINE uint64 size() const { return p_element_count; };
+    FORCE_INLINE u64 size() const { return p_element_count; };
     /**
      * @brief Method to find out if a vector type has any values in it.
      * @returns `TRUE` if the vector is empty, `FALSE` if it is not.
@@ -135,7 +135,7 @@ public:
      * @brief Gets the number of bytes the vector currently has allocated to itself. 
      * @returns The size of the vector in bytes
      */
-    FORCE_INLINE uint64 get_ptr_size() const { return p_size; };
+    FORCE_INLINE u64 get_ptr_size() const { return p_size; };
 
     // NOTE: probably unsafe for now
     
@@ -163,8 +163,8 @@ public:
     FORCE_INLINE Error resize(int p_new_size) { return _resize(p_new_size * sizeof(T)); }
 
     FORCE_INLINE void append(T item);
-    FORCE_INLINE void remove_at(uint64 index);
-    FORCE_INLINE void insert_at(T item, uint64 index);
+    FORCE_INLINE void remove_at(u64 index);
+    FORCE_INLINE void insert_at(T item, u64 index);
 
     FORCE_INLINE void push_front(T item);
     FORCE_INLINE T pop_front();
@@ -251,7 +251,7 @@ void Vector<T>::_unref() {
     }
 
     if (!std::is_trivially_destructible<T>::value) {
-        uint64 current_size = size();
+        u64 current_size = size();
 
         for (int i = 0; i < current_size; i++) {
             T *t = &_ptr[i];
@@ -288,11 +288,11 @@ void Vector<T>::_copy_on_write() {
  * @return `OK` if the vector was able to be resized, and returns a given error message if something went wrong. 
 */
 template <typename T>
-Error Vector<T>::_resize(uint64 n_size) {
+Error Vector<T>::_resize(u64 n_size) {
     ERR_FAIL_COND_R(n_size < 0, ERR_INVALID_PARAMETER);
 
-    uint64 current_size = get_ptr_size();
-    uint64 n_element_count = n_size / sizeof(T);
+    u64 current_size = get_ptr_size();
+    u64 n_element_count = n_size / sizeof(T);
 
     if (current_size == n_size) {
         return OK; // no need for changes
@@ -338,7 +338,7 @@ Error Vector<T>::_resize(uint64 n_size) {
     } else if (current_size > n_size) {
         // Destroy items that are no longer needed in the vector
         if (!std::is_trivially_destructible<T>::value) {
-            for (uint64 i = n_size; i < p_size; i++) {
+            for (u64 i = n_size; i < p_size; i++) {
                 T *t = &_ptr[i];
                 t->~T();
                 delete &_ptr[i]; // Call delete here rather than in `_unref()`, because we no longer need these specific values, but still require the array as a whole.
@@ -357,7 +357,7 @@ Error Vector<T>::_resize(uint64 n_size) {
 }
 
 template<typename T>
-Error Vector<T>::_realloc(uint64 n_size) {
+Error Vector<T>::_realloc(u64 n_size) {
     T *n_data = (T *)StaticAllocator::vreallocate(_ptr, p_size, n_size);
     ERR_COND_NULL_R(n_data, ERR_OUT_OF_MEMORY);
     
@@ -412,12 +412,12 @@ void Vector<T>::append(T item) {
  * @returns `true` if the item was removed successfully, `false` if the index was invalid or the vector could not be resized
  */
 template <typename T>
-void Vector<T>::remove_at(uint64 index) {
+void Vector<T>::remove_at(u64 index) {
     // Check if the index is out of bounds or not
     ERR_OUT_OF_BOUNDS(index, p_element_count - 1);
 
     //Get a list of every other index less than the given index
-    uint64 less_than = index;
+    u64 less_than = index;
 
     Vector<T> less_arr;
     for (int i = 0; i < less_than; i++) {
@@ -429,7 +429,7 @@ void Vector<T>::remove_at(uint64 index) {
         greater_arr.append(this->operator[](i));
     }
 
-    uint64 new_size = (p_element_count - 1) * sizeof(T);
+    u64 new_size = (p_element_count - 1) * sizeof(T);
 
     ERR_FAIL_COND(_resize(new_size) != OK);
 
@@ -463,7 +463,7 @@ void Vector<T>::remove_at(uint64 index) {
  * @returns `true` if successful, `false` if the vector could not be resized
  */
 template <typename T>
-void Vector<T>::insert_at(T item, uint64 index) {
+void Vector<T>::insert_at(T item, u64 index) {
     ERR_FAIL_COND(_resize(get_ptr_size() + sizeof(T)) != OK);
     for (int i = size() - 1; i > index; i--) {
         _ptr[i] = _ptr[i - 1];

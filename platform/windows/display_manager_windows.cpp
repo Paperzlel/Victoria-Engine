@@ -23,7 +23,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
  * @param height The height of the window
  * @return The ID of the current window
  */
-uint8 DisplayManagerWindows::create_window(const String &p_name, uint16 x, uint16 y, uint16 width, uint16 height) {
+u8 DisplayManagerWindows::create_window(const String &p_name, u16 x, u16 y, u16 width, u16 height) {
     LPCSTR class_name = "victoria_engine_window_class";
 
     WNDCLASSA wc = { 0 };
@@ -64,9 +64,9 @@ uint8 DisplayManagerWindows::create_window(const String &p_name, uint16 x, uint1
     new_win->notification_callback.connect(_notification_callback, false);
 
     if (gl_manager_windows) {
-        uint8 id = gl_manager_windows->create_window(new_win->hWnd, hInstance);
+        u8 id = gl_manager_windows->create_window(new_win->hWnd, hInstance);
 
-        if (id == (uint8)-1) {
+        if (id == (u8)-1) {
             delete gl_manager_windows;
             OS::get_singleton()->print_error(__FILE__, __FUNCTION__, __LINE__, "GLWindow was unable to be created.");
             return ERR_CANT_CREATE;
@@ -80,7 +80,7 @@ uint8 DisplayManagerWindows::create_window(const String &p_name, uint16 x, uint1
     return new_win->id;
 }
 
-void DisplayManagerWindows::destroy_window(uint8 p_id) {
+void DisplayManagerWindows::destroy_window(u8 p_id) {
     if (window->id == p_id) {
         if (gl_manager_windows) {
             gl_manager_windows->destroy_window(p_id);
@@ -117,7 +117,7 @@ void DisplayManagerWindows::finalize() {
 }
 
 LRESULT DisplayManagerWindows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-    uint8 window_id = INVALID_WINDOW_ID;
+    u8 window_id = INVALID_WINDOW_ID;
 
     if (window) {
         window_id = window->id;
@@ -135,8 +135,8 @@ LRESULT DisplayManagerWindows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
             return 0;
         }
         case WM_SIZE: {
-            uint32 width = LOWORD(lParam);
-            uint32 height = HIWORD(lParam);
+            u32 width = LOWORD(lParam);
+            u32 height = HIWORD(lParam);
             if (gl_manager_windows) {
                 gl_manager_windows->resize_viewport(width, height);
             }

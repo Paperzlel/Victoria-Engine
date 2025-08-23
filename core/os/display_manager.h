@@ -12,7 +12,7 @@ public:
 
     static DisplayManager *get_singleton();
 
-    const uint8 INVALID_WINDOW_ID = -1;
+    const u8 INVALID_WINDOW_ID = -1;
 
     enum WindowNotification {
         NOTIFICATION_WM_WINDOW_CLOSE,
@@ -20,10 +20,10 @@ public:
         NOTIFICATION_WM_MOUSE_EXIT,
     };
 
-    static void _notification_callback(WindowNotification notification, uint8 window_id);
+    static void _notification_callback(WindowNotification notification, u8 window_id);
 
-    virtual uint8 create_window(const String &p_name, uint16 x, uint16 y, uint16 width, uint16 height) = 0;
-    virtual void destroy_window(uint8 p_id) = 0;
+    virtual u8 create_window(const String &p_name, u16 x, u16 y, u16 width, u16 height) = 0;
+    virtual void destroy_window(u8 p_id) = 0;
 
     virtual void process_events() = 0;
     virtual void swap_buffers() = 0;

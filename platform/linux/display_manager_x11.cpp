@@ -14,7 +14,7 @@
  * @param height The number of pixels tall the window will be
  * @returns The ID of the created window (NOTE: For now, this will remain to be 0 until multiple windows are supported)
  */
-uint8 DisplayManagerX11::create_window(const String &p_name, uint16 x, uint16 y, uint16 width, uint16 height) {
+u8 DisplayManagerX11::create_window(const String &p_name, u16 x, u16 y, u16 width, u16 height) {
     XVisualInfo *visual = nullptr;
     if (gl_manager_x11) {
         visual = gl_manager_x11->get_visual_info();
@@ -66,8 +66,8 @@ uint8 DisplayManagerX11::create_window(const String &p_name, uint16 x, uint16 y,
     win_data->win = win;
 
     if (gl_manager_x11) {
-        uint8 id = gl_manager_x11->create_window(&win_data->win);
-        if (id == (uint8)-1) {
+        u8 id = gl_manager_x11->create_window(&win_data->win);
+        if (id == (u8)-1) {
             delete gl_manager_x11;
             OS::get_singleton()->print_error(__FILE__, FUNCTION_STR, __LINE__, "GLWindow was unable to be created,");
             return ERR_CANT_CREATE;
@@ -79,7 +79,7 @@ uint8 DisplayManagerX11::create_window(const String &p_name, uint16 x, uint16 y,
     return window->id;
 }
 
-void DisplayManagerX11::destroy_window(uint8 p_id) {
+void DisplayManagerX11::destroy_window(u8 p_id) {
     if (!window) {
         return;
     }
