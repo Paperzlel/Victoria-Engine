@@ -4,14 +4,20 @@
 #include "array.h"
 #include "core/string/vstring.h"
 
+// Alias for a `Vector<u8>`
 typedef Vector<u8> ByteArray;
+// Alias for a `Vector<i32>`
 typedef Vector<i32> Int32Array;
+// Alias for a `Vector<i64>`
 typedef Vector<i64> Int64Array;
+// Alias for a `Vector<float>`
 typedef Vector<float> Float32Array;
+// Alias for a `Vector<double>`
 typedef Vector<double> Float64Array;
 
 class Variant {
 public:
+    // Enum of all different types that are used by the `Variant`
     enum Type {
         // Atomic types
         NIL,
@@ -34,8 +40,10 @@ public:
     };
 private:
 
+    // Internal type of the `Variant`
     Type type = NIL;
 
+    // Base reference for an `Array` that has been converted into a `Variant`.
     struct ArrayRefBase {
         Refcount ref_count;
         FORCE_INLINE ArrayRefBase *reference() {
@@ -94,6 +102,7 @@ private:
         }
     };
 
+    // All data used by the `Variant`.
     union {
         bool _bool;
         i64 _int;
@@ -103,6 +112,9 @@ private:
         u8 _mem[sizeof(double) * 4] { 0 };
     } _data alignas(8);
 
+    /**
+     * @brief Clears all data from the array, and frees internals if a non-trivial type.
+     */
     FORCE_INLINE void clear() {
         bool needs_freeing[VARIANT_MAX] = {
             false,  // NIL
@@ -126,19 +138,50 @@ private:
         type = NIL;
     }
 
+    /**
+     * @brief Cleans up internals if needed.
+     */
     void _clear_internals();
 public:
 
+    /**
+     * @brief Converts the currently held data into a `String` type. 
+     * @param recurson_count The number of times a `stringify()` call was made. Exceeding 1024 calls will fail, which only occurs under
+     * self-assignment
+     * @return The `Variant` as a `String`.
+     */
     String stringify(int recursion_count = 0) const;
 
+    /**
+     * @brief Obtains the value of the given variant.
+     */
     static Type get_return_type(const Variant &p_var) { return p_var.type; }
 
+    /**
+     * @brief References data from one `Variant` into another. 
+     * @param p_other The `Variant` to reference from
+     */
     void _ref(const Variant &p_other);
+    /**
+     * @brief Assignment operator
+     */
     void operator=(const Variant &p_var);
 
+    /**
+     * @brief Equivalence operator
+     */
     bool operator==(const Variant &other);
+    /**
+     * @brief Equivalence operator
+     */
     bool operator!=(const Variant &other);
 
+    /**
+     * @brief Compares two `Variants` against one another.
+     * @param p_other The variant to compare with
+     * @param recursion_count The number of times the function was called.
+     * @return `true` if equal, `false` if not.
+     */
     bool hash_compare(const Variant &p_other, int recursion_count) const;
 
     operator bool() const;

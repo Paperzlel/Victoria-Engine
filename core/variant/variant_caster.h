@@ -11,6 +11,11 @@ struct VariantCaster {
     }
 };
 
+/**
+ * @brief Macro to create a caster that converts a Variant integer into an enum value. Useful for function pointers that require `Variants` being
+ * converted from their `Variant` value into a C++-specific value.
+ * @param m_enum The enum to create a converter for.
+ */
 #define VARIANT_CAST_ENUM(m_enum)                                           \
     template<>                                                              \
     struct VariantCaster<m_enum> {                                          \

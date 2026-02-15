@@ -1,4 +1,6 @@
 #pragma once
+
+// The core error enum. Contains every error value the engine can handle.
 enum Error {
     OK,
     FAILED,
