@@ -1,0 +1,31 @@
+#pragma once
+
+#include <core/typedefs.h>
+
+/**
+ * Editor base layout:
+ * - Entry is set from a class like this, which does all the instancing of sub-nodes, including the SceneTree itself. 
+ * - 
+ */
+
+#include <core/config/class_registry.h>
+
+#include <scene/main/object.h>
+#include <scene/gui/object_ui.h>
+#include <scene/resources/font.h>
+#include <scene/resources/texture.h>
+
+
+class Editor : public Object {
+    VREGISTER_CLASS(Editor, Object)
+
+    Vector<Ref<Font>> editor_fonts;
+public:
+
+    void _notification(int p_what);
+
+    Ref<Font> get_editor_font();
+
+    Editor();
+    ~Editor();
+};
