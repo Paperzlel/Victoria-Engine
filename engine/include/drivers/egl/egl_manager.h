@@ -1,7 +1,7 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <core/data/vector.h>
+#include "core/typedefs.h"
+#include "core/data/vector.h"
 
 #include <glad/egl.h>
 

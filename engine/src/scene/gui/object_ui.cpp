@@ -1,9 +1,9 @@
-#include <scene/gui/object_ui.h>
+#include "scene/gui/object_ui.h"
 
-#include <scene/main/viewport.h>
-#include <servers/rendering_server.h>
+#include "scene/main/viewport.h"
+#include "servers/rendering_server.h"
 
-#include <core/config/class_registry.h>
+#include "core/config/class_registry.h"
 
 void ObjectUI::_rect_changed() {
 	Vector2i parent_size = get_parent_rect();

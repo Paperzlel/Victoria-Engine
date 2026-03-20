@@ -1,10 +1,10 @@
 #include "display_manager_x11.h"
 #if PLATFORM_LINUX
 
-#include <core/os/os.h>
-#include <main/main.h>
+#include "core/os/os.h"
+#include "main/main.h"
 
-#include <drivers/opengl/rendering_server_gl.h>
+#include "drivers/opengl/rendering_server_gl.h"
 
 #include <stdlib.h>
 

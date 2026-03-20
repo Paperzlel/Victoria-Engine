@@ -1,6 +1,6 @@
 #pragma once
 
-#include <core/typedefs.h>
+#include "core/typedefs.h"
 
 // Constant to represent a very small number to compare floating-point values against. The phrase "approximately the same" in this documentation refers to if the
 // absolute difference between two values is less than this value.

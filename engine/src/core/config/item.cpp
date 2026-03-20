@@ -1,5 +1,5 @@
-#include <core/config/item.h>
-#include <core/config/class_registry.h>
+#include "core/config/item.h"
+#include "core/config/class_registry.h"
 
 bool Item::_predelete() {
     notification(NOTIFICATION_PREDELETE);

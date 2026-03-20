@@ -1,7 +1,7 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <core/data/vector.h>
+#include "core/typedefs.h"
+#include "core/data/vector.h"
 
 // Not a fan, but needed for some functions elsewhere in the code.
 #include <string.h>

@@ -2,12 +2,12 @@
 #if PLATFORM_LINUX
 #ifdef WAYLAND_ENABLED
 
-#include <core/error/error_macros.h>
-#include <core/os/memory.h>
-#include <core/os/os.h>
-#include <main/main.h>
+#include "core/error/error_macros.h"
+#include "core/os/memory.h"
+#include "core/os/os.h"
+#include "main/main.h"
 
-#include <drivers/opengl/rendering_server_gl.h>
+#include "drivers/opengl/rendering_server_gl.h"
 
 #include <string.h>
 

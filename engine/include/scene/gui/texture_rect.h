@@ -1,7 +1,7 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <scene/resources/texture.h>
+#include "core/typedefs.h"
+#include "scene/resources/texture.h"
 
 #include "object_ui.h"
 

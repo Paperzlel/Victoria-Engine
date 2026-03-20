@@ -2,10 +2,10 @@
 
 #ifdef TESTS_ENABLED
 
-#include <tests/test_macros.h>
-#include <tests/test_manager.h>
+#include "tests/test_macros.h"
+#include "tests/test_manager.h"
 
-#include <core/data/hashtable.h>
+#include "core/data/hashtable.h"
 
 struct hashstruct1 {
     bool used;

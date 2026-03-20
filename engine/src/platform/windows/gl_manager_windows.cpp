@@ -3,8 +3,8 @@
 
 #include "wgl_detect_version.h"
 
-#include <core/os/os.h>
-#include <core/os/display_manager.h>
+#include "core/os/os.h"
+#include "core/os/display_manager.h"
 
 #include <thirdparty/nvapi/nvapi_minimal.h>
 

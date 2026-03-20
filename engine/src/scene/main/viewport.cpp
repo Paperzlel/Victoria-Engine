@@ -1,10 +1,10 @@
-#include <scene/main/viewport.h>
-#include <scene/main/window.h>
+#include "scene/main/viewport.h"
+#include "scene/main/window.h"
 
-#include <core/config/class_registry.h>
-#include <servers/rendering_server.h>
-#include <scene/3d/camera_3d.h>
-#include <scene/gui/object_ui.h>
+#include "core/config/class_registry.h"
+#include "servers/rendering_server.h"
+#include "scene/3d/camera_3d.h"
+#include "scene/gui/object_ui.h"
 
 void Viewport::_size_changed() {
     texture_proxy->texture = RS::get_singleton()->viewport_get_texture(viewport);

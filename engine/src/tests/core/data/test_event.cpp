@@ -2,11 +2,11 @@
 
 #ifdef TESTS_ENABLED
 
-#include <core/data/event.h>
-#include <core/variant/variant.h>
+#include "core/data/event.h"
+#include "core/variant/variant.h"
 
-#include <tests/test_macros.h>
-#include <tests/test_manager.h>
+#include "tests/test_macros.h"
+#include "tests/test_manager.h"
 
 void testfunc1() {}
 void testfunc2() {}

@@ -1,4 +1,4 @@
-#include <core/config/class_registry.h>
+#include "core/config/class_registry.h"
 
 HashTable<String, ClassRegistry::ClassInfo> ClassRegistry::classes;
 

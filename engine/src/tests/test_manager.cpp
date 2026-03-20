@@ -1,6 +1,6 @@
-#include <tests/test_manager.h>
+#include "tests/test_manager.h"
 #ifdef TESTS_ENABLED
-#include <tests/test_macros.h>
+#include "tests/test_macros.h"
 
 #include "core/data/test_event.h"
 #include "core/data/test_hashtable.h"
@@ -10,7 +10,7 @@
 #include "core/math/test_quaternion.h"
 #include "core/variant/test_array.h"
 
-#include <core/data/vector.h>
+#include "core/data/vector.h"
 
 
 struct Test {

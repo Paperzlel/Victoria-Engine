@@ -1,7 +1,7 @@
 #pragma once
 
-#include <core/data/rid.h>
-#include <core/math/mat4.h>
+#include "core/data/rid.h"
+#include "core/math/mat4.h"
 
 #include "object_3d.h"
 

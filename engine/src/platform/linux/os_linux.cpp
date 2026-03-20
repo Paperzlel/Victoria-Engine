@@ -1,5 +1,5 @@
 #include "os_linux.h"
-#include <core/error/error_macros.h>
+#include "core/error/error_macros.h"
 #if PLATFORM_LINUX
 
 #include "logger_linux.h"
@@ -12,7 +12,7 @@
 #include "wayland/display_manager_wayland.h"
 #endif
 
-#include <main/main.h>
+#include "main/main.h"
 
 #include <stdarg.h>
 #include <stdlib.h>

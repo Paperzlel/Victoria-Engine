@@ -1,4 +1,4 @@
-#include <scene/3d/object_3d.h>
+#include "scene/3d/object_3d.h"
 
 void Object3D::_propagate_transform_changed(Object3D *p_object) {
     if (!is_inside_tree()) {

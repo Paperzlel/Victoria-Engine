@@ -1,4 +1,4 @@
-#include <core/io/resource.h>
+#include "core/io/resource.h"
 
 String Resource::get_name() const {
     return name;

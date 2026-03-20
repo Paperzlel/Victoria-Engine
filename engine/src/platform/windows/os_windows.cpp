@@ -3,7 +3,7 @@
 
 #include "logger_windows.h"
 #include "display_manager_windows.h"
-#include <main/main.h>
+#include "main/main.h"
 
 typedef int (WINAPI *RtlGetVersion)(LPOSVERSIONINFOEXA);
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <core/math/transform_3d.h>
+#include "core/typedefs.h"
+#include "core/math/transform_3d.h"
 
 struct RenderData {
     u64 draw_calls;

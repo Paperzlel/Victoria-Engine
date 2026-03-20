@@ -1,8 +1,8 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <core/config/instance.h>
-#include <core/data/rid.h>
+#include "core/typedefs.h"
+#include "core/config/instance.h"
+#include "core/data/rid.h"
 
 class VAPI Resource : public Instance {
     VREGISTER_CLASS(Resource, Instance)

@@ -1,9 +1,9 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <core/config/instance.h>
-#include <core/math/vector2i.h>
-#include <core/variant/variant_caster.h>
+#include "core/typedefs.h"
+#include "core/config/instance.h"
+#include "core/math/vector2i.h"
+#include "core/variant/variant_caster.h"
 
 // Enum for every currently supported key. As of current, the given keycodes translate directly into the Windows API virtual keycodes, and as a result using a
 // non-QWERTY keyboard is likely to produce some unintentional errors along the way.

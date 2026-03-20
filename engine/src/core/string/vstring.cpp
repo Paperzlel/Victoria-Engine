@@ -1,6 +1,6 @@
-#include <core/string/vstring.h>
+#include "core/string/vstring.h"
 
-#include <core/math/math_funcs.h>
+#include "core/math/math_funcs.h"
 
 #include <stdio.h>
 #include <stdarg.h>

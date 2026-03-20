@@ -1,11 +1,11 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <core/data/rid.h>
-#include <core/data/vector.h>
-#include <core/math/mat4.h>
+#include "core/typedefs.h"
+#include "core/data/rid.h"
+#include "core/data/vector.h"
+#include "core/math/mat4.h"
 
-#include <servers/rendering_server.h>
+#include "servers/rendering_server.h"
 
 #include <glad/gl.h>
 

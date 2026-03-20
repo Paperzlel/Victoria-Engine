@@ -1,9 +1,9 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <core/io/resource_format_importer.h>
-#include <core/math/vector2.h>
-#include <core/math/vector3.h>
+#include "core/typedefs.h"
+#include "core/io/resource_format_importer.h"
+#include "core/math/vector2.h"
+#include "core/math/vector3.h"
 
 class ResourceFormatImporterOBJ : public ResourceFormatImporter {
 private:

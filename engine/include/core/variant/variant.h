@@ -1,15 +1,15 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <core/data/vector.h>
-#include <core/math/vector2.h>
-#include <core/math/vector2i.h>
-#include <core/math/vector3.h>
-#include <core/math/vector3i.h>
-#include <core/math/vector4.h>
-#include <core/math/vector4i.h>
-#include <core/variant/array.h>
-#include <core/string/vstring.h>
+#include "core/typedefs.h"
+#include "core/data/vector.h"
+#include "core/math/vector2.h"
+#include "core/math/vector2i.h"
+#include "core/math/vector3.h"
+#include "core/math/vector3i.h"
+#include "core/math/vector4.h"
+#include "core/math/vector4i.h"
+#include "core/variant/array.h"
+#include "core/string/vstring.h"
 
 typedef Vector<u8> ByteArray;
 typedef Vector<i32> Int32Array;

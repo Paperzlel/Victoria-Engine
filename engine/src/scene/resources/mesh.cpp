@@ -1,8 +1,8 @@
-#include <scene/resources/mesh.h>
+#include "scene/resources/mesh.h"
 
-#include <core/variant/variant.h>
+#include "core/variant/variant.h"
 
-#include <servers/rendering_server.h>
+#include "servers/rendering_server.h"
 
 /**
  * @brief Obtains the bounding box of a given mesh, which can be useful in finding the size of things later on

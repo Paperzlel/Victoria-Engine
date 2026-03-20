@@ -1,7 +1,7 @@
-#include <core/math/vector2.h>
+#include "core/math/vector2.h"
 
-#include <core/string/vstring.h>
-#include <core/math/vector2i.h>
+#include "core/string/vstring.h"
+#include "core/math/vector2i.h"
 
 /**
  * @brief Transfers a vector from itself into a string, which can be used to debug information in a console, or for some other purpose.

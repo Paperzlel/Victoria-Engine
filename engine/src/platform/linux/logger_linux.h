@@ -1,9 +1,9 @@
 #pragma once
 
-#include <core/typedefs.h>
+#include "core/typedefs.h"
 #if PLATFORM_LINUX
 
-#include <core/io/logger.h>
+#include "core/io/logger.h"
 
 /**
  * @brief Extension of the `Logger` class for the Linux operating system. 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <core/data/rid.h>
+#include "core/typedefs.h"
+#include "core/data/rid.h"
 
 #include "object_3d.h"
 

@@ -1,4 +1,4 @@
-#include <scene/2d/sprite_2d.h>
+#include "scene/2d/sprite_2d.h"
 
 void Sprite2D::_get_dest_rect(Vector2 &p_position, Vector2 &p_size) {
     Vector2 offset;

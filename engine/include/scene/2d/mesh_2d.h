@@ -1,7 +1,7 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <scene/resources/mesh.h>
+#include "core/typedefs.h"
+#include "scene/resources/mesh.h"
 
 #include "object_2d.h"
 

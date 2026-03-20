@@ -1,7 +1,7 @@
 #include "logger_windows.h"
 #if PLATFORM_WINDOWS
 
-#include <core/string/vstring.h>
+#include "core/string/vstring.h"
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>

@@ -1,4 +1,4 @@
-#include <scene/gui/panel.h>
+#include "scene/gui/panel.h"
 
 void Panel::_notification(int p_what) {
 	switch (p_what) {

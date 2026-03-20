@@ -1,4 +1,4 @@
-#include <scene/3d/mesh_3d.h>
+#include "scene/3d/mesh_3d.h"
 
 Ref<Mesh> Mesh3D::get_mesh() const {
     return mesh;

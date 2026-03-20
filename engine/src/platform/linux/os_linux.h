@@ -1,11 +1,11 @@
 #pragma once
 
-#include <core/typedefs.h>
+#include "core/typedefs.h"
 
 #if PLATFORM_LINUX
 
-#include <core/os/os.h>
-#include <core/data/hashtable.h>
+#include "core/os/os.h"
+#include "core/data/hashtable.h"
 
 #include <sys/utsname.h>
 

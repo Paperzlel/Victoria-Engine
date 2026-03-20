@@ -1,10 +1,10 @@
 #pragma once
 
-#include <core/typedefs.h>
+#include "core/typedefs.h"
 #if PLATFORM_WINDOWS
 
-#include <core/string/vstring.h>
-#include <core/data/vector.h>
+#include "core/string/vstring.h"
+#include "core/data/vector.h"
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>

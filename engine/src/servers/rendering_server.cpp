@@ -1,7 +1,7 @@
-#include <servers/rendering_server.h>
+#include "servers/rendering_server.h"
 
-#include <core/os/display_manager.h>
-#include <scene/main/scene_tree.h>
+#include "core/os/display_manager.h"
+#include "scene/main/scene_tree.h"
 
 RenderingServer *(*RenderingServer::_create_func)() = nullptr;
 

@@ -1,7 +1,7 @@
-#include <scene/main/canvas_item.h>
-#include <scene/main/viewport.h>
+#include "scene/main/canvas_item.h"
+#include "scene/main/viewport.h"
 
-#include <servers/rendering_server.h>
+#include "servers/rendering_server.h"
 
 void CanvasItem::_set_transforms_dirty() {
     transforms_dirty = true;

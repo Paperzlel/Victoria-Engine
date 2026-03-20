@@ -1,9 +1,9 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <core/data/rb_map.h>
-#include <core/io/resource.h>
-#include <core/math/vector2i.h>
+#include "core/typedefs.h"
+#include "core/data/rb_map.h"
+#include "core/io/resource.h"
+#include "core/math/vector2i.h"
 
 
 class VAPI Font : public Resource {

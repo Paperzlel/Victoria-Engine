@@ -1,7 +1,7 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <core/data/list.h>
+#include "core/typedefs.h"
+#include "core/data/list.h"
 
 #include "resource.h"
 

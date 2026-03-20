@@ -1,8 +1,8 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <core/data/hashtable.h>
-#include <core/string/print_string.h>
+#include "core/typedefs.h"
+#include "core/data/hashtable.h"
+#include "core/string/print_string.h"
 
 #include "callable_method_pointer.h"
 #include "item.h"

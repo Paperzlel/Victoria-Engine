@@ -1,8 +1,8 @@
-#include <core/config/victoria_instance.h>
-#include <core/os/display_manager.h>
-#include <core/os/os.h>
+#include "core/config/victoria_instance.h"
+#include "core/os/display_manager.h"
+#include "core/os/os.h"
 
-#include <main/main.h>
+#include "main/main.h"
 
 bool VictoriaInstance::initialize() {
     started = Main::start() == OK;

@@ -1,4 +1,4 @@
-#include <scene/2d/mesh_2d.h>
+#include "scene/2d/mesh_2d.h"
 
 Ref<Mesh> Mesh2D::get_mesh() const {
     return mesh;

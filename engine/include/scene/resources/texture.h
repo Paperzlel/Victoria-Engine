@@ -1,8 +1,8 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <core/io/resource.h>
-#include <core/variant/variant_caster.h>
+#include "core/typedefs.h"
+#include "core/io/resource.h"
+#include "core/variant/variant_caster.h"
 
 class VAPI Texture : public Resource {
     VREGISTER_CLASS(Texture, Resource)

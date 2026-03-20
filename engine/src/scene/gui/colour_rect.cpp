@@ -1,4 +1,4 @@
-#include <scene/gui/colour_rect.h>
+#include "scene/gui/colour_rect.h"
 
 void ColourRect::_notification(int p_what) {
     switch (p_what) {

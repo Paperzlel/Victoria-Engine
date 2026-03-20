@@ -1,9 +1,9 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <core/math/transform_2d.h>
+#include "core/typedefs.h"
+#include "core/math/transform_2d.h"
 
-#include <scene/main/canvas_item.h>
+#include "scene/main/canvas_item.h"
 
 class VAPI Object2D : public CanvasItem {
     VREGISTER_CLASS(Object2D, CanvasItem)

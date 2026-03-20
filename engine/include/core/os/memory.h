@@ -1,7 +1,7 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <core/data/atomic_counter.h>
+#include "core/typedefs.h"
+#include "core/data/atomic_counter.h"
 
 class VAPI Memory {
 public:

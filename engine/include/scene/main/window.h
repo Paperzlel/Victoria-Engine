@@ -1,7 +1,7 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <core/os/display_manager.h>
+#include "core/typedefs.h"
+#include "core/os/display_manager.h"
 
 #include "viewport.h"
 

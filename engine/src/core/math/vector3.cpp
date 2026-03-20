@@ -1,6 +1,6 @@
-#include <core/math/vector3.h>
-#include <core/math/vector3i.h>
-#include <core/string/vstring.h>
+#include "core/math/vector3.h"
+#include "core/math/vector3i.h"
+#include "core/string/vstring.h"
 
 /**
  * @brief Take the current vector and makes it into a string, which can then be printed to the console if needed. 

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <core/config/callable_method_pointer.h>
-#include <core/error/error_macros.h>
+#include "core/typedefs.h"
+#include "core/config/callable_method_pointer.h"
+#include "core/error/error_macros.h"
 
 #include "list.h"
 

@@ -1,4 +1,4 @@
-#include <core/data/hashfuncs.h>
+#include "core/data/hashfuncs.h"
 
 // http://www.cse.yorku.ca/~oz/hash.html 
 u32 hash_djb2(u8 *str) {

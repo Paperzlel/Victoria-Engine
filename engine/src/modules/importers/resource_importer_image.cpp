@@ -1,12 +1,12 @@
-#include <modules/importers/resource_importer_image.h>
+#include "modules/importers/resource_importer_image.h"
 
-#include <core/io/filesystem.h>
-#include <core/variant/array.h>
-#include <core/variant/variant.h>
+#include "core/io/filesystem.h"
+#include "core/variant/array.h"
+#include "core/variant/variant.h"
 
-#include <scene/resources/texture.h>
+#include "scene/resources/texture.h"
 
-#include <servers/rendering_server.h>
+#include "servers/rendering_server.h"
 
 #include <stb/stb_image.h>
 

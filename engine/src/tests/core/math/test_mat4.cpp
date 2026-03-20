@@ -1,10 +1,10 @@
 #include "test_mat4.h"
 #ifdef TESTS_ENABLED
 
-#include <core/math/mat4.h>
+#include "core/math/mat4.h"
 
-#include <tests/test_macros.h>
-#include <tests/test_manager.h>
+#include "tests/test_macros.h"
+#include "tests/test_manager.h"
 
 static bool mat4_test_operators() {
     Mat4 m = Mat4::identity();

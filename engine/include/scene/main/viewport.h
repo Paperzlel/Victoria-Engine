@@ -1,11 +1,11 @@
 #pragma once
 
 
-#include <core/typedefs.h>
-#include <core/data/rid.h>
-#include <core/math/vector2i.h>
+#include "core/typedefs.h"
+#include "core/data/rid.h"
+#include "core/math/vector2i.h"
 
-#include <scene/resources/texture.h>
+#include "scene/resources/texture.h"
 
 #include "object.h"
 

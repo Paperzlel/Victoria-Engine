@@ -1,12 +1,12 @@
 #pragma once
 
-#include <core/typedefs.h>
+#include "core/typedefs.h"
 #if PLATFORM_WINDOWS
 
-#include <core/os/os.h>
+#include "core/os/os.h"
 
-#include <core/data/hashtable.h>
-#include <scene/main/scene_tree.h>
+#include "core/data/hashtable.h"
+#include "scene/main/scene_tree.h"
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>

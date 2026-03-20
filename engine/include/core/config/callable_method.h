@@ -1,9 +1,9 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <core/data/atomic_counter.h>
-#include <core/string/vstring.h>
-#include <core/variant/variant.h>
+#include "core/typedefs.h"
+#include "core/data/atomic_counter.h"
+#include "core/string/vstring.h"
+#include "core/variant/variant.h"
 
 class CallableMethodBase;
 

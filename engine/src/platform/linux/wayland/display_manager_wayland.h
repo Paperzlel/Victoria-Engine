@@ -1,12 +1,12 @@
 #pragma once
 
-#include <core/typedefs.h>
+#include "core/typedefs.h"
 
 #if PLATFORM_LINUX
 #ifdef WAYLAND_ENABLED
 
-#include <core/os/display_manager.h>
-#include <core/data/event.h>
+#include "core/os/display_manager.h"
+#include "core/data/event.h"
 
 #include "gl_manager_egl_wayland.h"
 

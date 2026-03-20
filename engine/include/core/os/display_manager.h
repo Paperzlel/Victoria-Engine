@@ -1,11 +1,11 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <core/error/error_macros.h>
-#include <core/math/vector2i.h>
-#include <core/string/vstring.h>
-#include <core/variant/variant_caster.h>
-#include <core/config/callable_method.h>
+#include "core/typedefs.h"
+#include "core/error/error_macros.h"
+#include "core/math/vector2i.h"
+#include "core/string/vstring.h"
+#include "core/variant/variant_caster.h"
+#include "core/config/callable_method.h"
 
 /**
  * @brief Base display class. This class works with everything to do with windows and window events.

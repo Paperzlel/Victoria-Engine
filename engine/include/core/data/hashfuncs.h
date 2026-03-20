@@ -1,6 +1,6 @@
 #pragma once
 
-#include <core/typedefs.h>
+#include "core/typedefs.h"
 
 VAPI u32 hash_djb2(u8 *str);
 VAPI u32 hash_lowbias32(u32 x);

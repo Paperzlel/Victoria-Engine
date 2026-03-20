@@ -1,7 +1,7 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <core/error/error_types.h>
+#include "core/typedefs.h"
+#include "core/error/error_types.h"
 
 class Variant;
 class ArrayData;

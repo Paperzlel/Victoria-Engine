@@ -1,8 +1,8 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <core/io/resource.h>
-#include <core/math/vector3.h>
+#include "core/typedefs.h"
+#include "core/io/resource.h"
+#include "core/math/vector3.h"
 
 #include "texture.h"
 

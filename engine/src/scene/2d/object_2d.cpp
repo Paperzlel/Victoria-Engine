@@ -1,6 +1,6 @@
-#include <scene/2d/object_2d.h>
+#include "scene/2d/object_2d.h"
 
-#include <servers/rendering_server.h>
+#include "servers/rendering_server.h"
 
 void Object2D::_update_transform() {
     transform.basis.set_rotation(rotation);

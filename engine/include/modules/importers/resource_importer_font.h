@@ -1,7 +1,7 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <core/io/resource_format_importer.h>
+#include "core/typedefs.h"
+#include "core/io/resource_format_importer.h"
 
 /**
  * @brief Importer class for a font.

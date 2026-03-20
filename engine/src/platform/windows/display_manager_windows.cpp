@@ -3,10 +3,10 @@
 
 #include "os_windows.h"
 
-#include <core/config/callable_method_pointer.h>
-#include <core/io/input.h>
-#include <main/main.h>
-#include <modules/opengl/rendering_server_gl.h>
+#include "core/config/callable_method_pointer.h"
+#include "core/io/input.h"
+#include "main/main.h"
+#include "modules/opengl/rendering_server_gl.h"
 
 void DisplayManagerWindows::finalize() {
     if (gl_manager_windows) {

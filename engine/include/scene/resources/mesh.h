@@ -1,9 +1,9 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <core/data/rid.h>
-#include <core/io/resource.h>
-#include <core/variant/array.h>
+#include "core/typedefs.h"
+#include "core/data/rid.h"
+#include "core/io/resource.h"
+#include "core/variant/array.h"
 
 #include "material.h"
 

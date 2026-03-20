@@ -1,26 +1,26 @@
-#include <main/main.h>
+#include "main/main.h"
 
-#include <core/version.h>
-#include <core/config/class_registry.h>
-#include <core/io/input.h>
-#include <core/io/resource_importer.h>
-#include <core/os/os.h>
-#include <core/os/display_manager.h>
-#include <core/string/print_string.h>
-#include <core/variant/variant.h>
-#include <core/register_core_types.h>
+#include "core/version.h"
+#include "core/config/class_registry.h"
+#include "core/io/input.h"
+#include "core/io/resource_importer.h"
+#include "core/os/os.h"
+#include "core/os/display_manager.h"
+#include "core/string/print_string.h"
+#include "core/variant/variant.h"
+#include "core/register_core_types.h"
 
-#include <servers/rendering_server.h>
-#include <modules/importers/resource_importer_font.h>
-#include <modules/importers/resource_importer_image.h>
-#include <modules/importers/resource_importer_obj.h>
+#include "servers/rendering_server.h"
+#include "modules/importers/resource_importer_font.h"
+#include "modules/importers/resource_importer_image.h"
+#include "modules/importers/resource_importer_obj.h"
 
-#include <scene/main/scene_tree.h>
-#include <scene/main/window.h>
-#include <scene/register_scene_classes.h>
+#include "scene/main/scene_tree.h"
+#include "scene/main/window.h"
+#include "scene/register_scene_classes.h"
 
 #ifdef TESTS_ENABLED
-#include <tests/test_manager.h>
+#include "tests/test_manager.h"
 #endif // TESTS_ENABLED
 
 static MainLoop *main_loop = nullptr;

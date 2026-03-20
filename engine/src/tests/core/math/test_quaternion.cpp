@@ -1,10 +1,10 @@
 #include "test_quaternion.h"
 #ifdef TESTS_ENABLED
 
-#include <tests/test_macros.h>
-#include <tests/test_manager.h>
+#include "tests/test_macros.h"
+#include "tests/test_manager.h"
 
-#include <core/math/quaternion.h>
+#include "core/math/quaternion.h"
 
 static bool quaternion_test_basic() {
     Quaternion q;

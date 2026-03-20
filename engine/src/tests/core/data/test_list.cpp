@@ -1,10 +1,10 @@
 #include "test_list.h"
 #ifdef TESTS_ENABLED
 
-#include <tests/test_macros.h>
-#include <tests/test_manager.h>
+#include "tests/test_macros.h"
+#include "tests/test_manager.h"
 
-#include <core/data/list.h>
+#include "core/data/list.h"
 
 struct liststruct1 {
     int a;

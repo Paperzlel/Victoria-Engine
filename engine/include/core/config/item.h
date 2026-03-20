@@ -1,9 +1,9 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <core/data/hashtable.h>
-#include <core/data/list.h>
-#include <core/string/vstring.h>
+#include "core/typedefs.h"
+#include "core/data/hashtable.h"
+#include "core/data/list.h"
+#include "core/string/vstring.h"
 
 #include "callable_method_pointer.h" // IWYU pragma: keep 
 

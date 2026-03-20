@@ -1,8 +1,8 @@
 #pragma once
 
-#include <core/typedefs.h>
+#include "core/typedefs.h"
 
-#include <scene/resources/mesh.h>
+#include "scene/resources/mesh.h"
 
 #include "visual_instance_3d.h"
 

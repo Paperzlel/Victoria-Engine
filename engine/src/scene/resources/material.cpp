@@ -1,6 +1,6 @@
-#include <scene/resources/material.h>
+#include "scene/resources/material.h"
 
-#include <servers/rendering_server.h>
+#include "servers/rendering_server.h"
 
 RID Material::get_material() const {
     return material;

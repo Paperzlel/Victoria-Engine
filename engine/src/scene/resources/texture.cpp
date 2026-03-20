@@ -1,6 +1,6 @@
-#include <scene/resources/texture.h>
+#include "scene/resources/texture.h"
 
-#include <servers/rendering_server.h>
+#include "servers/rendering_server.h"
 
 RID Texture::get_texture() const {
     return texture;

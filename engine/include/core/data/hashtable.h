@@ -1,8 +1,8 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <core/os/memory.h>
-#include <core/string/vstring.h>
+#include "core/typedefs.h"
+#include "core/os/memory.h"
+#include "core/string/vstring.h"
 
 #include "key_value.h"
 #include "hashfuncs.h"

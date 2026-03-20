@@ -1,8 +1,8 @@
-#include <drivers/egl/egl_manager.h>
+#include "drivers/egl/egl_manager.h"
 
-#include <core/os/os.h>
-#include <core/string/print_string.h>
-#include <core/os/display_manager.h>
+#include "core/os/os.h"
+#include "core/string/print_string.h"
+#include "core/os/display_manager.h"
 
 #include <glad/gl.h>
 

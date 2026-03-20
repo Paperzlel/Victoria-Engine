@@ -1,7 +1,7 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <core/variant/variant.h>
+#include "core/typedefs.h"
+#include "core/variant/variant.h"
 
 
 VAPI String stringify_variant(const Variant &p_var);

@@ -1,7 +1,7 @@
-#include <scene/gui/text.h>
+#include "scene/gui/text.h"
 
-#include <scene/main/viewport.h>
-#include <servers/rendering_server.h>
+#include "scene/main/viewport.h"
+#include "servers/rendering_server.h"
 
 void Text::_notification(int p_what) {
 	switch (p_what) {

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <core/variant/variant_caster.h>
+#include "core/typedefs.h"
+#include "core/variant/variant_caster.h"
 
 #include "callable_method.h"
 

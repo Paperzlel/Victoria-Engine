@@ -1,6 +1,6 @@
 #pragma once
 
-#include <core/typedefs.h>
+#include "core/typedefs.h"
 
 #include "mat2.h"
 #include "vector2.h"

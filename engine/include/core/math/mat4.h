@@ -1,7 +1,7 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <core/os/memory.h>
+#include "core/typedefs.h"
+#include "core/os/memory.h"
 
 #include "math_funcs.h"
 #include "vector3.h"

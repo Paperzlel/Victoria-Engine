@@ -1,11 +1,11 @@
-#include <core/register_core_types.h>
+#include "core/register_core_types.h"
 
-#include <core/config/class_registry.h>
-#include <core/config/instance.h>
-#include <core/config/item.h>
-#include <core/io/resource.h>
-#include <core/io/filesystem.h>
-#include <core/io/resource_format_importer.h>
+#include "core/config/class_registry.h"
+#include "core/config/instance.h"
+#include "core/config/item.h"
+#include "core/io/resource.h"
+#include "core/io/filesystem.h"
+#include "core/io/resource_format_importer.h"
 
 void register_core_types() {
     REGISTER_CLASS(Item);

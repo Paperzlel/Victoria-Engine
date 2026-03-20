@@ -1,7 +1,7 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <core/os/memory.h>
+#include "core/typedefs.h"
+#include "core/os/memory.h"
 
 #include "atomic_counter.h"
 #include "vector.h"

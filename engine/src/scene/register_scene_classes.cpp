@@ -1,32 +1,32 @@
-#include <scene/register_scene_classes.h>
+#include "scene/register_scene_classes.h"
 
-#include <core/config/class_registry.h>
-#include <core/io/resource.h>
+#include "core/config/class_registry.h"
+#include "core/io/resource.h"
 
-#include <scene/main/canvas_item.h>
-#include <scene/main/object.h>
-#include <scene/main/scene_tree.h>
-#include <scene/main/viewport.h>
-#include <scene/main/window.h>
-#include <scene/gui/colour_rect.h>
-#include <scene/gui/container.h>
-#include <scene/gui/object_ui.h>
-#include <scene/gui/panel.h>
-#include <scene/gui/text.h>
-#include <scene/gui/texture_rect.h>
-#include <scene/gui/viewport_container.h>
-#include <scene/2d/mesh_2d.h>
-#include <scene/2d/object_2d.h>
-#include <scene/2d/sprite_2d.h>
-#include <scene/3d/camera_3d.h>
-#include <scene/3d/light_3d.h>
-#include <scene/3d/mesh_3d.h>
-#include <scene/3d/object_3d.h>
-#include <scene/3d/visual_instance_3d.h>
-#include <scene/resources/font.h>
-#include <scene/resources/material.h>
-#include <scene/resources/mesh.h>
-#include <scene/resources/texture.h>
+#include "scene/main/canvas_item.h"
+#include "scene/main/object.h"
+#include "scene/main/scene_tree.h"
+#include "scene/main/viewport.h"
+#include "scene/main/window.h"
+#include "scene/gui/colour_rect.h"
+#include "scene/gui/container.h"
+#include "scene/gui/object_ui.h"
+#include "scene/gui/panel.h"
+#include "scene/gui/text.h"
+#include "scene/gui/texture_rect.h"
+#include "scene/gui/viewport_container.h"
+#include "scene/2d/mesh_2d.h"
+#include "scene/2d/object_2d.h"
+#include "scene/2d/sprite_2d.h"
+#include "scene/3d/camera_3d.h"
+#include "scene/3d/light_3d.h"
+#include "scene/3d/mesh_3d.h"
+#include "scene/3d/object_3d.h"
+#include "scene/3d/visual_instance_3d.h"
+#include "scene/resources/font.h"
+#include "scene/resources/material.h"
+#include "scene/resources/mesh.h"
+#include "scene/resources/texture.h"
 
 
 void register_scene_classes() {

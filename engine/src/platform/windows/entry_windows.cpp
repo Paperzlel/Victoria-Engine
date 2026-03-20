@@ -1,8 +1,8 @@
-#include <core/typedefs.h>
+#include "core/typedefs.h"
 #if PLATFORM_WINDOWS
 
 #include "os_windows.h"
-#include <main/main.h>
+#include "main/main.h"
 
 #include <libvictoria.h>
 

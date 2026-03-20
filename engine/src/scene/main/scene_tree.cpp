@@ -1,6 +1,6 @@
-#include <scene/main/scene_tree.h>
-#include <scene/3d/camera_3d.h>
-#include <scene/main/window.h>
+#include "scene/main/scene_tree.h"
+#include "scene/3d/camera_3d.h"
+#include "scene/main/window.h"
 
 SceneTree *SceneTree::singleton = nullptr;
 

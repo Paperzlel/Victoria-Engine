@@ -1,9 +1,9 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <core/data/vector.h>
-#include <core/math/transform_3d.h>
-#include <core/string/vstring.h>
+#include "core/typedefs.h"
+#include "core/data/vector.h"
+#include "core/math/transform_3d.h"
+#include "core/string/vstring.h"
 
 struct Uniform {
     String name;

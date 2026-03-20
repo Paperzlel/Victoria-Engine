@@ -1,9 +1,9 @@
 #pragma once
 
-#include <core/typedefs.h>
+#include "core/typedefs.h"
 
-#include <scene/main/canvas_item.h>
-#include <core/variant/variant_caster.h>
+#include "scene/main/canvas_item.h"
+#include "core/variant/variant_caster.h"
 
 class VAPI ObjectUI : public CanvasItem {
 	VREGISTER_CLASS(ObjectUI, CanvasItem)

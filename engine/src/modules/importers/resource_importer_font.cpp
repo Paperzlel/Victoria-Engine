@@ -1,7 +1,7 @@
-#include <modules/importers/resource_importer_font.h>
+#include "modules/importers/resource_importer_font.h"
 
-#include <servers/rendering_server.h>
-#include <scene/resources/font.h>
+#include "servers/rendering_server.h"
+#include "scene/resources/font.h"
 
 #ifdef FREETYPE_ENABLED
 #include <ft2build.h>

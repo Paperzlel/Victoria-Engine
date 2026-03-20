@@ -1,9 +1,9 @@
 #pragma once
 
-#include <core/typedefs.h>
-#include <core/math/transform_3d.h>
+#include "core/typedefs.h"
+#include "core/math/transform_3d.h"
 
-#include <scene/main/object.h>
+#include "scene/main/object.h"
 
 class VAPI Object3D : public Object {
     VREGISTER_CLASS(Object3D, Object)

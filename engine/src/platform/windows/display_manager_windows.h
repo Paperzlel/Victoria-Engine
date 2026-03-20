@@ -1,10 +1,10 @@
 #pragma once
 
-#include <core/typedefs.h>
+#include "core/typedefs.h"
 #if PLATFORM_WINDOWS
 
-#include <core/os/display_manager.h>
-#include <core/data/event.h>
+#include "core/os/display_manager.h"
+#include "core/data/event.h"
 
 #include "gl_manager_windows.h"
 

@@ -1,4 +1,4 @@
-#include <scene/gui/texture_rect.h>
+#include "scene/gui/texture_rect.h"
 
 void TextureRect::_notification(int p_what) {
     switch (p_what) {

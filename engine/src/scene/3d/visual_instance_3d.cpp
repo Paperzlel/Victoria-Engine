@@ -1,6 +1,6 @@
-#include <scene/3d/visual_instance_3d.h>
+#include "scene/3d/visual_instance_3d.h"
 
-#include <servers/rendering_server.h>
+#include "servers/rendering_server.h"
 
 RID VisualInstance3D::get_instance() const {
     return instance;

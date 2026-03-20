@@ -1,11 +1,11 @@
 #include "test_array.h"
 #ifdef TESTS_ENABLED
 
-#include <core/variant/array.h>
-#include <core/variant/variant.h>
+#include "core/variant/array.h"
+#include "core/variant/variant.h"
 
-#include <tests/test_macros.h>
-#include <tests/test_manager.h>
+#include "tests/test_macros.h"
+#include "tests/test_manager.h"
 
 static bool array_test_basic() {
     Array a;

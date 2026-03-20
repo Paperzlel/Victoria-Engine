@@ -1,7 +1,7 @@
-#include <scene/main/object.h>
+#include "scene/main/object.h"
 
-#include <core/error/error_macros.h>
-#include <scene/main/window.h>
+#include "core/error/error_macros.h"
+#include "scene/main/window.h"
 
 void Object::_propagate_enter_tree() {
     if (data.parent) {

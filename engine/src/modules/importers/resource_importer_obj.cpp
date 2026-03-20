@@ -1,10 +1,10 @@
-#include <modules/importers/resource_importer_obj.h>
+#include "modules/importers/resource_importer_obj.h"
 
-#include <core/io/filesystem.h>
-#include <core/math/vector2.h>
-#include <core/variant/variant.h>
+#include "core/io/filesystem.h"
+#include "core/math/vector2.h"
+#include "core/variant/variant.h"
 
-#include <scene/resources/mesh.h>
+#include "scene/resources/mesh.h"
 
 bool ResourceFormatImporterOBJ::Vertex::operator==(const Vertex &p_other) const {
     if (vertex != p_other.vertex) {
