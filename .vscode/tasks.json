@@ -2,7 +2,7 @@
     "version": "2.0.0",
     "tasks" : [
         {
-            "label": "Build Engine (Debug)",
+            "label": "Build Engine (Debug, Clang)",
             "type": "shell",
             "command": "make DEBUG=yes",
             "problemMatcher": [
@@ -11,6 +11,41 @@
             "group": {
                 "kind": "build",
                 "isDefault": true
+            }
+        },
+        {
+            "label": "Build Engine (Debug, GCC)",
+            "type": "shell",
+            "command": "make DEBUG=yes COMPILER=gcc",
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
+        {
+            "label": "Build Engine (Release, Clang)",
+            "type": "shell",
+            "command": "make",
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
+        {
+            "label": "Build Engine (Release, GCC)",
+            "type": "shell",
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": false
             }
         },
         {

@@ -1,10 +1,10 @@
 # Marginally more generic version of the Makefile we'll let end-users use to compile their own projects.
 TARGET := editor
 INCLUDES += -Iinclude -I../engine/include
-LINKER_FLAGS += -L$(BUILD_DIR) -lvictoria
+LDFLAGS += -L$(BUILD_DIR) -lvictoria
 
-ifeq ($(DETECTED_OS), LINUX)
-	LINKER_FLAGS += -Wl,-rpath='$$ORIGIN'
+ifeq ($(PLATFORM), linux)
+	LDFLAGS += -Wl,-rpath='$$ORIGIN'
 endif
 
 ifeq ($(COMPILER), clang)
@@ -16,12 +16,12 @@ C_FILES :=
 CPP_FILES :=
 DIRECTORIES :=
 
-ifeq ($(DETECTED_OS), WINDOWS)
+ifeq ($(PLATFORM), win32)
 	C_FILES += $(call rwildcard,*,*.c)
 	CPP_FILES += $(call rwildcard,*,*.cpp)
 	DIRECTORIES += $(addprefix $(BUILD_DIR)\, $(subst $(BUILD_DIR),,$(subst $(shell cd)\,,$(shell dir /s /AD /B))))
 else
-ifeq ($(DETECTED_OS), LINUX)
+ifeq ($(PLATFORM), linux)
 	CPP_FILES := $(shell find src -type f -name "*.cpp")
 	C_FILES := $(shell find src -type f -name "*.c")
 	DIRECTORIES := $(patsubst src/%,%,$(shell find src -type d -not -path "src"))
@@ -34,11 +34,12 @@ OBJ_FILES := $(patsubst src/%.cpp, $(BUILD_DIR)/$(TARGET)/%.o, $(CPP_FILES)) $(p
 
 
 # Setup final binary
-OUTPUT_FILE := victoria
-ifeq ($(DETECTED_OS), WINDOWS)
+OUTPUT_NAME := victoria
+OUTPUT_FILE := $(OUTPUT_NAME)
+ifeq ($(PLATFORM), win32)
 	OUTPUT_FILE := $(OUTPUT_FILE).exe
 else
-ifeq ($(DETECTED_OS), LINUX)
+ifeq ($(PLATFORM), linux)
 	OUTPUT_FILE := $(OUTPUT_FILE).x86_64
 endif
 endif
@@ -50,17 +51,18 @@ all: scaffold compile link
 
 scaffold:
 	@echo Creating project structure...
-ifeq ($(DETECTED_OS), WINDOWS)
+ifeq ($(PLATFORM), win32)
 	-@mkdir $(BUILD_DIR)/$(TARGET) 2>NUL || cd .
 	-@mkdir $(addprefix $(BUILD_DIR)/$(TARGET)/,$(DIRECTORIES)) 2>NUL || cd .
 endif
-ifeq ($(DETECTED_OS), LINUX)
+ifeq ($(PLATFORM), linux)
 	@mkdir -p $(BUILD_DIR)/$(TARGET)
 # Check that there's at least one subdirectory in the source tree.
 ifneq ("$(DIRECTORIES)","")
 	@mkdir -p $(addprefix $(BUILD_DIR)/$(TARGET)/,$(DIRECTORIES))
 endif
 endif
+	@$(COMPILEGEN) -o compile_flags.txt --args $(CPPFLAGS) $(DEFINES) $(INCLUDES) $(LDFLAGS)
 	@echo Done.
 
 
@@ -71,16 +73,18 @@ compile: scaffold
 link: compile $(OBJ_FILES)
 	@echo Done.
 	@echo Building binary...
-	@$(CXX) $(OBJ_FILES) -o $(BUILD_DIR)/$(OUTPUT_FILE) $(LINKER_FLAGS)
+	@$(CXX) $(OBJ_FILES) -o $(BUILD_DIR)/$(OUTPUT_FILE) $(LDFLAGS)
 	@echo $(OUTPUT_FILE) built successfully.
 
 
 clean:
-ifeq ($(DETECTED_OS), WINDOWS)
-	@rmdir $(BUILD_DIR)/$(TARGET) /S /Q
+ifeq ($(PLATFORM), win32)
+	@rmdir $(BUILD_DIR)/$(TARGET) /S /Q 2>NUL || cd .
+	@del /F /Q $(subst /,\,$(BUILD_DIR)/$(OUTPUT_NAME).*) 2>NUL || cd .
 endif
-ifeq ($(DETECTED_OS), LINUX)
+ifeq ($(PLATFORM), linux)
 	@rm -rf $(BUILD_DIR)/$(TARGET)
+	@rm -f $(BUILD_DIR)/$(OUTPUT_NAME)
 endif
 
 

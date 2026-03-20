@@ -13,6 +13,7 @@ rwildcard=$(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2))
 
 # Module options
 export USE_FREETYPE := yes
+export THIRDPARTY_CFLAGS := -fPIC -fvisibility=hidden
 
 # Platform-specific options
 export USE_WAYLAND := no
@@ -21,7 +22,7 @@ export USE_X11 := no
 # Wayland generator folder
 WAYLAND_PROTOCOLS := src/platform/linux/wayland/protocols
 
-ifeq ($(DETECTED_OS), LINUX)
+ifeq ($(PLATFORM), linux)
 ifeq ($(shell pkg-config --exists wayland-client; echo $$?),1)
 # Require Wayland EGL support
 ifeq ($(shell pkg-config --exists wayland-egl; echo $$?),1)
@@ -39,10 +40,10 @@ endif
 
 # Compiler-specific options
 ifeq ($(COMPILER), gcc)
-	LINKER_FLAGS += -shared -rdynamic
+	LDFLAGS += -shared -rdynamic
 endif
 ifeq ($(COMPILER), clang)
-	LINKER_FLAGS += --shared
+	LDFLAGS += --shared
 endif
 
 # Module-specific options
@@ -52,16 +53,16 @@ endif
 
 
 # OS-specific options
-ifeq ($(DETECTED_OS), LINUX)
+ifeq ($(PLATFORM), linux)
 ifeq ($(USE_WAYLAND), yes)
 	DEFINES += -DWAYLAND_ENABLED
-	LINKER_FLAGS += $(shell pkg-config --libs wayland-client)
+	LDFLAGS += $(shell pkg-config --libs wayland-client)
 	CFLAGS += $(shell pkg-config --cflags-only-other wayland-egl) -Wno-unused-const-variable
 	INCLUDES += $(shell pkg-config --cflags-only-I wayland-egl)
 endif
 ifeq ($(USE_X11), yes)
 	DEFINES += -DX11_ENABLED
-	LINKER_FLAGS += $(shell pkg-config --libs x11)
+	LDFLAGS += $(shell pkg-config --libs x11)
 endif
 endif
 
@@ -70,12 +71,19 @@ C_FILES :=
 CPP_FILES :=
 DIRECTORIES :=
 
-ifeq ($(DETECTED_OS), WINDOWS)
+# Pre-build generation steps (required for collecting build files)
+ifeq ($(PLATFORM), linux)
+ifeq ("$(wildcard $(WAYLAND_PROTOCOLS))","")
+	TEMP := $(shell mkdir -p $(WAYLAND_PROTOCOLS); $(PYTHON) src/platform/linux/wayland/generate_dynwrappers.py)
+endif
+endif
+
+ifeq ($(PLATFORM), win32)
 	C_FILES += $(call rwildcard,*,*.c)
 	CPP_FILES += $(call rwildcard,*,*.cpp)
 	DIRECTORIES += $(addprefix $(BUILD_DIR)\, $(subst $(BUILD_DIR),,$(subst $(shell cd)\,,$(shell dir /s /AD /B))))
 else
-ifeq ($(DETECTED_OS), LINUX)
+ifeq ($(PLATFORM), linux)
 	CPP_FILES := $(shell find src -type f -name "*.cpp")
 	C_FILES := $(shell find src -type f -name "*.c")
 	DIRECTORIES := $(patsubst src/%,%,$(shell find src -type d -not -path "src"))
@@ -140,11 +148,12 @@ endif
 OBJ_FILES := $(patsubst src/%.cpp, $(BUILD_DIR)/$(TARGET)/%.o, $(CPP_FILES)) $(patsubst src/%.c, $(BUILD_DIR)/$(TARGET)/%.o, $(C_FILES))
 
 # Setup final binary
-OUTPUT_FILE := libvictoria
-ifeq ($(DETECTED_OS), WINDOWS)
+OUTPUT_NAME := libvictoria
+OUTPUT_FILE := $(OUTPUT_NAME)
+ifeq ($(PLATFORM), win32)
 	OUTPUT_FILE := $(OUTPUT_FILE).dll
 else
-ifeq ($(DETECTED_OS), LINUX)
+ifeq ($(PLATFORM), linux)
 	OUTPUT_FILE := $(OUTPUT_FILE).so
 endif
 endif
@@ -154,7 +163,7 @@ all: test scaffold compile link
 
 # Look for if certain files are downloaded prior to building
 test:
-ifeq ($(DETECTED_OS), LINUX)
+ifeq ($(PLATFORM), linux)
 ifeq ($(shell pkg-config --exists wayland-client; echo $$?),1)
 ifeq ($(USE_WAYLAND), yes)
 	@echo Cannot compile for Wayland whilst the drivers are not installed. Please install the development packages before compiling.
@@ -176,38 +185,38 @@ endif
 
 scaffold: test
 	@echo Creating project structure...
-ifeq ($(DETECTED_OS), WINDOWS)
+ifeq ($(PLATFORM), win32)
 	-@mkdir $(BUILD_DIR)/$(TARGET) 2>NUL || cd .
 	-@mkdir $(addprefix $(BUILD_DIR)/$(TARGET)/,$(DIRECTORIES)) 2>NUL || cd .
 endif
-ifeq ($(DETECTED_OS), LINUX)
+ifeq ($(PLATFORM), linux)
 	@mkdir -p $(BUILD_DIR)/$(TARGET)
 	@mkdir -p $(addprefix $(BUILD_DIR)/$(TARGET)/,$(DIRECTORIES))
-ifeq ("$(WAYLAND_PROTOCOLS)","")
-	@mkdir -p $(WAYLAND_PROTOCOLS)
-	@$(PYTHON) src/platform/linux/wayland/generate_dynwrappers.py
 endif
-endif
+	@$(COMPILEGEN) -o compile_flags.txt --args $(CPPFLAGS) $(DEFINES) $(INCLUDES) $(LDFLAGS)
 	@echo Done.
 
 
-compile: scaffold
+compile: scaffold $(WAYLAND_PROTOCOLS)
 	@echo Compiling...
 
 
 link: compile $(OBJ_FILES)
 	@echo Done.
 	@echo Building binary...
-	@$(CXX) $(OBJ_FILES) -o $(BUILD_DIR)/$(OUTPUT_FILE) $(LINKER_FLAGS)
+	@$(CXX) $(OBJ_FILES) -o $(BUILD_DIR)/$(OUTPUT_FILE) $(LDFLAGS)
 	@echo $(OUTPUT_FILE) built successfully.
 
 
 clean:
-ifeq ($(DETECTED_OS), WINDOWS)
+ifeq ($(PLATFORM), win32)
 	@rmdir $(BUILD_DIR)/$(TARGET) /S /Q
+	@del /F /Q $(subst /,\,$(BUILD_DIR)/$(OUTPUT_NAME).*) 2>NUL || cd .
 endif
-ifeq ($(DETECTED_OS), LINUX)
+ifeq ($(PLATFORM), linux)
 	@rm -rf $(BUILD_DIR)/$(TARGET)
+	@rm -f $(BUILD_DIR)/$(OUTPUT_FILE)
+	@rm -rf $(WAYLAND_PROTOCOLS)
 endif
 
 
@@ -218,5 +227,10 @@ $(BUILD_DIR)/$(TARGET)/%.o: src/%.c
 $(BUILD_DIR)/$(TARGET)/%.o: src/%.cpp
 	@echo   $<...
 	@$(CXX) $< $(CPPFLAGS) -c -o $@ $(DEFINES) $(INCLUDES)
+
+# Third-party code has all warnings and errors disabled, except debugging options
+$(BUILD_DIR)/$(TARGET)/thirdparty/%.o: src/thirdparty/%.c
+	@echo 	$<...
+	@$(CC) $< $(THIRDPARTY_CFLAGS) -c -o $@ $(DEFINES) $(INCLUDES)
 
 -include $(OBJ_FILES:.o=.d)

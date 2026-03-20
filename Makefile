@@ -1,14 +1,14 @@
 # Find out what OS the user is running prior to building.
-export DETECTED_OS :=
+export PLATFORM :=
 
 ifeq ($(OS), Windows_NT)
-	DETECTED_OS := WINDOWS
+	PLATFORM := win32
 else
-	DETECTED_OS := $(shell sh -c 'uname 2>/dev/null || echo Unknown')
+	PLATFORM := $(shell sh -c 'uname 2>/dev/null || echo Unknown')
 endif
 
-ifeq ($(DETECTED_OS), Linux)
-	DETECTED_OS := LINUX
+ifeq ($(PLATFORM), Linux)
+	PLATFORM := linux
 endif
 # NOTE: Add other options here, but we ignore them for now.
 
@@ -25,16 +25,19 @@ export RUN_TESTS := no
 export BUILD_DIR := bin
 export COMPILER := clang
 export PYTHON := python
+export COMPILEGEN :=
 
 
 # Auto-check platform options
-ifeq ($(DETECTED_OS), LINUX)
+ifeq ($(PLATFORM), linux)
 	VERSION := $(shell python3 version.py)
 	PYTHON := python3
+	COMPILEGEN := $(abspath $(BUILD_DIR))/compilegen
 endif
-ifeq ($(DETECTED_OS), WINDOWS)
+ifeq ($(PLATFORM), win32)
 	VERSION := $(shell python version.py)
 	PYTHON := python
+	COMPILEGEN := $(abspath $(BUILD_DIR))/compilegen.exe
 endif
 
 # Ignore commit hash on certain builds.
@@ -49,7 +52,7 @@ export CXX := clang++
 export CFLAGS := -std=c17 -Wall -Werror
 export CPPFLAGS := -std=c++17 -Wall -Werror
 export INCLUDES :=
-export LINKER_FLAGS :=
+export LDFLAGS :=
 export DEFINES :=
 
 
@@ -74,17 +77,17 @@ endif
 ifeq ($(COMPILER), gcc)
 	CXX := g++
 	CC := gcc
-	CPPFLAGS += -Wno-sign-compare -Wno-dangling-pointer
+	CPPFLAGS += -Wno-sign-compare
 endif
 
 # Confirm platform-specific compiler options
-ifeq ($(DETECTED_OS), WINDOWS)
-	LINKER_FLAGS += -luser32 -lopengl32 -lgdi32
+ifeq ($(PLATFORM), win32)
+	LDFLAGS += -luser32 -lopengl32 -lgdi32
 	DEFINES += -D_CRT_SECURE_NO_WARNINGS
 ifeq ($(DEBUG), yes)
 	DEFINES += -D_DEBUG
 # Introduce these in the RID chapter. Links to the Visual Studio libraries, so in theory shouldn't appear in GCC builds on Windows.
-	LINKER_FLAGS += -g -lmsvcrtd -lvcruntimed -lucrtd
+	LDFLAGS += -g -lmsvcrtd -lvcruntimed -lucrtd
 endif
 endif
 
@@ -93,24 +96,19 @@ BUILD_DIR := $(abspath $(BUILD_DIR))
 
 .PHONY: all clean
 all:
-ifeq ($(DETECTED_OS), WINDOWS)
+ifeq ($(PLATFORM), win32)
 	-@mkdir $(BUILD_DIR), 2>NUL || cd .
 	-@xcopy -r assets $(BUILD_DIR)
 endif
-ifeq ($(DETECTED_OS), LINUX)
+ifeq ($(PLATFORM), linux)
 	@mkdir -p $(BUILD_DIR)
 	@cp -r assets $(BUILD_DIR)
 endif
 
+	@$(MAKE) -C utils
 	@$(MAKE) -C engine
 	@$(MAKE) -C editor
 
 clean:
 	@$(MAKE) clean -C engine
 	@$(MAKE) clean -C editor
-ifeq ($(DETECTED_OS), WINDOWS)
-	@rmdir $(BUILD_DIR) /S /Q
-endif
-ifeq ($(DETECTED_OS), LINUX)
-	@rm -rf $(BUILD_DIR)
-endif
