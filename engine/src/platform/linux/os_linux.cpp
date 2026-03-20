@@ -15,6 +15,7 @@
 #include <main/main.h>
 
 #include <stdarg.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <sys/utsname.h>
 

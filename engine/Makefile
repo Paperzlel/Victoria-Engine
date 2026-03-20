@@ -2,8 +2,9 @@ TARGET := engine
 # We want to hide as much of the API as possible, so we set the visibility to hidden by default. This allows our own API to be exposed properly.
 CFLAGS += -fPIC -fvisibility=hidden
 CPPFLAGS += -fPIC -fvisibility=hidden
-INCLUDES += -Iinclude -Iinclude/thirdparty/freetype/include -Iinclude/thirdparty/glad
-DEFINE += -DVEXPORT
+# We keep third-party, platform and driver specific code hidden from the user.
+INCLUDES += -Iinclude -Isrc/thirdparty/freetype/include -Isrc/thirdparty/glad/include -Isrc/thirdparty
+DEFINES += -DVEXPORT
 
 # Utilities
 
@@ -17,14 +18,19 @@ export USE_FREETYPE := yes
 export USE_WAYLAND := no
 export USE_X11 := no
 
+# Wayland generator folder
+WAYLAND_PROTOCOLS := src/platform/linux/wayland/protocols
+
 ifeq ($(DETECTED_OS), LINUX)
-ifeq ("$(wildcard /usr/include/wayland-client.h)", "")
+ifeq ($(shell pkg-config --exists wayland-client; echo $$?),1)
+# Require Wayland EGL support
+ifeq ($(shell pkg-config --exists wayland-egl; echo $$?),1)
 	USE_WAYLAND := no
 else
 	USE_WAYLAND := yes
 endif
-
-ifeq ("$(wildcard /usr/include/X11/Xlib.h)", "")
+endif
+ifeq ($(shell pkg-config --exists x11; echo $$?),1)
 	USE_X11 := no
 else
 	USE_X11 := yes
@@ -36,8 +42,6 @@ ifeq ($(COMPILER), gcc)
 	LINKER_FLAGS += -shared -rdynamic
 endif
 ifeq ($(COMPILER), clang)
-	CFLAGS += -fdeclspec
-	CPPFLAGS += -fdeclspec
 	LINKER_FLAGS += --shared
 endif
 
@@ -51,12 +55,13 @@ endif
 ifeq ($(DETECTED_OS), LINUX)
 ifeq ($(USE_WAYLAND), yes)
 	DEFINES += -DWAYLAND_ENABLED
-	LINKER_FLAGS += -lwayland-client -lwayland-egl
-	CFLAGS += -Wno-unused-const-variable
+	LINKER_FLAGS += $(shell pkg-config --libs wayland-client)
+	CFLAGS += $(shell pkg-config --cflags-only-other wayland-egl) -Wno-unused-const-variable
+	INCLUDES += $(shell pkg-config --cflags-only-I wayland-egl)
 endif
 ifeq ($(USE_X11), yes)
 	DEFINES += -DX11_ENABLED
-	LINKER_FLAGS += -lX11
+	LINKER_FLAGS += $(shell pkg-config --libs x11)
 endif
 endif
 
@@ -150,13 +155,13 @@ all: test scaffold compile link
 # Look for if certain files are downloaded prior to building
 test:
 ifeq ($(DETECTED_OS), LINUX)
-ifeq ("$(wildcard /usr/include/wayland-client.h)", "")
+ifeq ($(shell pkg-config --exists wayland-client; echo $$?),1)
 ifeq ($(USE_WAYLAND), yes)
 	@echo Cannot compile for Wayland whilst the drivers are not installed. Please install the development packages before compiling.
 	@exit 10
 endif
 endif
-ifeq ("$(wildcard /usr/include/X11/Xlib.h)", "")
+ifeq ($(wildcard pkg-config --exists x11; echo $$?),1)
 ifeq ($(USE_X11), yes)
 	@echo Cannot compile with X11 support whilst the drivers are not installed. Please install the development packages before compiling.
 	@exit 10
@@ -176,16 +181,12 @@ ifeq ($(DETECTED_OS), WINDOWS)
 	-@mkdir $(addprefix $(BUILD_DIR)/$(TARGET)/,$(DIRECTORIES)) 2>NUL || cd .
 endif
 ifeq ($(DETECTED_OS), LINUX)
-ifeq ($(USE_WAYLAND), yes)
-# Add sources only if not present
-ifeq ("$(wildcard src/platform/linux/wayland/protocols)","")
-	@mkdir -p src/platform/linux/wayland/protocols
-	@python3 src/platform/linux/wayland/generate_dynwrappers.py
-endif
-endif
 	@mkdir -p $(BUILD_DIR)/$(TARGET)
 	@mkdir -p $(addprefix $(BUILD_DIR)/$(TARGET)/,$(DIRECTORIES))
-
+ifeq ("$(WAYLAND_PROTOCOLS)","")
+	@mkdir -p $(WAYLAND_PROTOCOLS)
+	@$(PYTHON) src/platform/linux/wayland/generate_dynwrappers.py
+endif
 endif
 	@echo Done.
 
@@ -217,6 +218,5 @@ $(BUILD_DIR)/$(TARGET)/%.o: src/%.c
 $(BUILD_DIR)/$(TARGET)/%.o: src/%.cpp
 	@echo   $<...
 	@$(CXX) $< $(CPPFLAGS) -c -o $@ $(DEFINES) $(INCLUDES)
-
 
 -include $(OBJ_FILES:.o=.d)

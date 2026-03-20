@@ -8,7 +8,7 @@
 
 #include <servers/rendering_server.h>
 
-#include <thirdparty/stb/stb_image.h>
+#include <stb/stb_image.h>
 
 Ref<Resource> ResourceFormatImporterImage::_import(const String &p_file, int p_argc, Variant *p_args) {
     Ref<FileSystem> fs = FileSystem::open(p_file, FileSystem::FILE_ACCESS_READ);

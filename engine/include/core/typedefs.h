@@ -3,7 +3,7 @@
 
 #include <core/error/error_types.h>
 
-#include <utility>
+#include <utility> // IWYU pragma: keep 
 
 typedef signed char i8;
 
@@ -46,18 +46,17 @@ static_assert(sizeof(u64) == 8, "Expected an unsigned 64-bit integer to have 8 b
 
 // Export/import functions
 #if VEXPORT
-#if defined(__GNUC__)
+#if defined(__GNUC__) || defined(__clang__)
 #define VAPI __attribute__((visibility("default")))
-// We use -fdeclspec to apply clang here as well
-#elif defined(_MSC_VER) || defined(__clang__)
+#elif defined(_MSC_VER)
 #define VAPI __declspec(dllexport)
 #else
 #define VAPI
 #endif
 #else
-#if defined(__GNUC__)
-#define VAPI __attribute__((visibility("default")))
-#elif defined(_MSC_VER) || defined(__clang__)
+#if defined(__GNUC__) || defined(__clang__)
+#define VAPI
+#elif defined(_MSC_VER)
 #define VAPI __declspec(dllimport)
 #else
 #define VAPI

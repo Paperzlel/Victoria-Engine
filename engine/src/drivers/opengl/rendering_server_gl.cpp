@@ -1,17 +1,17 @@
 #include <drivers/opengl/rendering_server_gl.h>
 
-#include <core/io/filesystem.h>
-#include <core/io/input.h>
-#include <core/math/math_funcs.h>
-#include <core/math/mat4.h>
-#include <core/math/transform_3d.h>
-#include <core/os/os.h>
-#include <core/string/print_string.h>
+#include "core/io/filesystem.h"
+#include "core/io/input.h"
+#include "core/math/math_funcs.h"
+#include "core/math/mat4.h"
+#include "core/math/transform_3d.h"
+#include "core/os/os.h"
+#include "core/string/print_string.h"
 
-#include <scene/3d/camera_3d.h>
+#include "scene/3d/camera_3d.h"
 
 #include <glad/gl.h>
-#include <thirdparty/stb/stb_image.h>
+#include <stb/stb_image.h>
 
 bool polygon_line_mode = false;
 

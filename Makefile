@@ -24,14 +24,17 @@ export DEBUG := no
 export RUN_TESTS := no
 export BUILD_DIR := bin
 export COMPILER := clang
+export PYTHON := python
 
 
 # Auto-check platform options
 ifeq ($(DETECTED_OS), LINUX)
 	VERSION := $(shell python3 version.py)
+	PYTHON := python3
 endif
 ifeq ($(DETECTED_OS), WINDOWS)
 	VERSION := $(shell python version.py)
+	PYTHON := python
 endif
 
 # Ignore commit hash on certain builds.

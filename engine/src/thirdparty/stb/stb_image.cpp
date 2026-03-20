@@ -1,2 +1,2 @@
 #define STB_IMAGE_IMPLEMENTATION
-#include <thirdparty/stb/stb_image.h>
+#include "stb_image.h"

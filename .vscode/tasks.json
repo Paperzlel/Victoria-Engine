@@ -2,14 +2,9 @@
     "version": "2.0.0",
     "tasks" : [
         {
-            "label": "Build Engine",
+            "label": "Build Engine (Debug)",
             "type": "shell",
-            "windows" : {
-                "command": "${workspaceFolder}\\build.bat",
-            },
-            "linux" : {
-                "command": "${workspaceFolder}/build.sh",
-            },
+            "command": "make DEBUG=yes",
             "problemMatcher": [
                 "$gcc"
             ],
@@ -19,17 +14,12 @@
             }
         },
         {
-            "label": "Clean Binaries",
+            "label": "Clean Output",
             "type": "shell",
-            "windows": {
-                "command": "${workspaceFolder}\\clean.bat"
-            },
-            "linux": {
-                "command": "${workspaceFolder}/clean.sh"
-            },
+            "command": "make clean",
             "problemMatcher": [
                 "$gcc"
-            ]
+            ],
         }
     ]
 }

@@ -37,3 +37,6 @@
 
 # Other excludes
 bin/
+compile_commands.json
+compile_flags.txt
+.cache/
