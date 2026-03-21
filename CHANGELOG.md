@@ -4,6 +4,10 @@ Changes exist in chronological order (i.e. new changes are to be appended to the
 ## 21/3/2026
 - Buildsystem:
 	- Overhauled the buildsystem to be far more feature-rich and modular. We now generate `compile_commands.json`, use `clangd` and `clang-format` for debugging and formattings, and generally have updated how we approach building files to now minimize external dependencies.
+	- Fixed a longstanding issue with GCC failing to compile due to differences in signedness.
+		- GCC will now compile properly on Linux.
+- Core:
+	- Reverted back to using standard C++ type names (`uint32_t` and the like).
 
 ## 18/1/2026
 - Buildsystem:
