@@ -13,7 +13,15 @@ rwildcard=$(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2))
 
 # Module options
 export USE_FREETYPE := yes
-export THIRDPARTY_CFLAGS := -fPIC -fvisibility=hidden
+export THIRDPARTY_CFLAGS := -fPIC -fvisibility=hidden -O3
+ifeq ($(DEBUG),yes)
+ifeq ($(COMPILER),gcc)
+	THIRDPARTY_CFLAGS += -ggdb
+endif
+ifeq ($(COMPILER),clang)
+	THIRDPARTY_CFLAGS += -gdwarf-5
+endif
+endif 
 
 # Platform-specific options
 export USE_WAYLAND := no
@@ -23,13 +31,13 @@ export USE_X11 := no
 WAYLAND_PROTOCOLS := src/platform/linux/wayland/protocols
 
 ifeq ($(PLATFORM), linux)
-ifeq ($(shell pkg-config --exists wayland-client; echo $$?),1)
+ifeq ($(shell pkg-config --exists wayland-client; echo $$?),0)
 # Require Wayland EGL support
-ifeq ($(shell pkg-config --exists wayland-egl; echo $$?),1)
-	USE_WAYLAND := no
-else
+ifeq ($(shell pkg-config --exists wayland-egl; echo $$?),0)
 	USE_WAYLAND := yes
 endif
+else
+	USE_WAYLAND := no
 endif
 ifeq ($(shell pkg-config --exists x11; echo $$?),1)
 	USE_X11 := no
@@ -56,7 +64,7 @@ endif
 ifeq ($(PLATFORM), linux)
 ifeq ($(USE_WAYLAND), yes)
 	DEFINES += -DWAYLAND_ENABLED
-	LDFLAGS += $(shell pkg-config --libs wayland-client)
+	LDFLAGS += $(shell pkg-config --libs wayland-egl)
 	CFLAGS += $(shell pkg-config --cflags-only-other wayland-egl) -Wno-unused-const-variable
 	INCLUDES += $(shell pkg-config --cflags-only-I wayland-egl)
 endif

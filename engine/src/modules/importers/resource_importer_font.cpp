@@ -1,15 +1,15 @@
 #include "modules/importers/resource_importer_font.h"
 
-#include "servers/rendering_server.h"
 #include "scene/resources/font.h"
+#include "servers/rendering_server.h"
 
 #ifdef FREETYPE_ENABLED
-#include <ft2build.h>
-#include FT_FREETYPE_H
-#include FT_OUTLINE_H
+#	include <ft2build.h>
+#	include FT_FREETYPE_H
+#	include FT_OUTLINE_H
 #endif
 
-//TODO: REMOVE, ADD FLOOR/CEIL TO MATH LIB
+// TODO: REMOVE, ADD FLOOR/CEIL TO MATH LIB
 #include <math.h>
 
 #ifdef FREETYPE_ENABLED
@@ -27,7 +27,7 @@ Ref<Resource> ResourceFormatImporterFont::_import(const String &p_file, int p_ar
 	f.instantiate();
 
 	int font_height = 48;
-	int bitmap_size = 256;
+	u64 bitmap_size = 256;
 	if (p_argc >= 2) {
 		font_height = p_args[1];
 	}
@@ -38,19 +38,19 @@ Ref<Resource> ResourceFormatImporterFont::_import(const String &p_file, int p_ar
 	if (diff <= 3) {
 		bitmap_size <<= diff == 2 ? 1 : (diff == 1 ? 2 : 3); // Bitmap next power should always be 3 of the font
 	}
-	
+
 	f->set_font_size(font_height);
 	f->set_bitmap_size(bitmap_size);
 
 	FT_Face face;
-	ERR_FAIL_COND_MSG_R(FT_New_Face(freetype_lib, p_file.get_data(), 0, &face) != 0, vformat("Unable to load Freetype face from path %s", p_file.get_data()).get_data(), Ref<Resource>());
-
+	ERR_FAIL_COND_MSG_R(FT_New_Face(freetype_lib, p_file.get_data(), 0, &face) != 0,
+						vformat("Unable to load Freetype face from path %s", p_file.get_data()).get_data(),
+						Ref<Resource>());
 
 	FT_Set_Pixel_Sizes(face, 0, font_height);
 
-
 	FT_GlyphSlot slot = face->glyph;
-	
+
 	if (p_argc >= 1 && p_args[0].operator bool() == true) {
 		// Load font into a larger bitmap image
 
@@ -60,13 +60,13 @@ Ref<Resource> ResourceFormatImporterFont::_import(const String &p_file, int p_ar
 		}
 
 		u8 *bitmap = (u8 *)Memory::vallocate_zeroed(bitmap_size * bitmap_size);
-		int max_x = 0;
-		int max_y = 0;
-		int max_row = 0;
+		u32 max_x = 0;
+		u32 max_y = 0;
+		u32 max_row = 0;
 		int max_height_pos = 0;
 		int max_height_neg = 0;
 		int border = 1; // 1 px border
-		
+
 		RID r = rs->texture_allocate();
 		if (p_argc >= 3 && p_args[2].operator bool() == true) {
 			rs->texture_use_sdf(r, true);
@@ -157,27 +157,35 @@ Ref<Resource> ResourceFormatImporterFont::_import(const String &p_file, int p_ar
 		Memory::vfree(bitmap);
 	} else {
 		for (u8 c = 0; c < 128; c++) {
-			ERR_FAIL_COND_MSG_R(FT_Load_Char(face, c, FT_LOAD_RENDER) != 0, vformat("Unable to load Freetype character %c", (char)c).get_data(), Ref<Resource>());
+			ERR_FAIL_COND_MSG_R(FT_Load_Char(face, c, FT_LOAD_RENDER) != 0,
+								vformat("Unable to load Freetype character %c", (char)c).get_data(),
+								Ref<Resource>());
 
 			if (p_argc >= 3 && p_args[2].operator bool() == true) {
 				FT_Render_Glyph(slot, FT_RENDER_MODE_SDF);
 			}
-	
+
 			Font::Character ch;
 			ch.texture = rs->texture_allocate();
 			ch.size = Vector2i(slot->bitmap.width, slot->bitmap.rows);
 			ch.bearing = Vector2i(slot->bitmap_left, slot->bitmap_top);
 			ch.advance = slot->advance.x;
-	
+
 			if (!slot->bitmap.buffer) {
 				f->set_character(c, ch);
 				continue;
 			}
-	
-			// Fix lines problem by using the MASK_FILTER_NEAREST. Saves some time at the cost of making the text slightly off.
+
+			// Fix lines problem by using the MASK_FILTER_NEAREST. Saves some time at the cost of making the text
+			// slightly off.
 			rs->texture_use_sdf(ch.texture, true);
-			rs->texture_set_from_data(ch.texture, slot->bitmap.buffer, ch.size.x, ch.size.y, RS::FORMAT_R, RS::MASK_FILTER_NEAREST);
-	
+			rs->texture_set_from_data(ch.texture,
+									  slot->bitmap.buffer,
+									  ch.size.x,
+									  ch.size.y,
+									  RS::FORMAT_R,
+									  RS::MASK_FILTER_NEAREST);
+
 			f->set_character(c, ch);
 		}
 	}

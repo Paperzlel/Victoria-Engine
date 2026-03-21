@@ -1,9 +1,8 @@
 #include "scene/gui/object_ui.h"
 
+#include "core/config/class_registry.h"
 #include "scene/main/viewport.h"
 #include "servers/rendering_server.h"
-
-#include "core/config/class_registry.h"
 
 void ObjectUI::_rect_changed() {
 	Vector2i parent_size = get_parent_rect();
@@ -25,7 +24,7 @@ void ObjectUI::_rect_changed() {
 	if (data.min_size.x > new_size.x) {
 		new_size.x = data.min_size.x;
 	}
-	
+
 	if (data.min_size.y > new_size.y) {
 		new_size.y = data.min_size.y;
 	}
@@ -110,19 +109,19 @@ void ObjectUI::_update_anchor(Axis p_axis, double p_factor, bool p_keep_position
 	Vector2i parent_size = get_parent_rect();
 
 	// New position = offset in parent size + offset if needed
-	
+
 	// If parent resizes, we can't call to re-draw anchors, they need to be cached until disturbed.
 	// So, we can write the X/Y factor out to a vector, then re-calculate the below position.
-	
+
 	data.anchor_factor[p_axis & 1] = p_factor;
-	int new_pos = parent_size[p_axis & 1] * p_factor + (p_keep_position ? data.position[p_axis & 1] : 0) - data.size[p_axis & 1] * p_factor;
+	int new_pos = parent_size[p_axis & 1] * p_factor + (p_keep_position ? data.position[p_axis & 1] : 0) -
+				  data.size[p_axis & 1] * p_factor;
 	data.pos_cached[p_axis & 1] = new_pos;
 }
 
 void ObjectUI::_update_canvas_item_transform() {
 	Transform2D t = get_transform();
 	t.position += data.position;
-
 
 	RS::get_singleton()->item_set_transform(get_canvas_item(), t);
 }
@@ -146,7 +145,7 @@ void ObjectUI::_notification(int p_what) {
 			if (v) {
 				v->connect_method("size_changed", callable_mp(this, &ObjectUI::_rect_changed));
 			}
-			
+
 			_update_minimum_size();
 			_rect_changed();
 			_update_anchors(anchor_location, true);
@@ -223,7 +222,7 @@ Vector2i ObjectUI::get_parent_rect() const {
 	} else {
 		return get_viewport()->get_viewport_size();
 	}
-	
+
 	return Vector2i();
 }
 

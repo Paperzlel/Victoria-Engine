@@ -1,27 +1,25 @@
 #pragma once
 
-#include "core/typedefs.h"
+#include "key_value.h"
+
 #include "core/error/error_macros.h"
 #include "core/os/memory.h"
-
-#include "key_value.h"
+#include "core/typedefs.h"
 
 /**
  * Implementation of a RB Map (see https://en.wikipedia.org/wiki/Red%E2%80%93black_tree)
  */
 
- template<typename K, typename V>
- class RBMap {
+template <typename K, typename V>
+class RBMap {
 	enum Colour {
 		RED,
 		BLACK
 	};
 
 public:
-
 	class Element {
 	private:
-
 		friend class RBMap<K, V>;
 		int colour = RED;
 		Element *left = nullptr;
@@ -32,7 +30,6 @@ public:
 		KeyValue<K, V> _data;
 
 	public:
-
 		KeyValue<K, V> &key_value() {
 			return _data;
 		}
@@ -70,15 +67,18 @@ public:
 		}
 
 		FORCE_INLINE Element(const KeyValue<K, V> &p_kv) :
-				_data(p_kv) {
-		}
+			_data(p_kv) {}
 	};
 
 	struct Iterator {
 		friend class RBMap<K, V>;
 
-		FORCE_INLINE KeyValue<K, V> &operator*() const { return e->key_value(); }
-		FORCE_INLINE  KeyValue<K, V> *operator->() const { return &e->key_value(); }
+		FORCE_INLINE KeyValue<K, V> &operator*() const {
+			return e->key_value();
+		}
+		FORCE_INLINE KeyValue<K, V> *operator->() const {
+			return &e->key_value();
+		}
 
 		FORCE_INLINE Iterator &operator++() {
 			e = e->next();
@@ -90,8 +90,12 @@ public:
 			return *this;
 		}
 
-		FORCE_INLINE bool operator==(const Iterator &p_other) const { return e == p_other.e; }
-		FORCE_INLINE bool operator!=(const Iterator &p_other) const { return e != p_other.e; }
+		FORCE_INLINE bool operator==(const Iterator &p_other) const {
+			return e == p_other.e;
+		}
+		FORCE_INLINE bool operator!=(const Iterator &p_other) const {
+			return e != p_other.e;
+		}
 
 		explicit operator bool() const {
 			return e != nullptr;
@@ -102,11 +106,15 @@ public:
 			return *this;
 		}
 
-		Iterator(Element *p_e) { e = p_e; }
+		Iterator(Element *p_e) {
+			e = p_e;
+		}
 		Iterator() {}
-		Iterator(const Iterator &p_iter) { e = p_iter.e; }
-	private:
+		Iterator(const Iterator &p_iter) {
+			e = p_iter.e;
+		}
 
+	private:
 		Element *e = nullptr;
 	};
 
@@ -117,10 +125,11 @@ public:
 	FORCE_INLINE Iterator end() {
 		return Iterator(nullptr);
 	}
-private:
 
+private:
 	Element *_root = nullptr;
-	// An element that has all of its data uninitialized. Has no parent or sub-nodes or keys, and is set to black as its default colour.
+	// An element that has all of its data uninitialized. Has no parent or sub-nodes or keys, and is set to black as
+	// its default colour.
 	Element *_nil = nullptr;
 	u32 element_count = 0;
 
@@ -187,7 +196,7 @@ private:
 		ERR_COND_NULL(p_node);
 		Element *child = p_node->right;
 		p_node->right = child->left;
-		
+
 		if (child->left != _nil) {
 			child->left->parent = p_node;
 		}
@@ -274,12 +283,11 @@ private:
 						node = parent;
 						parent = node->parent;
 					}
-	
+
 					parent->colour = BLACK;
 					grandparent->colour = RED;
 					_rotate_left(parent);
 				}
-
 			}
 		}
 
@@ -334,7 +342,6 @@ private:
 		Element *node = _nil;
 		Element *parent = node->parent;
 		Element *sibling = p_node;
-
 
 		while (node != _root) {
 			if (sibling->colour == RED) {
@@ -476,9 +483,12 @@ private:
 	}
 
 public:
-
-	FORCE_INLINE u32 size() { return element_count; }
-	FORCE_INLINE bool is_empty() { return element_count == 0; }
+	FORCE_INLINE u32 size() {
+		return element_count;
+	}
+	FORCE_INLINE bool is_empty() {
+		return element_count == 0;
+	}
 
 	FORCE_INLINE Element *find(const K &p_key) const {
 		if (!_root) {
@@ -506,8 +516,6 @@ public:
 			return false; // Invalid key
 		}
 
-
-		
 		_erase(e);
 	}
 

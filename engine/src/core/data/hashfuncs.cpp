@@ -1,27 +1,28 @@
 #include "core/data/hashfuncs.h"
 
-// http://www.cse.yorku.ca/~oz/hash.html 
+// http://www.cse.yorku.ca/~oz/hash.html
 u32 hash_djb2(u8 *str) {
-    unsigned long hash = 5381;
-    int c;
+	unsigned long hash = 5381;
+	int c;
 
-    while ((c = *str++)) {
-        hash = ((hash << 5) + hash) + c;
-    }
+	while ((c = *str++)) {
+		hash = ((hash << 5) + hash) + c;
+	}
 
-    return hash;
+	return hash;
 }
 
 // https://github.com/skeeto/hash-prospector
 u32 hash_lowbias32(u32 x) {
-    x ^= x >> 16;
-    x *= 0x7feb352d;
-    x ^= x >> 15;
-    x *= 0x846ca68b;
-    x ^= x >> 16;
-    return x;
+	x ^= x >> 16;
+	x *= 0x7feb352d;
+	x ^= x >> 15;
+	x *= 0x846ca68b;
+	x ^= x >> 16;
+	return x;
 }
 
+/* clang-format off */
 int PRIMES[] = {
     5,
     11,
@@ -53,5 +54,6 @@ int PRIMES[] = {
     805306457,
     1610612741
 };
+/* clang-format on */
 
 int PRIMES_SIZE = sizeof(PRIMES) / sizeof(int);

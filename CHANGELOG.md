@@ -1,10 +1,14 @@
 # Changelog
 Changes exist in chronological order (i.e. new changes are to be appended to the end of the file). Dates are done in DD/MM/YYYY format with the version number applied to each date if needed.
 
+## 21/3/2026
+- Buildsystem:
+	- Overhauled the buildsystem to be far more feature-rich and modular. We now generate `compile_commands.json`, use `clangd` and `clang-format` for debugging and formattings, and generally have updated how we approach building files to now minimize external dependencies.
+
 ## 18/1/2026
 - Buildsystem:
 	- Fixed compilation errors caused by compiling C code as C++.
-		- We now use separate compilers for each
+		- We now use separate compilers for each.
 
 ## 11/1/2026
 - Editor:

@@ -1,15 +1,13 @@
 #pragma once
 
-#include "core/typedefs.h"
 #include "core/data/rb_map.h"
 #include "core/io/resource.h"
 #include "core/math/vector2i.h"
-
+#include "core/typedefs.h"
 
 class VAPI Font : public Resource {
 	VREGISTER_CLASS(Font, Resource)
 public:
-
 	struct Character {
 		RID texture;
 		Vector2i size;
@@ -20,15 +18,15 @@ public:
 
 	Character get_character(char c) const;
 	void set_character(char c, const Character &p_char);
-protected:
 
+protected:
 	RBMap<char, Character> font_map;
 	u32 font_size = 48;
 	u32 bitmap_size = 256;
 	u32 max_font_height = 0;
 	u32 font_baseline_offset = 0;
-public:
 
+public:
 	void set_font_size(u32 p_size);
 
 	u32 get_max_font_height() const;

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "core/typedefs.h"
 #include "core/io/resource_format_importer.h"
+#include "core/typedefs.h"
 
 /**
  * @brief Importer class for a font.
@@ -12,7 +12,6 @@
  */
 class ResourceFormatImporterFont : public ResourceFormatImporter {
 public:
-
 	virtual Ref<Resource> _import(const String &p_file, int p_argc, Variant *p_args) override;
 
 	ResourceFormatImporterFont();

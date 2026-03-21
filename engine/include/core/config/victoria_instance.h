@@ -1,18 +1,19 @@
 #pragma once
 
-#include "core/typedefs.h"
-
 #include "item.h"
 
+#include "core/typedefs.h"
+
 class VAPI VictoriaInstance : public Item {
-    VREGISTER_CLASS(VictoriaInstance, Item)
+	VREGISTER_CLASS(VictoriaInstance, Item);
 
-    bool started = false;
+	bool started = false;
+
 public:
-    bool initialize();
-    bool iteration();
-    void finalize();
+	bool initialize();
+	bool iteration();
+	void finalize();
 
-    VictoriaInstance();
-    ~VictoriaInstance();
+	VictoriaInstance();
+	~VictoriaInstance();
 };

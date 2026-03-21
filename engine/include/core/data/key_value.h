@@ -16,18 +16,16 @@ public:
 	FORCE_INLINE bool operator==(const KeyValue &p_other) {
 		return key == p_other.key && value == p_other.value;
 	}
-	
+
 	FORCE_INLINE bool operator!=(const KeyValue &p_other) {
 		return key != p_other.key && value != p_other.value;
 	}
 
 	KeyValue(const KeyValue &p_other) :
 		key(p_other.key),
-		value(p_other.value) {
-	}
+		value(p_other.value) {}
 
 	KeyValue(const K &p_key, const V &p_value) :
 		key(p_key),
-		value(p_value) {
-	}
+		value(p_value) {}
 };

@@ -1,13 +1,7 @@
 #include "core/config/main_loop.h"
 
-void MainLoop::initialize() {
+void MainLoop::initialize() {}
 
-}
+void MainLoop::update(double p_delta) {}
 
-void MainLoop::update(double p_delta) {
-
-}
-
-void MainLoop::finalize() {
-
-}
+void MainLoop::finalize() {}

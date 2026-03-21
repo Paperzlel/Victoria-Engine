@@ -1,5 +1,6 @@
 #include "core/error/error_types.h"
 
+/* clang-format off */
 const char *error_messages[] = {
     "OK",
     "Failed",
@@ -18,5 +19,7 @@ const char *error_messages[] = {
     "A bug in the code was found",
     "Help was called for",
 };
+/* clang-format on */
 
-static_assert(sizeof(error_messages) / sizeof(error_messages[0]) == ERR_MAX, "Expected the number of error messages to be the same as ERR_MAX");
+static_assert(sizeof(error_messages) / sizeof(error_messages[0]) == ERR_MAX,
+			  "Expected the number of error messages to be the same as ERR_MAX");

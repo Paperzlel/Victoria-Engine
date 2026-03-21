@@ -1,8 +1,8 @@
 #pragma once
 
-#include "core/typedefs.h"
 #include "core/config/main_loop.h"
 #include "core/data/list.h"
+#include "core/typedefs.h"
 
 #undef Window
 
@@ -12,36 +12,37 @@ class Camera3D;
 
 class VAPI SceneTree : public MainLoop {
 private:
+	static SceneTree *singleton;
+	friend class Object;
 
-    static SceneTree *singleton;
-    friend class Object;
+	Window *root = nullptr;
+	Camera3D *active_camera = nullptr;
+	double update_time = 0.0;
 
-    Window *root = nullptr;
-    Camera3D *active_camera = nullptr;
-    double update_time = 0.0;
+	List<Object *> queued_nodes_for_deletion;
 
-    List<Object *> queued_nodes_for_deletion;
 public:
+	static SceneTree *get_singleton();
 
-    static SceneTree *get_singleton();
+	FORCE_INLINE Window *get_root() const {
+		return root;
+	}
 
-    FORCE_INLINE Window *get_root() const { return root; }
+	void queue_delete(Object *p_object);
+	void flush_delete_queue();
 
-    void queue_delete(Object *p_object);
-    void flush_delete_queue();
+	double get_update_time() const;
 
-    double get_update_time() const;
+	void propagate_tree_notification(int p_what);
 
-    void propagate_tree_notification(int p_what);
+	friend class Camera3D;
+	void set_active_camera(Camera3D *p_camera);
+	Camera3D *get_active_camera();
 
-    friend class Camera3D;
-    void set_active_camera(Camera3D *p_camera);
-    Camera3D *get_active_camera();
+	virtual void initialize() override;
+	virtual void update(double p_delta) override;
+	virtual void finalize() override;
 
-    virtual void initialize() override;
-    virtual void update(double p_delta) override;
-    virtual void finalize() override;
-
-    SceneTree();
-    ~SceneTree();
+	SceneTree();
+	~SceneTree();
 };

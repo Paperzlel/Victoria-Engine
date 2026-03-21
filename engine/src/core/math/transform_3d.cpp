@@ -5,7 +5,7 @@
  * @param p_position The value to apply to the transform
  */
 void Transform3D::set_position(const Vector3 &p_position) {
-    position = p_position;
+	position = p_position;
 }
 
 /**
@@ -13,9 +13,9 @@ void Transform3D::set_position(const Vector3 &p_position) {
  * @param p_quaternion The rotational quaternion to apply to the transform
  */
 void Transform3D::set_rotation(const Quaternion &p_quaternion) {
-    Vector3 scale = basis.get_scale();
-    basis = Mat4::from_scale(scale) * Mat4(p_quaternion);
-    position = (basis * Mat4::translation(position)).get_translation();
+	Vector3 scale = basis.get_scale();
+	basis = Mat4::from_scale(scale) * Mat4(p_quaternion);
+	position = (basis * Mat4::translation(position)).get_translation();
 }
 
 /**
@@ -23,9 +23,9 @@ void Transform3D::set_rotation(const Quaternion &p_quaternion) {
  * @param p_scale The scale to apply to the transform
  */
 void Transform3D::set_scale(const Vector3 &p_scale) {
-    Quaternion rot = basis.get_quaternion();
-    basis = Mat4::from_scale(p_scale) * Mat4(rot);
-    position *= p_scale;
+	Quaternion rot = basis.get_quaternion();
+	basis = Mat4::from_scale(p_scale) * Mat4(rot);
+	position *= p_scale;
 }
 
 /**
@@ -33,16 +33,16 @@ void Transform3D::set_scale(const Vector3 &p_scale) {
  * @param p_offset The vector by which one wants to translate the object by
  */
 void Transform3D::translate(const Vector3 &p_offset) {
-    *this = translated(p_offset);
+	*this = translated(p_offset);
 }
 
 /**
  * @brief Returns a translated version of the current transform.
- * @param p_offset The amount one wants to offset the current point by 
+ * @param p_offset The amount one wants to offset the current point by
  * @returns The current transform offset by the given amount
  */
 Transform3D Transform3D::translated(const Vector3 &p_offset) {
-    return Transform3D(basis, position + p_offset);
+	return Transform3D(basis, position + p_offset);
 }
 
 /**
@@ -50,7 +50,7 @@ Transform3D Transform3D::translated(const Vector3 &p_offset) {
  * @param p_quaternion The quaternion by which one wants to rotate by
  */
 void Transform3D::rotate(const Quaternion &p_quaternion) {
-    *this = rotated(p_quaternion);
+	*this = rotated(p_quaternion);
 }
 
 /**
@@ -59,8 +59,8 @@ void Transform3D::rotate(const Quaternion &p_quaternion) {
  * @returns A rotated version of the current transform
  */
 Transform3D Transform3D::rotated(const Quaternion &p_quaternion) {
-    Mat4 b(p_quaternion);
-    return Transform3D(b * basis, (b * Mat4::translation(position)).get_translation());
+	Mat4 b(p_quaternion);
+	return Transform3D(b * basis, (b * Mat4::translation(position)).get_translation());
 }
 
 /**
@@ -68,7 +68,7 @@ Transform3D Transform3D::rotated(const Quaternion &p_quaternion) {
  * @param p_scale The scale factor by which one wants to scale the current transform
  */
 void Transform3D::scale(const Vector3 &p_scale) {
-    *this = scaled(p_scale);
+	*this = scaled(p_scale);
 }
 
 /**
@@ -77,8 +77,8 @@ void Transform3D::scale(const Vector3 &p_scale) {
  * @returns A scaled version of the current transform
  */
 Transform3D Transform3D::scaled(const Vector3 &p_scale) {
-    Mat4 b = Mat4::from_scale(p_scale);
-    return Transform3D(b * basis, (b * Mat4::translation(position)).get_translation());
+	Mat4 b = Mat4::from_scale(p_scale);
+	return Transform3D(b * basis, (b * Mat4::translation(position)).get_translation());
 }
 
 /**
@@ -86,9 +86,9 @@ Transform3D Transform3D::scaled(const Vector3 &p_scale) {
  * @param p_offset The offset by which one wants to move the current point
  */
 void Transform3D::translate_local(const Vector3 &p_offset) {
-    for (int i = 0; i < 3; i++) {
-        position[i] += Vector3(basis.data[4 * i], basis.data[4 * i + 1], basis.data[4 * i + 2]).dot(p_offset);
-    } 
+	for (int i = 0; i < 3; i++) {
+		position[i] += Vector3(basis.data[4 * i], basis.data[4 * i + 1], basis.data[4 * i + 2]).dot(p_offset);
+	}
 }
 
 /**
@@ -97,7 +97,7 @@ void Transform3D::translate_local(const Vector3 &p_offset) {
  * @returns A translated version of the current transform
  */
 Transform3D Transform3D::translated_local(const Vector3 &p_offset) {
-    return Transform3D(basis, position + (basis * Mat4::translation(p_offset)).get_translation());
+	return Transform3D(basis, position + (basis * Mat4::translation(p_offset)).get_translation());
 }
 
 /**
@@ -105,7 +105,7 @@ Transform3D Transform3D::translated_local(const Vector3 &p_offset) {
  * @param p_quaternion The quaternion by which to rotate the transform
  */
 void Transform3D::rotate_local(const Quaternion &p_quaternion) {
-    *this = rotated_local(p_quaternion);
+	*this = rotated_local(p_quaternion);
 }
 
 /**
@@ -114,8 +114,8 @@ void Transform3D::rotate_local(const Quaternion &p_quaternion) {
  * @returns A rotated version of the current transform
  */
 Transform3D Transform3D::rotated_local(const Quaternion &p_quaternion) {
-    Mat4 b(p_quaternion);
-    return Transform3D(basis * b, position);
+	Mat4 b(p_quaternion);
+	return Transform3D(basis * b, position);
 }
 
 /**
@@ -123,7 +123,7 @@ Transform3D Transform3D::rotated_local(const Quaternion &p_quaternion) {
  * @param p_scale The scale factor by which to scale the transform
  */
 void Transform3D::scale_local(const Vector3 &p_scale) {
-    *this = scaled_local(p_scale);
+	*this = scaled_local(p_scale);
 }
 
 /**
@@ -132,8 +132,8 @@ void Transform3D::scale_local(const Vector3 &p_scale) {
  * @returns A scaled version of the current transform
  */
 Transform3D Transform3D::scaled_local(const Vector3 &p_scale) {
-    Mat4 b = Mat4::from_scale(p_scale);
-    return Transform3D(basis * b, position);
+	Mat4 b = Mat4::from_scale(p_scale);
+	return Transform3D(basis * b, position);
 }
 
 /**
@@ -143,9 +143,9 @@ Transform3D Transform3D::scaled_local(const Vector3 &p_scale) {
  * @param p_up The "up" vector relative to the camera
  */
 void Transform3D::look_at_from(const Vector3 &p_position, const Vector3 &p_target, const Vector3 &p_up) {
-    basis = Mat4::look_at(p_position, p_target, p_up);
-    position = basis.get_translation();
-    basis.zero_translation();
+	basis = Mat4::look_at(p_position, p_target, p_up);
+	position = basis.get_translation();
+	basis.zero_translation();
 }
 
 /**
@@ -155,31 +155,31 @@ void Transform3D::look_at_from(const Vector3 &p_position, const Vector3 &p_targe
  * @returns A transform representing the given look-at matrix
  */
 Transform3D Transform3D::look_at(const Vector3 &p_target, const Vector3 &p_up) const {
-    Transform3D t = *this;
-    t.basis = Mat4::look_at(t.position, p_target, p_up);
-    t.position = t.basis.get_translation();
-    t.basis.zero_translation();
-    return t;
+	Transform3D t = *this;
+	t.basis = Mat4::look_at(t.position, p_target, p_up);
+	t.position = t.basis.get_translation();
+	t.basis.zero_translation();
+	return t;
 }
 
 /**
  * @brief Obtains the current transform as a `Mat4` to be used within rendering APIs and so forth.
  */
 Mat4 Transform3D::get_model() const {
-    Mat4 model = basis;
-    model.data[3] = position.x;
-    model.data[7] = position.y;
-    model.data[11] = position.z;
-    return model;
+	Mat4 model = basis;
+	model.data[3] = position.x;
+	model.data[7] = position.y;
+	model.data[11] = position.z;
+	return model;
 }
 
 /**
- * @brief Modifies the current transform to represent a series of transforms in the opposite direction to where they would usually
- * point. 
+ * @brief Modifies the current transform to represent a series of transforms in the opposite direction to where they
+ * would usually point.
  */
 void Transform3D::invert() {
-    basis.invert();
-    position = (basis * Mat4::translation(position)).get_translation();
+	basis.invert();
+	position = (basis * Mat4::translation(position)).get_translation();
 }
 
 /**
@@ -187,23 +187,23 @@ void Transform3D::invert() {
  * @returns The current transform, inverted.
  */
 Transform3D Transform3D::inverse() const {
-    Transform3D ret = *this;
-    ret.invert();
-    return ret;
+	Transform3D ret = *this;
+	ret.invert();
+	return ret;
 }
 
 void Transform3D::operator*=(const Transform3D &p_other) {
-    position += (basis * Mat4::translation(p_other.position)).get_translation();
-    basis *= p_other.basis;
+	position += (basis * Mat4::translation(p_other.position)).get_translation();
+	basis *= p_other.basis;
 }
 
 Transform3D Transform3D::operator*(const Transform3D &p_other) {
-    Transform3D t = *this;
-    t *= p_other;
-    return t;
+	Transform3D t = *this;
+	t *= p_other;
+	return t;
 }
 
 Transform3D::Transform3D(const Mat4 &p_look_at) {
-    basis = p_look_at;
-    position = p_look_at.get_translation();
+	basis = p_look_at;
+	position = p_look_at.get_translation();
 }

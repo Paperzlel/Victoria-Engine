@@ -3,10 +3,10 @@
 ResourceImporter *ResourceImporter::singleton = nullptr;
 
 ResourceImporter *ResourceImporter::get_singleton() {
-    return singleton;
+	return singleton;
 }
 void ResourceImporter::add_importer(Ref<ResourceFormatImporter> p_importer) {
-    importers.push_back(p_importer);
+	importers.push_back(p_importer);
 }
 
 /**
@@ -18,31 +18,31 @@ void ResourceImporter::add_importer(Ref<ResourceFormatImporter> p_importer) {
  * @returns A resource file of the desired type if successful, and otherwise a null resource if the operation fails.
  */
 Ref<Resource> ResourceImporter::import(const String &p_path, int p_argc, Variant *p_args, Error *r_error) {
-    for (const Ref<ResourceFormatImporter> &i : importers) {
-        List<String> supported_formats = i->get_extension_list();
-        List<String>::Element *e = supported_formats.front();
+	for (const Ref<ResourceFormatImporter> &i : importers) {
+		List<String> supported_formats = i->get_extension_list();
+		List<String>::Element *e = supported_formats.front();
 
-        while (e) {
-            if (p_path.get_file_extension() == e->get()) {
-                Ref<Resource> ret = i->_import(p_path, p_argc, p_args);
-                if (ret == Ref<Resource>()) {
-                    if (r_error) {
-                        *r_error = ERR_CANT_CREATE;
-                    }
-                    ERR_FAIL_MSG_R("Could not properly import the resource.", Ref<Resource>());
-                }
-                if (r_error) {
-                    *r_error = OK;
-                }
-                return ret;
-            }
-            e = e->next();
-        }
-    }
+		while (e) {
+			if (p_path.get_file_extension() == e->get()) {
+				Ref<Resource> ret = i->_import(p_path, p_argc, p_args);
+				if (ret == Ref<Resource>()) {
+					if (r_error) {
+						*r_error = ERR_CANT_CREATE;
+					}
+					ERR_FAIL_MSG_R("Could not properly import the resource.", Ref<Resource>());
+				}
+				if (r_error) {
+					*r_error = OK;
+				}
+				return ret;
+			}
+			e = e->next();
+		}
+	}
 
-    return Ref<Resource>();
+	return Ref<Resource>();
 }
 
 ResourceImporter::ResourceImporter() {
-    singleton = this;
+	singleton = this;
 }

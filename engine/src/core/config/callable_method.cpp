@@ -1,75 +1,72 @@
 #include "core/config/callable_method.h"
 
 void CallableMethod::callp(const Variant **p_args, Error &r_error) const {
-    r_error = OK;
-    base->call(p_args == nullptr ? nullptr : p_args);
+	r_error = OK;
+	base->call(p_args == nullptr ? nullptr : p_args);
 }
 
 String CallableMethod::get_name() const {
-    if (base) {
-        return base->get_name();
-    }
-    return "";
+	if (base) {
+		return base->get_name();
+	}
+	return "";
 }
 
 void CallableMethod::operator=(const CallableMethod &p_other) {
-    CallableMethodBase *cleanup = nullptr;
-    if (base == p_other.base) {
-        return;
-    }
+	CallableMethodBase *cleanup = nullptr;
+	if (base == p_other.base) {
+		return;
+	}
 
-    cleanup = base;
-    base = nullptr;
+	cleanup = base;
+	base = nullptr;
 
-    if (p_other.base->refcount.ref()) {
-        base = p_other.base;
-    }
+	if (p_other.base->refcount.ref()) {
+		base = p_other.base;
+	}
 
-    if (cleanup != nullptr && cleanup->refcount.unref()) {
-        vdelete(cleanup);
-    }
+	if (cleanup != nullptr && cleanup->refcount.unref()) {
+		vdelete(cleanup);
+	}
 
-    cleanup = nullptr;
+	cleanup = nullptr;
 }
 
-
 bool CallableMethod::operator==(const CallableMethod &p_other) {
-    if (base == p_other.base) {
-        return true;
-    }
+	if (base == p_other.base) {
+		return true;
+	}
 
-    return false;
+	return false;
 }
 
 bool CallableMethod::operator!=(const CallableMethod &p_other) {
-    if (base == p_other.base) {
-        return false;
-    }
+	if (base == p_other.base) {
+		return false;
+	}
 
-    return true;
+	return true;
 }
 
-
 CallableMethod::CallableMethod(CallableMethodBase *p_base) {
-    base = p_base;
+	base = p_base;
 }
 
 CallableMethod::~CallableMethod() {
-    if (base && base->refcount.unref()) {
-        vdelete(base);
-        base = nullptr;
-    }
+	if (base && base->refcount.unref()) {
+		vdelete(base);
+		base = nullptr;
+	}
 }
 
-
 CallableMethodBase::CallableMethodBase() {
-    refcount.init();
+	refcount.init();
 }
 
 String CallableMethodBase::get_name() const {
-    return name;
+	return name;
 }
 
 void CallableMethodBase::set_name(const String &p_name) {
-    name = p_name;
+	name = p_name;
 }

@@ -37,10 +37,6 @@ void Font::set_bitmap_size(u32 p_size) {
 	bitmap_size = p_size;
 }
 
-Font::Font() {
+Font::Font() {}
 
-}
-
-Font::~Font() {
-
-}
+Font::~Font() {}

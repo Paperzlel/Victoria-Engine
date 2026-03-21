@@ -6,8 +6,8 @@
 void Text::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_TRANSFORM_CHANGED: {
-            Transform2D t = get_transform();
-		    for (const Character &c : text_charlist) {
+			Transform2D t = get_transform();
+			for (const Character &c : text_charlist) {
 				Transform2D c_t = t;
 				c_t.position += c.position;
 				RS::get_singleton()->item_set_rect_offset(c.id, c_t.position);
@@ -55,9 +55,10 @@ void Text::set_text(const String &p_text) {
 	Vector2 new_size;
 	new_size.y = max_y;
 
-	ERR_FAIL_COND_MSG(font.is_null(), "Could not get a list of font rects as the current font resource does not exist.");
+	ERR_FAIL_COND_MSG(font.is_null(),
+					  "Could not get a list of font rects as the current font resource does not exist.");
 
-	for (u32 i = 0; i < p_text.length(); i++) {
+	for (int i = 0; i < p_text.length(); i++) {
 		char c = p_text[i];
 		Font::Character loaded_char = font->get_character(c);
 		Character ch;
@@ -73,11 +74,9 @@ void Text::set_text(const String &p_text) {
 		u32 bmp_size = font->get_bitmap_size();
 		Vector2i pos = Vector2i(x + loaded_char.bearing.x, y + baseline - loaded_char.bearing.y);
 		RS::get_singleton()->item_set_texture_rect(ch.id, loaded_char.texture, pos, loaded_char.size);
-		RS::get_singleton()->item_set_uv_rect(
-			ch.id,
-			(Vector2) loaded_char.origin / bmp_size,
-			(Vector2) loaded_char.size / bmp_size
-		);
+		RS::get_singleton()->item_set_uv_rect(ch.id,
+											  (Vector2)loaded_char.origin / bmp_size,
+											  (Vector2)loaded_char.size / bmp_size);
 		RS::get_singleton()->item_set_ysort(ch.id, get_ysort());
 
 		ch.position = pos;
@@ -96,6 +95,4 @@ Text::Text() {
 	set_ysort(1);
 }
 
-Text::~Text() {
-
-}
+Text::~Text() {}

@@ -142,8 +142,11 @@ FORCE_INLINE u32 find_log2(u32 p_input) {
 // http://loungecpp.wikidot.com/tips-and-tricks:indices
 // Expands a variadic macro into its constituent parts
 
-template <u64... Is> struct Indicies {};
+template <u64... Is>
+struct Indicies {};
 
-template <u64 N, u64... Is> struct BuildIndicies : BuildIndicies<N - 1, N - 1, Is...> {};
+template <u64 N, u64... Is>
+struct BuildIndicies : BuildIndicies<N - 1, N - 1, Is...> {};
 
-template <u64... Is> struct BuildIndicies<0, Is...> : Indicies<Is...> {};
+template <u64... Is>
+struct BuildIndicies<0, Is...> : Indicies<Is...> {};
