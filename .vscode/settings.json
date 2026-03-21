@@ -31,4 +31,17 @@
     },
     "markdown.preview.fontFamily": "\"JetBrains Mono\"",
     "editor.fontFamily": "'JetBrains Mono'",
+    "clangd.arguments": [
+        "--header-insertion=never"
+    ],
+
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "xaver.clang-format",
+    "clang-format.executable.linux": "/usr/bin/clang-format",
+    "clang-format.executable.windows": "C:\\Program Files\\LLVM\\bin\\clang-format.exe",
+    "clangd.path": "/usr/bin/clangd",
+    "editor.insertSpaces": false,
+    "editor.tabSize": 4,
+    "editor.detectIndentation": true,
+    "editor.autoIndent": "full",
 }

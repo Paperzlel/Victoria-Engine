@@ -7,11 +7,8 @@ ifeq ($(PLATFORM), linux)
 	LDFLAGS += -Wl,-rpath='$$ORIGIN'
 endif
 
-ifeq ($(COMPILER), clang)
-	CPPFLAGS += -fdeclspec
-endif
-
 # Source files and directories
+DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 C_FILES :=
 CPP_FILES :=
 DIRECTORIES :=
@@ -62,7 +59,6 @@ ifneq ("$(DIRECTORIES)","")
 	@mkdir -p $(addprefix $(BUILD_DIR)/$(TARGET)/,$(DIRECTORIES))
 endif
 endif
-	@$(COMPILEGEN) -o compile_flags.txt --args $(CPPFLAGS) $(DEFINES) $(INCLUDES) $(LDFLAGS)
 	@echo Done.
 
 
@@ -84,12 +80,15 @@ ifeq ($(PLATFORM), win32)
 endif
 ifeq ($(PLATFORM), linux)
 	@rm -rf $(BUILD_DIR)/$(TARGET)
-	@rm -f $(BUILD_DIR)/$(OUTPUT_NAME)
+	@rm -f $(BUILD_DIR)/$(OUTPUT_FILE)
 endif
 
 
 $(BUILD_DIR)/$(TARGET)/%.o: src/%.cpp
 	@echo   $<...
 	@$(CXX) $< $(CPPFLAGS) -c -o $@ $(DEFINES) $(INCLUDES)
+ifeq ($(RUN_COMPILE_CMDS),yes)
+	@$(COMPILECMDS) --args $(CXX) $(CPPFLAGS) -c -o $(DEFINES) $(INCLUDES) --file $< --output $@ --directory $(DIR)
+endif
 
 -include $(OBJ_FILES:.o=.d)

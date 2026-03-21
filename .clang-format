@@ -1,0 +1,30 @@
+BasedOnStyle: LLVM
+BreakBeforeBraces: Attach
+ColumnLimit: 119
+NamespaceIndentation: All
+AlignAfterOpenBracket: true
+AllowAllArgumentsOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortEnumsOnASingleLine: false
+BinPackArguments: false
+BinPackParameters: false
+IndentCaseLabels: true
+IndentWidth: 4
+IndentPPDirectives: AfterHash
+InsertBraces: true
+LineEnding: LF
+# Disabled, enable when clang 19 is available on Mint
+# KeepEmptyLines:
+#   AtEndOfFile: false
+#   AtStartOfBlock: false
+#   AtStartOfFile: false
+# Replace with above past clangd-19
+KeepEmptyLinesAtTheStartOfBlocks: false
+KeepEmptyLinesAtEOF: true
+MaxEmptyLinesToKeep: 1
+PointerAlignment: Right
+TabWidth: 4
+UseTab: Always

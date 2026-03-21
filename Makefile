@@ -25,20 +25,26 @@ export RUN_TESTS := no
 export BUILD_DIR := bin
 export COMPILER := clang
 export PYTHON := python
-export COMPILEGEN :=
+export RUN_COMPILE_CMDS := no
+export COMPILECMDS :=
 
 
 # Auto-check platform options
 ifeq ($(PLATFORM), linux)
 	VERSION := $(shell python3 version.py)
 	PYTHON := python3
-	COMPILEGEN := $(abspath $(BUILD_DIR))/compilegen
+	COMPILECMDS := $(PYTHON) $(abspath make_compile_commands.py)
 endif
 ifeq ($(PLATFORM), win32)
 	VERSION := $(shell python version.py)
 	PYTHON := python
-	COMPILEGEN := $(abspath $(BUILD_DIR))/compilegen.exe
+	COMPILECMDS := $(PYTHON) $(abspath make_compile_commands.py)
 endif
+
+# Can only happen prior to a full rebuild
+ifeq ("$(wildcard $(BUILD_DIR)/assets)","")
+	RUN_COMPILE_CMDS := yes
+endif 
 
 # Ignore commit hash on certain builds.
 ifneq ($(IGNORE_VERSION_HASH), yes)
@@ -77,7 +83,6 @@ endif
 ifeq ($(COMPILER), gcc)
 	CXX := g++
 	CC := gcc
-	CPPFLAGS += -Wno-sign-compare
 endif
 
 # Confirm platform-specific compiler options
@@ -105,10 +110,16 @@ ifeq ($(PLATFORM), linux)
 	@cp -r assets $(BUILD_DIR)
 endif
 
-	@$(MAKE) -C utils
+ifeq ($(RUN_COMPILE_CMDS),yes)
+	@$(COMPILECMDS) --begin
+endif
 	@$(MAKE) -C engine
 	@$(MAKE) -C editor
+ifeq ($(RUN_COMPILE_CMDS),yes)
+	@$(COMPILECMDS) --end
+endif
 
 clean:
 	@$(MAKE) clean -C engine
 	@$(MAKE) clean -C editor
+	rm -rf $(BUILD_DIR)/assets
