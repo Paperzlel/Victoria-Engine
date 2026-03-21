@@ -1,3 +1,5 @@
 # This file is for all diffs that have excessive noise and don't contribute to the
 # commit history. 
 
+# Initial clang-format pass
+a261e6519c8a741a2683cc179e7d9664a0019f7d
