@@ -91,6 +91,14 @@ ifeq ($(PLATFORM), linux)
 endif
 endif
 
+# Setup GLAD file whitelist
+C_FILES := $(patsubst src/thirdparty/glad/%.c,,$(C_FILES))
+C_FILES += src/thirdparty/glad/src/gl.c \
+	src/thirdparty/glad/src/egl.c
+# GLX will fail to compile on Windows, preventative measure.
+ifeq ($(USE_X11),yes)
+	C_FILES += src/thirdparty/glad/src/glx.c
+endif 
 
 # Setup freetype file whitelist
 C_FILES := $(patsubst src/thirdparty/freetype/%.c,,$(C_FILES))
