@@ -11,9 +11,9 @@
 #include "core/typedefs.h"
 #include "core/variant/array.h"
 
-typedef Vector<u8> ByteArray;
-typedef Vector<i32> Int32Array;
-typedef Vector<i64> Int64Array;
+typedef Vector<uint8_t> ByteArray;
+typedef Vector<int32_t> Int32Array;
+typedef Vector<int64_t> Int64Array;
 typedef Vector<float> Float32Array;
 typedef Vector<double> Float64Array;
 typedef Vector<Vector2> Vector2Array;
@@ -117,11 +117,11 @@ private:
 
 	union {
 		bool _bool;
-		i64 _int;
+		int64_t _int;
 		double _float;
 		ArrayRefBase *_array;
 		void *_ptr; // General pointer type
-		u8 _mem[sizeof(double) * 4]{0};
+		uint8_t _mem[sizeof(double) * 4]{0};
 	} _data alignas(8);
 
 	FORCE_INLINE void clear() {
@@ -175,14 +175,14 @@ public:
 	bool hash_compare(const Variant &p_other, int recursion_count) const;
 
 	operator bool() const;
-	operator i8() const;
-	operator i16() const;
-	operator i32() const;
-	operator i64() const;
-	operator u64() const;
-	operator u32() const;
-	operator u16() const;
-	operator u8() const;
+	operator int8_t() const;
+	operator int16_t() const;
+	operator int32_t() const;
+	operator int64_t() const;
+	operator uint64_t() const;
+	operator uint32_t() const;
+	operator uint16_t() const;
+	operator uint8_t() const;
 	operator float() const;
 	operator double() const;
 	operator String() const;
@@ -202,14 +202,14 @@ public:
 	operator Vector3Array() const;
 	operator Vector4Array() const;
 
-	Variant(i8 p_int);
-	Variant(i16 p_int);
-	Variant(i32 p_int);
-	Variant(i64 p_int);
-	Variant(u8 p_uint);
-	Variant(u16 p_uint);
-	Variant(u32 p_uint);
-	Variant(u64 p_uint);
+	Variant(int8_t p_int);
+	Variant(int16_t p_int);
+	Variant(int32_t p_int);
+	Variant(int64_t p_int);
+	Variant(uint8_t p_uint);
+	Variant(uint16_t p_uint);
+	Variant(uint32_t p_uint);
+	Variant(uint64_t p_uint);
 	Variant(bool p_bool);
 	Variant(float p_float);
 	Variant(double p_double);

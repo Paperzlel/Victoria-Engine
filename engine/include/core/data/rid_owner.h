@@ -8,7 +8,7 @@
 #include "core/typedefs.h"
 
 class RIDAllocatorBase {
-	static AtomicCounter<u64> global_counter;
+	static AtomicCounter<uint64_t> global_counter;
 
 public:
 	static RID _gen_rid() {
@@ -17,11 +17,11 @@ public:
 		return rid;
 	}
 
-	static u64 _gen_id() {
+	static uint64_t _gen_id() {
 		return global_counter.increment();
 	}
 
-	static RID _gen_from_uint(u64 p_uint) {
+	static RID _gen_from_uint(uint64_t p_uint) {
 		RID rid;
 		rid._id = p_uint;
 		return rid;
@@ -34,36 +34,36 @@ class RIDAllocator : public RIDAllocatorBase {
 	// if the position is free or not.
 	struct Item {
 		T data;
-		u32 validator;
+		uint32_t validator;
 	};
 
 	// Pointer of pointers for chunks and their arrays
 	Item **items = nullptr;
 	// Free list of the next available RIDs
-	u32 **free_list = nullptr;
+	uint32_t **free_list = nullptr;
 
 	// Maximum number of chunks that the allocator can hold
-	u64 max_chunks;
+	uint64_t max_chunks;
 	// The maximumn number of allocations that can occur before a new chunk is needed
-	u64 max_allocations = 0;
+	uint64_t max_allocations = 0;
 	// The number of items currently allocated
-	u64 items_allocated = 0;
+	uint64_t items_allocated = 0;
 	// The maximum number of items a chunk can hold
-	u64 items_per_chunk;
+	uint64_t items_per_chunk;
 
 	FORCE_INLINE RID _allocate_rid() {
 		if (items_allocated == max_allocations) {
-			u64 new_chunk_count = max_allocations / items_per_chunk;
+			uint64_t new_chunk_count = max_allocations / items_per_chunk;
 
 			ERR_FAIL_COND_MSG_R(new_chunk_count == max_chunks, "Item RID limit reached.", RID());
 
 			items = (Item **)Memory::vreallocate(items, sizeof(Item *) * (new_chunk_count + 1));
 			items[new_chunk_count] = (Item *)Memory::vallocate(sizeof(Item) * items_per_chunk);
 
-			free_list = (u32 **)Memory::vreallocate(free_list, sizeof(u32 *) * (new_chunk_count + 1));
-			free_list[new_chunk_count] = (u32 *)Memory::vallocate(sizeof(u32) * items_per_chunk);
+			free_list = (uint32_t **)Memory::vreallocate(free_list, sizeof(uint32_t *) * (new_chunk_count + 1));
+			free_list[new_chunk_count] = (uint32_t *)Memory::vallocate(sizeof(uint32_t) * items_per_chunk);
 
-			for (u64 i = 0; i < items_per_chunk; i++) {
+			for (uint64_t i = 0; i < items_per_chunk; i++) {
 				items[new_chunk_count][i].validator = 0xffffffff; // Set to invalid ID
 				free_list[new_chunk_count][i] = items_allocated + i;
 			}
@@ -71,14 +71,14 @@ class RIDAllocator : public RIDAllocatorBase {
 		}
 
 		// The next available RID slot in the current chunk
-		u64 first_free = free_list[items_allocated / items_per_chunk][items_allocated % items_per_chunk];
+		uint64_t first_free = free_list[items_allocated / items_per_chunk][items_allocated % items_per_chunk];
 
-		u64 chunk_id = first_free / items_per_chunk;
-		u64 item_idx = first_free % items_per_chunk;
+		uint64_t chunk_id = first_free / items_per_chunk;
+		uint64_t item_idx = first_free % items_per_chunk;
 
-		u32 validator = u32(_gen_id() & 0x7fffffff); // Check for RID overflow
+		uint32_t validator = uint32_t(_gen_id() & 0x7fffffff); // Check for RID overflow
 		ERR_COND_FATAL(validator == 0x7fffffff);
-		u64 id = validator;
+		uint64_t id = validator;
 		id <<= 32;
 		id |= first_free;
 
@@ -112,13 +112,13 @@ public:
 			return nullptr;
 		}
 
-		u64 id = p_rid.get_id();
-		u32 index = u32(id & 0xffffffff);
+		uint64_t id = p_rid.get_id();
+		uint32_t index = uint32_t(id & 0xffffffff);
 
-		u64 chunk_id = index / items_per_chunk;
-		u64 chunk_idx = index % items_per_chunk;
+		uint64_t chunk_id = index / items_per_chunk;
+		uint64_t chunk_idx = index % items_per_chunk;
 
-		u32 validator = u32(id >> 32);
+		uint32_t validator = uint32_t(id >> 32);
 
 		Item &i = items[chunk_id][chunk_idx];
 
@@ -152,25 +152,25 @@ public:
 	}
 
 	FORCE_INLINE bool owns(const RID &p_rid) const {
-		u64 id = p_rid.get_id();
-		u32 index = u32(id & 0xffffffff);
+		uint64_t id = p_rid.get_id();
+		uint32_t index = uint32_t(id & 0xffffffff);
 
-		u64 chunk_id = index / items_per_chunk;
-		u64 chunk_idx = index % items_per_chunk;
+		uint64_t chunk_id = index / items_per_chunk;
+		uint64_t chunk_idx = index % items_per_chunk;
 
-		u32 validator = id >> 32;
+		uint32_t validator = id >> 32;
 		bool owned = (validator != 0x7fffffff) && (items[chunk_id][chunk_idx].validator & 0x7fffffff) == validator;
 		return owned;
 	}
 
 	FORCE_INLINE void free(const RID &p_rid) {
-		u64 id = p_rid.get_id();
-		u64 index = u32(id & 0xffffffff);
+		uint64_t id = p_rid.get_id();
+		uint64_t index = uint32_t(id & 0xffffffff);
 
-		u64 chunk_id = index / items_per_chunk;
-		u64 chunk_idx = index % items_per_chunk;
+		uint64_t chunk_id = index / items_per_chunk;
+		uint64_t chunk_idx = index % items_per_chunk;
 
-		u32 validator = u32(id >> 32);
+		uint32_t validator = uint32_t(id >> 32);
 		ERR_FAIL_COND_MSG(items[chunk_id][chunk_idx].validator & 0x80000000,
 						  "Attempted to free an uninitialized RID.");
 		ERR_FAIL_COND(items[chunk_id][chunk_idx].validator != validator);
@@ -184,23 +184,23 @@ public:
 	}
 
 	FORCE_INLINE void get_owned_list(Vector<RID> *p_list) const {
-		for (u64 i = 0; i < max_allocations; i++) {
-			u64 validator = items[i / items_per_chunk][i % items_per_chunk].validator;
+		for (uint64_t i = 0; i < max_allocations; i++) {
+			uint64_t validator = items[i / items_per_chunk][i % items_per_chunk].validator;
 			if (validator != 0xffffffff) {
 				p_list->push_back(_gen_from_uint((validator << 32) | i));
 			}
 		}
 	}
 
-	RIDAllocator(u64 max_chunk_size = 16384, u64 max_item_count = 65536) {
+	RIDAllocator(uint64_t max_chunk_size = 16384, uint64_t max_item_count = 65536) {
 		max_chunks = max_item_count / max_chunk_size; // By default, we have 4 chunks.
 		items_per_chunk = sizeof(T) > max_chunk_size ? 1 : (max_chunk_size / sizeof(T));
 	}
 
 	~RIDAllocator() {
 		if (items_allocated) {
-			for (u64 i = 0; i < max_allocations; i++) {
-				u64 validator = items[i / items_per_chunk][i % items_per_chunk].validator;
+			for (uint64_t i = 0; i < max_allocations; i++) {
+				uint64_t validator = items[i / items_per_chunk][i % items_per_chunk].validator;
 				if (validator & 0x80000000) {
 					continue; // Never initialized
 				}
@@ -211,8 +211,8 @@ public:
 			}
 		}
 
-		u32 chunks_used = max_allocations / items_per_chunk;
-		for (u32 i = 0; i < chunks_used; i++) {
+		uint32_t chunks_used = max_allocations / items_per_chunk;
+		for (uint32_t i = 0; i < chunks_used; i++) {
 			Memory::vfree(items[i]);
 			Memory::vfree(free_list[i]);
 		}
@@ -275,6 +275,6 @@ public:
 		allocator.get_owned_list(p_list);
 	}
 
-	RIDOwner(u64 max_chunk_size = 16384, u64 max_item_count = 65536) :
+	RIDOwner(uint64_t max_chunk_size = 16384, uint64_t max_item_count = 65536) :
 		allocator(max_chunk_size, max_item_count) {}
 };

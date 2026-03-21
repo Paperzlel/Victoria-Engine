@@ -147,7 +147,7 @@ XVisualInfo *GLManagerX11::get_visual_info() {
  * @param win A pointer to an X11 window struct
  * @returns The ID of the new window
  */
-u8 GLManagerX11::create_window(Window *win) {
+uint8_t GLManagerX11::create_window(Window *win) {
 	GLWindow *n_window = vnew(GLWindow);
 	n_window->id = 0;
 	n_window->win = win;
@@ -165,7 +165,7 @@ u8 GLManagerX11::create_window(Window *win) {
  * @brief Makes the current context null and destroys the active window.
  * @param p_id The ID of the window to destroy
  */
-void GLManagerX11::destroy_window(u8 p_id) {
+void GLManagerX11::destroy_window(uint8_t p_id) {
 	if (!_active_window) {
 		return;
 	}
@@ -182,8 +182,8 @@ void GLManagerX11::destroy_window(u8 p_id) {
  * @brief Sets the window with the given ID to be the active one. Sets the context of the given window to current.
  * @param p_id The ID of the window to set as current
  */
-void GLManagerX11::set_active_window(u8 p_id) {
-	if (p_id == (u8)-1) {
+void GLManagerX11::set_active_window(uint8_t p_id) {
+	if (p_id == (uint8_t)-1) {
 		return;
 	}
 
@@ -265,6 +265,6 @@ void GLManagerX11::swap_buffers() const {
  * @param width The new width of the viewport
  * @param height The new height of the viewport
  */
-void GLManagerX11::resize_viewport(u16 width, u16 height) const {}
+void GLManagerX11::resize_viewport(uint16_t width, uint16_t height) const {}
 
 #endif // PLATFORM_LINUX

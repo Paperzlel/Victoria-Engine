@@ -55,11 +55,11 @@ Array::ConstIterator Array::end() const {
 	return ConstIterator(_data->_array.ptr() + _data->_array.size());
 }
 
-Variant &Array::operator[](u64 p_index) {
+Variant &Array::operator[](uint64_t p_index) {
 	return _data->_array[p_index];
 }
 
-const Variant &Array::operator[](u64 p_index) const {
+const Variant &Array::operator[](uint64_t p_index) const {
 	return _data->_array[p_index];
 }
 
@@ -79,7 +79,7 @@ bool Array::operator!=(const Array &p_other) {
 	return !is_equal(p_other);
 }
 
-i64 Array::size() const {
+int64_t Array::size() const {
 	return _data->_array.size();
 }
 
@@ -103,13 +103,13 @@ void Array::append(const Variant &p_item) {
 	push_back(p_item);
 }
 
-void Array::remove_at(u64 p_index) {
+void Array::remove_at(uint64_t p_index) {
 	ERR_FAIL_COND_MSG(_data->_array.is_empty(), "Cannot remove an item from an empty array.");
 	ERR_FAIL_COND_MSG(_data->read_only, "Can't remove elements from a read-only array.");
 	_data->_array.remove_at(p_index);
 }
 
-void Array::insert(u64 p_index, const Variant &p_item) {
+void Array::insert(uint64_t p_index, const Variant &p_item) {
 	ERR_FAIL_COND_MSG(_data->read_only, "Can't add elements to a read-only array.");
 	Variant value = p_item;
 	_data->_array.insert_at(value, p_index);

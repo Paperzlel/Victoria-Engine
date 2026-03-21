@@ -434,9 +434,9 @@ String String::get_file_extension() const {
  * characters will still be read as a number, which can confuse the function and give a non-intended result.
  * @returns The given string as an integer.
  */
-i64 String::to_int() const {
+int64_t String::to_int() const {
 	String self = *this;
-	i64 ret = 0;
+	int64_t ret = 0;
 	// Get length of the string
 	// Assume the value is only a number
 	int len = length();
@@ -450,7 +450,7 @@ i64 String::to_int() const {
 
 	for (int i = 0; i < len; i++) {
 		char val = self[i];
-		u8 num = (u8)(val > 0 ? val : 48) - 48;
+		uint8_t num = (uint8_t)(val > 0 ? val : 48) - 48;
 		ret += (num * Math::pow(10, len - i - 1));
 	}
 	return ret * sign;
@@ -469,7 +469,7 @@ double String::to_float() const {
 
 	for (int i = 0; i < v[1].length(); i++) {
 		char c = v[1].get(i);
-		u8 n = (u8)(c > 0 ? c : 48) - 48;
+		uint8_t n = (uint8_t)(c > 0 ? c : 48) - 48;
 		ret += (double)(n * Math::pow(10, -(i + 1)));
 	}
 
@@ -487,10 +487,10 @@ void String::append(const String &p_string) {
 /**
  * @brief Takes a given integer and converts it into a string.
  */
-String itos(i64 p_int) {
+String itos(int64_t p_int) {
 	String ret;
 	int magnitude = 0;
-	i64 abs_num = Math::abs(p_int);
+	int64_t abs_num = Math::abs(p_int);
 
 	if (p_int < 10 && p_int > -10) {
 		magnitude = 1;
@@ -505,7 +505,7 @@ String itos(i64 p_int) {
 	}
 
 	ret.resize(magnitude + 1);
-	sprintf(ret.ptrw(), "%lli", p_int);
+	sprintf(ret.ptrw(), "%li", p_int);
 	return ret;
 }
 
@@ -610,7 +610,7 @@ void String::copy_from(const char *p_str) {
 	char *dest = ptrw();
 
 	for (int i = 0; i <= len; i++) {
-		u8 c = p_str[i];
+		uint8_t c = p_str[i];
 		if (c == 0 && i < len) {
 			dest[i] = ' ';
 		} else {

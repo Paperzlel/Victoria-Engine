@@ -13,19 +13,19 @@ struct Vector3;
 struct VAPI Vector3i {
 public:
 	union {
-		i64 elements[3] = {0};
+		int64_t elements[3] = {0};
 		struct {
-			i64 x;
-			i64 y;
-			i64 z;
+			int64_t x;
+			int64_t y;
+			int64_t z;
 		};
 	};
 
-	FORCE_INLINE i64 &operator[](int p_index) {
+	FORCE_INLINE int64_t &operator[](int p_index) {
 		return elements[CLAMP(p_index, 0, 2)];
 	}
 
-	FORCE_INLINE const i64 &operator[](int p_index) const {
+	FORCE_INLINE const int64_t &operator[](int p_index) const {
 		return elements[CLAMP(p_index, 0, 2)];
 	}
 
@@ -40,13 +40,13 @@ public:
 	FORCE_INLINE Vector3i operator-(const Vector3i &p_other);
 	FORCE_INLINE Vector3i &operator-=(const Vector3i &p_other);
 	FORCE_INLINE Vector3i operator*(const Vector3i &p_other);
-	FORCE_INLINE Vector3i operator*(const i64 p_scalar);
+	FORCE_INLINE Vector3i operator*(const int64_t p_scalar);
 	FORCE_INLINE Vector3i &operator*=(const Vector3i &p_other);
-	FORCE_INLINE Vector3i &operator*=(const i64 p_scalar);
+	FORCE_INLINE Vector3i &operator*=(const int64_t p_scalar);
 	FORCE_INLINE Vector3i operator/(const Vector3i &p_other);
-	FORCE_INLINE Vector3i operator/(const i64 p_scalar);
+	FORCE_INLINE Vector3i operator/(const int64_t p_scalar);
 	FORCE_INLINE Vector3i &operator/=(const Vector3i &p_other);
-	FORCE_INLINE Vector3i &operator/=(const i64 p_scalar);
+	FORCE_INLINE Vector3i &operator/=(const int64_t p_scalar);
 
 	/**
 	 * @brief Represents a vector with each component set to 0.
@@ -107,9 +107,9 @@ public:
 	}
 
 	FORCE_INLINE double length() const;
-	FORCE_INLINE i64 length_squared() const;
-	FORCE_INLINE i64 angle(const Vector3i &p_other) const;
-	FORCE_INLINE i64 dot(const Vector3i &p_other) const;
+	FORCE_INLINE int64_t length_squared() const;
+	FORCE_INLINE int64_t angle(const Vector3i &p_other) const;
+	FORCE_INLINE int64_t dot(const Vector3i &p_other) const;
 	FORCE_INLINE Vector3i cross(const Vector3i &p_other) const;
 	FORCE_INLINE Vector3i inverse() const;
 	FORCE_INLINE void normalize();
@@ -126,7 +126,7 @@ public:
 	FORCE_INLINE Vector3i(const Vector3i &p_other) {
 		*this = p_other;
 	}
-	FORCE_INLINE Vector3i(i64 p_x, i64 p_y, i64 p_z) {
+	FORCE_INLINE Vector3i(int64_t p_x, int64_t p_y, int64_t p_z) {
 		x = p_x;
 		y = p_y;
 		z = p_z;
@@ -165,7 +165,7 @@ Vector3i Vector3i::operator*(const Vector3i &p_other) {
 	return ret;
 }
 
-Vector3i Vector3i::operator*(const i64 p_scalar) {
+Vector3i Vector3i::operator*(const int64_t p_scalar) {
 	Vector3i ret = *this;
 	ret *= p_scalar;
 	return ret;
@@ -178,7 +178,7 @@ Vector3i &Vector3i::operator*=(const Vector3i &p_other) {
 	return *this;
 }
 
-Vector3i &Vector3i::operator*=(const i64 p_scalar) {
+Vector3i &Vector3i::operator*=(const int64_t p_scalar) {
 	x *= p_scalar;
 	y *= p_scalar;
 	z *= p_scalar;
@@ -191,7 +191,7 @@ Vector3i Vector3i::operator/(const Vector3i &p_other) {
 	return ret;
 }
 
-Vector3i Vector3i::operator/(const i64 p_scalar) {
+Vector3i Vector3i::operator/(const int64_t p_scalar) {
 	Vector3i ret = *this;
 	ret /= p_scalar;
 	return ret;
@@ -204,7 +204,7 @@ Vector3i &Vector3i::operator/=(const Vector3i &p_other) {
 	return *this;
 }
 
-Vector3i &Vector3i::operator/=(const i64 p_scalar) {
+Vector3i &Vector3i::operator/=(const int64_t p_scalar) {
 	x /= p_scalar;
 	y /= p_scalar;
 	z /= p_scalar;
@@ -221,7 +221,7 @@ double Vector3i::length() const {
 /**
  * @brief Gets the square of the magnitude of a given vector.
  */
-i64 Vector3i::length_squared() const {
+int64_t Vector3i::length_squared() const {
 	return x * x + y * y + z * z;
 }
 
@@ -229,9 +229,9 @@ i64 Vector3i::length_squared() const {
  * @brief Gets the smallest angle between two given vectors (between `-PI` and `PI`).
  * @param p_other The other vector to find the angle between
  */
-i64 Vector3i::angle(const Vector3i &p_other) const {
-	i64 lhs_len = length();
-	i64 rhs_len = p_other.length();
+int64_t Vector3i::angle(const Vector3i &p_other) const {
+	int64_t lhs_len = length();
+	int64_t rhs_len = p_other.length();
 
 	// <= is not needed because imaginary numbers are not included in this application but god knows what the C++
 	// compiler is capable of
@@ -239,7 +239,7 @@ i64 Vector3i::angle(const Vector3i &p_other) const {
 		return 0.0;
 	}
 
-	i64 dot_product = dot(p_other);
+	int64_t dot_product = dot(p_other);
 	// Dot product of 0 means the two vectors are perpendicular
 	if (dot_product == 0) {
 		return Math::PI / 2.0;
@@ -255,8 +255,8 @@ i64 Vector3i::angle(const Vector3i &p_other) const {
  * @param p_other The other vector to compare against
  * @returns The dot product of the two vectors
  */
-i64 Vector3i::dot(const Vector3i &p_other) const {
-	i64 ret = 0.0;
+int64_t Vector3i::dot(const Vector3i &p_other) const {
+	int64_t ret = 0.0;
 	ret += x * p_other.x;
 	ret += y * p_other.y;
 	ret += z * p_other.z;
@@ -288,7 +288,7 @@ Vector3i Vector3i::inverse() const {
  * @brief Normalizes the current vector, which is where one divides each component by the magnitude of the vector.
  */
 void Vector3i::normalize() {
-	i64 len = length();
+	int64_t len = length();
 
 	if (len == 0) {
 		return;

@@ -4,8 +4,8 @@
 #include "core/typedefs.h"
 
 struct RenderData {
-	u64 draw_calls;
-	u64 primitive_count;
+	uint64_t draw_calls;
+	uint64_t primitive_count;
 
 	double render_time;
 

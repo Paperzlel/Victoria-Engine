@@ -9,8 +9,8 @@
 /**
  * @brief Our core vector class. Acts as an implementation of `std::vector`, which we use over the latter to keep our
  * code lightweight and readable for end-users. This class consists of one pointer which acts as the raw vector to
- * access and retrieve values from, and several `u64`s that keep count of its size, elements and the standalone data
- * size. For situations where one may alternate between datatypes, please refer to the `Array` class, which can be
+ * access and retrieve values from, and several `uint64_t`s that keep count of its size, elements and the standalone
+ * data size. For situations where one may alternate between datatypes, please refer to the `Array` class, which can be
  * found under `core/ variant/array.h`.
  */
 template <typename T>
@@ -21,9 +21,9 @@ private:
 	// The reference count for this array
 	Refcount refc;
 	// The size of the array in bytes
-	u64 p_size = 0;
+	uint64_t p_size = 0;
 	// The number of elements in the array
-	u64 p_element_count = 0;
+	uint64_t p_element_count = 0;
 	// The internal pointer that makes up the actual array in memory
 	T *_ptr = nullptr;
 
@@ -32,7 +32,7 @@ private:
 	 * @param p_index The index into the vector we want to retrieve from
 	 * @returns An item of type `T`
 	 */
-	FORCE_INLINE T &get(i64 p_index) const {
+	FORCE_INLINE T &get(int64_t p_index) const {
 		ERR_OUT_OF_BOUNDS_FATAL(p_index, size());
 		return _ptr[p_index];
 	}
@@ -42,7 +42,7 @@ private:
 	 * @param p_index The given index to set it at
 	 * @param item The given item to set
 	 */
-	FORCE_INLINE void set(const T &item, i64 p_index) {
+	FORCE_INLINE void set(const T &item, int64_t p_index) {
 		ERR_OUT_OF_BOUNDS_FATAL(p_index, size());
 		// Since the data is set up so that data isn't unique - not normally a problem for basic (atomic) data, but for
 		// Strings (data types with a nested vector) it has a whole load of problems. To fix this, we need to copy over
@@ -54,8 +54,8 @@ private:
 	FORCE_INLINE void _ref(const Vector &p_from);
 	FORCE_INLINE void _unref();
 	FORCE_INLINE void _copy_on_write();
-	FORCE_INLINE Error _resize(i64 n_size);
-	FORCE_INLINE Error _realloc(i64 n_size);
+	FORCE_INLINE Error _resize(int64_t n_size);
+	FORCE_INLINE Error _realloc(int64_t n_size);
 
 public:
 	// Iterator structure, is used by a C++ for loop in order to find an element at a given point in the vector. Its
@@ -158,7 +158,7 @@ public:
 	 * @param index The index in the vector to access
 	 * @returns The item at the given index
 	 */
-	FORCE_INLINE T &operator[](i64 index) {
+	FORCE_INLINE T &operator[](int64_t index) {
 		// Check for an out of bounds index and throw an error if so
 		ERR_OUT_OF_BOUNDS_FATAL(index, size());
 
@@ -169,7 +169,7 @@ public:
 	 * @param index The index in the vector to access
 	 * @returns The item at the given index
 	 */
-	FORCE_INLINE const T &operator[](i64 index) const {
+	FORCE_INLINE const T &operator[](int64_t index) const {
 		ERR_OUT_OF_BOUNDS_FATAL(index, size());
 
 		return _ptr[index];
@@ -191,7 +191,7 @@ public:
 	 * @brief Gets the number of elements within the vector.
 	 * @returns A value for the number of elements in the vector
 	 */
-	FORCE_INLINE i64 size() const {
+	FORCE_INLINE int64_t size() const {
 		return p_element_count;
 	};
 	/**
@@ -205,7 +205,7 @@ public:
 	 * @brief Gets the number of bytes the vector currently has allocated to itself.
 	 * @returns The size of the vector in bytes
 	 */
-	FORCE_INLINE u64 get_ptr_size() const {
+	FORCE_INLINE uint64_t get_ptr_size() const {
 		return p_size;
 	};
 
@@ -241,14 +241,14 @@ public:
 	 * calculates the number of bytes per-element.
 	 * @param p_new_size The new number of elements in the vector
 	 */
-	FORCE_INLINE Error resize(i64 p_new_size) {
+	FORCE_INLINE Error resize(int64_t p_new_size) {
 		return _resize(p_new_size * sizeof(T));
 	}
 
 	FORCE_INLINE void append(T item);
 	FORCE_INLINE void append_array(Vector<T> p_other);
-	FORCE_INLINE void remove_at(i64 index);
-	FORCE_INLINE void insert_at(const T &item, i64 index);
+	FORCE_INLINE void remove_at(int64_t index);
+	FORCE_INLINE void insert_at(const T &item, int64_t index);
 
 	FORCE_INLINE void push_front(T item);
 	FORCE_INLINE T pop_front();
@@ -347,7 +347,7 @@ void Vector<T>::_unref() {
 	}
 
 	if (!std::is_trivially_destructible<T>::value) {
-		i64 current_size = size();
+		int64_t current_size = size();
 
 		for (int i = 0; i < current_size; i++) {
 			T *t = &_ptr[i];
@@ -385,11 +385,11 @@ void Vector<T>::_copy_on_write() {
  * @return `OK` if the vector was able to be resized, and returns a given error message if something went wrong.
  */
 template <typename T>
-Error Vector<T>::_resize(i64 n_size) {
+Error Vector<T>::_resize(int64_t n_size) {
 	ERR_FAIL_COND_R(n_size < 0, ERR_INVALID_PARAMETER);
 
-	i64 current_size = get_ptr_size();
-	u64 n_element_count = n_size / sizeof(T);
+	int64_t current_size = get_ptr_size();
+	uint64_t n_element_count = n_size / sizeof(T);
 
 	if (current_size == n_size) {
 		return OK; // no need for changes
@@ -423,7 +423,7 @@ Error Vector<T>::_resize(i64 n_size) {
 		// Check if the classes can't be constructed easily, if not call constructors (because this happens before raw
 		// assignment, it prevents data being wiped)
 		if (!std::is_trivially_constructible<T>::value) {
-			for (u64 i = (get_ptr_size() / sizeof(T)); i < n_element_count; i++) {
+			for (uint64_t i = (get_ptr_size() / sizeof(T)); i < n_element_count; i++) {
 				vnew_placement(&_ptr[i], T);
 			}
 		} else {
@@ -435,7 +435,7 @@ Error Vector<T>::_resize(i64 n_size) {
 	} else if (current_size > n_size) {
 		// Destroy items that are no longer needed in the vector
 		if (!std::is_trivially_destructible<T>::value) {
-			for (u64 i = n_size; i < p_size; i++) {
+			for (uint64_t i = n_size; i < p_size; i++) {
 				T *t = &_ptr[i];
 				t->~T();
 				vdelete(&_ptr[i]); // Call delete here rather than in `_unref()`, because we no longer need these
@@ -455,7 +455,7 @@ Error Vector<T>::_resize(i64 n_size) {
 }
 
 template <typename T>
-Error Vector<T>::_realloc(i64 n_size) {
+Error Vector<T>::_realloc(int64_t n_size) {
 	T *n_data = (T *)Memory::vreallocate(_ptr, n_size);
 	ERR_COND_NULL_R(n_data, ERR_OUT_OF_MEMORY);
 
@@ -522,7 +522,7 @@ void Vector<T>::append_array(Vector<T> p_other) {
  * resized
  */
 template <typename T>
-void Vector<T>::remove_at(i64 index) {
+void Vector<T>::remove_at(int64_t index) {
 	// Check if the index is out of bounds or not
 	ERR_OUT_OF_BOUNDS(index, size());
 
@@ -539,7 +539,7 @@ void Vector<T>::remove_at(i64 index) {
 		greater_arr.append(this->operator[](i));
 	}
 
-	u64 new_size = (p_element_count - 1) * sizeof(T);
+	uint64_t new_size = (p_element_count - 1) * sizeof(T);
 
 	ERR_FAIL_COND(_resize(new_size) != OK);
 
@@ -568,7 +568,7 @@ void Vector<T>::remove_at(i64 index) {
  * @returns `true` if successful, `false` if the vector could not be resized
  */
 template <typename T>
-void Vector<T>::insert_at(const T &item, i64 index) {
+void Vector<T>::insert_at(const T &item, int64_t index) {
 	ERR_FAIL_COND(_resize(get_ptr_size() + sizeof(T)) != OK);
 	for (int i = size() - 1; i > index; i--) {
 		_ptr[i] = _ptr[i - 1];

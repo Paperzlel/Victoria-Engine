@@ -18,5 +18,5 @@ Vector3::operator String() const {
 }
 
 Vector3::operator Vector3i() const {
-	return Vector3i((i64)x, (i64)y, (i64)z);
+	return Vector3i((int64_t)x, (int64_t)y, (int64_t)z);
 }

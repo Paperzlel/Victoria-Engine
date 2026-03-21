@@ -15,9 +15,9 @@ struct UBO {
 };
 
 struct ShaderData {
-	u32 id;
-	u32 vert_id;
-	u32 frag_id;
+	uint32_t id;
+	uint32_t vert_id;
+	uint32_t frag_id;
 
 	Vector<Uniform> uniforms;
 	Vector<UBO> ubos;

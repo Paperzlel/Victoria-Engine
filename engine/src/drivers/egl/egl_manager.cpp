@@ -107,7 +107,7 @@ int EGLManager::get_native_visual_id(void *p_native) {
 	return native_id;
 }
 
-u8 EGLManager::create_window(void *p_native_display, void *p_native_window) {
+uint8_t EGLManager::create_window(void *p_native_display, void *p_native_window) {
 	int disp_id = _get_display_id(p_native_display);
 
 	if (disp_id < 0) {
@@ -141,7 +141,7 @@ u8 EGLManager::create_window(void *p_native_display, void *p_native_window) {
 	return 0;
 }
 
-void EGLManager::destroy_window(u8 p_id) {
+void EGLManager::destroy_window(uint8_t p_id) {
 	if (!window) {
 		return;
 	}
@@ -239,4 +239,4 @@ void EGLManager::set_use_vsync(bool p_value) {
 	}
 }
 
-void EGLManager::resize_viewport(u16 p_width, u16 p_height) {}
+void EGLManager::resize_viewport(uint16_t p_width, uint16_t p_height) {}

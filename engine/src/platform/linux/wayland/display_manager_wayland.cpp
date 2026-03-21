@@ -18,9 +18,9 @@
 
 void DisplayManagerWayland::_on_registry_global(void *p_data,
 												struct wl_registry *p_registry,
-												u32 p_name,
+												uint32_t p_name,
 												const char *p_interface,
-												u32 p_version) {
+												uint32_t p_version) {
 	ClientData *data = (ClientData *)p_data;
 	if (strcmp(p_interface, wl_compositor_interface.name) == 0) {
 		data->compositor = (struct wl_compositor *)wl_registry_bind(p_registry, p_name, &wl_compositor_interface, 4);
@@ -37,17 +37,18 @@ void DisplayManagerWayland::_on_registry_global(void *p_data,
 	}
 }
 
-void DisplayManagerWayland::_on_registry_global_remove(void *p_data, struct wl_registry *p_registry, u32 p_name) {}
+void DisplayManagerWayland::_on_registry_global_remove(void *p_data, struct wl_registry *p_registry, uint32_t p_name) {
+}
 
-void DisplayManagerWayland::_on_xdg_surface_configure(void *p_data, struct xdg_surface *p_surface, u32 p_serial) {
+void DisplayManagerWayland::_on_xdg_surface_configure(void *p_data, struct xdg_surface *p_surface, uint32_t p_serial) {
 	// Acknowledge, but do nothing. In most cases EGL will look after window data.
 	xdg_surface_ack_configure(p_surface, p_serial);
 }
 
 void DisplayManagerWayland::_on_xdg_toplevel_configure(void *p_data,
 													   struct xdg_toplevel *p_toplevel,
-													   i32 width,
-													   i32 height,
+													   int32_t width,
+													   int32_t height,
 													   struct wl_array *p_states) {
 	WindowData *wd = (WindowData *)p_data;
 
@@ -81,13 +82,13 @@ void DisplayManagerWayland::_on_xdg_toplevel_close(void *p_data, struct xdg_topl
 	Main::set_should_quit(true);
 }
 
-void DisplayManagerWayland::_on_xdg_wm_base_ping(void *p_data, struct xdg_wm_base *p_base, u32 p_serial) {
+void DisplayManagerWayland::_on_xdg_wm_base_ping(void *p_data, struct xdg_wm_base *p_base, uint32_t p_serial) {
 	xdg_wm_base_pong(p_base, p_serial);
 }
 
 void DisplayManagerWayland::_on_zxdg_decoration_manager_configure(void *p_data,
 																  struct zxdg_toplevel_decoration_v1 *p_decor,
-																  u32 p_mode) {
+																  uint32_t p_mode) {
 	if (p_mode != ZXDG_TOPLEVEL_DECORATION_V1_MODE_SERVER_SIDE) {
 		ERR_WARN("Victoria Engine does not support client-side decorations!");
 	}
@@ -103,12 +104,12 @@ void DisplayManagerWayland::register_wayland_driver() {
 	create_func_count++;
 }
 
-u8 DisplayManagerWayland::create_window(const String &p_name,
-										u16 x,
-										u16 y,
-										u16 width,
-										u16 height,
-										WindowFlags p_flags) {
+uint8_t DisplayManagerWayland::create_window(const String &p_name,
+											 uint16_t x,
+											 uint16_t y,
+											 uint16_t width,
+											 uint16_t height,
+											 WindowFlags p_flags) {
 	wd = vnew(WindowData);
 	wd->wl_surface = wl_compositor_create_surface(client_data->compositor);
 
@@ -137,15 +138,15 @@ u8 DisplayManagerWayland::create_window(const String &p_name,
 
 	if (egl_manager_wl) {
 		wd->egl_window = wl_egl_window_create(wd->wl_surface, width, height);
-		u8 id = egl_manager_wl->create_window(display, wd->egl_window);
-		ERR_FAIL_COND_MSG_R(id == (u8)-1, "Failed to create Wayland EGL window.", INVALID_WINDOW_ID);
+		uint8_t id = egl_manager_wl->create_window(display, wd->egl_window);
+		ERR_FAIL_COND_MSG_R(id == (uint8_t)-1, "Failed to create Wayland EGL window.", INVALID_WINDOW_ID);
 		wd->id = id;
 	}
 
 	return wd->id;
 }
 
-void DisplayManagerWayland::destroy_window(u8 p_id) {
+void DisplayManagerWayland::destroy_window(uint8_t p_id) {
 	if (p_id == INVALID_WINDOW_ID) {
 		return; // Dont handle invalid windows
 	}
@@ -181,7 +182,7 @@ Vector2i DisplayManagerWayland::get_window_rect() const {
 	return wd->size;
 }
 
-void DisplayManagerWayland::set_window_resize_callback(const CallableMethod &p_method, u8 p_id) {
+void DisplayManagerWayland::set_window_resize_callback(const CallableMethod &p_method, uint8_t p_id) {
 	if (p_id == wd->id) {
 		wd->resize_callback = p_method;
 	}

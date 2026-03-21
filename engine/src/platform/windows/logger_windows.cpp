@@ -23,7 +23,7 @@ void WindowsLogger::logv(bool is_error, const char *message, va_list arg_list) {
 		if (!console || console == INVALID_HANDLE_VALUE) {
 			Logger::logv(is_error, message, arg_list);
 		} else {
-			u8 colour_attrib = is_error ? 1 : 8;
+			uint8_t colour_attrib = is_error ? 1 : 8;
 
 			SetConsoleTextAttribute(console, colour_attrib);
 			vfprintf(stdout, message, arg_list);

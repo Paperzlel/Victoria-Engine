@@ -26,7 +26,7 @@ public:
 	FORCE_INLINE bool has(const CallableMethod &p_method);
 
 	Event() {}
-	~Event() {};
+	~Event(){};
 };
 
 /**
@@ -51,7 +51,7 @@ void Event<Args...>::connect(const CallableMethod &p_method, bool priority) {
  */
 template <typename... Args>
 void Event<Args...>::fire(Args... p_args) {
-	u64 list_size = listeners.size();
+	uint64_t list_size = listeners.size();
 	if (!list_size) {
 		return;
 	}

@@ -51,8 +51,9 @@ endif
 # Compiler options
 export CC := clang
 export CXX := clang++
-export CFLAGS := -std=c17 -Wall -Werror
-export CPPFLAGS := -std=c++17 -Wall -Werror
+export CCFLAGS := -Wall -Werror
+export CFLAGS := -std=c17
+export CPPFLAGS := -std=c++17
 export INCLUDES :=
 export LDFLAGS :=
 export DEFINES :=
@@ -61,17 +62,22 @@ export DEFINES :=
 # Confirm compiler options
 ifeq ($(DEBUG), yes)
 	DEFINES += -DDEBUG
-	CFLAGS += -MD
-	CPPFLAGS += -MD
-ifeq ($(COMPILER), gcc)
-	CFLAGS += -ggdb
-	CPPFLAGS += -ggdb
-endif
+	CCFLAGS += -MD -O0
+ifeq ($(PLATFORM), win32)
 ifeq ($(COMPILER), clang)
-	CFLAGS += -gdwarf-5
-	CPPFLAGS += -gdwarf-5
+	CCFLAGS += -gdwarf-4
+else
+	CCFLAGS += -gdwarf-5
 endif
+else
+	CCFLAGS += -gdwarf-4 -g3
+# NOTE: Should enable -g2 for non-dev builds that want debugging symbols
 endif
+else
+	LDFLAGS += -Wl,-s
+	CCFLAGS += -O2
+endif
+
 ifeq ($(RUN_TESTS), yes)
 	DEFINES += -DTESTS
 endif
@@ -88,7 +94,7 @@ ifeq ($(PLATFORM), win32)
 ifeq ($(DEBUG), yes)
 	DEFINES += -D_DEBUG
 # Introduce these in the RID chapter. Links to the Visual Studio libraries, so in theory shouldn't appear in GCC builds on Windows.
-	LDFLAGS += -g -lmsvcrtd -lvcruntimed -lucrtd
+	LDFLAGS += -lmsvcrtd -lvcruntimed -lucrtd
 endif
 endif
 
@@ -117,4 +123,4 @@ generate_compile_commands:
 clean:
 	@$(MAKE) clean -C engine
 	@$(MAKE) clean -C editor
-	rm -rf $(BUILD_DIR)/assets
+	@rm -rf $(BUILD_DIR)/assets

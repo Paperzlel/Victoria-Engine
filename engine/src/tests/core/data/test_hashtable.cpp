@@ -47,15 +47,15 @@ static bool hashtable_test_struct() {
 }
 
 static bool hashtable_test_hashing() {
-	u64 hash1 = HasherDefault::hash("b");
-	u64 hash2 = HasherDefault::hash("b");
+	uint64_t hash1 = HasherDefault::hash("b");
+	uint64_t hash2 = HasherDefault::hash("b");
 	TEST_EQ(hash1, hash2);
 
-	u64 hash3 = HasherDefault::hash("B");
+	uint64_t hash3 = HasherDefault::hash("B");
 	TEST_NEQ(hash1, hash3);
 
-	u64 hash4 = HasherDefault::hash("abcdef");
-	u64 hash5 = HasherDefault::hash("fedcba");
+	uint64_t hash4 = HasherDefault::hash("abcdef");
+	uint64_t hash5 = HasherDefault::hash("fedcba");
 	TEST_NEQ(hash4, hash5);
 
 	return true;

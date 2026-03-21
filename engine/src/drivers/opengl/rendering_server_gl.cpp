@@ -159,7 +159,7 @@ void RenderingServerGL::finalize() {
 	material_free(default_material);
 
 	utils->free_buffer(GL_ARRAY_BUFFER, sizeof(float) * 16, &canvas_data.rect_vertex_buffer);
-	utils->free_buffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(u32) * 6, &canvas_data.rect_index_buffer);
+	utils->free_buffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * 6, &canvas_data.rect_index_buffer);
 	glDeleteVertexArrays(1, &canvas_data.rect_vertex_array);
 
 	glDeleteBuffers(GL_ARRAY_BUFFER, &canvas_data.screen_quad);
@@ -280,9 +280,9 @@ void RenderingServerGL::_render_scene(RenderData *r_data, Viewport *p_viewport, 
 		shaders.scene_shader.shader_set_active();
 
 		Vector<GeometryData> geom_instances;
-		u32 point_light_count = 0;
-		u32 directional_light_count = 0;
-		u32 spot_light_count = 0;
+		uint32_t point_light_count = 0;
+		uint32_t directional_light_count = 0;
+		uint32_t spot_light_count = 0;
 		Vector<Uniform> scene_uniforms = shaders.scene_shader.uniforms;
 
 		Vector<RID> instance_list;
@@ -529,7 +529,7 @@ void RenderingServerGL::_render_canvas(RenderData *r_data, Viewport *p_viewport,
 		// Create a new batch
 		_new_canvas_batch();
 
-		u32 index = 0;
+		uint32_t index = 0;
 
 		// Gather the item data
 		for (const Item *i : p_canvas->child_items) {
@@ -617,7 +617,7 @@ void RenderingServerGL::_render_canvas(RenderData *r_data, Viewport *p_viewport,
 		// Actually draw the data
 
 		// Y-sort the batches
-		for (u32 i = 1; i <= canvas_data.current_batch; i++) {
+		for (uint32_t i = 1; i <= canvas_data.current_batch; i++) {
 			for (int k = i; k > 0 && canvas_data.batches[k].ysort < canvas_data.batches[k - 1].ysort; k--) {
 				CanvasBatch b = canvas_data.batches[k];
 				canvas_data.batches[k] = canvas_data.batches[k - 1];
@@ -625,7 +625,7 @@ void RenderingServerGL::_render_canvas(RenderData *r_data, Viewport *p_viewport,
 			}
 		}
 
-		for (u32 i = 0; i <= canvas_data.current_batch; i++) {
+		for (uint32_t i = 0; i <= canvas_data.current_batch; i++) {
 			RID material = canvas_data.batches[i].material;
 			RID texture = canvas_data.batches[i].texture;
 
@@ -978,12 +978,12 @@ void RenderingServerGL::mesh_set_from_data(RID p_mesh, const MeshData &p_data) {
 
 	// Normals aren't supported by canvas items, disable if they don't exist
 	if (p_data.normal_data.size()) {
-		glVertexAttribPointer(1, verts_per_coord, GL_FLOAT, GL_FALSE, stride, (void *)i64(p_data.normal_offset));
+		glVertexAttribPointer(1, verts_per_coord, GL_FLOAT, GL_FALSE, stride, (void *)int64_t(p_data.normal_offset));
 		glEnableVertexAttribArray(1);
 	}
 
 	if (p_data.uv_data.size()) {
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void *)i64(p_data.normal_offset * 2));
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void *)int64_t(p_data.normal_offset * 2));
 		glEnableVertexAttribArray(2);
 	}
 
@@ -1331,7 +1331,7 @@ void RenderingServerGL::texture_free(RID p_texture) {
 }
 
 void RenderingServerGL::texture_set_from_data(RID p_texture,
-											  const u8 *p_data,
+											  const uint8_t *p_data,
 											  int p_width,
 											  int p_height,
 											  TextureFormat p_format,
@@ -1339,7 +1339,7 @@ void RenderingServerGL::texture_set_from_data(RID p_texture,
 	Texture *tex = texture_owner.get_or_null(p_texture);
 	ERR_COND_NULL(tex);
 
-	u32 extern_format = GL_RED;
+	uint32_t extern_format = GL_RED;
 	tex->format = p_format;
 
 	switch (p_format) {
@@ -1495,7 +1495,7 @@ void RenderingServerGL::free(RID p_rid) {
 	}
 }
 
-void RenderingServerGL::_enable_attributes(u32 p_start, u32 p_rate) {
+void RenderingServerGL::_enable_attributes(uint32_t p_start, uint32_t p_rate) {
 	for (int i = 4; i < 9; i++) {
 		glBindVertexArray(canvas_data.rect_vertex_array);
 
@@ -1613,7 +1613,7 @@ RenderingServerGL::RenderingServerGL() {
 	// Create default texture (a 1x1 white pixel)
 	default_texture = texture_allocate();
 	Texture *t = texture_owner.get_or_null(default_texture);
-	Vector<u8> data = {255, 255, 255};
+	Vector<uint8_t> data = {255, 255, 255};
 
 	glGenTextures(1, &t->texture_buffer);
 	glActiveTexture(GL_TEXTURE0);
@@ -1645,10 +1645,10 @@ RenderingServerGL::RenderingServerGL() {
 		glBindBuffer(GL_ARRAY_BUFFER, canvas_data.rect_vertex_buffer);
 		utils->allocate_buffer(GL_ARRAY_BUFFER, 16 * sizeof(float), rect, GL_STATIC_DRAW);
 
-		u32 indicies[6] = {2, 1, 0, 3, 0, 1};
+		uint32_t indicies[6] = {2, 1, 0, 3, 0, 1};
 		glGenBuffers(1, &canvas_data.rect_index_buffer);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, canvas_data.rect_index_buffer);
-		utils->allocate_buffer(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(u32), indicies, GL_STATIC_DRAW);
+		utils->allocate_buffer(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(uint32_t), indicies, GL_STATIC_DRAW);
 
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), nullptr);
 		glEnableVertexAttribArray(0);

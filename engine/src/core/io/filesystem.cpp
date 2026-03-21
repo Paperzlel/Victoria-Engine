@@ -65,7 +65,7 @@ bool FileSystem::is_valid_file() const {
  * @brief Obtains the current position of the file handle within the file. File position is read from 0, where 0 is the
  * space before the first character.
  */
-u64 FileSystem::get_position() const {
+uint64_t FileSystem::get_position() const {
 	return ftell(handle->f);
 }
 
@@ -73,14 +73,14 @@ u64 FileSystem::get_position() const {
  * @brief Finds the length (number of characters between 0 and the null terminator) of the currently used file. Returns
  * to the origin of the file, rather than the previously read file.
  */
-u64 FileSystem::get_length() const {
+uint64_t FileSystem::get_length() const {
 	if (!handle->f) {
 		return 0;
 	}
 
-	u64 pos = get_position();
+	uint64_t pos = get_position();
 	fseek(handle->f, 0, SEEK_END);
-	u64 size = get_position();
+	uint64_t size = get_position();
 	fseek(handle->f, pos, SEEK_SET);
 
 	return size;
@@ -93,11 +93,11 @@ bool FileSystem::is_eof() const {
 	return get_position() >= get_length();
 }
 
-Vector<u8> FileSystem::get_buffer(int p_length) {
-	Vector<u8> ret;
+Vector<uint8_t> FileSystem::get_buffer(int p_length) {
+	Vector<uint8_t> ret;
 	ret.resize(p_length);
 
-	u8 *ptr = ret.ptrw();
+	uint8_t *ptr = ret.ptrw();
 
 	int len = get_buffer(ptr, p_length);
 	if (len < p_length) {
@@ -106,7 +106,7 @@ Vector<u8> FileSystem::get_buffer(int p_length) {
 	return ret;
 }
 
-int FileSystem::get_buffer(u8 *p_buf, int p_length) {
+int FileSystem::get_buffer(uint8_t *p_buf, int p_length) {
 	return fread(p_buf, 1, p_length, handle->f);
 }
 
@@ -116,7 +116,7 @@ int FileSystem::get_buffer(u8 *p_buf, int p_length) {
  */
 String FileSystem::get_contents_as_string() {
 	ERR_COND_NULL_R(handle->f, String());
-	u64 file_size = get_length();
+	uint64_t file_size = get_length();
 
 	String p_string;
 	p_string.resize(file_size + 1);

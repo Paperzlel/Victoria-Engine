@@ -11,10 +11,10 @@ protected:
 
 	Logger *_logger = nullptr;
 
-	u8 exit_code = 0;
+	uint8_t exit_code = 0;
 
-	u64 timer_frequency = 0;
-	u64 timer_offset = 0;
+	uint64_t timer_frequency = 0;
+	uint64_t timer_offset = 0;
 
 	bool stdout_verbose = false;
 	bool suspended = false;
@@ -25,13 +25,13 @@ protected:
 public:
 	static OS *get_singleton();
 
-	u8 get_exit_code() const;
-	void set_exit_code(u8 p_id);
+	uint8_t get_exit_code() const;
+	void set_exit_code(uint8_t p_id);
 
 	bool is_suspended() const;
 	void set_is_suspended(bool p_value);
 
-	u64 get_timer_frequency() {
+	uint64_t get_timer_frequency() {
 		return timer_frequency;
 	}
 
@@ -49,7 +49,7 @@ public:
 							 ErrorType type = ERROR_ERR) = 0;
 	virtual void printerr(const char *message, ...) = 0;
 
-	virtual u64 get_current_time_usec() = 0;
+	virtual uint64_t get_current_time_usec() = 0;
 	virtual double get_os_running_time() = 0;
 
 	virtual bool has_feature(const String &p_feature) const = 0;

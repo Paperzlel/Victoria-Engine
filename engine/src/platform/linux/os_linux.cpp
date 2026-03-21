@@ -88,10 +88,10 @@ void OSLinux::alert(const char *message, const char *title) const {
 	OS::get_singleton()->printerr("%s \n%s", title, message);
 }
 
-u64 OSLinux::get_current_time_usec() {
+uint64_t OSLinux::get_current_time_usec() {
 	timespec t;
 	clock_gettime(CLOCK_MONOTONIC_RAW, &t);
-	return (u64)(t.tv_nsec / 1000) + t.tv_sec * 1000000; // Return it to 1us rather than ns
+	return (uint64_t)(t.tv_nsec / 1000) + t.tv_sec * 1000000; // Return it to 1us rather than ns
 }
 
 double OSLinux::get_os_running_time() {

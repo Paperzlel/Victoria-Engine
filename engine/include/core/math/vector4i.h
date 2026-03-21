@@ -13,20 +13,20 @@ struct Vector4;
  */
 struct VAPI Vector4i {
 	union {
-		i64 elements[4] = {0};
+		int64_t elements[4] = {0};
 		struct {
-			i64 x;
-			i64 y;
-			i64 z;
-			i64 w;
+			int64_t x;
+			int64_t y;
+			int64_t z;
+			int64_t w;
 		};
 	};
 
-	FORCE_INLINE i64 &operator[](int p_index) {
+	FORCE_INLINE int64_t &operator[](int p_index) {
 		return elements[CLAMP(p_index, 0, 3)];
 	}
 
-	FORCE_INLINE const i64 &operator[](int p_index) const {
+	FORCE_INLINE const int64_t &operator[](int p_index) const {
 		return elements[CLAMP(p_index, 0, 3)];
 	}
 
@@ -42,13 +42,13 @@ struct VAPI Vector4i {
 	FORCE_INLINE Vector4i operator-(const Vector4i &p_other);
 	FORCE_INLINE Vector4i &operator-=(const Vector4i &p_other);
 	FORCE_INLINE Vector4i operator*(const Vector4i &p_other);
-	FORCE_INLINE Vector4i operator*(const i64 p_scalar);
+	FORCE_INLINE Vector4i operator*(const int64_t p_scalar);
 	FORCE_INLINE Vector4i &operator*=(const Vector4i &p_other);
-	FORCE_INLINE Vector4i &operator*=(const i64 p_scalar);
+	FORCE_INLINE Vector4i &operator*=(const int64_t p_scalar);
 	FORCE_INLINE Vector4i operator/(const Vector4i &p_other);
-	FORCE_INLINE Vector4i operator/(const i64 p_scalar);
+	FORCE_INLINE Vector4i operator/(const int64_t p_scalar);
 	FORCE_INLINE Vector4i &operator/=(const Vector4i &p_other);
-	FORCE_INLINE Vector4i &operator/=(const i64 p_scalar);
+	FORCE_INLINE Vector4i &operator/=(const int64_t p_scalar);
 
 	/**
 	 * @brief Represents a vector with all components set to 0.
@@ -65,8 +65,8 @@ struct VAPI Vector4i {
 	}
 
 	FORCE_INLINE double length() const;
-	FORCE_INLINE i64 length_squared() const;
-	FORCE_INLINE i64 dot(const Vector4i &p_other) const;
+	FORCE_INLINE int64_t length_squared() const;
+	FORCE_INLINE int64_t dot(const Vector4i &p_other) const;
 	FORCE_INLINE Vector4i inverse() const;
 	FORCE_INLINE void normalize();
 	FORCE_INLINE Vector4i normalized() const;
@@ -82,7 +82,7 @@ struct VAPI Vector4i {
 	Vector4i(const Vector4i &p_other) {
 		*this = p_other;
 	}
-	Vector4i(i64 p_x, i64 p_y, i64 p_z, i64 p_w) {
+	Vector4i(int64_t p_x, int64_t p_y, int64_t p_z, int64_t p_w) {
 		x = p_x;
 		y = p_y;
 		z = p_z;
@@ -124,7 +124,7 @@ Vector4i Vector4i::operator*(const Vector4i &p_other) {
 	return ret;
 }
 
-Vector4i Vector4i::operator*(const i64 p_scalar) {
+Vector4i Vector4i::operator*(const int64_t p_scalar) {
 	Vector4i ret = *this;
 	ret *= p_scalar;
 	return ret;
@@ -138,7 +138,7 @@ Vector4i &Vector4i::operator*=(const Vector4i &p_other) {
 	return *this;
 }
 
-Vector4i &Vector4i::operator*=(const i64 p_scalar) {
+Vector4i &Vector4i::operator*=(const int64_t p_scalar) {
 	x *= p_scalar;
 	y *= p_scalar;
 	z *= p_scalar;
@@ -152,7 +152,7 @@ Vector4i Vector4i::operator/(const Vector4i &p_other) {
 	return ret;
 }
 
-Vector4i Vector4i::operator/(const i64 p_scalar) {
+Vector4i Vector4i::operator/(const int64_t p_scalar) {
 	Vector4i ret = *this;
 	ret /= p_scalar;
 	return ret;
@@ -166,7 +166,7 @@ Vector4i &Vector4i::operator/=(const Vector4i &p_other) {
 	return *this;
 }
 
-Vector4i &Vector4i::operator/=(const i64 p_scalar) {
+Vector4i &Vector4i::operator/=(const int64_t p_scalar) {
 	x /= p_scalar;
 	y /= p_scalar;
 	z /= p_scalar;
@@ -184,7 +184,7 @@ double Vector4i::length() const {
 /**
  * @brief Obtains the squared magnitude of the current vector.
  */
-i64 Vector4i::length_squared() const {
+int64_t Vector4i::length_squared() const {
 	return x * x + y * y + z * z + w * w;
 }
 
@@ -196,8 +196,8 @@ i64 Vector4i::length_squared() const {
  * @param p_other The other vector to compare against
  * @returns The dot product of the two vectors
  */
-i64 Vector4i::dot(const Vector4i &p_other) const {
-	i64 ret = 0.0;
+int64_t Vector4i::dot(const Vector4i &p_other) const {
+	int64_t ret = 0.0;
 	ret += x * p_other.x;
 	ret += y * p_other.y;
 	ret += z * p_other.z;
@@ -216,7 +216,7 @@ Vector4i Vector4i::inverse() const {
  * @brief Normalizes the current vector, which is where one divides each component by the magnitude of the vector.
  */
 void Vector4i::normalize() {
-	i64 len = length();
+	int64_t len = length();
 
 	if (len == 0) {
 		return;

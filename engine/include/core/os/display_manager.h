@@ -30,7 +30,7 @@ protected:
 public:
 	static DisplayManager *get_singleton();
 
-	static const u8 INVALID_WINDOW_ID = -1;
+	static const uint8_t INVALID_WINDOW_ID = -1;
 
 	enum WindowNotification {
 		NOTIFICATION_WM_WINDOW_CLOSE,
@@ -47,20 +47,20 @@ public:
 	static int get_creation_func_count();
 	static const String &get_creation_func_name(int p_id);
 
-	static void _notification_callback(WindowNotification notification, u8 window_id);
+	static void _notification_callback(WindowNotification notification, uint8_t window_id);
 
-	virtual u8 create_window(const String &p_name,
-							 u16 x,
-							 u16 y,
-							 u16 width,
-							 u16 height,
-							 WindowFlags p_flags = WINDOW_FLAG_DEFAULT) = 0;
-	virtual void destroy_window(u8 p_id) = 0;
+	virtual uint8_t create_window(const String &p_name,
+								  uint16_t x,
+								  uint16_t y,
+								  uint16_t width,
+								  uint16_t height,
+								  WindowFlags p_flags = WINDOW_FLAG_DEFAULT) = 0;
+	virtual void destroy_window(uint8_t p_id) = 0;
 
 	virtual void set_use_vsync(bool p_value) = 0;
 
 	virtual Vector2i get_window_rect() const = 0;
-	virtual void set_window_resize_callback(const CallableMethod &p_method, u8 p_id) = 0;
+	virtual void set_window_resize_callback(const CallableMethod &p_method, uint8_t p_id) = 0;
 
 	virtual void toggle_mouse_mode(bool p_mode) = 0;
 	virtual bool get_mouse_mode() const = 0;

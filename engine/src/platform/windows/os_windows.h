@@ -29,7 +29,7 @@ public:
 							 ErrorType type) override;
 	virtual void printerr(const char *message, ...) override;
 
-	virtual u64 get_current_time_usec() override;
+	virtual uint64_t get_current_time_usec() override;
 	virtual double get_os_running_time() override;
 
 	virtual bool has_feature(const String &p_feature) const override;

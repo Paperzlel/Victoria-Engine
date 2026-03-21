@@ -88,7 +88,7 @@ public:
 
 	String get_file_extension() const;
 
-	i64 to_int() const;
+	int64_t to_int() const;
 	double to_float() const;
 
 	void append(const String &p_string);
@@ -110,7 +110,7 @@ protected:
 };
 
 String operator+(const char *p_lhs, const String &p_rhs);
-String itos(i64 p_int);
+String itos(int64_t p_int);
 String ftos(double p_double);
 
 String vformat(const char *p_string, ...);

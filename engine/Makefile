@@ -1,10 +1,26 @@
 TARGET := engine
 # We want to hide as much of the API as possible, so we set the visibility to hidden by default. This allows our own API to be exposed properly.
-CFLAGS += -fPIC -fvisibility=hidden
-CPPFLAGS += -fPIC -fvisibility=hidden
+CCFLAGS += -fPIC -fvisibility=hidden
 # We keep third-party, platform and driver specific code hidden from the user.
 INCLUDES += -Iinclude -Isrc/thirdparty/freetype/include -Isrc/thirdparty/glad/include -Isrc/thirdparty
 DEFINES += -DVEXPORT
+
+# Define flags that are applied only to third-party libraries. Essentially a boiled-down version of before.
+THIRDPARTY_CFLAGS := -fPIC -fvisibility=hidden
+ifeq ($(DEBUG), yes)
+	THIRDPARTY_CFLAGS += -O0
+ifeq ($(PLATFORM), win32)
+ifeq ($(COMPILER), clang)
+	THIRDPARTY_CFLAGS += -gdwarf-4
+else
+	THIRDPARTY_CFLAGS += -gdwarf-5
+endif
+else
+	THIRDPARTY_CFLAGS += -gdwarf-4 -g3
+endif
+else
+	THIRDPARTY_CFLAGS += -O2
+endif
 
 # Utilities
 
@@ -13,15 +29,6 @@ rwildcard=$(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2))
 
 # Module options
 export USE_FREETYPE := yes
-export THIRDPARTY_CFLAGS := -fPIC -fvisibility=hidden -O3
-ifeq ($(DEBUG),yes)
-ifeq ($(COMPILER),gcc)
-	THIRDPARTY_CFLAGS += -ggdb
-endif
-ifeq ($(COMPILER),clang)
-	THIRDPARTY_CFLAGS += -gdwarf-5
-endif
-endif 
 
 # Platform-specific options
 export USE_WAYLAND := no
@@ -73,6 +80,10 @@ ifeq ($(USE_X11), yes)
 	LDFLAGS += $(shell pkg-config --libs x11)
 endif
 endif
+
+# Merge CFLAGS, CPPFLAGS and CCFLAGS
+CFLAGS += $(CCFLAGS)
+CPPFLAGS += $(CCFLAGS)
 
 # Source files and directories
 DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))

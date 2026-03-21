@@ -47,13 +47,13 @@ public:
 		Vector<Vector3> vertex_data;
 		Vector<Vector3> normal_data;
 		Vector<Vector2> uv_data;
-		u32 vertex_count = 0;
+		uint32_t vertex_count = 0;
 
 		Vector<int> index_attribs;
-		u32 index_count = 0;
+		uint32_t index_count = 0;
 
 		int normal_offset = 0;
-		u64 format = 0;
+		uint64_t format = 0;
 	};
 
 	/* Instance API */
@@ -166,7 +166,7 @@ public:
 	virtual RID texture_allocate() = 0;
 	virtual void texture_free(RID p_texture) = 0;
 	virtual void texture_set_from_data(RID p_texture,
-									   const u8 *p_data,
+									   const uint8_t *p_data,
 									   int p_width,
 									   int p_height,
 									   TextureFormat p_format,

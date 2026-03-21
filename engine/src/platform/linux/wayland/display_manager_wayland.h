@@ -36,51 +36,53 @@ private:
 
 	static void _on_registry_global(void *p_data,
 									struct wl_registry *p_registry,
-									u32 p_name,
+									uint32_t p_name,
 									const char *p_interface,
-									u32 p_version);
-	static void _on_registry_global_remove(void *p_data, struct wl_registry *p_registry, u32 p_name);
+									uint32_t p_version);
+	static void _on_registry_global_remove(void *p_data, struct wl_registry *p_registry, uint32_t p_name);
 
-	static void _on_xdg_surface_configure(void *p_data, struct xdg_surface *p_surface, u32 p_serial);
+	static void _on_xdg_surface_configure(void *p_data, struct xdg_surface *p_surface, uint32_t p_serial);
 
 	static void _on_xdg_toplevel_configure(void *p_data,
 										   struct xdg_toplevel *p_toplevel,
-										   i32 width,
-										   i32 height,
+										   int32_t width,
+										   int32_t height,
 										   struct wl_array *p_states);
 	static void _on_xdg_toplevel_close(void *p_data, struct xdg_toplevel *p_toplevel);
 
-	static void _on_xdg_wm_base_ping(void *p_data, struct xdg_wm_base *p_base, u32 p_serial);
+	static void _on_xdg_wm_base_ping(void *p_data, struct xdg_wm_base *p_base, uint32_t p_serial);
 
 	static void
-	_on_zxdg_decoration_manager_configure(void *p_data, struct zxdg_toplevel_decoration_v1 *p_decor, u32 p_mode);
+	_on_zxdg_decoration_manager_configure(void *p_data, struct zxdg_toplevel_decoration_v1 *p_decor, uint32_t p_mode);
 
-	static constexpr struct wl_registry_listener global_listener{
+	static constexpr struct wl_registry_listener global_listener {
 		.global = DisplayManagerWayland::_on_registry_global,
-		.global_remove = DisplayManagerWayland::_on_registry_global_remove};
+		.global_remove = DisplayManagerWayland::_on_registry_global_remove
+	};
 
-	static constexpr struct xdg_surface_listener surface_listener{
+	static constexpr struct xdg_surface_listener surface_listener {
 		.configure = DisplayManagerWayland::_on_xdg_surface_configure,
 	};
 
-	static constexpr struct xdg_toplevel_listener toplevel_listener{
+	static constexpr struct xdg_toplevel_listener toplevel_listener {
 		.configure = DisplayManagerWayland::_on_xdg_toplevel_configure,
 		.close = DisplayManagerWayland::_on_xdg_toplevel_close,
 	};
 
-	static constexpr struct xdg_wm_base_listener wm_base_listener{
+	static constexpr struct xdg_wm_base_listener wm_base_listener {
 		.ping = DisplayManagerWayland::_on_xdg_wm_base_ping,
 	};
 
-	static constexpr struct zxdg_toplevel_decoration_v1_listener toplevel_decor_listener{
-		.configure = DisplayManagerWayland::_on_zxdg_decoration_manager_configure};
+	static constexpr struct zxdg_toplevel_decoration_v1_listener toplevel_decor_listener {
+		.configure = DisplayManagerWayland::_on_zxdg_decoration_manager_configure
+	};
 
 	struct WindowData {
-		u8 id;
+		uint8_t id;
 		Vector2i size;
 		Vector2i cached_size;
 		Vector2i position;
-		Event<WindowNotification, u8> notification_callback;
+		Event<WindowNotification, uint8_t> notification_callback;
 		CallableMethod resize_callback;
 
 		bool maximised = false;
@@ -100,18 +102,18 @@ public:
 	static DisplayManager *create_func(const String &p_renderer, const Vector2i &p_size, Error *r_error);
 	static void register_wayland_driver();
 
-	virtual u8 create_window(const String &p_name,
-							 u16 x,
-							 u16 y,
-							 u16 width,
-							 u16 height,
-							 WindowFlags p_flags = WINDOW_FLAG_DEFAULT) override;
-	virtual void destroy_window(u8 p_id) override;
+	virtual uint8_t create_window(const String &p_name,
+								  uint16_t x,
+								  uint16_t y,
+								  uint16_t width,
+								  uint16_t height,
+								  WindowFlags p_flags = WINDOW_FLAG_DEFAULT) override;
+	virtual void destroy_window(uint8_t p_id) override;
 
 	virtual void set_use_vsync(bool p_value) override;
 
 	virtual Vector2i get_window_rect() const override;
-	virtual void set_window_resize_callback(const CallableMethod &p_method, u8 p_id) override;
+	virtual void set_window_resize_callback(const CallableMethod &p_method, uint8_t p_id) override;
 
 	virtual void toggle_mouse_mode(bool p_mode) override;
 	virtual bool get_mouse_mode() const override;

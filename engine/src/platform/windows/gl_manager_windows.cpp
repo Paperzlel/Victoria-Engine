@@ -89,9 +89,9 @@ void GLManagerWindows::_create_nvapi_profile() {
 	if (!nvapi) {
 		return;
 	}
-	void *(__cdecl * NvAPI_QueryInterface)(u32 interface_id) = nullptr;
+	void *(__cdecl * NvAPI_QueryInterface)(uint32_t interface_id) = nullptr;
 
-	NvAPI_QueryInterface = (void *(__cdecl *)(u32))GetProcAddress(nvapi, "nvapi_QueryInterface");
+	NvAPI_QueryInterface = (void *(__cdecl *)(uint32_t))GetProcAddress(nvapi, "nvapi_QueryInterface");
 	if (NvAPI_QueryInterface == nullptr) {
 		return; // Should probably say something here, but whatever.
 	}
@@ -324,7 +324,7 @@ int GLManagerWindows::_configure_pixel_format(HDC hDC) {
 	return chosen_pfd;
 }
 
-u8 GLManagerWindows::create_window(HWND hWnd, HINSTANCE hInstance) {
+uint8_t GLManagerWindows::create_window(HWND hWnd, HINSTANCE hInstance) {
 	HDC hDC = GetDC(hWnd);
 
 	if (hDC == NULL) {
@@ -350,7 +350,7 @@ u8 GLManagerWindows::create_window(HWND hWnd, HINSTANCE hInstance) {
 	return win_data->id;
 }
 
-void GLManagerWindows::destroy_window(u8 p_id) {
+void GLManagerWindows::destroy_window(uint8_t p_id) {
 	if (!_active_window) {
 		return;
 	}
@@ -359,7 +359,7 @@ void GLManagerWindows::destroy_window(u8 p_id) {
 	}
 }
 
-u8 GLManagerWindows::get_active_window() {
+uint8_t GLManagerWindows::get_active_window() {
 	if (!_active_window) {
 		return -1;
 	}
@@ -367,8 +367,8 @@ u8 GLManagerWindows::get_active_window() {
 	return _active_window->id;
 }
 
-void GLManagerWindows::set_active_window(u8 p_id) {
-	if (p_id == (u8)-1) {
+void GLManagerWindows::set_active_window(uint8_t p_id) {
+	if (p_id == (uint8_t)-1) {
 		return;
 	}
 
@@ -437,7 +437,7 @@ void GLManagerWindows::swap_buffers() const {
 	}
 }
 
-void GLManagerWindows::resize_viewport(u16 width, u16 height) const {}
+void GLManagerWindows::resize_viewport(uint16_t width, uint16_t height) const {}
 
 /**
  * @brief Class destructor. Frees all the data within the vectors.

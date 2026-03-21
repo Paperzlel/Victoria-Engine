@@ -13,7 +13,7 @@ public:
 		Vector2i size;
 		Vector2i bearing;
 		Vector2i origin;
-		u32 advance;
+		uint32_t advance;
 	};
 
 	Character get_character(char c) const;
@@ -21,22 +21,22 @@ public:
 
 protected:
 	RBMap<char, Character> font_map;
-	u32 font_size = 48;
-	u32 bitmap_size = 256;
-	u32 max_font_height = 0;
-	u32 font_baseline_offset = 0;
+	uint32_t font_size = 48;
+	uint32_t bitmap_size = 256;
+	uint32_t max_font_height = 0;
+	uint32_t font_baseline_offset = 0;
 
 public:
-	void set_font_size(u32 p_size);
+	void set_font_size(uint32_t p_size);
 
-	u32 get_max_font_height() const;
-	void set_max_font_height(u32 p_height);
+	uint32_t get_max_font_height() const;
+	void set_max_font_height(uint32_t p_height);
 
-	u32 get_font_baseline_offset() const;
-	void set_font_baseline_offset(u32 p_offset);
+	uint32_t get_font_baseline_offset() const;
+	void set_font_baseline_offset(uint32_t p_offset);
 
-	u32 get_bitmap_size() const;
-	void set_bitmap_size(u32 p_size);
+	uint32_t get_bitmap_size() const;
+	void set_bitmap_size(uint32_t p_size);
 
 	Font();
 	~Font();

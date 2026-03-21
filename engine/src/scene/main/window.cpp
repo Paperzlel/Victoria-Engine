@@ -3,7 +3,7 @@
 #include "core/config/callable_method_pointer.h"
 #include "servers/rendering_server.h"
 
-void Window::_window_resize_callback(u8 p_window_id) {
+void Window::_window_resize_callback(uint8_t p_window_id) {
 	ERR_FAIL_COND_MSG(window_id != p_window_id, "Scene window ID was not the same as DisplayManager window ID.");
 
 	set_viewport_size(DisplayManager::get_singleton()->get_window_rect());

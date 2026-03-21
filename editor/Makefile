@@ -7,6 +7,10 @@ ifeq ($(PLATFORM), linux)
 	LDFLAGS += -Wl,-rpath='$$ORIGIN'
 endif
 
+# Merge CFLAGS, CPPFLAGS and CCFLAGS
+CFLAGS += $(CCFLAGS)
+CPPFLAGS += $(CCFLAGS)
+
 # Source files and directories
 DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 C_FILES :=

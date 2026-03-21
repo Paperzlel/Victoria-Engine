@@ -131,7 +131,7 @@ private:
 	// An element that has all of its data uninitialized. Has no parent or sub-nodes or keys, and is set to black as
 	// its default colour.
 	Element *_nil = nullptr;
-	u32 element_count = 0;
+	uint32_t element_count = 0;
 
 	void _create_root() {
 		_root = vnew(Element(KeyValue<K, V>(K(), V())));
@@ -483,7 +483,7 @@ private:
 	}
 
 public:
-	FORCE_INLINE u32 size() {
+	FORCE_INLINE uint32_t size() {
 		return element_count;
 	}
 	FORCE_INLINE bool is_empty() {

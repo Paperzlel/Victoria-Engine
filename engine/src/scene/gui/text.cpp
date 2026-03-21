@@ -71,7 +71,7 @@ void Text::set_text(const String &p_text) {
 		}
 		ch.id = RS::get_singleton()->item_allocate();
 
-		u32 bmp_size = font->get_bitmap_size();
+		uint32_t bmp_size = font->get_bitmap_size();
 		Vector2i pos = Vector2i(x + loaded_char.bearing.x, y + baseline - loaded_char.bearing.y);
 		RS::get_singleton()->item_set_texture_rect(ch.id, loaded_char.texture, pos, loaded_char.size);
 		RS::get_singleton()->item_set_uv_rect(ch.id,

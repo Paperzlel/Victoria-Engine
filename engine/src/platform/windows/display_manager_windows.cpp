@@ -39,12 +39,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
  * @param height The height of the window
  * @return The ID of the current window
  */
-u8 DisplayManagerWindows::create_window(const String &p_name,
-										u16 x,
-										u16 y,
-										u16 width,
-										u16 height,
-										WindowFlags p_flags) {
+uint8_t DisplayManagerWindows::create_window(const String &p_name,
+											 uint16_t x,
+											 uint16_t y,
+											 uint16_t width,
+											 uint16_t height,
+											 WindowFlags p_flags) {
 	// TODO: Make this a little nicer - maybe format to snake case for the title?
 	String class_name = "victoria_engine_window_class_" + p_name;
 
@@ -63,7 +63,7 @@ u8 DisplayManagerWindows::create_window(const String &p_name,
 	WindowData *win_data = (WindowData *)Memory::vallocate(sizeof(WindowData));
 	Memory::vzero(win_data, sizeof(WindowData));
 
-	u32 window_flags = WS_OVERLAPPEDWINDOW;
+	uint32_t window_flags = WS_OVERLAPPEDWINDOW;
 	if (!(p_flags & WINDOW_FLAG_INVISIBLE)) {
 		window_flags |= WS_VISIBLE;
 	}
@@ -84,9 +84,9 @@ u8 DisplayManagerWindows::create_window(const String &p_name,
 	win_data->notification_callback.connect(cm, false);
 
 	if (gl_manager_windows) {
-		u8 id = gl_manager_windows->create_window(win_data->hWnd, hInstance);
+		uint8_t id = gl_manager_windows->create_window(win_data->hWnd, hInstance);
 		// Invalid window ID, need to return an error.
-		if (id == (u8)-1) {
+		if (id == (uint8_t)-1) {
 			vdelete(gl_manager_windows);
 			OS::get_singleton()
 				->print_error(__FILE__, __FUNCTION__, __LINE__, "GLWindow was unable to be created,", "", ERROR_ERR);
@@ -100,7 +100,7 @@ u8 DisplayManagerWindows::create_window(const String &p_name,
 	return win_data->id;
 }
 
-void DisplayManagerWindows::destroy_window(u8 p_id) {
+void DisplayManagerWindows::destroy_window(uint8_t p_id) {
 	if (window->id == p_id) {
 		if (gl_manager_windows) {
 			gl_manager_windows->destroy_window(p_id);
@@ -166,7 +166,7 @@ void DisplayManagerWindows::swap_buffers() {
 }
 
 LRESULT DisplayManagerWindows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-	u8 window_id = INVALID_WINDOW_ID;
+	uint8_t window_id = INVALID_WINDOW_ID;
 
 	if (window) {
 		window_id = window->id;
@@ -184,8 +184,8 @@ LRESULT DisplayManagerWindows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			return 0;
 		}
 		case WM_SIZE: {
-			u32 width = LOWORD(lParam);
-			u32 height = HIWORD(lParam);
+			uint32_t width = LOWORD(lParam);
+			uint32_t height = HIWORD(lParam);
 			if (gl_manager_windows) {
 				gl_manager_windows->resize_viewport(width, height);
 			}

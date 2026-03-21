@@ -6,7 +6,7 @@ class RIDAllocatorBase;
 
 class RID {
 	friend class RIDAllocatorBase;
-	u64 _id = 0;
+	uint64_t _id = 0;
 
 public:
 	FORCE_INLINE bool operator==(const RID &p_other) const {
@@ -24,7 +24,7 @@ public:
 		return _id == 0;
 	}
 
-	FORCE_INLINE u64 get_id() const {
+	FORCE_INLINE uint64_t get_id() const {
 		return _id;
 	}
 

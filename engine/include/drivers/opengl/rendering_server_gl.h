@@ -28,9 +28,9 @@ private:
 	struct Mesh {
 		RID material;
 
-		u32 vertex_buffer;
-		u32 element_buffer;
-		u32 vertex_array;
+		uint32_t vertex_buffer;
+		uint32_t element_buffer;
+		uint32_t vertex_array;
 
 		int vertex_count;
 		int index_count;
@@ -59,7 +59,7 @@ private:
 		MaterialData *data = nullptr;
 
 		RID texture;
-		u32 buffer = 0;
+		uint32_t buffer = 0;
 	};
 
 	RIDOwner<Material> material_owner;
@@ -92,7 +92,7 @@ private:
 			float projection[16];
 			float view[16];
 			float time;
-			u32 directional_light_count;
+			uint32_t directional_light_count;
 			float pad[2];
 		};
 		static_assert(sizeof(UBO) % 16 == 0, "SceneDataGlobals must be a multiple of 16 bytes in width");
@@ -130,18 +130,18 @@ private:
 		static_assert(sizeof(SpotLight) % 16 == 0, "Spotlight data must be a multiple of 16 bytes in width");
 
 		UBO ubo;
-		u32 ubo_buffer = 0;
+		uint32_t ubo_buffer = 0;
 
 		PointLight *point_lights = nullptr;
-		u32 point_light_count = 0;
-		u32 point_light_buffer = 0;
+		uint32_t point_light_count = 0;
+		uint32_t point_light_buffer = 0;
 
 		DirectionalLight *directional_lights = nullptr;
-		u32 directional_light_buffer = 0;
+		uint32_t directional_light_buffer = 0;
 
 		SpotLight *spot_lights = nullptr;
-		u32 spot_light_count = 0;
-		u32 spot_light_buffer = 0;
+		uint32_t spot_light_count = 0;
+		uint32_t spot_light_buffer = 0;
 	} scene_data;
 
 	/* 2D Drawing API */
@@ -226,8 +226,8 @@ private:
 
 	RIDOwner<Canvas> canvas_owner;
 
-	static constexpr u32 MAX_INSTANCE_DATA_COUNT = 1 << 14; // felt fancy
-	static constexpr u32 MAX_BATCH_ITEM_COUNT = 1 << 8;
+	static constexpr uint32_t MAX_INSTANCE_DATA_COUNT = 1 << 14; // felt fancy
+	static constexpr uint32_t MAX_BATCH_ITEM_COUNT = 1 << 8;
 
 	struct CanvasInstanceData {
 		float model[6];
@@ -245,8 +245,8 @@ private:
 	 * problems with changing data that is different for each item (i.e. materials and textures)
 	 */
 	struct CanvasBatch {
-		u32 start = 0; // How far into the CanvasInstanceData buffer
-		u32 instance_count = 0;
+		uint32_t start = 0; // How far into the CanvasInstanceData buffer
+		uint32_t instance_count = 0;
 		Item::BaseType type = Item::TYPE_NONE;
 		Item::Base *base = nullptr; // Only set for meshes
 		int ysort = 0;
@@ -262,25 +262,25 @@ private:
 		static_assert(sizeof(UBO) % 16 == 0, "The CanvasData UBO must be a multiple of 16 bytes in width");
 
 		UBO ubo;
-		u32 canvas_buffer = 0;
+		uint32_t canvas_buffer = 0;
 
 		Vector<CanvasBatch> batches;
-		u32 current_batch = 0;
+		uint32_t current_batch = 0;
 
 		CanvasInstanceData *canvas_instance_data = nullptr;
 		GLuint canvas_instance_data_buffer = 0;
-		u32 instance_data_offset = 0;
+		uint32_t instance_data_offset = 0;
 
-		u32 rect_vertex_array = 0;
-		u32 rect_vertex_buffer = 0;
-		u32 rect_index_buffer = 0;
+		uint32_t rect_vertex_array = 0;
+		uint32_t rect_vertex_buffer = 0;
+		uint32_t rect_index_buffer = 0;
 
-		u32 screen_quad = 0;
-		u32 screen_quad_array = 0;
+		uint32_t screen_quad = 0;
+		uint32_t screen_quad_array = 0;
 	} canvas_data;
 
 	struct Texture {
-		u32 texture_buffer;
+		uint32_t texture_buffer;
 		TextureFormat format;
 		bool use_sdf = false;
 	};
@@ -323,7 +323,7 @@ private:
 		return vnew(RenderingServerGL);
 	}
 
-	void _enable_attributes(u32 p_start, u32 p_rate = 1);
+	void _enable_attributes(uint32_t p_start, uint32_t p_rate = 1);
 	void _new_canvas_batch();
 
 	Vector<Viewport *> _get_sorted_viewports();
@@ -435,7 +435,7 @@ public:
 	virtual RID texture_allocate() override;
 	virtual void texture_free(RID p_texture) override;
 	virtual void texture_set_from_data(RID p_texture,
-									   const u8 *p_data,
+									   const uint8_t *p_data,
 									   int p_width,
 									   int p_height,
 									   TextureFormat p_format,

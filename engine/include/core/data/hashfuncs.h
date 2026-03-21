@@ -2,25 +2,25 @@
 
 #include "core/typedefs.h"
 
-VAPI u32 hash_djb2(u8 *str);
-VAPI u32 hash_lowbias32(u32 x);
+VAPI uint32_t hash_djb2(uint8_t *str);
+VAPI uint32_t hash_lowbias32(uint32_t x);
 
 class HasherDefault {
 public:
-	static FORCE_INLINE u32 hash(u8 *p_key);
-	static FORCE_INLINE u32 hash(const char *p_key);
-	static FORCE_INLINE u32 hash(u32 p_key);
+	static FORCE_INLINE uint32_t hash(uint8_t *p_key);
+	static FORCE_INLINE uint32_t hash(const char *p_key);
+	static FORCE_INLINE uint32_t hash(uint32_t p_key);
 };
 
-u32 HasherDefault::hash(u8 *p_key) {
+uint32_t HasherDefault::hash(uint8_t *p_key) {
 	return hash_djb2(p_key);
 }
 
-u32 HasherDefault::hash(const char *p_key) {
-	return hash_djb2((u8 *)p_key);
+uint32_t HasherDefault::hash(const char *p_key) {
+	return hash_djb2((uint8_t *)p_key);
 }
 
-u32 HasherDefault::hash(u32 p_key) {
+uint32_t HasherDefault::hash(uint32_t p_key) {
 	return hash_lowbias32(p_key);
 }
 

@@ -18,16 +18,16 @@ private:
 	GLManagerWindows *gl_manager_windows = nullptr;
 
 	struct WindowData {
-		u8 id;
+		uint8_t id;
 		HWND hWnd;
-		Event<WindowNotification, u8> notification_callback;
+		Event<WindowNotification, uint8_t> notification_callback;
 
-		u16 x, y, width, height;
+		uint16_t x, y, width, height;
 	};
 
 	bool first_frame = true;
-	u16 old_x = 0;
-	u16 old_y = 0;
+	uint16_t old_x = 0;
+	uint16_t old_y = 0;
 	Vector2i centre;
 
 	WindowData *window = nullptr;
@@ -38,13 +38,13 @@ public:
 
 	LRESULT WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-	virtual u8 create_window(const String &p_name,
-							 u16 x,
-							 u16 y,
-							 u16 width,
-							 u16 height,
-							 WindowFlags p_flags = WINDOW_FLAG_DEFAULT) override;
-	virtual void destroy_window(u8 p_id) override;
+	virtual uint8_t create_window(const String &p_name,
+								  uint16_t x,
+								  uint16_t y,
+								  uint16_t width,
+								  uint16_t height,
+								  WindowFlags p_flags = WINDOW_FLAG_DEFAULT) override;
+	virtual void destroy_window(uint8_t p_id) override;
 
 	virtual void set_use_vsync(bool p_value) override;
 

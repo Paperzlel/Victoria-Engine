@@ -14,7 +14,7 @@ namespace GL {
 	private:
 		struct Buffer {
 			GLenum type;
-			u64 size;
+			uint64_t size;
 
 			bool operator==(const Buffer &p_other) const; // For compat with Vector<T>::find()
 		};
@@ -53,12 +53,12 @@ namespace GL {
 
 		void report_buffer_allocations();
 
-		void allocate_buffer(const GLenum p_type, u64 p_size, const void *p_ptr, const GLenum p_draw_type);
-		void allocate_buffer(const GLenum p_type, u64 p_size, const GLenum p_draw_type);
+		void allocate_buffer(const GLenum p_type, uint64_t p_size, const void *p_ptr, const GLenum p_draw_type);
+		void allocate_buffer(const GLenum p_type, uint64_t p_size, const GLenum p_draw_type);
 
-		void free_buffer(const GLenum p_type, u64 p_size, const GLuint *p_buffer);
+		void free_buffer(const GLenum p_type, uint64_t p_size, const GLuint *p_buffer);
 
-		Error check_pipeline_errors(u32 p_what, GLStatusType p_compile_type);
+		Error check_pipeline_errors(uint32_t p_what, GLStatusType p_compile_type);
 		static void debug_message_callback(GLenum p_source,
 										   GLenum p_type,
 										   GLenum p_id,

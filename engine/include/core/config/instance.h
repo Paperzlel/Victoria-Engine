@@ -42,7 +42,7 @@ public:
 	 * @brief Obtains the number of references to the given object.
 	 * @returns The reference count.
 	 */
-	u64 get_refcount() const;
+	uint64_t get_refcount() const;
 
 	/**
 	 * @brief Checks to see if the refcount has been initialized.

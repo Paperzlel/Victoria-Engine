@@ -11,7 +11,7 @@ static bool array_test_basic() {
 	a.push_back(1);
 	a.push_back(true);
 	a.push_back(3.14159);
-	TEST_EQ(i32(a[0]), 1);
+	TEST_EQ(int32_t(a[0]), 1);
 	TEST_EQ(bool(a[1]), true);
 	TEST_EQ(double(a[2]), 3.14159);
 

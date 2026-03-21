@@ -27,14 +27,14 @@ Ref<Resource> ResourceFormatImporterFont::_import(const String &p_file, int p_ar
 	f.instantiate();
 
 	int font_height = 48;
-	u64 bitmap_size = 256;
+	uint64_t bitmap_size = 256;
 	if (p_argc >= 2) {
 		font_height = p_args[1];
 	}
 
-	u32 po2 = next_po2(font_height);
-	u32 base = find_log2(po2);
-	u32 diff = (find_log2(bitmap_size) - base);
+	uint32_t po2 = next_po2(font_height);
+	uint32_t base = find_log2(po2);
+	uint32_t diff = (find_log2(bitmap_size) - base);
 	if (diff <= 3) {
 		bitmap_size <<= diff == 2 ? 1 : (diff == 1 ? 2 : 3); // Bitmap next power should always be 3 of the font
 	}
@@ -55,14 +55,14 @@ Ref<Resource> ResourceFormatImporterFont::_import(const String &p_file, int p_ar
 		// Load font into a larger bitmap image
 
 		RBMap<int, char> char_map;
-		for (u8 c = 32; c < 127; c++) {
+		for (uint8_t c = 32; c < 127; c++) {
 			char_map.insert(c, (char)c);
 		}
 
-		u8 *bitmap = (u8 *)Memory::vallocate_zeroed(bitmap_size * bitmap_size);
-		u32 max_x = 0;
-		u32 max_y = 0;
-		u32 max_row = 0;
+		uint8_t *bitmap = (uint8_t *)Memory::vallocate_zeroed(bitmap_size * bitmap_size);
+		uint32_t max_x = 0;
+		uint32_t max_y = 0;
+		uint32_t max_row = 0;
 		int max_height_pos = 0;
 		int max_height_neg = 0;
 		int border = 1; // 1 px border
@@ -72,7 +72,7 @@ Ref<Resource> ResourceFormatImporterFont::_import(const String &p_file, int p_ar
 			rs->texture_use_sdf(r, true);
 		}
 
-		for (u8 i = 0; i < char_map.size(); i++) {
+		for (uint8_t i = 0; i < char_map.size(); i++) {
 			char character = char_map[i + 32];
 
 			if (FT_Load_Char(face, character, FT_LOAD_RENDER) != 0) {
@@ -128,8 +128,8 @@ Ref<Resource> ResourceFormatImporterFont::_import(const String &p_file, int p_ar
 				max_row = bmp.rows;
 			}
 
-			for (u8 h = 0; h < bmp.rows; h++) {
-				for (u8 w = 0; w < bmp.width; w++) {
+			for (uint8_t h = 0; h < bmp.rows; h++) {
+				for (uint8_t w = 0; w < bmp.width; w++) {
 					if ((h + max_y) * (w + max_x) > bitmap_size * bitmap_size) {
 						ERR_WARN("Bitmap pixel does not exist");
 					}
@@ -156,7 +156,7 @@ Ref<Resource> ResourceFormatImporterFont::_import(const String &p_file, int p_ar
 
 		Memory::vfree(bitmap);
 	} else {
-		for (u8 c = 0; c < 128; c++) {
+		for (uint8_t c = 0; c < 128; c++) {
 			ERR_FAIL_COND_MSG_R(FT_Load_Char(face, c, FT_LOAD_RENDER) != 0,
 								vformat("Unable to load Freetype character %c", (char)c).get_data(),
 								Ref<Resource>());

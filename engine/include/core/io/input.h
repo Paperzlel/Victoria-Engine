@@ -146,7 +146,7 @@ public:
 struct Mouse {
 public:
 	bool buttons[3];
-	u8 scroll;
+	uint8_t scroll;
 	Vector2i position;
 };
 
@@ -192,7 +192,7 @@ public:
 class InputEventMouseScroll : public InputEventMouse {
 	VREGISTER_CLASS(InputEventMouseScroll, InputEventMouse)
 public:
-	u8 scroll;
+	uint8_t scroll;
 
 	InputEventMouseScroll() {}
 };
@@ -235,7 +235,7 @@ public:
 	/**
 	 * @brief Gets the scroll direction of the mouse wheel. -1 is downwards, 0 is netural, and 1 is upwards.
 	 */
-	u8 get_mouse_scroll() const {
+	uint8_t get_mouse_scroll() const {
 		return current_mouse.scroll;
 	}
 

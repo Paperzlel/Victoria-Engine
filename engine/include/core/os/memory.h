@@ -5,21 +5,21 @@
 
 class VAPI Memory {
 public:
-	static AtomicCounter<u64> current_mem_usage;
-	static AtomicCounter<u64> max_mem_usage;
+	static AtomicCounter<uint64_t> current_mem_usage;
+	static AtomicCounter<uint64_t> max_mem_usage;
 
 	static constexpr size_t DATA_OFFSET = sizeof(size_t);
 
-	static u64 get_memory_usage();
-	static u64 get_mem_max_usage();
+	static uint64_t get_memory_usage();
+	static uint64_t get_mem_max_usage();
 
-	static void *vallocate(u64 p_size);
-	static void *vallocate_zeroed(u64 p_size);
-	static void *vreallocate(void *p_block, u64 p_new_size);
+	static void *vallocate(uint64_t p_size);
+	static void *vallocate_zeroed(uint64_t p_size);
+	static void *vreallocate(void *p_block, uint64_t p_new_size);
 	static void vfree(void *p_block);
-	static void vzero(void *p_block, u64 p_size);
-	static void vset_memory(void *p_block, int p_value, u64 p_size);
-	static void *vcopy_memory(void *p_dest, void *p_source, u64 p_size);
+	static void vzero(void *p_block, uint64_t p_size);
+	static void vset_memory(void *p_block, int p_value, uint64_t p_size);
+	static void *vcopy_memory(void *p_dest, void *p_source, uint64_t p_size);
 };
 
 VAPI void *operator new(size_t p_size, const char *p_description);

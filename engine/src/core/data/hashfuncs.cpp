@@ -1,7 +1,7 @@
 #include "core/data/hashfuncs.h"
 
 // http://www.cse.yorku.ca/~oz/hash.html
-u32 hash_djb2(u8 *str) {
+uint32_t hash_djb2(uint8_t *str) {
 	unsigned long hash = 5381;
 	int c;
 
@@ -13,7 +13,7 @@ u32 hash_djb2(u8 *str) {
 }
 
 // https://github.com/skeeto/hash-prospector
-u32 hash_lowbias32(u32 x) {
+uint32_t hash_lowbias32(uint32_t x) {
 	x ^= x >> 16;
 	x *= 0x7feb352d;
 	x ^= x >> 15;

@@ -29,12 +29,12 @@ public:
 
 	bool is_valid_file() const;
 
-	u64 get_position() const;
-	u64 get_length() const;
+	uint64_t get_position() const;
+	uint64_t get_length() const;
 	bool is_eof() const;
 
-	Vector<u8> get_buffer(int p_length);
-	int get_buffer(u8 *p_buf, int p_length);
+	Vector<uint8_t> get_buffer(int p_length);
+	int get_buffer(uint8_t *p_buf, int p_length);
 
 	String get_contents_as_string();
 	String get_line();

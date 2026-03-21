@@ -14,20 +14,20 @@ struct Vector2;
 struct VAPI Vector2i {
 public:
 	union {
-		i64 elements[2] = {0};
+		int64_t elements[2] = {0};
 		struct {
 			// The x component of the vector
-			i64 x;
+			int64_t x;
 			// The y component of the vector
-			i64 y;
+			int64_t y;
 		};
 	};
 
-	FORCE_INLINE i64 &operator[](int p_index) {
+	FORCE_INLINE int64_t &operator[](int p_index) {
 		return elements[CLAMP(p_index, 0, 1)];
 	}
 
-	FORCE_INLINE const i64 &operator[](int p_index) const {
+	FORCE_INLINE const int64_t &operator[](int p_index) const {
 		return elements[CLAMP(p_index, 0, 1)];
 	}
 
@@ -47,13 +47,13 @@ public:
 	FORCE_INLINE Vector2i operator-(const Vector2i &p_other);
 	FORCE_INLINE Vector2i &operator-=(const Vector2i &p_other);
 	FORCE_INLINE Vector2i operator*(const Vector2i &p_other);
-	FORCE_INLINE Vector2i operator*(const i64 p_scalar);
+	FORCE_INLINE Vector2i operator*(const int64_t p_scalar);
 	FORCE_INLINE Vector2i &operator*=(const Vector2i &p_other);
-	FORCE_INLINE Vector2i &operator*=(const i64 p_scalar);
+	FORCE_INLINE Vector2i &operator*=(const int64_t p_scalar);
 	FORCE_INLINE Vector2i operator/(const Vector2i &p_other);
-	FORCE_INLINE Vector2i operator/(const i64 p_scalar);
+	FORCE_INLINE Vector2i operator/(const int64_t p_scalar);
 	FORCE_INLINE Vector2i &operator/=(const Vector2i &p_other);
-	FORCE_INLINE Vector2i &operator/=(const i64 p_scalar);
+	FORCE_INLINE Vector2i &operator/=(const int64_t p_scalar);
 
 	/**
 	 * @brief Represents a vector with a magnitude of 0.
@@ -98,7 +98,7 @@ public:
 	}
 
 	FORCE_INLINE double length() const;
-	FORCE_INLINE i64 length_squared() const;
+	FORCE_INLINE int64_t length_squared() const;
 	FORCE_INLINE Vector2i inverse() const;
 
 	FORCE_INLINE void normalize();
@@ -125,7 +125,7 @@ public:
 	/**
 	 * @brief `Vector2i` class constructor. Creates a vector from two specified x and y components.
 	 */
-	FORCE_INLINE Vector2i(i64 p_x, i64 p_y) {
+	FORCE_INLINE Vector2i(int64_t p_x, int64_t p_y) {
 		x = p_x;
 		y = p_y;
 	}
@@ -193,7 +193,7 @@ Vector2i Vector2i::operator*(const Vector2i &p_other) {
 /**
  * @brief Multiplication operator for a `Vector2i`, using a scalar.
  */
-Vector2i Vector2i::operator*(const i64 p_scalar) {
+Vector2i Vector2i::operator*(const int64_t p_scalar) {
 	Vector2i ret = *this;
 	ret *= p_scalar;
 	return ret;
@@ -211,7 +211,7 @@ Vector2i &Vector2i::operator*=(const Vector2i &p_other) {
 /**
  * @brief Multiplication operator for a `Vector2i`, using a scalar.
  */
-Vector2i &Vector2i::operator*=(const i64 p_scalar) {
+Vector2i &Vector2i::operator*=(const int64_t p_scalar) {
 	x *= p_scalar;
 	y *= p_scalar;
 	return *this;
@@ -229,7 +229,7 @@ Vector2i Vector2i::operator/(const Vector2i &p_other) {
 /**
  * @brief Division operator for a `Vector2i`, using a scalar.
  */
-Vector2i Vector2i::operator/(const i64 p_scalar) {
+Vector2i Vector2i::operator/(const int64_t p_scalar) {
 	Vector2i ret = *this;
 	ret /= p_scalar;
 	return ret;
@@ -247,7 +247,7 @@ Vector2i &Vector2i::operator/=(const Vector2i &p_other) {
 /**
  * @brief Division operator for a `Vector2i`, using a scalar
  */
-Vector2i &Vector2i::operator/=(const i64 p_scalar) {
+Vector2i &Vector2i::operator/=(const int64_t p_scalar) {
 	x /= p_scalar;
 	y /= p_scalar;
 	return *this;
@@ -267,7 +267,7 @@ double Vector2i::length() const {
  * @brief Obtains the squared length of the current vector, which is equivalent to the square of its x component added
  * to the sqaure of its y component.
  */
-i64 Vector2i::length_squared() const {
+int64_t Vector2i::length_squared() const {
 	return x * x + y * y;
 }
 
@@ -282,7 +282,7 @@ Vector2i Vector2i::inverse() const {
  * @brief Normalizes a vector, which is to divide each component by its length to make its magnitude equal to 1.
  */
 void Vector2i::normalize() {
-	i64 len = length();
+	int64_t len = length();
 
 	if (len == 0) {
 		return;

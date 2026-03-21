@@ -84,7 +84,7 @@ void Utilities::report_buffer_allocations() {
 	}
 }
 
-void Utilities::allocate_buffer(const GLenum p_type, u64 p_size, const void *p_ptr, const GLenum p_draw_type) {
+void Utilities::allocate_buffer(const GLenum p_type, uint64_t p_size, const void *p_ptr, const GLenum p_draw_type) {
 	glBufferData(p_type, p_size, p_ptr, p_draw_type);
 	Buffer buf;
 	buf.type = p_type;
@@ -106,11 +106,11 @@ void Utilities::allocate_buffer(const GLenum p_type, u64 p_size, const void *p_p
 	}
 }
 
-void Utilities::allocate_buffer(const GLenum p_type, u64 p_size, const GLenum p_draw_type) {
+void Utilities::allocate_buffer(const GLenum p_type, uint64_t p_size, const GLenum p_draw_type) {
 	allocate_buffer(p_type, p_size, nullptr, p_draw_type);
 }
 
-void Utilities::free_buffer(const GLenum p_type, u64 p_size, const GLuint *p_buffer) {
+void Utilities::free_buffer(const GLenum p_type, uint64_t p_size, const GLuint *p_buffer) {
 	glDeleteBuffers(1, p_buffer);
 
 	for (Buffer &b : allocations) {
@@ -125,7 +125,7 @@ void Utilities::free_buffer(const GLenum p_type, u64 p_size, const GLuint *p_buf
 	}
 }
 
-Error Utilities::check_pipeline_errors(u32 p_what, GLStatusType p_compile_type) {
+Error Utilities::check_pipeline_errors(uint32_t p_what, GLStatusType p_compile_type) {
 	int success = 0;
 	char info_log[512];
 	switch (p_compile_type) {
@@ -199,9 +199,9 @@ void Utilities::debug_message_callback(GLenum p_source,
 		return; // Ignore notifications as they're not very important for us to handle
 	}
 
-	u8 source_id = p_source - GL_DEBUG_SOURCE_API;
-	u8 severity = (p_severity == GL_DEBUG_SEVERITY_NOTIFICATION) ? 3 : p_severity - GL_DEBUG_SEVERITY_HIGH;
-	u8 error_type = (p_type == GL_DEBUG_TYPE_MARKER) ? 6 : p_type - GL_DEBUG_TYPE_ERROR;
+	uint8_t source_id = p_source - GL_DEBUG_SOURCE_API;
+	uint8_t severity = (p_severity == GL_DEBUG_SEVERITY_NOTIFICATION) ? 3 : p_severity - GL_DEBUG_SEVERITY_HIGH;
+	uint8_t error_type = (p_type == GL_DEBUG_TYPE_MARKER) ? 6 : p_type - GL_DEBUG_TYPE_ERROR;
 
 	// Is fatal/serious --> error
 	// Is warning/notification --> no error

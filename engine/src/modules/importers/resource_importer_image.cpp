@@ -13,14 +13,14 @@ Ref<Resource> ResourceFormatImporterImage::_import(const String &p_file, int p_a
 
 	int len = fs->get_length();
 
-	Vector<u8> buf;
+	Vector<uint8_t> buf;
 	buf.resize(len);
 	fs->get_buffer(buf.ptrw(), len);
 
 	Ref<Texture> t;
 	t.instantiate();
 	int width, height, channel_count;
-	u8 *data = stbi_load_from_memory(buf.ptr(), buf.size(), &width, &height, &channel_count, 0);
+	uint8_t *data = stbi_load_from_memory(buf.ptr(), buf.size(), &width, &height, &channel_count, 0);
 
 	RS::TextureFormat format;
 	switch (channel_count) {

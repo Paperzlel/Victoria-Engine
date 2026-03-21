@@ -5,12 +5,12 @@
 #include "core/typedefs.h"
 #include "core/variant/variant_caster.h"
 
-template <typename C, typename... Args, u64... Is>
+template <typename C, typename... Args, uint64_t... Is>
 void method_call_varargs(C *p_class, void (C::*p_method)(Args...), const Variant **p_args, Indicies<Is...>) {
 	(p_class->*p_method)(VariantCaster<Args>::cast(*p_args[Is])...);
 }
 
-template <typename... Args, u64... Is>
+template <typename... Args, uint64_t... Is>
 void static_method_call_varargs(void (*p_method)(Args...), const Variant **p_args, Indicies<Is...>) {
 	p_method(VariantCaster<Args>::cast(*p_args[Is])...);
 }

@@ -15,10 +15,10 @@ private:
 	 * @brief Struct that contains all the core information our OpenGL functions need to know about a given window.
 	 */
 	struct GLWindow {
-		u8 id;
+		uint8_t id;
 		// The display ID is the ID that links a given window to a given display. When looking for an OpenGL context,
 		// the display ID lets the code know which context to apply itself to.
-		u8 display_id;
+		uint8_t display_id;
 
 		HDC hDC;
 		HWND hWnd;
@@ -36,11 +36,11 @@ private:
 	void _create_nvapi_profile();
 
 public:
-	u8 create_window(HWND hWnd, HINSTANCE hInstance);
-	void destroy_window(u8 p_id);
+	uint8_t create_window(HWND hWnd, HINSTANCE hInstance);
+	void destroy_window(uint8_t p_id);
 
-	u8 get_active_window();
-	void set_active_window(u8 p_id);
+	uint8_t get_active_window();
+	void set_active_window(uint8_t p_id);
 	void release_active_window();
 
 	bool is_using_vsync() const;
@@ -50,7 +50,7 @@ public:
 	void finalize();
 	void swap_buffers() const;
 
-	void resize_viewport(u16 width, u16 height) const;
+	void resize_viewport(uint16_t width, uint16_t height) const;
 
 	GLManagerWindows() {}
 	~GLManagerWindows();

@@ -7,7 +7,7 @@
 
 class EGLManager {
 	struct EGL_Window {
-		u8 display_id = -1;
+		uint8_t display_id = -1;
 
 		EGLSurface surface = EGL_NO_SURFACE;
 	};
@@ -39,14 +39,14 @@ class EGLManager {
 public:
 	int get_native_visual_id(void *p_native);
 
-	u8 create_window(void *p_native_display, void *p_native_window);
-	void destroy_window(u8 p_id);
+	uint8_t create_window(void *p_native_display, void *p_native_window);
+	void destroy_window(uint8_t p_id);
 
 	Error initialize(void *p_platform_display = nullptr);
 	Error open_display(void *p_native);
 	void finalize();
 	void swap_buffers() const;
-	void resize_viewport(u16 p_width, u16 p_height);
+	void resize_viewport(uint16_t p_width, uint16_t p_height);
 
 	/**
 	 * @brief Sets all displays to use vsync depending on the value given. Should change once multiple displays

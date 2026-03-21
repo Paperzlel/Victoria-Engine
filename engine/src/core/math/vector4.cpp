@@ -18,5 +18,5 @@ Vector4::operator String() const {
 }
 
 Vector4::operator Vector4i() const {
-	return Vector4i((i64)x, (i64)y, (i64)z, (i64)w);
+	return Vector4i((int64_t)x, (int64_t)y, (int64_t)z, (int64_t)w);
 }

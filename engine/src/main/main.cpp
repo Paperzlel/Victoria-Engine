@@ -27,7 +27,7 @@ static DisplayManager *display_manager = nullptr;
 static RenderingServer *rendering_server = nullptr;
 
 static String version_str;
-static u64 frame_count = 0;
+static uint64_t frame_count = 0;
 static bool should_quit = false;
 static String rendering_backend = "";
 

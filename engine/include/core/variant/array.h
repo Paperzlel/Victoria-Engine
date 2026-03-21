@@ -72,23 +72,23 @@ public:
 	ConstIterator begin() const;
 	ConstIterator end() const;
 
-	Variant &operator[](u64 p_index);
-	const Variant &operator[](u64 p_index) const;
+	Variant &operator[](uint64_t p_index);
+	const Variant &operator[](uint64_t p_index) const;
 
 	void operator=(const Array &p_other);
 
 	bool operator==(const Array &p_other);
 	bool operator!=(const Array &p_other);
 
-	i64 size() const;
+	int64_t size() const;
 	Error resize(int p_new_size);
 	bool is_empty() const;
 	bool is_read_only() const;
 	void set_read_only(bool p_bool) const;
 
 	void append(const Variant &p_item);
-	void remove_at(u64 p_index);
-	void insert(u64 p_index, const Variant &p_item);
+	void remove_at(uint64_t p_index);
+	void insert(uint64_t p_index, const Variant &p_item);
 
 	Variant pop_front();
 	Variant pop_back();

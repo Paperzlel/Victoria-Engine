@@ -54,7 +54,7 @@ Error CallableMethod::call(Args... p_args) const {
 	Variant args[sizeof...(p_args) + 1] = {p_args..., Variant()};
 	const Variant *argptrs[sizeof...(p_args) + 1];
 
-	for (u32 i = 0; i < sizeof...(p_args); i++) {
+	for (uint32_t i = 0; i < sizeof...(p_args); i++) {
 		argptrs[i] = &args[i];
 	}
 

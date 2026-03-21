@@ -24,7 +24,7 @@ bool Instance::unreference() {
 	return can_die;
 }
 
-u64 Instance::get_refcount() const {
+uint64_t Instance::get_refcount() const {
 	return refcount.get();
 }
 

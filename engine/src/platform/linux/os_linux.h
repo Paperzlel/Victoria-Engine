@@ -31,7 +31,7 @@ public:
 
 	virtual void alert(const char *message, const char *title) const override;
 
-	virtual u64 get_current_time_usec() override;
+	virtual uint64_t get_current_time_usec() override;
 	virtual double get_os_running_time() override;
 
 	virtual bool has_feature(const String &p_feature) const override;

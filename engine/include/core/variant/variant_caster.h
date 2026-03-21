@@ -15,6 +15,6 @@ struct VariantCaster {
 	template <>                                                                                                       \
 	struct VariantCaster<m_enum> {                                                                                    \
 		static FORCE_INLINE m_enum cast(const Variant &p_variant) {                                                   \
-			return (m_enum)p_variant.operator i64();                                                                  \
+			return (m_enum)p_variant.operator int64_t();                                                              \
 		}                                                                                                             \
 	}

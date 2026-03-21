@@ -35,7 +35,7 @@ public:                                                                         
                                                                                                                       \
 protected:                                                                                                            \
 	FORCE_INLINE void (Item::*_get_notification() const)(int) {                                                       \
-		return (void (Item::*)(int)) & m_class::_notification;                                                        \
+		return (void(Item::*)(int)) & m_class::_notification;                                                         \
 	}                                                                                                                 \
                                                                                                                       \
 	FORCE_INLINE static void (*_get_bind_methods())() {                                                               \
@@ -148,7 +148,7 @@ public:
 		Variant args[sizeof...(p_args) + 1] = {p_args..., Variant()};
 		const Variant *argptrs[sizeof...(p_args) + 1];
 
-		for (u32 i = 0; i < sizeof...(p_args); i++) {
+		for (uint32_t i = 0; i < sizeof...(p_args); i++) {
 			argptrs[i] = &args[i];
 		}
 

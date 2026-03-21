@@ -19,5 +19,5 @@ Vector2::operator String() const {
 }
 
 Vector2::operator Vector2i() const {
-	return Vector2i((i64)x, (i64)y);
+	return Vector2i((int64_t)x, (int64_t)y);
 }

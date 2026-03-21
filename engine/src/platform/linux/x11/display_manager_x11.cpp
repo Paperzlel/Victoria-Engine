@@ -50,9 +50,9 @@ void DisplayManagerX11::_update_wm_properties() {
 						   &format,
 						   &state_count,
 						   &bytes_after,
-						   (u8 **)&states) == Success) {
+						   (uint8_t **)&states) == Success) {
 		local_states.resize(state_count);
-		for (u64 i = 0; i < state_count; i++) {
+		for (uint64_t i = 0; i < state_count; i++) {
 			local_states[i] = states[i];
 		}
 	}
@@ -77,7 +77,12 @@ void DisplayManagerX11::_update_wm_properties() {
  * @param height The number of pixels tall the window will be
  * @returns The ID of the created window (NOTE: For now, this will remain to be 0 until multiple windows are supported)
  */
-u8 DisplayManagerX11::create_window(const String &p_name, u16 x, u16 y, u16 width, u16 height, WindowFlags p_flags) {
+uint8_t DisplayManagerX11::create_window(const String &p_name,
+										 uint16_t x,
+										 uint16_t y,
+										 uint16_t width,
+										 uint16_t height,
+										 WindowFlags p_flags) {
 	XVisualInfo visual;
 	if (gl_manager_x11) {
 		visual = *gl_manager_x11->get_visual_info();
@@ -146,8 +151,8 @@ u8 DisplayManagerX11::create_window(const String &p_name, u16 x, u16 y, u16 widt
 	win_data->win = win;
 
 	if (gl_manager_x11) {
-		u8 id = gl_manager_x11->create_window(&win_data->win);
-		if (id == (u8)-1) {
+		uint8_t id = gl_manager_x11->create_window(&win_data->win);
+		if (id == (uint8_t)-1) {
 			vdelete(gl_manager_x11);
 			OS::get_singleton()->print_error(__FILE__, FUNCTION_STR, __LINE__, "GLWindow was unable to be created.");
 			return INVALID_WINDOW_ID;
@@ -156,8 +161,8 @@ u8 DisplayManagerX11::create_window(const String &p_name, u16 x, u16 y, u16 widt
 	}
 
 	if (egl_manager_x11) {
-		u8 id = egl_manager_x11->create_window(display, &win_data->win);
-		if (id == (u8)-1) {
+		uint8_t id = egl_manager_x11->create_window(display, &win_data->win);
+		if (id == (uint8_t)-1) {
 			vdelete(egl_manager_x11);
 			OS::get_singleton()->print_error(__FILE__, FUNCTION_STR, __LINE__, "EGLWindow was unable to be created,");
 			return INVALID_WINDOW_ID;
@@ -174,7 +179,7 @@ u8 DisplayManagerX11::create_window(const String &p_name, u16 x, u16 y, u16 widt
  * @brief Deletes the currently active window.
  * @param p_id The current ID of the active window
  */
-void DisplayManagerX11::destroy_window(u8 p_id) {
+void DisplayManagerX11::destroy_window(uint8_t p_id) {
 	if (!window) {
 		return;
 	}
@@ -237,7 +242,7 @@ void DisplayManagerX11::process_events() {
 				_update_window(&event);
 			} break;
 			case ClientMessage: {
-				if (event.xclient.data.l[0] == (i64)window->wm_close_atom) {
+				if (event.xclient.data.l[0] == (int64_t)window->wm_close_atom) {
 					window->notification_callback.fire(NOTIFICATION_WM_WINDOW_CLOSE, window->id);
 					OS::get_singleton()->set_exit_code(0);
 					Main::set_should_quit(true);
@@ -280,7 +285,7 @@ void DisplayManagerX11::process_events() {
 			case ButtonRelease: {
 				bool is_pressed = (event.type == ButtonPress ? true : false);
 
-				u32 p_button = event.xbutton.button;
+				uint32_t p_button = event.xbutton.button;
 
 				// Scroll event
 				if (p_button == 4 || p_button == 5) {
@@ -376,7 +381,7 @@ Vector2i DisplayManagerX11::get_window_rect() const {
 	return window->size;
 }
 
-void DisplayManagerX11::set_window_resize_callback(const CallableMethod &p_method, u8 p_id) {
+void DisplayManagerX11::set_window_resize_callback(const CallableMethod &p_method, uint8_t p_id) {
 	if (p_id == window->id) {
 		window->window_resize_callback = p_method;
 	}

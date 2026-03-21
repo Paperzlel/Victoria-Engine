@@ -151,21 +151,21 @@ void Variant::_ref(const Variant &p_other) {
 			vnew_placement(_data._mem, Array(*reinterpret_cast<const Array *>(p_other._data._mem)));
 		} break;
 		case BYTE_ARRAY: {
-			_data._array = static_cast<ArrayRef<u8> *>(p_other._data._array)->reference();
+			_data._array = static_cast<ArrayRef<uint8_t> *>(p_other._data._array)->reference();
 			if (!_data._array) {
-				_data._array = ArrayRef<u8>::create();
+				_data._array = ArrayRef<uint8_t>::create();
 			}
 		} break;
 		case INT32_ARRAY: {
-			_data._array = static_cast<ArrayRef<i32> *>(p_other._data._array)->reference();
+			_data._array = static_cast<ArrayRef<int32_t> *>(p_other._data._array)->reference();
 			if (!_data._array) {
-				_data._array = ArrayRef<i32>::create();
+				_data._array = ArrayRef<int32_t>::create();
 			}
 		} break;
 		case INT64_ARRAY: {
-			_data._array = static_cast<ArrayRef<i64> *>(p_other._data._array)->reference();
+			_data._array = static_cast<ArrayRef<int64_t> *>(p_other._data._array)->reference();
 			if (!_data._array) {
-				_data._array = ArrayRef<i64>::create();
+				_data._array = ArrayRef<int64_t>::create();
 			}
 		} break;
 		case FLOAT32_ARRAY: {
@@ -317,7 +317,7 @@ Variant::operator bool() const {
 	}
 }
 
-Variant::operator i8() const {
+Variant::operator int8_t() const {
 	switch (type) {
 		case NIL:
 			return 0;
@@ -333,7 +333,7 @@ Variant::operator i8() const {
 	}
 }
 
-Variant::operator i16() const {
+Variant::operator int16_t() const {
 	switch (type) {
 		case NIL:
 			return 0;
@@ -349,7 +349,7 @@ Variant::operator i16() const {
 	}
 }
 
-Variant::operator i32() const {
+Variant::operator int32_t() const {
 	switch (type) {
 		case NIL:
 			return 0;
@@ -365,7 +365,7 @@ Variant::operator i32() const {
 	}
 }
 
-Variant::operator i64() const {
+Variant::operator int64_t() const {
 	switch (type) {
 		case NIL:
 			return 0;
@@ -381,7 +381,7 @@ Variant::operator i64() const {
 	}
 }
 
-Variant::operator u64() const {
+Variant::operator uint64_t() const {
 	switch (type) {
 		case NIL:
 			return 0;
@@ -397,7 +397,7 @@ Variant::operator u64() const {
 	}
 }
 
-Variant::operator u32() const {
+Variant::operator uint32_t() const {
 	switch (type) {
 		case NIL:
 			return 0;
@@ -413,7 +413,7 @@ Variant::operator u32() const {
 	}
 }
 
-Variant::operator u16() const {
+Variant::operator uint16_t() const {
 	switch (type) {
 		case NIL:
 			return 0;
@@ -429,7 +429,7 @@ Variant::operator u16() const {
 	}
 }
 
-Variant::operator u8() const {
+Variant::operator uint8_t() const {
 	switch (type) {
 		case NIL:
 			return 0;
@@ -695,25 +695,25 @@ Variant::operator Array() const {
 
 Variant::operator ByteArray() const {
 	if (type == BYTE_ARRAY) {
-		return static_cast<ArrayRef<u8> *>(_data._array)->array;
+		return static_cast<ArrayRef<uint8_t> *>(_data._array)->array;
 	} else {
-		return Vector<u8>();
+		return Vector<uint8_t>();
 	}
 }
 
 Variant::operator Int32Array() const {
 	if (type == INT32_ARRAY) {
-		return static_cast<ArrayRef<i32> *>(_data._array)->array;
+		return static_cast<ArrayRef<int32_t> *>(_data._array)->array;
 	} else {
-		return Vector<i32>();
+		return Vector<int32_t>();
 	}
 }
 
 Variant::operator Int64Array() const {
 	if (type == INT64_ARRAY) {
-		return static_cast<ArrayRef<i64> *>(_data._array)->array;
+		return static_cast<ArrayRef<int64_t> *>(_data._array)->array;
 	} else {
-		return Vector<i64>();
+		return Vector<int64_t>();
 	}
 }
 
@@ -757,22 +757,22 @@ Variant::operator Vector4Array() const {
 	}
 }
 
-Variant::Variant(i8 p_int) {
+Variant::Variant(int8_t p_int) {
 	_data._int = p_int;
 	type = INT;
 }
 
-Variant::Variant(i16 p_int) {
+Variant::Variant(int16_t p_int) {
 	_data._int = p_int;
 	type = INT;
 }
 
-Variant::Variant(i32 p_int) {
+Variant::Variant(int32_t p_int) {
 	_data._int = p_int;
 	type = INT;
 }
 
-Variant::Variant(i64 p_int) {
+Variant::Variant(int64_t p_int) {
 	_data._int = p_int;
 	type = INT;
 }
@@ -781,7 +781,7 @@ Variant::Variant(i64 p_int) {
  * @brief Variant class constructor, unsigned 8-bit integer version
  * @param p_uint An unsigned 8-bit integer
  */
-Variant::Variant(u8 p_uint) {
+Variant::Variant(uint8_t p_uint) {
 	_data._int = p_uint;
 	type = INT;
 }
@@ -790,7 +790,7 @@ Variant::Variant(u8 p_uint) {
  * @brief Variant class constructor, unsigned 16-bit integer version
  * @param p_uint An unsigned 16-bit integer
  */
-Variant::Variant(u16 p_uint) {
+Variant::Variant(uint16_t p_uint) {
 	_data._int = p_uint;
 	type = INT;
 }
@@ -799,7 +799,7 @@ Variant::Variant(u16 p_uint) {
  * @brief Variant class constructor, unsigned 32-bit integer version
  * @param p_uint An unsigned 32-bit integer
  */
-Variant::Variant(u32 p_uint) {
+Variant::Variant(uint32_t p_uint) {
 	_data._int = p_uint;
 	type = INT;
 }
@@ -808,7 +808,7 @@ Variant::Variant(u32 p_uint) {
  * @brief Variant class constructor, unsigned 64-bit integer version
  * @param p_uint An unsigned 64-bit integer
  */
-Variant::Variant(u64 p_uint) {
+Variant::Variant(uint64_t p_uint) {
 	_data._int = p_uint;
 	type = INT;
 }
@@ -886,17 +886,17 @@ Variant::Variant(const Array &p_array) {
 }
 
 Variant::Variant(const ByteArray &p_byte_array) {
-	_data._array = ArrayRef<u8>::create(p_byte_array);
+	_data._array = ArrayRef<uint8_t>::create(p_byte_array);
 	type = BYTE_ARRAY;
 }
 
 Variant::Variant(const Int32Array &p_int32_array) {
-	_data._array = ArrayRef<i32>::create(p_int32_array);
+	_data._array = ArrayRef<int32_t>::create(p_int32_array);
 	type = INT32_ARRAY;
 }
 
 Variant::Variant(const Int64Array &p_int64_array) {
-	_data._array = ArrayRef<i64>::create(p_int64_array);
+	_data._array = ArrayRef<int64_t>::create(p_int64_array);
 	type = INT64_ARRAY;
 }
 
