@@ -167,7 +167,7 @@ ifeq ($(PLATFORM), linux)
 endif
 endif
 
-.PHONY: test scaffold compile link generate_cc clean
+.PHONY: test scaffold compile link generate_compile_commands clean
 all: test scaffold compile link
 
 # Look for if certain files are downloaded prior to building
@@ -215,6 +215,12 @@ link: compile $(OBJ_FILES)
 	@$(CXX) $(OBJ_FILES) -o $(BUILD_DIR)/$(OUTPUT_FILE) $(LDFLAGS)
 	@echo $(OUTPUT_FILE) built successfully.
 
+generate_compile_commands:
+	@echo Getting compile commands from $(TARGET)...
+	@$(PYTHON) ../misc/gen_tmp_commands.py --extension .cpp --arg_path src --args $(CXX) $(CPPFLAGS) -c $(DEFINES) $(INCLUDES)
+	@$(PYTHON) ../misc/gen_tmp_commands.py --extension .c --arg_path src --args $(CXX) $(CFLAGS) -c $(DEFINES) $(INCLUDES)
+	@$(PYTHON) ../misc/gen_tmp_commands.py --extension .c --arg_path src/thirdparty --args $(CXX) $(THIRDPARTY_CFLAGS) -c $(DEFINES) $(INCLUDES)
+	@$(PYTHON) ../misc/gen_tmp_commands.py --sources $(CPP_FILES) $(C_FILES) --objects $(OBJ_FILES)
 
 clean:
 ifeq ($(PLATFORM), win32)
@@ -231,23 +237,14 @@ endif
 $(BUILD_DIR)/$(TARGET)/%.o: src/%.c
 	@echo   $<...
 	@$(CC) $< $(CFLAGS) -c -o $@ $(DEFINES) $(INCLUDES)
-ifeq ($(RUN_COMPILE_CMDS),yes)
-	@$(COMPILECMDS) --args $(CC) $(CFLAGS) -c -o $(DEFINES) $(INCLUDES) --file $< --output $@ --directory $(DIR)
-endif
 
 $(BUILD_DIR)/$(TARGET)/%.o: src/%.cpp
 	@echo   $<...
 	@$(CXX) $< $(CPPFLAGS) -c -o $@ $(DEFINES) $(INCLUDES)
-ifeq ($(RUN_COMPILE_CMDS),yes)
-	@$(COMPILECMDS) --args $(CXX) $(CPPFLAGS) -c -o $(DEFINES) $(INCLUDES) --file $< --output $@ --directory $(DIR)
-endif
 
 # Third-party code has all warnings and errors disabled, except debugging options
 $(BUILD_DIR)/$(TARGET)/thirdparty/%.o: src/thirdparty/%.c
 	@echo 	$<...
 	@$(CC) $< $(THIRDPARTY_CFLAGS) -c -o $@ $(DEFINES) $(INCLUDES)
-ifeq ($(RUN_COMPILE_CMDS),yes)
-	@$(COMPILECMDS) --args $(CC) $(THIRDPARTY_CFLAGS) -c -o $(DEFINES) $(INCLUDES) --file $< --output $@ --directory $(DIR)
-endif
 
 -include $(OBJ_FILES:.o=.d)

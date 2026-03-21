@@ -40,6 +40,7 @@
         {
             "label": "Build Engine (Release, GCC)",
             "type": "shell",
+            "command": "make COMPILER=gcc",
             "problemMatcher": [
                 "$gcc"
             ],
@@ -55,6 +56,22 @@
             "problemMatcher": [
                 "$gcc"
             ],
+        },
+        {
+            "label": "Rebuild compile_commands.json (Debug)",
+            "type": "shell",
+            "command": "make generate_compile_commands DEBUG=yes",
+            "problemMatcher": [
+                "$python"
+            ]
+        },
+        {
+            "label": "Rebuild compile_commands.json (Release)",
+            "type": "shell",
+            "command": "make generate_compile_commands",
+            "problemMatcher": [
+                "$python"
+            ]
         }
     ]
 }

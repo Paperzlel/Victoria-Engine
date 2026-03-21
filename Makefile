@@ -25,20 +25,16 @@ export RUN_TESTS := no
 export BUILD_DIR := bin
 export COMPILER := clang
 export PYTHON := python
-export RUN_COMPILE_CMDS := no
-export COMPILECMDS :=
 
 
 # Auto-check platform options
 ifeq ($(PLATFORM), linux)
 	VERSION := $(shell python3 version.py)
 	PYTHON := python3
-	COMPILECMDS := $(PYTHON) $(abspath make_compile_commands.py)
 endif
 ifeq ($(PLATFORM), win32)
 	VERSION := $(shell python version.py)
 	PYTHON := python
-	COMPILECMDS := $(PYTHON) $(abspath make_compile_commands.py)
 endif
 
 # Can only happen prior to a full rebuild
@@ -99,7 +95,7 @@ endif
 # Globalize build directory
 BUILD_DIR := $(abspath $(BUILD_DIR))
 
-.PHONY: all clean
+.PHONY: all generate_compile_commands clean
 all:
 ifeq ($(PLATFORM), win32)
 	-@mkdir $(BUILD_DIR), 2>NUL || cd .
@@ -110,14 +106,13 @@ ifeq ($(PLATFORM), linux)
 	@cp -r assets $(BUILD_DIR)
 endif
 
-ifeq ($(RUN_COMPILE_CMDS),yes)
-	@$(COMPILECMDS) --begin
-endif
 	@$(MAKE) -C engine
 	@$(MAKE) -C editor
-ifeq ($(RUN_COMPILE_CMDS),yes)
-	@$(COMPILECMDS) --end
-endif
+
+generate_compile_commands:
+	@$(MAKE) generate_compile_commands -C engine
+	@$(MAKE) generate_compile_commands -C editor
+	@$(PYTHON) misc/gen_compile_commands.py --search editor engine
 
 clean:
 	@$(MAKE) clean -C engine

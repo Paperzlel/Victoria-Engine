@@ -42,7 +42,7 @@ endif
 endif
 
 
-.PHONY: scaffold compile link clean
+.PHONY: scaffold compile link generate_compile_commands clean
 all: scaffold compile link
 
 
@@ -72,6 +72,10 @@ link: compile $(OBJ_FILES)
 	@$(CXX) $(OBJ_FILES) -o $(BUILD_DIR)/$(OUTPUT_FILE) $(LDFLAGS)
 	@echo $(OUTPUT_FILE) built successfully.
 
+generate_compile_commands:
+	@echo Getting compile commands from $(TARGET)...
+	@$(PYTHON) ../misc/gen_tmp_commands.py --extension .cpp --arg_path src --args $(CXX) $(CPPFLAGS) -c $(DEFINES) $(INCLUDES)
+	@$(PYTHON) ../misc/gen_tmp_commands.py --sources $(CPP_FILES) $(C_FILES) --objects $(OBJ_FILES)
 
 clean:
 ifeq ($(PLATFORM), win32)
@@ -87,8 +91,5 @@ endif
 $(BUILD_DIR)/$(TARGET)/%.o: src/%.cpp
 	@echo   $<...
 	@$(CXX) $< $(CPPFLAGS) -c -o $@ $(DEFINES) $(INCLUDES)
-ifeq ($(RUN_COMPILE_CMDS),yes)
-	@$(COMPILECMDS) --args $(CXX) $(CPPFLAGS) -c -o $(DEFINES) $(INCLUDES) --file $< --output $@ --directory $(DIR)
-endif
 
 -include $(OBJ_FILES:.o=.d)

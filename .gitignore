@@ -35,9 +35,15 @@
 *.ilk
 *.pdb
 
-# Other excludes
+# Build artifacts
 bin/
 compile_commands.json
 compile_flags.txt
-.cache/
+temp.json
+
+# Generated files 
 *.gen.*
+
+# Clangd cache
+.cache/
+.clangd/
