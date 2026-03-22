@@ -397,7 +397,7 @@ DisplayManagerWindows::DisplayManagerWindows(const String &p_renderer, const Vec
 			}
 		}
 
-		RenderingServerGL::make_default();
+		RenderingServerGL::make_default(true);
 	}
 
 	if (driver == "opengl") {
@@ -409,7 +409,7 @@ DisplayManagerWindows::DisplayManagerWindows(const String &p_renderer, const Vec
 			ERR_FAIL_MSG(error_messages[err]);
 		}
 
-		RenderingServerGL::make_default();
+		RenderingServerGL::make_default(false);
 	}
 
 	create_window("Victoria Engine Window", 100, 100, p_size.x, p_size.y);

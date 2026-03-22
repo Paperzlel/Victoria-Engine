@@ -38,6 +38,7 @@ WAYLAND_PROTOCOLS := src/platform/linux/wayland/protocols
 
 ifeq ($(PLATFORM), linux)
 	CCFLAGS += -fPIC -fvisibility=hidden
+	THIRDPARTY_CFLAGS += -fPIC -fvisibility=hidden
 ifeq ($(shell pkg-config --exists wayland-client; echo $$?),0)
 # Require Wayland EGL support
 ifeq ($(shell pkg-config --exists wayland-egl; echo $$?),0)
@@ -74,12 +75,13 @@ ifeq ($(USE_WAYLAND), yes)
 	LDFLAGS += $(shell pkg-config --libs wayland-egl)
 	CFLAGS += $(shell pkg-config --cflags-only-other wayland-egl) -Wno-unused-const-variable
 	INCLUDES += $(shell pkg-config --cflags-only-I wayland-egl)
+	TMP := $(shell $(PYTHON) src/platform/linux/wayland/generate_protocols.py)
 endif
 ifeq ($(USE_X11), yes)
 	DEFINES += -DX11_ENABLED
 	LDFLAGS += $(shell pkg-config --libs x11)
 endif
-	DIR := $(shell $(PWD))
+	DIR := $(PWD)
 endif
 
 ifeq ($(PLATFORM), win32)
@@ -97,13 +99,6 @@ CPPFLAGS += $(CCFLAGS)
 C_FILES :=
 CPP_FILES :=
 DIRECTORIES :=
-
-# Pre-build generation steps (required for collecting build files)
-ifeq ($(PLATFORM), linux)
-ifeq ("$(wildcard $(WAYLAND_PROTOCOLS))","")
-	TEMP := $(shell mkdir -p $(WAYLAND_PROTOCOLS); $(PYTHON) src/platform/linux/wayland/generate_dynwrappers.py)
-endif
-endif
 
 ifeq ($(PLATFORM), win32)
 	C_FILES := $(call rwildcard,*,*.c)
@@ -199,18 +194,6 @@ all: test scaffold compile link
 # Look for if certain files are downloaded prior to building
 test:
 ifeq ($(PLATFORM), linux)
-ifeq ($(shell pkg-config --exists wayland-client; echo $$?),1)
-ifeq ($(USE_WAYLAND), yes)
-	@echo Cannot compile for Wayland whilst the drivers are not installed. Please install the development packages before compiling.
-	@exit 10
-endif
-endif
-ifeq ($(wildcard pkg-config --exists x11; echo $$?),1)
-ifeq ($(USE_X11), yes)
-	@echo Cannot compile with X11 support whilst the drivers are not installed. Please install the development packages before compiling.
-	@exit 10
-endif
-endif
 ifeq ("$(and $(USE_X11), $(USE_WAYLAND))","")
 	@echo Cannot compile as neither X11 nor Wayland is available on the system.
 	@exit 10

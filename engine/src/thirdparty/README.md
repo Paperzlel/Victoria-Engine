@@ -32,8 +32,7 @@ Modifications:
 - Version: R525
 - License: MIT
 Modifications:
-- Removed code from `nvapi.h` and renamed the file.
-
+- Removed unecessary code from `nvapi.h` and renamed the file.
 
 ## STB
 - Source: https://github.com/nothings/stb
@@ -44,3 +43,17 @@ Modifications:
 - Added `stb_image.cpp` for an implementation source
 - Moved `stb_image.h` to the include directory with all other files for consistency.
 - Included `LICENSE.txt`
+
+## Wayland
+- Source: https://gitlab.freedesktop.org/wayland/wayland
+- Version: N/A
+- License: Expat
+Modifications:
+- Extracted `protocol/wayland.xml` from source.
+
+## wayland-protocols
+- Source: https://gitlab.freedesktop.org/wayland/wayland-protocols
+- Version: N/A
+- License: Expat
+Modifications:
+- Extracted `stable` `staging` and `unstable` and the subsequent XML files from source.

@@ -29,6 +29,10 @@ int GLAD_GLX_VERSION_1_2 = 0;
 int GLAD_GLX_VERSION_1_3 = 0;
 int GLAD_GLX_VERSION_1_4 = 0;
 int GLAD_GLX_ARB_create_context = 0;
+int GLAD_GLX_ARB_create_context_profile = 0;
+int GLAD_GLX_EXT_swap_control = 0;
+int GLAD_GLX_MESA_swap_control = 0;
+int GLAD_GLX_SGI_swap_control = 0;
 
 
 
@@ -57,6 +61,7 @@ PFNGLXGETFBCONFIGATTRIBPROC glad_glXGetFBConfigAttrib = NULL;
 PFNGLXGETFBCONFIGSPROC glad_glXGetFBConfigs = NULL;
 PFNGLXGETPROCADDRESSPROC glad_glXGetProcAddress = NULL;
 PFNGLXGETSELECTEDEVENTPROC glad_glXGetSelectedEvent = NULL;
+PFNGLXGETSWAPINTERVALMESAPROC glad_glXGetSwapIntervalMESA = NULL;
 PFNGLXGETVISUALFROMFBCONFIGPROC glad_glXGetVisualFromFBConfig = NULL;
 PFNGLXISDIRECTPROC glad_glXIsDirect = NULL;
 PFNGLXMAKECONTEXTCURRENTPROC glad_glXMakeContextCurrent = NULL;
@@ -69,6 +74,9 @@ PFNGLXQUERYSERVERSTRINGPROC glad_glXQueryServerString = NULL;
 PFNGLXQUERYVERSIONPROC glad_glXQueryVersion = NULL;
 PFNGLXSELECTEVENTPROC glad_glXSelectEvent = NULL;
 PFNGLXSWAPBUFFERSPROC glad_glXSwapBuffers = NULL;
+PFNGLXSWAPINTERVALEXTPROC glad_glXSwapIntervalEXT = NULL;
+PFNGLXSWAPINTERVALMESAPROC glad_glXSwapIntervalMESA = NULL;
+PFNGLXSWAPINTERVALSGIPROC glad_glXSwapIntervalSGI = NULL;
 PFNGLXUSEXFONTPROC glad_glXUseXFont = NULL;
 PFNGLXWAITGLPROC glad_glXWaitGL = NULL;
 PFNGLXWAITXPROC glad_glXWaitX = NULL;
@@ -132,6 +140,19 @@ static void glad_glx_load_GLX_ARB_create_context( GLADuserptrloadfunc load, void
     if(!GLAD_GLX_ARB_create_context) return;
     glad_glXCreateContextAttribsARB = (PFNGLXCREATECONTEXTATTRIBSARBPROC) load(userptr, "glXCreateContextAttribsARB");
 }
+static void glad_glx_load_GLX_EXT_swap_control( GLADuserptrloadfunc load, void* userptr) {
+    if(!GLAD_GLX_EXT_swap_control) return;
+    glad_glXSwapIntervalEXT = (PFNGLXSWAPINTERVALEXTPROC) load(userptr, "glXSwapIntervalEXT");
+}
+static void glad_glx_load_GLX_MESA_swap_control( GLADuserptrloadfunc load, void* userptr) {
+    if(!GLAD_GLX_MESA_swap_control) return;
+    glad_glXGetSwapIntervalMESA = (PFNGLXGETSWAPINTERVALMESAPROC) load(userptr, "glXGetSwapIntervalMESA");
+    glad_glXSwapIntervalMESA = (PFNGLXSWAPINTERVALMESAPROC) load(userptr, "glXSwapIntervalMESA");
+}
+static void glad_glx_load_GLX_SGI_swap_control( GLADuserptrloadfunc load, void* userptr) {
+    if(!GLAD_GLX_SGI_swap_control) return;
+    glad_glXSwapIntervalSGI = (PFNGLXSWAPINTERVALSGIPROC) load(userptr, "glXSwapIntervalSGI");
+}
 
 
 
@@ -178,6 +199,10 @@ static GLADapiproc glad_glx_get_proc_from_userptr(void *userptr, const char* nam
 
 static int glad_glx_find_extensions(Display *display, int screen) {
     GLAD_GLX_ARB_create_context = glad_glx_has_extension(display, screen, "GLX_ARB_create_context");
+    GLAD_GLX_ARB_create_context_profile = glad_glx_has_extension(display, screen, "GLX_ARB_create_context_profile");
+    GLAD_GLX_EXT_swap_control = glad_glx_has_extension(display, screen, "GLX_EXT_swap_control");
+    GLAD_GLX_MESA_swap_control = glad_glx_has_extension(display, screen, "GLX_MESA_swap_control");
+    GLAD_GLX_SGI_swap_control = glad_glx_has_extension(display, screen, "GLX_SGI_swap_control");
     return 1;
 }
 
@@ -218,6 +243,9 @@ int gladLoadGLXUserPtr(Display *display, int screen, GLADuserptrloadfunc load, v
 
     if (!glad_glx_find_extensions(display, screen)) return 0;
     glad_glx_load_GLX_ARB_create_context(load, userptr);
+    glad_glx_load_GLX_EXT_swap_control(load, userptr);
+    glad_glx_load_GLX_MESA_swap_control(load, userptr);
+    glad_glx_load_GLX_SGI_swap_control(load, userptr);
 
 
     return version;

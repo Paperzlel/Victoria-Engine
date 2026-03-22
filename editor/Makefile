@@ -6,7 +6,7 @@ DIR :=
 
 ifeq ($(PLATFORM), linux)
 	LDFLAGS += -lvictoria -Wl,-rpath='$$ORIGIN'
-	DIR := $(shell $(PWD))
+	DIR := $(PWD)
 endif
 
 ifeq ($(PLATFORM), win32)

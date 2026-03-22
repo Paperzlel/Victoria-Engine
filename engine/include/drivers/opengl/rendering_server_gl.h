@@ -319,6 +319,8 @@ private:
 		CopyShader copy_shader;
 	} shaders;
 
+	static bool use_gles_over_gl;
+
 	static RenderingServer *_create() {
 		return vnew(RenderingServerGL);
 	}
@@ -348,8 +350,17 @@ public:
 		BINDING_SPOT_LIGHT_DATA,
 	};
 
-	static void make_default() {
+	static bool is_gles_over_gl() {
+		return use_gles_over_gl;
+	}
+
+	static void set_gles_over_gl(bool p_value) {
+		use_gles_over_gl = p_value;
+	}
+
+	static void make_default(bool p_use_gles) {
 		_create_func = _create;
+		set_gles_over_gl(p_use_gles);
 	}
 
 	void set_depth_testing(bool p_value) {

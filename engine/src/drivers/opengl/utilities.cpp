@@ -18,7 +18,6 @@ static const char *buffer_names[14] = {
     "GL_ELEMENT_ARRAY_BUFFER",
     "GL_PIXEL_PACK_BUFFER",
     "GL_PIXEL_UNPACK_BUFFER",
-    "GL_QUERY_BUFFER",
     "GL_SHADER_STORAGE_BUFFER",
     "GL_TEXTURE_BUFFER",
     "GL_TRANSFORM_FEEDBACK_BUFFER",
@@ -46,16 +45,14 @@ const char *get_buffer_name(const GLenum p_type) {
 			return buffer_names[7];
 		case GL_PIXEL_UNPACK_BUFFER:
 			return buffer_names[8];
-		case GL_QUERY_BUFFER:
-			return buffer_names[9];
 		case GL_SHADER_STORAGE_BUFFER:
-			return buffer_names[10];
+			return buffer_names[9];
 		case GL_TEXTURE_BUFFER:
-			return buffer_names[11];
+			return buffer_names[10];
 		case GL_TRANSFORM_FEEDBACK_BUFFER:
-			return buffer_names[12];
+			return buffer_names[11];
 		case GL_UNIFORM_BUFFER:
-			return buffer_names[13];
+			return buffer_names[12];
 	}
 	return "";
 }

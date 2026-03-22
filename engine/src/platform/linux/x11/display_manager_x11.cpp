@@ -698,7 +698,7 @@ DisplayManagerX11::DisplayManagerX11(const String &p_renderer, const Vector2i &p
 			ERR_FAIL_MSG("Could not initialize the OpenGL manager for X11.");
 		}
 
-		RenderingServerGL::make_default();
+		RenderingServerGL::make_default(false);
 	} else if (p_renderer == "opengl_es") {
 		egl_manager_x11 = vnew(EGLManagerX11);
 
@@ -714,7 +714,7 @@ DisplayManagerX11::DisplayManagerX11(const String &p_renderer, const Vector2i &p
 			ERR_FAIL_MSG("Could not open a display on the EGL manager.");
 		}
 
-		RenderingServerGL::make_default();
+		RenderingServerGL::make_default(true);
 	}
 
 	if (create_window("Victoria Engine Window", 100, 100, p_size.x, p_size.y) != 0) {

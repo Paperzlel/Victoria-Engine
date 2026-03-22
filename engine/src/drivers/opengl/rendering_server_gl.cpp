@@ -19,6 +19,10 @@ static void *_egl_load_function_wrapper(const char *data) {
 	return (void *)eglGetProcAddress(data);
 }
 
+bool RenderingServerGL::use_gles_over_gl = false;
+
+typedef void(GLAPIENTRY *PFNDEBUGMESSAGECALLBACK)(GLDEBUGPROC, const void *);
+
 /**
  * @brief Converts a Transform2D to a Transform3D (shouldn't need to per se, but we do regardless).
  */
@@ -1548,11 +1552,19 @@ RenderingServerGL::RenderingServerGL() {
 	bool glad_loaded = false;
 
 	if (is_egl && !glad_loaded) {
-		glad_loaded = gladLoadGL((GLADloadfunc)_egl_load_function_wrapper);
+		if (is_gles_over_gl()) {
+			glad_loaded = gladLoadGLES2((GLADloadfunc)_egl_load_function_wrapper);
+		} else {
+			glad_loaded = gladLoadGL((GLADloadfunc)_egl_load_function_wrapper);
+		}
 	}
 
 	if (!glad_loaded) {
-		glad_loaded = gladLoaderLoadGL();
+		if (is_gles_over_gl()) {
+			glad_loaded = gladLoaderLoadGLES2();
+		} else {
+			glad_loaded = gladLoaderLoadGL();
+		}
 	}
 	ERR_FAIL_COND_MSG(!glad_loaded, "GLAD was unable to be loaded.");
 
@@ -1569,18 +1581,64 @@ RenderingServerGL::RenderingServerGL() {
 	// Check for debug output.
 	// We will also check for extension strings here, as it's the least expensive to do at once
 
-	String extensions = (const char *)glGetString(GL_EXTENSIONS);
-	Vector<String> ext_list = extensions.split(" ");
-	if (ext_list.find("GL_KHR_debug") >= 0) {
-		// TODO: Uncomment code and add debug messages as an extension
-		// if (!glIsEnabled(GL_DEBUG_OUTPUT)) {
-		// 	glEnable(GL_DEBUG_OUTPUT);
-		// }
+	if (OS::get_singleton()->is_stdout_verbose()) {
+		if (is_gles_over_gl()) {
+			PFNDEBUGMESSAGECALLBACK callback = (PFNDEBUGMESSAGECALLBACK)eglGetProcAddress("glDebugMessageCallback");
+			if (!callback) {
+				callback = (PFNDEBUGMESSAGECALLBACK)eglGetProcAddress("glDebugMessageCallbackKHR");
+			}
 
-		// glDebugMessageCallback(Utilities::debug_message_callback, nullptr);
-	} else {
-		print_verbose(
-			"Could not find the debug extensions string for OpenGL. OpenGL advanced debug output is disabled.");
+			if (callback) {
+				glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+				callback((GLDEBUGPROC)Utilities::debug_message_callback, nullptr);
+				glEnable(GL_DEBUG_OUTPUT);
+			}
+		} else {
+			if (GLAD_GL_KHR_debug) {
+				glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+				glDebugMessageCallback((GLDEBUGPROC)Utilities::debug_message_callback, nullptr);
+				glEnable(GL_DEBUG_OUTPUT);
+
+				glDebugMessageControl(GL_DEBUG_SOURCE_API,
+									  GL_DEBUG_TYPE_ERROR,
+									  GL_DEBUG_SEVERITY_HIGH,
+									  0,
+									  nullptr,
+									  GL_TRUE);
+				glDebugMessageControl(GL_DEBUG_SOURCE_API,
+									  GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR,
+									  GL_DEBUG_SEVERITY_HIGH,
+									  0,
+									  nullptr,
+									  GL_TRUE);
+				glDebugMessageControl(GL_DEBUG_SOURCE_API,
+									  GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR,
+									  GL_DEBUG_SEVERITY_HIGH,
+									  0,
+									  nullptr,
+									  GL_TRUE);
+				glDebugMessageControl(GL_DEBUG_SOURCE_API,
+									  GL_DEBUG_TYPE_PORTABILITY,
+									  GL_DEBUG_SEVERITY_HIGH,
+									  0,
+									  nullptr,
+									  GL_TRUE);
+				glDebugMessageControl(GL_DEBUG_SOURCE_API,
+									  GL_DEBUG_TYPE_PERFORMANCE,
+									  GL_DEBUG_SEVERITY_HIGH,
+									  0,
+									  nullptr,
+									  GL_TRUE);
+				glDebugMessageControl(GL_DEBUG_SOURCE_API,
+									  GL_DEBUG_TYPE_OTHER,
+									  GL_DEBUG_SEVERITY_HIGH,
+									  0,
+									  nullptr,
+									  GL_TRUE);
+			} else {
+				print_line("OpenGL debugging is not supported.");
+			}
+		}
 	}
 
 	// Setup lights
@@ -1720,7 +1778,7 @@ RenderingServerGL::RenderingServerGL() {
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	OS::get_singleton()->print("OpenGL v4.6.0 - using device %s", OS::get_singleton()->get_device_name().get_data());
+	OS::get_singleton()->print("OpenGL v3.3.0 - using device %s", OS::get_singleton()->get_device_name().get_data());
 }
 
 RenderingServerGL::~RenderingServerGL() {

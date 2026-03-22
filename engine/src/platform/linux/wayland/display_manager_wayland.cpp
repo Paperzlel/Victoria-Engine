@@ -270,7 +270,7 @@ DisplayManagerWayland::DisplayManagerWayland(const String &p_renderer, const Vec
 			ERR_FAIL_MSG("Could not open the display for the EGL manager.");
 		}
 
-		RenderingServerGL::make_default();
+		RenderingServerGL::make_default(false);
 	}
 
 	if (create_window("Victoria Engine Window", 100, 100, p_size.x, p_size.y) != 0) {
