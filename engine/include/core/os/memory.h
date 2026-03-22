@@ -19,7 +19,7 @@ public:
 	static void vfree(void *p_block);
 	static void vzero(void *p_block, uint64_t p_size);
 	static void vset_memory(void *p_block, int p_value, uint64_t p_size);
-	static void *vcopy_memory(void *p_dest, void *p_source, uint64_t p_size);
+	static void *vcopy_memory(void *p_dest, const void *p_source, uint64_t p_size);
 };
 
 VAPI void *operator new(size_t p_size, const char *p_description);

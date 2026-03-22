@@ -123,9 +123,9 @@ void ShaderData::shader_find_uniforms_from_source(const String &p_source) {
 			// is a UBO
 			if (line.contains("layout")) {
 				UBO ub;
-				ub.name = indicators[3]; // Should be #4 in the array, could change if someone uses manual bindings
-				ub.index =
-					indicators[5].right(1).to_int(); // Binding a UBO to a layout goes something like "{ //ubo:2"
+				ub.name = indicators[2]; // Should be #3 in the array, could change if someone uses manual bindings
+				// Binding a UBO to a layout goes something like "{ // ubo:2"
+				ub.index = indicators[5].right(1).to_int();
 				ubos.push_back(ub);
 			} else {
 				Uniform un;

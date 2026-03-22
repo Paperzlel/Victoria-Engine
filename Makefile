@@ -58,7 +58,7 @@ export DEFINES :=
 ifeq ($(DEBUG), yes)
 	DEFINES += -DDEBUG
 	CCFLAGS += -MD -O0
-	LDFLAGS += -g -lucrtd -lmsvcrtd -lvcruntimed
+	LDFLAGS += -g
 ifeq ($(PLATFORM), win32)
 # ifeq ($(COMPILER), clang)
 # 	CCFLAGS += -g
@@ -67,6 +67,7 @@ ifeq ($(PLATFORM), win32)
 # endif
 	CCFLAGS += -g
 	DEFINES += -D_DEBUG
+	LDFLAGS += -lucrtd -lmsvcrtd -lvcruntimed
 else
 	CCFLAGS += -gdwarf-4 -g3
 # NOTE: Should enable -g2 for non-dev builds that want debugging symbols

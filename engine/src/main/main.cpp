@@ -39,7 +39,7 @@ void print_help_option(const char *command, const char *description, bool is_hea
 		OS::get_singleton()->print(command);
 	} else {
 		char buf[25];
-		Memory::vcopy_memory(buf, 0, 25);
+		Memory::vcopy_memory(buf, command, 25);
 		int i = 0;
 		while (command[i]) {
 			buf[i] = command[i];
@@ -76,7 +76,7 @@ void Main::print_help() {
 
 	print_help_option("Rendering options:", "", true);
 	print_help_option("--rendering-driver",
-					  "Load a specific rendering driver.Can choose from: \"opengl\", \"opengl_es\"");
+					  "Load a specific rendering driver. Can choose from: \"opengl\", \"opengl_es\"");
 }
 
 void Main::set_should_quit(bool p_value) {

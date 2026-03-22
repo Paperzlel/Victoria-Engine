@@ -167,27 +167,26 @@ void main() {
 
 	vec3 result = vec3(0.0);
 	// Directional lights
-	if (directional_lights_used > ((uint)0)) {) {
-			for (uint i = 0; i < directional_lights_used; i++) {
-				result += calculate_directional_light(directional_lights[i], view_dir);
-			}
+	if (bool(directional_lights_used)) {
+		for (int i = 0; i < int(directional_lights_used); i++) {
+			result += calculate_directional_light(directional_lights[i], view_dir);
 		}
 	}
 
 	// Point lights
-	if (point_lights_used > ((uint)0)) {
-		for (uint i = 0; i < point_lights_used; i++) {
+	if (bool(point_lights_used)) {
+		for (int i = 0; i < int(point_lights_used); i++) {
 			result += calculate_point_light(point_lights[i], frag_pos, view_dir);
 		}
 	}
 
-	if (spot_lights_used > ((uint)0)) {
-		for (uint i = 0; i < spot_lights_used; i++) {
+	if (bool(spot_lights_used)) {
+		for (int i = 0; i < int(spot_lights_used); i++) {
 			result += calculate_spot_light(spot_lights[i], view_dir);
 		}
 	}
 
-	if (directional_lights_used == ((uint)0) && point_lights_used == ((uint)0) && spot_lights_used == ((uint)0)) {
+	if (!bool(directional_lights_used) && !bool(point_lights_used) && !bool(spot_lights_used)) {
 		result = ambient;
 	}
 

@@ -73,7 +73,7 @@ void Memory::vset_memory(void *p_dest, int p_value, uint64_t p_size) {
 	memset(p_dest, p_value, p_size);
 }
 
-void *Memory::vcopy_memory(void *p_dest, void *p_source, uint64_t p_size) {
+void *Memory::vcopy_memory(void *p_dest, const void *p_source, uint64_t p_size) {
 	return memcpy(p_dest, p_source, p_size);
 }
 

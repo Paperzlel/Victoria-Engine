@@ -10,7 +10,9 @@
 #define VICTORIA_VERSION_NUMBER_MINOR 2
 #define VICTORIA_VERSION_NUMBER_PATCH 0
 
-#define VICTORIA_VERSION_TYPE _STR(pre - alpha)
+/* clang-format off */
+#define VICTORIA_VERSION_TYPE _STR(pre-alpha)
+/* clang-format on */
 
 #if defined(_WIN32) || defined(_WIN32) || defined(__WIN32__)
 #	define VICTORIA_BUILD_OS _STR(windows)
