@@ -4,6 +4,7 @@
 #	include "os_windows.h"
 
 #	include <windows.h>
+#	include <stdio.h>
 
 #	define WGL_CONTEXT_MAJOR_VERSION_ARB 0x2091
 #	define WGL_CONTEXT_MINOR_VERSION_ARB 0x2092
@@ -29,8 +30,8 @@ typedef const char *(*PFNWGLGETSTRING)(unsigned int);
  * manufacturer, third is driver version. If the function failed, it will return an empty dictionary, and contains no
  * data. Assume this is a failure of the program.
  */
-HashTable<String, String> detect_wgl_version() {
-	HashTable<String, String> ret;
+HashTable<String, Variant> detect_wgl_version() {
+	HashTable<String, Variant> ret;
 
 	LPCWSTR class_name = L"VICTORIA_WGLDetectVersionClass";
 	HINSTANCE hInstance = static_cast<OSWindows *>(OS::get_singleton())->get_hinstance();
@@ -95,9 +96,9 @@ HashTable<String, String> detect_wgl_version() {
 								(PFNWGLCREATCONTEXTATTRIBSARB)wglGetProcAddress("wglCreateContextAttribsARB");
 							if (victoria_wglCreateContextAttribsARB) {
 								const int attribs[] = {WGL_CONTEXT_MAJOR_VERSION_ARB,
-													   4,
+													   3,
 													   WGL_CONTEXT_MINOR_VERSION_ARB,
-													   6,
+													   3,
 													   WGL_CONTEXT_PROFILE_MASK_ARB,
 													   WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
 													   WGL_CONTEXT_FLAGS_ARB,
@@ -133,10 +134,9 @@ HashTable<String, String> detect_wgl_version() {
 													   &version_minor,
 													   &version_patch);
 
-												const String &version =
-													vformat("%d.%d.%d", version_major, version_minor, version_patch);
+												int ver = version_major * 10000 + version_minor;
 
-												ret["version"] = version;
+												ret["version"] = ver;
 												ret["vendor"] = vendor;
 												ret["device"] = device;
 											}

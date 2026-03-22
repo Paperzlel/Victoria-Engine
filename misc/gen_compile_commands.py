@@ -58,6 +58,7 @@ def get_commands_for_target(target: str) -> None:
 	path: str = directory + "/temp.json"
 	tmpfh = open(path, 'r', encoding='utf-8')
 	data_dict: dict = json.loads(tmpfh.read())
+	tmpfh.close()
 	os.remove(path)
 	for i in range(len(data_dict["sources"])):
 		add_file_to_commands(data_dict, directory, i)

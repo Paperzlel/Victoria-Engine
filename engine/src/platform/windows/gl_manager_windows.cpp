@@ -1,13 +1,12 @@
 #include "gl_manager_windows.h"
 #if PLATFORM_WINDOWS
 
-#	include "wgl_detect_version.h"
-
-#	include "core/os/display_manager.h"
 #	include "core/os/os.h"
 
 #	include <glad/gl.h>
-#	include <thirdparty/nvapi/nvapi_minimal.h>
+#	include <nvapi/nvapi_minimal.h>
+
+#	include <stdio.h>
 
 // Not included in a header, so we define manually.
 #	define WGL_CONTEXT_MAJOR_VERSION_ARB 0x2091
@@ -412,13 +411,7 @@ void GLManagerWindows::set_use_vsync(bool p_value) {
  * @return `OK` if the manager was able to set up properly, and various error codes if not.
  */
 Error GLManagerWindows::initialize() {
-	//_create_nvapi_profile(); // uncomment when using RenderDoc
-	HashTable<String, String> version_info = detect_wgl_version();
-
-	sscanf(version_info["version"].get_data(), "%d.%d.%d", &gl_version_major, &gl_version_minor, &gl_version_patch);
-	OS::get_singleton()->set_device_name(version_info["device"]);
-	OS::get_singleton()->set_device_vendor(version_info["vendor"]);
-
+	_create_nvapi_profile(); // uncomment when using RenderDoc
 	return OK;
 }
 

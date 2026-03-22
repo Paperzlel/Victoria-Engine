@@ -85,6 +85,22 @@ void OSWindows::set_feature(const String &p_feature, bool p_value) {
 	features[p_feature] = p_value;
 }
 
+String OSWindows::get_environment(const String &p_path) const {
+	String ret;
+	ret.resize(INT16_MAX);
+	int new_size = GetEnvironmentVariableA(p_path.get_data(), ret.ptrw(), INT16_MAX);
+	ret.resize(new_size + 1);
+	ret[new_size] = 0;
+	return ret;
+}
+
+void OSWindows::set_environment(const String &p_path, const String &p_value) {
+	if (!SetEnvironmentVariableA(p_path.get_data(), p_value.get_data())) {
+		ERR_WARN(
+			vformat("Failed to set environment variable \'%s\' to \'%s\'.", p_path.get_data(), p_value.get_data()))
+	}
+}
+
 String OSWindows::get_name() const {
 	return "Windows";
 }
@@ -106,6 +122,10 @@ String OSWindows::get_executable_path() const {
 	GetModuleFileNameA(nullptr, exe_path, MAX_PATH);
 	exe_path[MAX_PATH - 1] = 0;
 	return exe_path;
+}
+
+int OSWindows::get_preferred_display_manager() {
+	return 0;
 }
 
 MainLoop *OSWindows::get_main_loop() const {

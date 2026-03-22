@@ -35,7 +35,7 @@ public:                                                                         
                                                                                                                       \
 protected:                                                                                                            \
 	FORCE_INLINE void (Item::*_get_notification() const)(int) {                                                       \
-		return (void(Item::*)(int)) & m_class::_notification;                                                         \
+		return (void (Item::*)(int)) & m_class::_notification;                                                        \
 	}                                                                                                                 \
                                                                                                                       \
 	FORCE_INLINE static void (*_get_bind_methods())() {                                                               \
@@ -109,7 +109,7 @@ public:
 	virtual void _notification_forwardv(int p_what) {}
 	virtual void _notification_backwardv(int p_what) {}
 
-	friend bool predelete(Item *);
+	VAPI friend bool predelete(Item *);
 	bool _predelete();
 
 	/**

@@ -14,7 +14,7 @@ VictoriaInstance *victoria_create_instance(int argc, char *argv[]) {
 	ERR_FAIL_COND_MSG_R(instance != nullptr,
 						"Cannot create another Victoria instance whilst one already exists.",
 						nullptr);
-	os = new OSWindows();
+	os = new OSWindows(nullptr);
 
 	Error err = Main::setup(argc, argv);
 	if (err != OK) {

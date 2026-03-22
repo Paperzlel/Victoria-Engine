@@ -1,18 +1,27 @@
 # Marginally more generic version of the Makefile we'll let end-users use to compile their own projects.
 TARGET := editor
 INCLUDES += -Iinclude -I../engine/include
-LDFLAGS += -L$(BUILD_DIR) -lvictoria
+LDFLAGS += -L$(BUILD_DIR)
+DIR := 
 
 ifeq ($(PLATFORM), linux)
-	LDFLAGS += -Wl,-rpath='$$ORIGIN'
+	LDFLAGS += -lvictoria -Wl,-rpath='$$ORIGIN'
+	DIR := $(shell $(PWD))
 endif
+
+ifeq ($(PLATFORM), win32)
+	LDFLAGS += -llibvictoria
+	DIR := $(subst \,/,$(shell cd))
+endif
+
+# Make does not offer a recursive wildcard function, so here's one:
+rwildcard=$(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2))
 
 # Merge CFLAGS, CPPFLAGS and CCFLAGS
 CFLAGS += $(CCFLAGS)
 CPPFLAGS += $(CCFLAGS)
 
 # Source files and directories
-DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 C_FILES :=
 CPP_FILES :=
 DIRECTORIES :=
@@ -53,8 +62,8 @@ all: scaffold compile link
 scaffold:
 	@echo Creating project structure...
 ifeq ($(PLATFORM), win32)
-	-@mkdir $(BUILD_DIR)/$(TARGET) 2>NUL || cd .
-	-@mkdir $(addprefix $(BUILD_DIR)/$(TARGET)/,$(DIRECTORIES)) 2>NUL || cd .
+	-@mkdir $(subst /,\,$(BUILD_DIR)/$(TARGET)) 2>NUL || cd .
+	-@mkdir $(subst /,\,$(addprefix $(BUILD_DIR)/$(TARGET)/,$(DIRECTORIES))) 2>NUL || cd .
 endif
 ifeq ($(PLATFORM), linux)
 	@mkdir -p $(BUILD_DIR)/$(TARGET)
@@ -83,8 +92,8 @@ generate_compile_commands:
 
 clean:
 ifeq ($(PLATFORM), win32)
-	@rmdir $(BUILD_DIR)/$(TARGET) /S /Q 2>NUL || cd .
-	@del /F /Q $(subst /,\,$(BUILD_DIR)/$(OUTPUT_NAME).*) 2>NUL || cd .
+	@rmdir $(subst /,\,$(BUILD_DIR)/$(TARGET)) /S /Q 2>NUL || cd .
+	@del /F /Q $(subst /,\,$(BUILD_DIR)/$(OUTPUT_NAME).*) /Q 2>NUL || cd .
 endif
 ifeq ($(PLATFORM), linux)
 	@rm -rf $(BUILD_DIR)/$(TARGET)

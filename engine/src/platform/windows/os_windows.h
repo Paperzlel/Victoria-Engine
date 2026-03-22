@@ -5,7 +5,7 @@
 
 #	include "core/data/hashtable.h"
 #	include "core/os/os.h"
-#	include "scene/main/scene_tree.h"
+#	include "scene/main/scene_tree.h" // IWYU pragma: keep Needed for header and main loop creation.
 
 #	define WIN32_LEAN_AND_MEAN
 #	include <windows.h>
@@ -35,10 +35,14 @@ public:
 	virtual bool has_feature(const String &p_feature) const override;
 	virtual void set_feature(const String &p_feature, bool p_value) override;
 
+	virtual String get_environment(const String &p_path) const override;
+	virtual void set_environment(const String &p_path, const String &p_value) override;
+
 	virtual String get_name() const override;
 	virtual String get_version() const override;
-
 	virtual String get_executable_path() const override;
+
+	virtual int get_preferred_display_manager() override;
 
 	virtual MainLoop *get_main_loop() const override;
 	virtual void set_main_loop(MainLoop *p_tree) override;

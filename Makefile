@@ -24,7 +24,7 @@ export DEBUG := no
 export RUN_TESTS := no
 export BUILD_DIR := bin
 export COMPILER := clang
-export PYTHON := python
+export PYTHON :=
 
 
 # Auto-check platform options
@@ -36,11 +36,6 @@ ifeq ($(PLATFORM), win32)
 	VERSION := $(shell python version.py)
 	PYTHON := python
 endif
-
-# Can only happen prior to a full rebuild
-ifeq ("$(wildcard $(BUILD_DIR)/assets)","")
-	RUN_COMPILE_CMDS := yes
-endif 
 
 # Ignore commit hash on certain builds.
 ifneq ($(IGNORE_VERSION_HASH), yes)
@@ -63,12 +58,15 @@ export DEFINES :=
 ifeq ($(DEBUG), yes)
 	DEFINES += -DDEBUG
 	CCFLAGS += -MD -O0
+	LDFLAGS += -g -lucrtd -lmsvcrtd -lvcruntimed
 ifeq ($(PLATFORM), win32)
-ifeq ($(COMPILER), clang)
-	CCFLAGS += -gdwarf-4
-else
-	CCFLAGS += -gdwarf-5
-endif
+# ifeq ($(COMPILER), clang)
+# 	CCFLAGS += -g
+# else
+# 	CCFLAGS += -g
+# endif
+	CCFLAGS += -g
+	DEFINES += -D_DEBUG
 else
 	CCFLAGS += -gdwarf-4 -g3
 # NOTE: Should enable -g2 for non-dev builds that want debugging symbols
@@ -89,13 +87,7 @@ endif
 
 # Confirm platform-specific compiler options
 ifeq ($(PLATFORM), win32)
-	LDFLAGS += -luser32 -lopengl32 -lgdi32
 	DEFINES += -D_CRT_SECURE_NO_WARNINGS
-ifeq ($(DEBUG), yes)
-	DEFINES += -D_DEBUG
-# Introduce these in the RID chapter. Links to the Visual Studio libraries, so in theory shouldn't appear in GCC builds on Windows.
-	LDFLAGS += -lmsvcrtd -lvcruntimed -lucrtd
-endif
 endif
 
 # Globalize build directory
@@ -104,8 +96,8 @@ BUILD_DIR := $(abspath $(BUILD_DIR))
 .PHONY: all generate_compile_commands clean
 all:
 ifeq ($(PLATFORM), win32)
-	-@mkdir $(BUILD_DIR), 2>NUL || cd .
-	-@xcopy -r assets $(BUILD_DIR)
+	-@mkdir $(subst /,\,$(BUILD_DIR)), 2>NUL || cd .
+	-@xcopy "assets\" "$(subst /,\,$(BUILD_DIR)/assets)\" /q /y
 endif
 ifeq ($(PLATFORM), linux)
 	@mkdir -p $(BUILD_DIR)
@@ -123,4 +115,10 @@ generate_compile_commands:
 clean:
 	@$(MAKE) clean -C engine
 	@$(MAKE) clean -C editor
+ifeq ($(PLATFORM), win32)
+	@del /F /Q $(subst /,\,$(BUILD_DIR)/assets) 2>NUL || cd .
+	@rmdir $(subst /,\,$(BUILD_DIR)/assets) /S /Q 2>NUL || cd .
+endif
+ifeq ($(PLATFORM), linux)
 	@rm -rf $(BUILD_DIR)/assets
+endif

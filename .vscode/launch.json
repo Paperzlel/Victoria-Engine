@@ -2,7 +2,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch (Windows)",
+            "name": "Launch (CodeLLDB) (Windows)",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}\\bin\\victoria.exe",
+            "args": [],
+            "stopOnEntry": false,
+            "cwd": "${workspaceFolder}\\bin\\",
+            "env": {},
+            "console": "integratedTerminal",
+        },
+        {
+            "name": "Launch (GDB) (Windows)",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}\\bin\\victoria.exe",

@@ -22,18 +22,18 @@
 
 // Export/import functions
 #if VEXPORT
-#	if defined(__GNUC__) || defined(__clang__)
-#		define VAPI __attribute__((visibility("default")))
-#	elif defined(_MSC_VER)
+#	if defined(_MSC_VER)
 #		define VAPI __declspec(dllexport)
+#	elif defined(__GNUC__) || defined(__clang__)
+#		define VAPI __attribute__((visibility("default")))
 #	else
 #		define VAPI
 #	endif
 #else
-#	if defined(__GNUC__) || defined(__clang__)
-#		define VAPI
-#	elif defined(_MSC_VER)
+#	if defined(_MSC_VER)
 #		define VAPI __declspec(dllimport)
+#	elif defined(__GNUC__) || defined(__clang__)
+#		define VAPI
 #	else
 #		define VAPI
 #	endif

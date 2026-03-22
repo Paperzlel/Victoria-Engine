@@ -31,7 +31,7 @@ Error ShaderData::_setup(const String &p_source_path) {
 
 		err = Utilities::get_singleton()->check_pipeline_errors(vert_id, Utilities::STATUS_COMPILE);
 		if (err != OK) {
-			return err;
+			ERR_FAIL_MSG_R("Failed to compile vertex shader.", err);
 		}
 
 		shader_find_uniforms_from_source(vertex_contents);
@@ -51,7 +51,7 @@ Error ShaderData::_setup(const String &p_source_path) {
 
 		err = Utilities::get_singleton()->check_pipeline_errors(frag_id, Utilities::STATUS_COMPILE);
 		if (err != OK) {
-			return err;
+			ERR_FAIL_MSG_R(vformat("Failed to compile fragment shader \'%s\'", n_vert_path.get_data()), err);
 		}
 
 		shader_find_uniforms_from_source(fragment_contents);

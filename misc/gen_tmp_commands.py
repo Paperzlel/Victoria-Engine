@@ -84,3 +84,4 @@ if len(object_list) > 0:
 	output["objects"] = object_list
 
 fh.write(json.dumps(output, indent=2))
+fh.close()

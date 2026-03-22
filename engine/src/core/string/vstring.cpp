@@ -505,7 +505,11 @@ String itos(int64_t p_int) {
 	}
 
 	ret.resize(magnitude + 1);
+#ifdef PLATFORM_WINDOWS
+	sprintf(ret.ptrw(), "%lli", p_int);
+#else
 	sprintf(ret.ptrw(), "%li", p_int);
+#endif
 	return ret;
 }
 

@@ -1,20 +1,19 @@
 #include "display_manager_wayland.h"
-#if PLATFORM_LINUX
-#	ifdef WAYLAND_ENABLED
+#if PLATFORM_LINUX && defined(WAYLAND_ENABLED)
 
-#		include "core/error/error_macros.h"
-#		include "core/os/memory.h"
-#		include "core/os/os.h"
-#		include "drivers/opengl/rendering_server_gl.h"
-#		include "main/main.h"
+#	include "core/error/error_macros.h"
+#	include "core/os/memory.h"
+#	include "core/os/os.h"
+#	include "drivers/opengl/rendering_server_gl.h"
+#	include "main/main.h"
 
-#		include <string.h>
+#	include <string.h>
 
 // Override from the default `wl_array_for_each` as it doesn't work for C++ compilers.
 // Workaround specifically from https://github.com/libretro/RetroArch/commit/8e638f435a37c46195aad1589ab024e443971d12
 // (thanks RetroArch)
-#		define WL_ARRAY_FOR_EACH(pos, array, type)                                                                   \
-			for (pos = (type)(array)->data; (const char *)pos < ((const char *)(array)->data + (array)->size); (pos)++)
+#	define WL_ARRAY_FOR_EACH(pos, array, type)                                                                       \
+		for (pos = (type)(array)->data; (const char *)pos < ((const char *)(array)->data + (array)->size); (pos)++)
 
 void DisplayManagerWayland::_on_registry_global(void *p_data,
 												struct wl_registry *p_registry,
@@ -288,5 +287,4 @@ DisplayManagerWayland::~DisplayManagerWayland() {
 	}
 }
 
-#	endif // WAYLAND_ENABLED
-#endif	   // PLATFORM_LINUX
+#endif // PLATFORM_LINUX && WAYLAND_ENABLED

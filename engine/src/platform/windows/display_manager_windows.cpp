@@ -2,16 +2,21 @@
 #if PLATFORM_WINDOWS
 
 #	include "os_windows.h"
+#	include "wgl_detect_version.h"
 
 #	include "core/config/callable_method_pointer.h"
 #	include "core/io/input.h"
 #	include "main/main.h"
 
-#	include "modules/opengl/rendering_server_gl.h"
+#	include <drivers/opengl/rendering_server_gl.h>
 
 void DisplayManagerWindows::finalize() {
 	if (gl_manager_windows) {
 		gl_manager_windows->finalize();
+	}
+
+	if (egl_manager_windows) {
+		egl_manager_windows->finalize();
 	}
 
 	if (window) {
@@ -75,10 +80,8 @@ uint8_t DisplayManagerWindows::create_window(const String &p_name,
 		return INVALID_WINDOW_ID;
 	}
 
-	win_data->x = x;
-	win_data->y = y;
-	win_data->width = width;
-	win_data->height = height;
+	win_data->position = Vector2i(x, y);
+	win_data->size = Vector2i(width, height);
 
 	CallableMethod cm = static_callable_mp(_notification_callback);
 	win_data->notification_callback.connect(cm, false);
@@ -86,13 +89,23 @@ uint8_t DisplayManagerWindows::create_window(const String &p_name,
 	if (gl_manager_windows) {
 		uint8_t id = gl_manager_windows->create_window(win_data->hWnd, hInstance);
 		// Invalid window ID, need to return an error.
-		if (id == (uint8_t)-1) {
+		if (id == INVALID_WINDOW_ID) {
 			vdelete(gl_manager_windows);
 			OS::get_singleton()
 				->print_error(__FILE__, __FUNCTION__, __LINE__, "GLWindow was unable to be created,", "", ERROR_ERR);
 			return ERR_CANT_CREATE;
 		}
 		gl_manager_windows->set_active_window(id);
+		win_data->id = id;
+	}
+
+	if (egl_manager_windows) {
+		uint8_t id = egl_manager_windows->create_window(GetDC(win_data->hWnd), win_data->hWnd);
+		if (id == INVALID_WINDOW_ID) {
+			vdelete(egl_manager_windows);
+			ERR_FAIL_MSG_R("EGLWindow was unable to be created.", ERR_CANT_CREATE);
+		}
+
 		win_data->id = id;
 	}
 
@@ -105,6 +118,10 @@ void DisplayManagerWindows::destroy_window(uint8_t p_id) {
 		if (gl_manager_windows) {
 			gl_manager_windows->destroy_window(p_id);
 		}
+
+		if (egl_manager_windows) {
+			egl_manager_windows->destroy_window(p_id);
+		}
 		DestroyWindow(window->hWnd);
 	}
 }
@@ -113,11 +130,19 @@ void DisplayManagerWindows::set_use_vsync(bool p_value) {
 	if (gl_manager_windows) {
 		gl_manager_windows->set_use_vsync(p_value);
 	}
+
+	if (egl_manager_windows) {
+		egl_manager_windows->set_use_vsync(p_value);
+	}
 }
 
 Vector2i DisplayManagerWindows::get_window_rect() const {
 	ERR_COND_NULL_R(window, Vector2i());
-	return Vector2i(window->width, window->height);
+	return window->size;
+}
+
+void DisplayManagerWindows::set_window_resize_callback(const CallableMethod &p_method, uint8_t p_id) {
+	window->window_resize_callback = p_method;
 }
 
 void DisplayManagerWindows::toggle_mouse_mode(bool p_mode) {
@@ -130,7 +155,7 @@ void DisplayManagerWindows::toggle_mouse_mode(bool p_mode) {
 		ClipCursor(&r);
 
 		// Centre the cursor in the middle of the screen
-		POINT centre = {window->width / 2, window->height / 2};
+		POINT centre = {(LONG)window->size.x / 2, (LONG)window->size.y / 2};
 		ClientToScreen(window->hWnd, &centre);
 		SetCursorPos(centre.x, centre.y);
 	} else {
@@ -163,6 +188,10 @@ void DisplayManagerWindows::swap_buffers() {
 	if (gl_manager_windows) {
 		gl_manager_windows->swap_buffers();
 	}
+
+	if (egl_manager_windows) {
+		egl_manager_windows->swap_buffers();
+	}
 }
 
 LRESULT DisplayManagerWindows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
@@ -170,6 +199,10 @@ LRESULT DisplayManagerWindows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 
 	if (window) {
 		window_id = window->id;
+	}
+
+	if (window_id == INVALID_WINDOW_ID) {
+		return DefWindowProcA(hWnd, uMsg, wParam, lParam);
 	}
 
 	switch (uMsg) {
@@ -188,6 +221,10 @@ LRESULT DisplayManagerWindows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			uint32_t height = HIWORD(lParam);
 			if (gl_manager_windows) {
 				gl_manager_windows->resize_viewport(width, height);
+			}
+
+			if (window->window_resize_callback.is_valid()) {
+				window->window_resize_callback.call(width, height);
 			}
 		} break;
 		case WM_KEYDOWN:
@@ -262,7 +299,7 @@ LRESULT DisplayManagerWindows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 
 			// Mouse is captured
 			if (mouse_mode) {
-				Vector2i c(window->width / 2, window->height / 2);
+				Vector2i c(window->size / 2);
 
 				old_x = c.x;
 				old_y = c.y;
@@ -318,37 +355,82 @@ LRESULT DisplayManagerWindows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-DisplayManager *DisplayManagerWindows::create_func(const String &p_renderer, int p_window_width, int p_window_height) {
-	DisplayManager *ds = vnew(DisplayManagerWindows(p_renderer, p_window_width, p_window_height));
-
+DisplayManager *DisplayManagerWindows::create_func(const String &p_renderer, const Vector2i &p_size, Error *r_error) {
+	DisplayManager *ds = vnew(DisplayManagerWindows(p_renderer, p_size, r_error));
 	return ds;
 }
 
-DisplayManagerWindows::DisplayManagerWindows(const String &p_renderer, int p_window_width, int p_window_height) {
+DisplayManagerWindows::DisplayManagerWindows(const String &p_renderer, const Vector2i &p_size, Error *r_error) {
 	hInstance = static_cast<OSWindows *>(OS::get_singleton())->get_hinstance();
 	if (!hInstance) {
 		hInstance = GetModuleHandleA(NULL);
 	}
 
-	if (p_renderer == "opengl") {
-		gl_manager_windows = vnew(GLManagerWindows);
+	String driver = p_renderer;
 
-		Error err = gl_manager_windows->initialize();
-		ERR_FAIL_COND_MSG(err != OK, error_messages[err]);
+	bool can_load_gl = false;
+	if (driver == "opengl") {
+		HashTable<String, Variant> gl_info = detect_wgl_version();
+		can_load_gl = gl_info["version"].operator int() >= 30003;
+
+		// Warn about native GL being unavailable.
+		if (!can_load_gl) {
+			ERR_WARN("Your video card does not support the required OpenGL version of 3.3, switching to ANGLE.");
+			driver = "opengl_es";
+		}
+	}
+
+	if (driver == "opengl_es") {
+		egl_manager_windows = vnew(EGLManagerANGLE);
+
+		Error err = egl_manager_windows->initialize();
+		if (err != OK) {
+			vdelete(egl_manager_windows);
+			egl_manager_windows = nullptr;
+			if (can_load_gl) {
+				ERR_WARN("Your video card drivers do not appear to support ANGLE or the ANGLE dynamic libraries have "
+						 "not been supplied. Switching to native OpenGL.");
+				driver = "opengl";
+			} else {
+				*r_error = err;
+				ERR_FAIL_MSG("Could not initialize the ANGLE drivers.");
+			}
+		}
 
 		RenderingServerGL::make_default();
 	}
 
-	create_window("Victoria Engine Window", 100, 100, p_window_width, p_window_height);
+	if (driver == "opengl") {
+		gl_manager_windows = vnew(GLManagerWindows);
+
+		Error err = gl_manager_windows->initialize();
+		if (err != OK) {
+			*r_error = err;
+			ERR_FAIL_MSG(error_messages[err]);
+		}
+
+		RenderingServerGL::make_default();
+	}
+
+	create_window("Victoria Engine Window", 100, 100, p_size.x, p_size.y);
 }
 
 void DisplayManagerWindows::register_windows_driver() {
-	_create_funcs[create_func_count] = create_func;
+	_create_funcs[create_func_count].func = create_func;
+	_create_funcs[create_func_count].name = String("windows");
 	create_func_count++;
 }
 
 DisplayManagerWindows::~DisplayManagerWindows() {
-	vdelete(gl_manager_windows);
+	if (gl_manager_windows) {
+		vdelete(gl_manager_windows);
+		gl_manager_windows = nullptr;
+	}
+
+	if (egl_manager_windows) {
+		vdelete(egl_manager_windows);
+		egl_manager_windows = nullptr;
+	}
 }
 
 #endif // PLATFORM_WINDOWS

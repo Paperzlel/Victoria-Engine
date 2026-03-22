@@ -1,6 +1,14 @@
 # Thirdparty Libraries
 Here is a list of all third-party libraries and their corresponding licenses and modifications.
 
+## angle
+- Source: https://chromium.googlesource.com/angle/angle
+- Version: Git commit 780bcd7b1195521251ba61e8b5a7760650ec2505
+- License: MIT
+Modifications:
+- Extracted `include/EGL/*` and `include/KHR/*` to own source tree
+- Removed `.clang-format` files found in the folders.
+
 ## freetype
 - Source: https://gitlab.freedesktop.org/freetype/freetype
 - Version: 2.13.3 (2024)

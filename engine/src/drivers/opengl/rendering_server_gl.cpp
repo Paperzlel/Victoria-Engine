@@ -7,12 +7,17 @@
 #include "core/os/os.h"
 #include "core/string/print_string.h"
 
+#include <glad/egl.h>
 #include <glad/gl.h>
 #include <stb/stb_image.h>
 
 bool polygon_line_mode = false;
 
 using namespace GL;
+
+static void *_egl_load_function_wrapper(const char *data) {
+	return (void *)eglGetProcAddress(data);
+}
 
 /**
  * @brief Converts a Transform2D to a Transform3D (shouldn't need to per se, but we do regardless).
@@ -1506,7 +1511,10 @@ void RenderingServerGL::_enable_attributes(uint32_t p_start, uint32_t p_rate) {
 							  GL_FALSE,
 							  sizeof(CanvasInstanceData),
 							  (void *)(p_start + (i - 4) * 4 * sizeof(float)));
-		glVertexAttribDivisor(i, p_rate);
+		// TODO: Temporary fix
+		if (glVertexAttribDivisor) {
+			glVertexAttribDivisor(i, p_rate);
+		}
 	}
 }
 
@@ -1536,10 +1544,18 @@ void RenderingServerGL::_new_canvas_batch() {
 RenderingServerGL::RenderingServerGL() {
 	print_verbose("Registering OpenGL rendering server");
 	// Load GLAD function pointers here
-	if (!gladLoaderLoadGL()) {
-		OS::get_singleton()->print_error(__FILE__, FUNCTION_STR, __LINE__, "GLAD could not be loaded.");
-		return;
+	bool is_egl = eglGetProcAddress != nullptr;
+	bool glad_loaded = false;
+
+	if (is_egl && !glad_loaded) {
+		glad_loaded = gladLoadGL((GLADloadfunc)_egl_load_function_wrapper);
 	}
+
+	if (!glad_loaded) {
+		glad_loaded = gladLoaderLoadGL();
+	}
+	ERR_FAIL_COND_MSG(!glad_loaded, "GLAD was unable to be loaded.");
+
 	utils = vnew(GL::Utilities);
 	stbi_set_flip_vertically_on_load(true);
 
@@ -1556,11 +1572,12 @@ RenderingServerGL::RenderingServerGL() {
 	String extensions = (const char *)glGetString(GL_EXTENSIONS);
 	Vector<String> ext_list = extensions.split(" ");
 	if (ext_list.find("GL_KHR_debug") >= 0) {
-		if (!glIsEnabled(GL_DEBUG_OUTPUT)) {
-			glEnable(GL_DEBUG_OUTPUT);
-		}
+		// TODO: Uncomment code and add debug messages as an extension
+		// if (!glIsEnabled(GL_DEBUG_OUTPUT)) {
+		// 	glEnable(GL_DEBUG_OUTPUT);
+		// }
 
-		glDebugMessageCallback(Utilities::debug_message_callback, nullptr);
+		// glDebugMessageCallback(Utilities::debug_message_callback, nullptr);
 	} else {
 		print_verbose(
 			"Could not find the debug extensions string for OpenGL. OpenGL advanced debug output is disabled.");

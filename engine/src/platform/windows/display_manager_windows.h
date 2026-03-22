@@ -4,6 +4,7 @@
 #if PLATFORM_WINDOWS
 
 #	include "gl_manager_windows.h"
+#	include "gl_manager_windows_angle.h"
 
 #	include "core/data/event.h"
 #	include "core/os/display_manager.h"
@@ -16,13 +17,15 @@ class DisplayManagerWindows : public DisplayManager {
 private:
 	HINSTANCE hInstance = nullptr;
 	GLManagerWindows *gl_manager_windows = nullptr;
+	EGLManagerANGLE *egl_manager_windows = nullptr;
 
 	struct WindowData {
 		uint8_t id;
 		HWND hWnd;
 		Event<WindowNotification, uint8_t> notification_callback;
-
-		uint16_t x, y, width, height;
+		CallableMethod window_resize_callback;
+		Vector2i position;
+		Vector2i size;
 	};
 
 	bool first_frame = true;
@@ -33,7 +36,7 @@ private:
 	WindowData *window = nullptr;
 
 public:
-	static DisplayManager *create_func(const String &p_renderer, int p_window_width, int p_window_height);
+	static DisplayManager *create_func(const String &p_renderer, const Vector2i &p_size, Error *r_error);
 	static void register_windows_driver();
 
 	LRESULT WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -49,6 +52,7 @@ public:
 	virtual void set_use_vsync(bool p_value) override;
 
 	virtual Vector2i get_window_rect() const override;
+	virtual void set_window_resize_callback(const CallableMethod &p_method, uint8_t p_id) override;
 
 	virtual void toggle_mouse_mode(bool p_mode) override;
 	virtual bool get_mouse_mode() const override;
@@ -58,7 +62,7 @@ public:
 
 	virtual void finalize() override;
 
-	DisplayManagerWindows(const String &p_renderer, int p_window_width, int p_window_height);
+	DisplayManagerWindows(const String &p_renderer, const Vector2i &p_size, Error *r_error);
 	~DisplayManagerWindows();
 };
 

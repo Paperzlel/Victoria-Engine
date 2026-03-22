@@ -1,20 +1,19 @@
 TARGET := engine
-# We want to hide as much of the API as possible, so we set the visibility to hidden by default. This allows our own API to be exposed properly.
-CCFLAGS += -fPIC -fvisibility=hidden
 # We keep third-party, platform and driver specific code hidden from the user.
 INCLUDES += -Iinclude -Isrc/thirdparty/freetype/include -Isrc/thirdparty/glad/include -Isrc/thirdparty
 DEFINES += -DVEXPORT
 
 # Define flags that are applied only to third-party libraries. Essentially a boiled-down version of before.
-THIRDPARTY_CFLAGS := -fPIC -fvisibility=hidden
+THIRDPARTY_CFLAGS :=
 ifeq ($(DEBUG), yes)
 	THIRDPARTY_CFLAGS += -O0
 ifeq ($(PLATFORM), win32)
-ifeq ($(COMPILER), clang)
-	THIRDPARTY_CFLAGS += -gdwarf-4
-else
-	THIRDPARTY_CFLAGS += -gdwarf-5
-endif
+# ifeq ($(COMPILER), clang)
+# 	THIRDPARTY_CFLAGS += -gdwarf-4
+# else
+# 	THIRDPARTY_CFLAGS += -gdwarf-5
+# endif
+	THIRDPARTY_CFLAGS += -g3
 else
 	THIRDPARTY_CFLAGS += -gdwarf-4 -g3
 endif
@@ -38,6 +37,7 @@ export USE_X11 := no
 WAYLAND_PROTOCOLS := src/platform/linux/wayland/protocols
 
 ifeq ($(PLATFORM), linux)
+	CCFLAGS += -fPIC -fvisibility=hidden
 ifeq ($(shell pkg-config --exists wayland-client; echo $$?),0)
 # Require Wayland EGL support
 ifeq ($(shell pkg-config --exists wayland-egl; echo $$?),0)
@@ -79,6 +79,14 @@ ifeq ($(USE_X11), yes)
 	DEFINES += -DX11_ENABLED
 	LDFLAGS += $(shell pkg-config --libs x11)
 endif
+	DIR := $(shell $(PWD))
+endif
+
+ifeq ($(PLATFORM), win32)
+	DIR := $(subst \,/,$(shell cd))
+# We only want ANGLE libs on Windows
+	INCLUDES += -Isrc/thirdparty/angle/include
+	LDFLAGS += -luser32 -lopengl32 -lgdi32
 endif
 
 # Merge CFLAGS, CPPFLAGS and CCFLAGS
@@ -86,7 +94,6 @@ CFLAGS += $(CCFLAGS)
 CPPFLAGS += $(CCFLAGS)
 
 # Source files and directories
-DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 C_FILES :=
 CPP_FILES :=
 DIRECTORIES :=
@@ -99,9 +106,9 @@ endif
 endif
 
 ifeq ($(PLATFORM), win32)
-	C_FILES += $(call rwildcard,*,*.c)
-	CPP_FILES += $(call rwildcard,*,*.cpp)
-	DIRECTORIES += $(addprefix $(BUILD_DIR)\, $(subst $(BUILD_DIR),,$(subst $(shell cd)\,,$(shell dir /s /AD /B))))
+	C_FILES := $(call rwildcard,*,*.c)
+	CPP_FILES := $(call rwildcard,*,*.cpp)
+	DIRECTORIES := $(patsubst src,,$(patsubst src\\%,%,$(subst $(shell cd)\,,$(shell dir src /s /AD /B)))))
 else
 ifeq ($(PLATFORM), linux)
 	CPP_FILES := $(shell find src -type f -name "*.cpp")
@@ -214,8 +221,8 @@ endif
 scaffold: test
 	@echo Creating project structure...
 ifeq ($(PLATFORM), win32)
-	-@mkdir $(BUILD_DIR)/$(TARGET) 2>NUL || cd .
-	-@mkdir $(addprefix $(BUILD_DIR)/$(TARGET)/,$(DIRECTORIES)) 2>NUL || cd .
+	-@mkdir $(subst /,\,$(BUILD_DIR)/$(TARGET)) 2>NUL || cd .
+	-@mkdir $(subst /,\,$(addprefix $(BUILD_DIR)/$(TARGET)/,$(DIRECTORIES))) 2>NUL || cd .
 endif
 ifeq ($(PLATFORM), linux)
 	@mkdir -p $(BUILD_DIR)/$(TARGET)
@@ -224,7 +231,7 @@ endif
 	@echo Done.
 
 
-compile: scaffold $(WAYLAND_PROTOCOLS)
+compile: scaffold
 	@echo Compiling...
 
 
@@ -243,8 +250,8 @@ generate_compile_commands:
 
 clean:
 ifeq ($(PLATFORM), win32)
-	@rmdir $(BUILD_DIR)/$(TARGET) /S /Q
-	@del /F /Q $(subst /,\,$(BUILD_DIR)/$(OUTPUT_NAME).*) 2>NUL || cd .
+	@rmdir $(subst /,\,$(BUILD_DIR)/$(TARGET)) /S /Q 2>NUL || cd .
+	@del /F /Q $(subst /,\,$(BUILD_DIR)/$(OUTPUT_NAME).*) /Q 2>NUL || cd .
 endif
 ifeq ($(PLATFORM), linux)
 	@rm -rf $(BUILD_DIR)/$(TARGET)
