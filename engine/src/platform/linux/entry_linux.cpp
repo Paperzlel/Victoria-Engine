@@ -23,6 +23,10 @@ VictoriaInstance *victoria_create_instance(int argc, char *argv[]) {
 
 	// Allocate instance but don't call initialize.
 	instance = vnew(VictoriaInstance);
+	if (!instance->initialize()) {
+		vdelete(instance);
+		return nullptr;
+	}
 	return instance;
 }
 
