@@ -73,8 +73,29 @@ uint8_t DisplayManagerWindows::create_window(const String &p_name,
 		window_flags |= WS_VISIBLE;
 	}
 
-	win_data->hWnd =
-		CreateWindowExA(0, class_name, p_name, window_flags, x, y, width, height, NULL, NULL, hInstance, NULL);
+	// For SOME reason, Windows doesn't like using the normal window rect properly.
+	// We adjust it here to get its size properly as to prevent problems with ANGLE not setting
+	// a proper initial viewport size.
+	RECT window_rect = {};
+	window_rect.left = x;
+	window_rect.right = x + width;
+	window_rect.top = y;
+	window_rect.bottom = y + height;
+
+	AdjustWindowRectEx(&window_rect, window_flags, FALSE, 0);
+
+	win_data->hWnd = CreateWindowExA(0,
+									 class_name,
+									 p_name,
+									 window_flags,
+									 window_rect.left,
+									 window_rect.top,
+									 window_rect.right - window_rect.left,
+									 window_rect.bottom - window_rect.top,
+									 NULL,
+									 NULL,
+									 hInstance,
+									 NULL);
 
 	if (win_data->hWnd == NULL) {
 		return INVALID_WINDOW_ID;
@@ -142,7 +163,9 @@ Vector2i DisplayManagerWindows::get_window_rect() const {
 }
 
 void DisplayManagerWindows::set_window_resize_callback(const CallableMethod &p_method, uint8_t p_id) {
-	window->window_resize_callback = p_method;
+	if (window->id == p_id) {
+		window->window_resize_callback = p_method;
+	}
 }
 
 void DisplayManagerWindows::toggle_mouse_mode(bool p_mode) {
@@ -223,9 +246,18 @@ LRESULT DisplayManagerWindows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 				gl_manager_windows->resize_viewport(width, height);
 			}
 
+			window->size = Vector2i(width, height);
 			if (window->window_resize_callback.is_valid()) {
-				window->window_resize_callback.call(width, height);
+				window->window_resize_callback.call(window_id);
 			}
+			return 0;
+		} break;
+		case WM_MOVE: {
+			uint32_t x = LOWORD(lParam);
+			uint32_t y = HIWORD(lParam);
+
+			window->position = Vector2i(x, y);
+			return 0;
 		} break;
 		case WM_KEYDOWN:
 		case WM_SYSKEYDOWN:
@@ -290,6 +322,7 @@ LRESULT DisplayManagerWindows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			mb->mb = button;
 
 			Input::get_singleton()->parse_input_event(mb);
+			return 0;
 		} break;
 		case WM_MOUSEMOVE: {
 			int x_position = GET_X_LPARAM(lParam);
@@ -332,7 +365,7 @@ LRESULT DisplayManagerWindows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 
 			old_x = pos.x;
 			old_y = pos.y;
-
+			return 0;
 		} break;
 		case WM_MOUSEWHEEL: {
 			int delta = GET_WHEEL_DELTA_WPARAM(wParam);
@@ -347,12 +380,17 @@ LRESULT DisplayManagerWindows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			ms->scroll = delta;
 
 			Input::get_singleton()->parse_input_event(ms);
+			return 0;
 		} break;
 		case WM_KILLFOCUS: {
 			Input::get_singleton()->clear();
+			return 0;
+		} break;
+		default: {
+			return DefWindowProcA(hWnd, uMsg, wParam, lParam);
 		} break;
 	}
-	return DefWindowProc(hWnd, uMsg, wParam, lParam);
+	return 0;
 }
 
 DisplayManager *DisplayManagerWindows::create_func(const String &p_renderer, const Vector2i &p_size, Error *r_error) {

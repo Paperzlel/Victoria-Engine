@@ -12,15 +12,12 @@ int main(int argc, char *argv[]) {
 		return -1;
 	}
 
-	bool success = inst->initialize();
 	// Initialize editor class here
 	Editor *editor = vnew(Editor);
 	SceneTree::get_singleton()->get_root()->add_child(editor);
 
-	if (success) {
-		while (inst->iteration()) {
-			// Run
-		}
+	while (inst->iteration()) {
+		// Run
 	}
 
 	int exit_code = OS::get_singleton()->get_exit_code();

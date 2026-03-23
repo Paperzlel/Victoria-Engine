@@ -9,5 +9,7 @@ class EGLManagerANGLE : public EGLManager {
 	virtual Vector<EGLint> _egl_get_context_attribs() override;
 
 public:
+	virtual void resize_viewport(uint16_t width, uint16_t height) override;
+
 	EGLManagerANGLE() {}
 };

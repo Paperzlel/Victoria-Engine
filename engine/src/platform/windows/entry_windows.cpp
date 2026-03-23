@@ -23,6 +23,7 @@ VictoriaInstance *victoria_create_instance(int argc, char *argv[]) {
 
 	instance = vnew(VictoriaInstance);
 	if (!instance->initialize()) {
+		vdelete(instance);
 		return nullptr;
 	}
 

@@ -233,11 +233,6 @@ void RenderingServerGL::_render_internal(RenderData *r_data) {
 		utils->report_buffer_allocations();
 	}
 
-	// Clear screen
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 	// - Renders Viewport 1 first (get scene list --> render, get item list (empty) --> render, render viewport
 	// texture)
 	// - Then renders parent viewport
@@ -753,8 +748,6 @@ void RenderingServerGL::_render_viewport(RenderData *r_data, Viewport *p_viewpor
 	Texture *t = texture_owner.get_or_null(p_viewport->colour_texture);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, t->texture_buffer);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	glDisable(GL_DEPTH_TEST);
 
@@ -801,7 +794,7 @@ void RenderingServerGL::_rebuild_viewport_texture(Viewport *p_viewport, Vector2i
 		glDeleteTextures(1, &p_viewport->texture_depth_id);
 	}
 
-	// Create colour texture (can be accessed asa normal texture)
+	// Create colour texture (can be accessed as a normal texture)
 	p_viewport->colour_texture = texture_allocate();
 	Texture *colour = texture_owner.get_or_null(p_viewport->colour_texture);
 	colour->format = FORMAT_RGBA;
@@ -810,11 +803,9 @@ void RenderingServerGL::_rebuild_viewport_texture(Viewport *p_viewport, Vector2i
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, colour->texture_buffer);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, p_size.x, p_size.y, 0, GL_RGBA, GL_UNSIGNED_INT, nullptr);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, p_size.x, p_size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
 	// Create depth texture (internally managed)
 	glGenTextures(1, &p_viewport->texture_depth_id);
@@ -831,8 +822,6 @@ void RenderingServerGL::_rebuild_viewport_texture(Viewport *p_viewport, Vector2i
 				 nullptr);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -847,9 +836,11 @@ void RenderingServerGL::_rebuild_viewport_texture(Viewport *p_viewport, Vector2i
 						   p_viewport->texture_depth_id,
 						   0);
 
-	ERR_FAIL_COND(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE);
-
+	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	ERR_FAIL_COND_MSG(status != GL_FRAMEBUFFER_COMPLETE, vformat("Framebuffer returned invalid format %x", status));
 	p_viewport->size = p_size;
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 RID RenderingServerGL::instance_allocate() {

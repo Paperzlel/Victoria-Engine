@@ -124,13 +124,13 @@ void Utilities::free_buffer(const GLenum p_type, uint64_t p_size, const GLuint *
 
 Error Utilities::check_pipeline_errors(uint32_t p_what, GLStatusType p_compile_type) {
 	int success = 0;
-	char info_log[512];
+	char info_log[1024];
 	switch (p_compile_type) {
 		case STATUS_COMPILE: {
 			glGetShaderiv(p_what, GL_COMPILE_STATUS, &success);
 			if (!success) {
-				glGetShaderInfoLog(p_what, 512, nullptr, info_log);
-				String fmt = vformat("OpenGL: Shader compilation error. \n%s", info_log);
+				glGetShaderInfoLog(p_what, 1024, nullptr, info_log);
+				String fmt = vformat("OpenGL: Shader compilation error.\n%s", info_log);
 				OS::get_singleton()->print_error(__FILE__, FUNCTION_STR, __LINE__, fmt.get_data(), "", ERROR_SHADER);
 				return ERR_CANT_CREATE;
 			}
@@ -138,8 +138,8 @@ Error Utilities::check_pipeline_errors(uint32_t p_what, GLStatusType p_compile_t
 		case STATUS_LINK: {
 			glGetProgramiv(p_what, GL_LINK_STATUS, &success);
 			if (!success) {
-				glGetProgramInfoLog(p_what, 512, nullptr, info_log);
-				OS::get_singleton()->printerr("OpenGL shader linking error!\n%s", info_log);
+				glGetProgramInfoLog(p_what, 1024, nullptr, info_log);
+				OS::get_singleton()->printerr("OpenGL shader linking error.\n%s", info_log);
 				return ERR_CANT_CREATE;
 			}
 		} break;

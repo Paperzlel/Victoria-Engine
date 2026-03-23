@@ -203,6 +203,9 @@ ResourceFormatImporterFont::ResourceFormatImporterFont() {
 
 ResourceFormatImporterFont::~ResourceFormatImporterFont() {
 #ifdef FREETYPE_ENABLED
-	FT_Done_FreeType(freetype_lib);
+	if (freetype_lib) {
+		FT_Done_FreeType(freetype_lib);
+		freetype_lib = nullptr;
+	}
 #endif
 }

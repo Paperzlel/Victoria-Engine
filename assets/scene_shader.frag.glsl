@@ -13,10 +13,11 @@ out highp vec4 frag_colour;
 layout(std140) uniform SceneData { // ubo:0
 	mat4 camera_projection;
 	mat4 camera_view;
-	highp float time;
+	float time;
 
 	uint directional_lights_used;
-};
+}
+scene_data;
 
 layout(std140) uniform MaterialData { // ubo:2
 	vec4 diffuse;
@@ -103,7 +104,7 @@ vec3 calculate_point_light(PointLight in_light, vec3 fragment, vec3 view_directi
 }
 
 vec3 calculate_directional_light(DirectionalLight in_light, vec3 view_direction) {
-	vec3 light_direction = normalize(mat3(camera_view) * -in_light.direction);
+	vec3 light_direction = normalize(mat3(scene_data.camera_view) * -in_light.direction);
 
 	// Diffuse lighting
 	float diff = max(dot(frag_normal, light_direction), 0.0);
@@ -167,8 +168,8 @@ void main() {
 
 	vec3 result = vec3(0.0);
 	// Directional lights
-	if (bool(directional_lights_used)) {
-		for (int i = 0; i < int(directional_lights_used); i++) {
+	if (bool(scene_data.directional_lights_used)) {
+		for (int i = 0; i < int(scene_data.directional_lights_used); i++) {
 			result += calculate_directional_light(directional_lights[i], view_dir);
 		}
 	}
@@ -186,7 +187,7 @@ void main() {
 		}
 	}
 
-	if (!bool(directional_lights_used) && !bool(point_lights_used) && !bool(spot_lights_used)) {
+	if (!bool(scene_data.directional_lights_used) && !bool(point_lights_used) && !bool(spot_lights_used)) {
 		result = ambient;
 	}
 

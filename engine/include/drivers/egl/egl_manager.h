@@ -46,7 +46,7 @@ public:
 	Error open_display(void *p_native);
 	void finalize();
 	void swap_buffers() const;
-	void resize_viewport(uint16_t p_width, uint16_t p_height);
+	virtual void resize_viewport(uint16_t p_width, uint16_t p_height);
 
 	/**
 	 * @brief Sets all displays to use vsync depending on the value given. Should change once multiple displays

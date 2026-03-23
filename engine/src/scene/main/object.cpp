@@ -46,10 +46,10 @@ void Object::_notification(int p_what) {
 			}
 
 			// Need to clean up child nodes
-			for (Object *child : data.children) {
-				if (child) {
-					vdelete(child);
-				}
+			// Use cleaner end-to-beginning sort
+			while (data.children.size()) {
+				Object *c = data.children.back()->get();
+				vdelete(c);
 			}
 		}
 	}

@@ -29,4 +29,8 @@ Vector<EGLint> EGLManagerANGLE::_egl_get_context_attribs() {
 	return ret;
 }
 
+void EGLManagerANGLE::resize_viewport(uint16_t width, uint16_t height) {
+	eglWaitNative(EGL_CORE_NATIVE_ENGINE);
+}
+
 #endif

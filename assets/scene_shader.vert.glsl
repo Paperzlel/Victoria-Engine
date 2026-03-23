@@ -16,7 +16,8 @@ layout(std140) uniform SceneData { // ubo:0
 	float time;
 
 	uint directional_lights_used;
-};
+}
+scene_data;
 
 uniform mat4 transform;
 
@@ -27,5 +28,5 @@ void main() {
 
 	frag_uv = uv;
 
-	gl_Position = camera_projection * camera_view * transform * vec4(position, 1.0);
+	gl_Position = scene_data.camera_projection * scene_data.camera_view * transform * vec4(position, 1.0);
 }
