@@ -1,6 +1,6 @@
 TARGET := engine
 # We keep third-party, platform and driver specific code hidden from the user.
-INCLUDES += -Iinclude -Isrc/thirdparty/freetype/include -Isrc/thirdparty/glad/include -Isrc/thirdparty
+INCLUDES += -Iinclude -Isrc/include -Isrc/thirdparty/freetype/include -Isrc/thirdparty/glad/include -Isrc/thirdparty
 DEFINES += -DVEXPORT
 
 # Define flags that are applied only to third-party libraries. Essentially a boiled-down version of before.
@@ -73,8 +73,7 @@ ifeq ($(PLATFORM), linux)
 ifeq ($(USE_WAYLAND), yes)
 	DEFINES += -DWAYLAND_ENABLED
 	LDFLAGS += $(shell pkg-config --libs wayland-egl)
-	CFLAGS += $(shell pkg-config --cflags-only-other wayland-egl) -Wno-unused-const-variable
-	INCLUDES += $(shell pkg-config --cflags-only-I wayland-egl)
+	CFLAGS += -Wno-unused-const-variable
 	TMP := $(shell $(PYTHON) src/platform/linux/wayland/generate_protocols.py)
 endif
 ifeq ($(USE_X11), yes)
