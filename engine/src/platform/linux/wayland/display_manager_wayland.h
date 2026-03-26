@@ -55,27 +55,26 @@ private:
 	static void
 	_on_zxdg_decoration_manager_configure(void *p_data, struct zxdg_toplevel_decoration_v1 *p_decor, uint32_t p_mode);
 
-	static constexpr struct wl_registry_listener global_listener {
+	static constexpr struct wl_registry_listener global_listener{
 		.global = DisplayManagerWayland::_on_registry_global,
-		.global_remove = DisplayManagerWayland::_on_registry_global_remove
+		.global_remove = DisplayManagerWayland::_on_registry_global_remove,
 	};
 
-	static constexpr struct xdg_surface_listener surface_listener {
+	static constexpr struct xdg_surface_listener surface_listener{
 		.configure = DisplayManagerWayland::_on_xdg_surface_configure,
 	};
 
-	static constexpr struct xdg_toplevel_listener toplevel_listener {
+	static constexpr struct xdg_toplevel_listener toplevel_listener{
 		.configure = DisplayManagerWayland::_on_xdg_toplevel_configure,
 		.close = DisplayManagerWayland::_on_xdg_toplevel_close,
 	};
 
-	static constexpr struct xdg_wm_base_listener wm_base_listener {
+	static constexpr struct xdg_wm_base_listener wm_base_listener{
 		.ping = DisplayManagerWayland::_on_xdg_wm_base_ping,
 	};
 
-	static constexpr struct zxdg_toplevel_decoration_v1_listener toplevel_decor_listener {
-		.configure = DisplayManagerWayland::_on_zxdg_decoration_manager_configure
-	};
+	static constexpr struct zxdg_toplevel_decoration_v1_listener toplevel_decor_listener{
+		.configure = DisplayManagerWayland::_on_zxdg_decoration_manager_configure};
 
 	struct WindowData {
 		uint8_t id;
@@ -88,6 +87,7 @@ private:
 		bool maximised = false;
 		bool fullscreen = false;
 		bool resizing = false;
+		bool is_size_dirty = false;
 
 		struct wl_surface *wl_surface;
 		struct xdg_surface *xdg_surface;

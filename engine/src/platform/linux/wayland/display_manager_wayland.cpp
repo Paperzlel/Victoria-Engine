@@ -73,6 +73,13 @@ void DisplayManagerWayland::_on_xdg_toplevel_configure(void *p_data,
 		wd->size.y = height;
 	}
 
+	// Send an update to resize the window on focus enter events. We don't
+	// yet handle those properly elsewhere.
+	if (!wd->maximised && !wd->resizing) {
+		wd->cached_size = Vector2i(width, height);
+		wd->is_size_dirty = true;
+	}
+
 	// TODO: Update window size if not equal to zero (means the compositor wants to configure window size)
 }
 
@@ -132,6 +139,8 @@ uint8_t DisplayManagerWayland::create_window(const String &p_name,
 	wl_display_roundtrip(display);
 
 	wd->size = Vector2i(width, height);
+	// Store cached size prior to updates.
+	wd->cached_size = wd->size;
 	wd->position = Vector2i(x, y);
 	wd->notification_callback.connect(static_callable_mp(_notification_callback), false);
 
@@ -200,7 +209,15 @@ void DisplayManagerWayland::process_events() {
 		// error on dispatch!
 	}
 
-	if (wd->resizing || wd->maximised) {
+	// Force resize events if certain parameters are called.
+	bool force_resize_event = false;
+	if (wd->is_size_dirty) {
+		wd->size = wd->cached_size;
+		wd->is_size_dirty = false;
+		force_resize_event = true;
+	}
+
+	if (wd->resizing || wd->maximised || force_resize_event) {
 		if (wd->wl_surface) {
 			xdg_surface_set_window_geometry(wd->xdg_surface, 0, 0, wd->size.x, wd->size.y);
 		}
