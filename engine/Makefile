@@ -6,6 +6,10 @@ DEFINES += -DVEXPORT
 # Define flags that are applied only to third-party libraries. Essentially a boiled-down version of before.
 THIRDPARTY_CFLAGS :=
 ifeq ($(DEBUG), yes)
+ifeq ($(USE_MSVC), yes)
+	THIRDPARTY_CFLAGS += /Zi /Z7
+	CCFLAGS += /MDd
+else
 	THIRDPARTY_CFLAGS += -O0
 ifeq ($(PLATFORM), win32)
 # ifeq ($(COMPILER), clang)
@@ -17,8 +21,12 @@ ifeq ($(PLATFORM), win32)
 else
 	THIRDPARTY_CFLAGS += -gdwarf-4 -g3
 endif
+endif
 else
 	THIRDPARTY_CFLAGS += -O2
+ifeq ($(USE_MSVC), yes)
+	CCFLAGS += /MDd
+endif
 endif
 
 # Utilities
@@ -59,12 +67,24 @@ ifeq ($(COMPILER), gcc)
 	LDFLAGS += -shared -rdynamic
 endif
 ifeq ($(COMPILER), clang)
+ifeq ($(USE_MSVC), yes)
+ifeq ($(DEBUG), yes)
+	LDFLAGS += /LDd
+else
+	LDFLAGS += /LD
+endif
+else
 	LDFLAGS += --shared
+endif
 endif
 
 # Module-specific options
 ifeq ($(USE_FREETYPE), yes)
+ifeq ($(USE_MSVC), yes)
+	DEFINES += /DFREETYPE_ENABLED /DFT2_BUILD_LIBRARY
+else 
 	DEFINES += -DFREETYPE_ENABLED -DFT2_BUILD_LIBRARY
+endif
 endif
 
 
@@ -88,6 +108,10 @@ ifeq ($(PLATFORM), win32)
 # We only want ANGLE libs on Windows
 	INCLUDES += -Isrc/thirdparty/angle/include
 	LDFLAGS += -luser32 -lopengl32 -lgdi32
+ifeq ($(USE_MSVC), yes)
+	INCLUDES := $(patsubst -I%,/I%,$(INCLUDES))
+	LDFLAGS := $(patsubst -l%,%.lib,$(LDFLAGS))
+endif
 endif
 
 # Merge CFLAGS, CPPFLAGS and CCFLAGS
