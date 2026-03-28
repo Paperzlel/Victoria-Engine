@@ -18,7 +18,6 @@ set ARGS=/nologo /Zc:enumTypes /Wall /wd5039 /EHsc
 set LIBS=user32.lib advapi32.lib
 set OUTFILE=%globdir%bin\vcutil.exe
 set OBJFILE=%globdir%bin\set_msvc_paths.o
-echo %OUTFILE% %OBJFILE%
 cl %ARGS% /Fo:%OBJFILE% /Fe:%OUTFILE% utils/windows/set_msvc_paths.cpp %LIBS%
 if %ERRORLEVEL% NEQ 0 pause
 @REM Don't want the object file. Clean it up.

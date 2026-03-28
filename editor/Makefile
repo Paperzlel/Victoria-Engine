@@ -68,8 +68,14 @@ endif
 endif
 
 
-.PHONY: scaffold compile link generate_compile_commands clean
-all: scaffold compile link
+.PHONY: scaffold generate_compile_commands clean
+# If make was invoked in the directory, call upwards to gather compiler information.
+ifeq ("$(COMPILER)","")
+all:
+	@$(MAKE) -C ..
+else
+all: test scaffold $(OBJ_FILES) $(BUILD_DIR)/$(OUTPUT_FILE)
+endif
 
 
 scaffold:
@@ -86,22 +92,7 @@ ifneq ("$(DIRECTORIES)","")
 endif
 endif
 	@echo Done.
-
-
-compile: scaffold
 	@echo Compiling...
-
-
-link: compile $(OBJ_FILES)
-	@echo Done.
-	@echo Building binary...
-ifeq ($(USE_MSVC), yes)
-	@echo $(LDFLAGS)
-	@$(LD) $(OBJ_FILES) /OUT:$(BUILD_DIR)/$(OUTPUT_FILE) $(LDFLAGS)
-else
-	@$(CXX) $(OBJ_FILES) -o $(BUILD_DIR)/$(OUTPUT_FILE) $(LDFLAGS)
-endif
-	@echo $(OUTPUT_FILE) built successfully.
 
 generate_compile_commands:
 	@echo Getting compile commands from $(TARGET)...
@@ -118,6 +109,16 @@ ifeq ($(PLATFORM), linux)
 	@rm -f $(BUILD_DIR)/$(OUTPUT_FILE)
 endif
 
+$(BUILD_DIR)/$(OUTPUT_FILE): $(OBJ_FILES)
+	@echo Done.
+	@echo Building binary...
+ifeq ($(USE_MSVC), yes)
+	@echo $(LDFLAGS)
+	@$(LD) $(OBJ_FILES) /OUT:$(BUILD_DIR)/$(OUTPUT_FILE) $(LDFLAGS)
+else
+	@$(CXX) $(OBJ_FILES) -o $(BUILD_DIR)/$(OUTPUT_FILE) $(LDFLAGS)
+endif
+	@echo $(OUTPUT_FILE) built successfully.
 
 $(BUILD_DIR)/$(TARGET)/%.o: src/%.cpp
 	@echo   $<...

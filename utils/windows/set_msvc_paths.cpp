@@ -141,7 +141,7 @@ int main(void) {
 
 	std::string include;
 	// MSVC tools dir
-	include += tools_dir;
+	include = tools_dir;
 	include += "include";
 	include += ";";
 	// Windows SDK UCRT includes
@@ -162,7 +162,7 @@ int main(void) {
 
 	std::string libs;
 	// MSVC libs
-	libs += tools_dir;
+	libs = tools_dir;
 	libs += "lib\\";
 	libs += arch;
 	libs += ";";

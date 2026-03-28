@@ -206,8 +206,14 @@ ifeq ($(PLATFORM), linux)
 endif
 endif
 
-.PHONY: test scaffold compile link generate_compile_commands clean
-all: test scaffold compile link
+.PHONY: test scaffold generate_compile_commands clean
+# If make was invoked in the directory, call upwards to gather compiler information.
+ifeq ("$(COMPILER)","")
+all:
+	@$(MAKE) -C ..
+else
+all: test scaffold $(OBJ_FILES) $(BUILD_DIR)/$(OUTPUT_FILE)
+endif
 
 # Look for if certain files are downloaded prior to building
 test:
@@ -230,21 +236,8 @@ ifeq ($(PLATFORM), linux)
 	@mkdir -p $(addprefix $(BUILD_DIR)/$(TARGET)/,$(DIRECTORIES))
 endif
 	@echo Done.
-
-
-compile: scaffold
 	@echo Compiling...
 
-
-link: compile $(OBJ_FILES)
-	@echo Done.
-	@echo Building binary...
-ifeq ($(USE_MSVC), yes)
-	@$(LD) $(OBJ_FILES) /OUT:$(BUILD_DIR)/$(OUTPUT_FILE) $(LDFLAGS)
-else
-	@$(CXX) $(OBJ_FILES) -o $(BUILD_DIR)/$(OUTPUT_FILE) $(LDFLAGS)
-endif
-	@echo $(OUTPUT_FILE) built successfully.
 
 generate_compile_commands:
 	@echo Getting compile commands from $(TARGET)...
@@ -264,6 +257,15 @@ ifeq ($(PLATFORM), linux)
 	@rm -rf $(WAYLAND_PROTOCOLS)
 endif
 
+$(BUILD_DIR)/$(OUTPUT_FILE): $(OBJ_FILES)
+	@echo Done.
+	@echo Building binary...
+ifeq ($(USE_MSVC), yes)
+	@$(LD) $(OBJ_FILES) /OUT:$(BUILD_DIR)/$(OUTPUT_FILE) $(LDFLAGS)
+else
+	@$(CXX) $(OBJ_FILES) -o $(BUILD_DIR)/$(OUTPUT_FILE) $(LDFLAGS)
+endif
+	@echo $(OUTPUT_FILE) built successfully.
 
 $(BUILD_DIR)/$(TARGET)/%.o: src/%.c
 	@echo   $<...
