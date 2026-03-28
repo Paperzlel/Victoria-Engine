@@ -183,7 +183,7 @@ void GLManagerX11::destroy_window(uint8_t p_id) {
  * @param p_id The ID of the window to set as current
  */
 void GLManagerX11::set_active_window(uint8_t p_id) {
-	if (p_id == (uint8_t)-1) {
+	if (p_id == DisplayManager::INVALID_WINDOW_ID) {
 		return;
 	}
 

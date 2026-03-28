@@ -9,6 +9,7 @@
 #		include "protocols/wayland.gen.h"
 #		include "protocols/xdg_decoration.gen.h"
 #		include "protocols/xdg_shell.gen.h"
+#		include "protocols/cursor_shape.gen.h"
 
 #		include "core/data/event.h"
 #		include "core/os/display_manager.h"
@@ -25,11 +26,18 @@ private:
 
 	// Data passed from the compositor to the Wayland client.
 	struct ClientData {
-		struct wl_compositor *compositor;
-		struct zxdg_decoration_manager_v1 *decor_manager;
-		struct xdg_wm_base *wm_base;
+		struct wl_compositor *compositor = nullptr;
+		struct zxdg_decoration_manager_v1 *decor_manager = nullptr;
+		struct xdg_wm_base *wm_base = nullptr;
+		struct wl_seat *seat = nullptr;
+		struct wl_pointer *pointer = nullptr;
+		struct wl_keyboard *keyboard = nullptr;
+		struct wp_cursor_shape_manager_v1 *wp_cursor_shape = nullptr;
+		struct wp_cursor_shape_device_v1 *wp_pointer_shape = nullptr;
 
 		bool should_quit = false;
+		bool frame_recieved = false;
+		uint8_t active_window = INVALID_WINDOW_ID;
 	};
 
 	ClientData *client_data = nullptr;
@@ -40,6 +48,32 @@ private:
 									const char *p_interface,
 									uint32_t p_version);
 	static void _on_registry_global_remove(void *p_data, struct wl_registry *p_registry, uint32_t p_name);
+
+	static void _on_seat_capabilities_changed(void *p_data, struct wl_seat *p_seat, uint32_t p_capabilities);
+	static void _on_seat_name_changed(void *p_data, struct wl_seat *p_seat, const char *p_name);
+
+	static void _on_pointer_enter(void *p_data,
+								  struct wl_pointer *p_pointer,
+								  uint32_t p_serial,
+								  struct wl_surface *p_surface,
+								  wl_fixed_t p_surface_x,
+								  wl_fixed_t p_surface_y);
+	static void
+	_on_pointer_leave(void *p_data, struct wl_pointer *p_pointer, uint32_t p_serial, struct wl_surface *p_surface);
+	static void _on_pointer_motion(void *p_data,
+								   struct wl_pointer *p_pointer,
+								   uint32_t p_time,
+								   wl_fixed_t p_surface_x,
+								   wl_fixed_t p_surface_y);
+	static void _on_pointer_button(void *p_data,
+								   struct wl_pointer *p_pointer,
+								   uint32_t p_serial,
+								   uint32_t p_time,
+								   uint32_t p_button,
+								   uint32_t p_state);
+	static void
+	_on_pointer_axis(void *p_data, struct wl_pointer *p_pointer, uint32_t p_time, uint32_t p_axis, wl_fixed_t p_fixed);
+	static void _on_pointer_frame(void *p_data, struct wl_pointer *p_pointer);
 
 	static void _on_xdg_surface_configure(void *p_data, struct xdg_surface *p_surface, uint32_t p_serial);
 
@@ -60,6 +94,20 @@ private:
 		.global_remove = DisplayManagerWayland::_on_registry_global_remove,
 	};
 
+	static constexpr struct wl_seat_listener seat_listener{
+		.capabilities = _on_seat_capabilities_changed,
+		.name = _on_seat_name_changed,
+	};
+
+	static constexpr struct wl_pointer_listener pointer_listener{
+		.enter = _on_pointer_enter,
+		.leave = _on_pointer_leave,
+		.motion = _on_pointer_motion,
+		.button = _on_pointer_button,
+		.axis = _on_pointer_axis,
+		.frame = _on_pointer_frame,
+	};
+
 	static constexpr struct xdg_surface_listener surface_listener{
 		.configure = DisplayManagerWayland::_on_xdg_surface_configure,
 	};
@@ -74,7 +122,8 @@ private:
 	};
 
 	static constexpr struct zxdg_toplevel_decoration_v1_listener toplevel_decor_listener{
-		.configure = DisplayManagerWayland::_on_zxdg_decoration_manager_configure};
+		.configure = DisplayManagerWayland::_on_zxdg_decoration_manager_configure,
+	};
 
 	struct WindowData {
 		uint8_t id;
@@ -83,6 +132,10 @@ private:
 		Vector2i position;
 		Event<WindowNotification, uint8_t> notification_callback;
 		CallableMethod resize_callback;
+
+		Vector2i last_cursor_pos;
+		Vector2i cursor_pos;
+		bool is_first_frame;
 
 		bool maximised = false;
 		bool fullscreen = false;
@@ -97,6 +150,10 @@ private:
 	};
 
 	WindowData *wd = nullptr;
+
+	uint8_t _get_window_id_from_surface(struct wl_surface *p_surface);
+	void _window_update_cursor_position(uint8_t p_window, const Vector2i &p_position);
+	void _window_push_event(uint8_t p_window, WindowNotification p_notification);
 
 public:
 	static DisplayManager *create_func(const String &p_renderer, const Vector2i &p_size, Error *r_error);

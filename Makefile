@@ -108,6 +108,12 @@ endif
 endif
 # NOTE: MinGW might need an early exit to use the below commands.
 else
+ifeq ("$(COMPILER)","")
+	COMPILER := clang
+	CXX := clang++
+	CC := clang
+	LD := clang++
+endif
 # Real world
 	CCFLAGS += -Wall -Werror
 	CFLAGS += -std=c17

@@ -1,7 +1,6 @@
 import subprocess
 import os
 
-sources = []
 
 def create_xml(name, path):
     subprocess.call(
@@ -13,19 +12,26 @@ def create_xml(name, path):
         shell=True,
     )
 
-    sources.append(f"src/platform/linux/wayland/protocols/{name}.gen.c")
-
 def generate_sources():
     # Generate code protocol
     create_xml("wayland", "src/thirdparty/wayland/protocol/wayland.xml")
     # Stable protocols
-    create_xml(
+    create_xml(                                                                                                                     
         "linux_dmabuf",
         "src/thirdparty/wayland-protocols/stable/linux-dmabuf/linux-dmabuf-v1.xml",
     )
     create_xml(
+        "tablet",
+        "src/thirdparty/wayland-protocols/stable/tablet/tablet-v2.xml",
+    )
+    create_xml(
         "xdg_shell",
         "src/thirdparty/wayland-protocols/stable/xdg-shell/xdg-shell.xml",
+    )
+    # Staging protocols
+    create_xml(
+        "cursor_shape",
+        "src/thirdparty/wayland-protocols/staging/cursor-shape/cursor-shape-v1.xml"
     )
     # Unstable protocols
     create_xml(

@@ -2,6 +2,7 @@
 #if PLATFORM_LINUX && defined(WAYLAND_ENABLED)
 
 #	include "core/error/error_macros.h"
+#	include "core/io/input.h"
 #	include "core/os/memory.h"
 #	include "core/os/os.h"
 #	include "drivers/opengl/rendering_server_gl.h"
@@ -25,9 +26,19 @@ void DisplayManagerWayland::_on_registry_global(void *p_data,
 		data->compositor = (struct wl_compositor *)wl_registry_bind(p_registry, p_name, &wl_compositor_interface, 4);
 	}
 
+	if (strcmp(p_interface, wl_seat_interface.name) == 0) {
+		data->seat = (struct wl_seat *)wl_registry_bind(p_registry, p_name, &wl_seat_interface, 7);
+		wl_seat_add_listener(data->seat, &seat_listener, data);
+	}
+
 	if (strcmp(p_interface, xdg_wm_base_interface.name) == 0) {
 		data->wm_base = (struct xdg_wm_base *)wl_registry_bind(p_registry, p_name, &xdg_wm_base_interface, 1);
 		xdg_wm_base_add_listener(data->wm_base, &wm_base_listener, data);
+	}
+
+	if (strcmp(p_interface, wp_cursor_shape_manager_v1_interface.name) == 0) {
+		data->wp_cursor_shape = (struct wp_cursor_shape_manager_v1 *)
+			wl_registry_bind(p_registry, p_name, &wp_cursor_shape_manager_v1_interface, 1);
 	}
 
 	if (strcmp(p_interface, zxdg_decoration_manager_v1_interface.name) == 0) {
@@ -37,6 +48,112 @@ void DisplayManagerWayland::_on_registry_global(void *p_data,
 }
 
 void DisplayManagerWayland::_on_registry_global_remove(void *p_data, struct wl_registry *p_registry, uint32_t p_name) {
+}
+
+void DisplayManagerWayland::_on_seat_capabilities_changed(void *p_data,
+														  struct wl_seat *p_seat,
+														  uint32_t p_capabilities) {
+	ClientData *cd = (ClientData *)p_data;
+	if (cd->seat != p_seat) {
+		return;
+	}
+
+	bool has_pointer = (p_capabilities & WL_SEAT_CAPABILITY_POINTER);
+	bool has_keyboard = (p_capabilities & WL_SEAT_CAPABILITY_KEYBOARD);
+
+	if (has_pointer && !cd->pointer) {
+		cd->pointer = wl_seat_get_pointer(cd->seat);
+		wl_pointer_add_listener(cd->pointer, &pointer_listener, cd);
+	} else if (!has_pointer && cd->pointer) {
+		wl_pointer_release(cd->pointer);
+		cd->pointer = nullptr;
+	}
+
+	if (has_keyboard && !cd->keyboard) {
+		cd->keyboard = wl_seat_get_keyboard(cd->seat);
+		// TODO: Bind keyboard listener
+	} else if (!has_keyboard && cd->keyboard) {
+		wl_keyboard_release(cd->keyboard);
+		cd->keyboard = nullptr;
+	}
+}
+
+void DisplayManagerWayland::_on_seat_name_changed(void *p_data, struct wl_seat *p_seat, const char *p_name) {
+	ClientData *cd = (ClientData *)p_data;
+	if (cd->seat != p_seat) {
+		return;
+	}
+}
+
+void DisplayManagerWayland::_on_pointer_enter(void *p_data,
+											  struct wl_pointer *p_pointer,
+											  uint32_t p_serial,
+											  struct wl_surface *p_surface,
+											  wl_fixed_t p_surface_x,
+											  wl_fixed_t p_surface_y) {
+	ClientData *cd = (ClientData *)p_data;
+	DisplayManagerWayland *wl = static_cast<DisplayManagerWayland *>(DisplayManager::get_singleton());
+	cd->active_window = wl->_get_window_id_from_surface(p_surface);
+	if (cd->active_window == INVALID_WINDOW_ID) {
+		ERR_WARN(vformat("Unknown surface %p entered by cursor", p_surface));
+	}
+
+	// Handle cursor data on our own.
+	cd->wp_pointer_shape = wp_cursor_shape_manager_v1_get_pointer(cd->wp_cursor_shape, cd->pointer);
+	wp_cursor_shape_device_v1_set_shape(cd->wp_pointer_shape, p_serial, WP_CURSOR_SHAPE_DEVICE_V1_SHAPE_DEFAULT);
+	wl->_window_push_event(cd->active_window, NOTIFICATION_WM_MOUSE_ENTER);
+}
+
+void DisplayManagerWayland::_on_pointer_leave(void *p_data,
+											  struct wl_pointer *p_pointer,
+											  uint32_t p_serial,
+											  struct wl_surface *p_surface) {
+	ClientData *cd = (ClientData *)p_data;
+	DisplayManagerWayland *wl = static_cast<DisplayManagerWayland *>(DisplayManager::get_singleton());
+	if (cd->active_window != INVALID_WINDOW_ID) {
+		wl->_window_push_event(cd->active_window, NOTIFICATION_WM_MOUSE_EXIT);
+		cd->active_window = INVALID_WINDOW_ID;
+
+		wp_cursor_shape_device_v1_destroy(cd->wp_pointer_shape);
+		cd->wp_pointer_shape = nullptr;
+	} else {
+		ERR_WARN("Wayland attempted to leave a window's surface without entering one.");
+	}
+}
+
+void DisplayManagerWayland::_on_pointer_motion(void *p_data,
+											   struct wl_pointer *p_pointer,
+											   uint32_t p_time,
+											   wl_fixed_t p_surface_x,
+											   wl_fixed_t p_surface_y) {
+	ClientData *cd = (ClientData *)p_data;
+	DisplayManagerWayland *wl = static_cast<DisplayManagerWayland *>(DisplayManager::get_singleton());
+	Vector2i npos(wl_fixed_to_int(p_surface_x), wl_fixed_to_int(p_surface_y));
+	wl->_window_update_cursor_position(cd->active_window, npos);
+}
+
+void DisplayManagerWayland::_on_pointer_button(void *p_data,
+											   struct wl_pointer *p_pointer,
+											   uint32_t p_serial,
+											   uint32_t p_time,
+											   uint32_t p_button,
+											   uint32_t p_state) {}
+
+void DisplayManagerWayland::_on_pointer_axis(void *p_data,
+											 struct wl_pointer *p_pointer,
+											 uint32_t p_time,
+											 uint32_t p_axis,
+											 wl_fixed_t p_fixed) {}
+
+void DisplayManagerWayland::_on_pointer_frame(void *p_data, struct wl_pointer *p_pointer) {
+	// Pushes a pointer frame, or in other words tells our client that it
+	// needs to update the cursor's position.
+	ClientData *cd = (ClientData *)p_data;
+	if (cd->active_window == INVALID_WINDOW_ID) {
+		return;
+	}
+
+	cd->frame_recieved = true;
 }
 
 void DisplayManagerWayland::_on_xdg_surface_configure(void *p_data, struct xdg_surface *p_surface, uint32_t p_serial) {
@@ -100,6 +217,30 @@ void DisplayManagerWayland::_on_zxdg_decoration_manager_configure(void *p_data,
 	}
 }
 
+uint8_t DisplayManagerWayland::_get_window_id_from_surface(struct wl_surface *p_surface) {
+	if (p_surface == wd->wl_surface) {
+		return 0;
+	}
+
+	return INVALID_WINDOW_ID;
+}
+
+void DisplayManagerWayland::_window_update_cursor_position(uint8_t p_window, const Vector2i &p_position) {
+	if (p_window != 0 || p_window == INVALID_WINDOW_ID) {
+		return;
+	}
+
+	// To accumulate pointer events, we simply update the current position every frame.
+	wd->cursor_pos = p_position;
+}
+
+void DisplayManagerWayland::_window_push_event(uint8_t p_window, WindowNotification p_notification) {
+	if (p_window != 0 || p_window == INVALID_WINDOW_ID) {
+		return;
+	}
+	// Do nothing for now.
+}
+
 DisplayManager *DisplayManagerWayland::create_func(const String &p_renderer, const Vector2i &p_size, Error *r_error) {
 	return vnew(DisplayManagerWayland(p_renderer, p_size, r_error));
 }
@@ -147,7 +288,7 @@ uint8_t DisplayManagerWayland::create_window(const String &p_name,
 	if (egl_manager_wl) {
 		wd->egl_window = wl_egl_window_create(wd->wl_surface, width, height);
 		uint8_t id = egl_manager_wl->create_window(display, wd->egl_window);
-		ERR_FAIL_COND_MSG_R(id == (uint8_t)-1, "Failed to create Wayland EGL window.", INVALID_WINDOW_ID);
+		ERR_FAIL_COND_MSG_R(id == INVALID_WINDOW_ID, "Failed to create Wayland EGL window.", INVALID_WINDOW_ID);
 		wd->id = id;
 	}
 
@@ -229,6 +370,24 @@ void DisplayManagerWayland::process_events() {
 		if (wd->resize_callback.is_valid()) {
 			wd->resize_callback.call(wd->id);
 		}
+	}
+
+	if (client_data->frame_recieved) {
+		// TODO: implement mouse mode focus
+
+		if (wd->is_first_frame) {
+			wd->last_cursor_pos = wd->cursor_pos;
+			wd->is_first_frame = false;
+		}
+
+		Ref<InputEventMouseMotion> mm;
+		mm.instantiate();
+
+		mm->absolute = wd->cursor_pos;
+		mm->relative = wd->cursor_pos - wd->last_cursor_pos;
+		Input::get_singleton()->parse_input_event(mm);
+		wd->last_cursor_pos = wd->cursor_pos;
+		client_data->frame_recieved = false;
 	}
 }
 

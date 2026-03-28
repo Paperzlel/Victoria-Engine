@@ -152,7 +152,7 @@ uint8_t DisplayManagerX11::create_window(const String &p_name,
 
 	if (gl_manager_x11) {
 		uint8_t id = gl_manager_x11->create_window(&win_data->win);
-		if (id == (uint8_t)-1) {
+		if (id == INVALID_WINDOW_ID) {
 			vdelete(gl_manager_x11);
 			OS::get_singleton()->print_error(__FILE__, FUNCTION_STR, __LINE__, "GLWindow was unable to be created.");
 			return INVALID_WINDOW_ID;
@@ -162,7 +162,7 @@ uint8_t DisplayManagerX11::create_window(const String &p_name,
 
 	if (egl_manager_x11) {
 		uint8_t id = egl_manager_x11->create_window(display, &win_data->win);
-		if (id == (uint8_t)-1) {
+		if (id == INVALID_WINDOW_ID) {
 			vdelete(egl_manager_x11);
 			OS::get_singleton()->print_error(__FILE__, FUNCTION_STR, __LINE__, "EGLWindow was unable to be created,");
 			return INVALID_WINDOW_ID;
