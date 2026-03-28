@@ -25,7 +25,7 @@ endif
 else
 	THIRDPARTY_CFLAGS += -O2
 ifeq ($(USE_MSVC), yes)
-	CCFLAGS += /MDd
+	CCFLAGS += /MD
 endif
 endif
 
@@ -66,25 +66,18 @@ endif
 ifeq ($(COMPILER), gcc)
 	LDFLAGS += -shared -rdynamic
 endif
-ifeq ($(COMPILER), clang)
+
 ifeq ($(USE_MSVC), yes)
-ifeq ($(DEBUG), yes)
-	LDFLAGS += /LDd
+	LDFLAGS += /DLL
 else
-	LDFLAGS += /LD
-endif
-else
+ifeq ($(COMPILER), clang)
 	LDFLAGS += --shared
 endif
 endif
 
 # Module-specific options
 ifeq ($(USE_FREETYPE), yes)
-ifeq ($(USE_MSVC), yes)
-	DEFINES += /DFREETYPE_ENABLED /DFT2_BUILD_LIBRARY
-else 
 	DEFINES += -DFREETYPE_ENABLED -DFT2_BUILD_LIBRARY
-endif
 endif
 
 
@@ -108,9 +101,11 @@ ifeq ($(PLATFORM), win32)
 # We only want ANGLE libs on Windows
 	INCLUDES += -Isrc/thirdparty/angle/include
 	LDFLAGS += -luser32 -lopengl32 -lgdi32
+# Force MSVC variables to their proper form.
 ifeq ($(USE_MSVC), yes)
 	INCLUDES := $(patsubst -I%,/I%,$(INCLUDES))
 	LDFLAGS := $(patsubst -l%,%.lib,$(LDFLAGS))
+	DEFINES := $(patsubst -D%,/D%,$(DEFINES))
 endif
 endif
 
@@ -244,7 +239,11 @@ compile: scaffold
 link: compile $(OBJ_FILES)
 	@echo Done.
 	@echo Building binary...
+ifeq ($(USE_MSVC), yes)
+	@$(LD) $(OBJ_FILES) /OUT:$(BUILD_DIR)/$(OUTPUT_FILE) $(LDFLAGS)
+else
 	@$(CXX) $(OBJ_FILES) -o $(BUILD_DIR)/$(OUTPUT_FILE) $(LDFLAGS)
+endif
 	@echo $(OUTPUT_FILE) built successfully.
 
 generate_compile_commands:
@@ -268,15 +267,27 @@ endif
 
 $(BUILD_DIR)/$(TARGET)/%.o: src/%.c
 	@echo   $<...
+ifeq ($(USE_MSVC), yes)
+	@$(CC) $< $(CFLAGS) /c /Fo:$@ $(DEFINES) $(INCLUDES)
+else
 	@$(CC) $< $(CFLAGS) -c -o $@ $(DEFINES) $(INCLUDES)
+endif
 
 $(BUILD_DIR)/$(TARGET)/%.o: src/%.cpp
 	@echo   $<...
+ifeq ($(USE_MSVC), yes)
+	@$(CXX) $< $(CFLAGS) /c /Fo:$@ $(DEFINES) $(INCLUDES)
+else
 	@$(CXX) $< $(CPPFLAGS) -c -o $@ $(DEFINES) $(INCLUDES)
+endif
 
 # Third-party code has all warnings and errors disabled, except debugging options
 $(BUILD_DIR)/$(TARGET)/thirdparty/%.o: src/thirdparty/%.c
 	@echo 	$<...
+ifeq ($(USE_MSVC), yes)
+	@$(CXX) $< $(CFLAGS) /c /Fo:$@ $(DEFINES) $(INCLUDES)
+else
 	@$(CC) $< $(THIRDPARTY_CFLAGS) -c -o $@ $(DEFINES) $(INCLUDES)
+endif
 
 -include $(OBJ_FILES:.o=.d)

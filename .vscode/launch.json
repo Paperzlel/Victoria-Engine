@@ -13,17 +13,6 @@
             "console": "integratedTerminal",
         },
         {
-            "name": "Launch (GDB) (Windows)",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}\\bin\\victoria.exe",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}\\bin\\",
-            "environment": [],
-            "externalConsole": false,
-        },
-        {
             "name": "Launch (CodeLLDB) (Linux)",
             "type": "lldb",
             "request": "launch",

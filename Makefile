@@ -90,10 +90,21 @@ ifeq ($(COMPILER), msvc)
 	CC := cl
 	CXX := cl
 	LD := link
+# Disable MSVC options. There's a bunch and they suck.
+# In order:
+# - C4244: Conversion is normal. The compiler can handle it and we expect it.
+# - C4267: Conversion is normal.
+# - C4251: This error is partially true, but most of the code it was worrying about was template classes. Should be fine.
+# - C4305: Conversion from double to float. 
+	CCFLAGS += /wd4244\
+	/wd4267\
+	/wd4251\
+	/wd4305
 endif
-	CCFLAGS += /Wall 
+	CCFLAGS += /nologo /W3 /permissive- /Zc:__cplusplus /EHsc
 	CFLAGS += /std:c17
 	CPPFLAGS += /std:c++17
+	LDFLAGS += /nologo
 endif
 # NOTE: MinGW might need an early exit to use the below commands.
 else
@@ -107,7 +118,7 @@ endif
 ifeq ($(DEBUG), yes)
 	DEFINES += -DDEBUG
 ifeq ($(USE_MSVC), yes)
-	CCFLAGS += /Zi /Z7 
+	CCFLAGS += /Zi /FS 
 	LDFLAGS += /DEBUG:FULL
 	DEFINES += /D_DEBUG
 else 
@@ -138,11 +149,7 @@ endif
 
 # Confirm platform-specific compiler options
 ifeq ($(PLATFORM), win32)
-ifeq ($(USE_MSVC), yes)
-	DEFINES += /D_CRT_SECURE_NO_WARNINGS
-else
 	DEFINES += -D_CRT_SECURE_NO_WARNINGS
-endif
 endif
 
 # Globalize build directory
@@ -168,6 +175,7 @@ endif
 else
 ifeq ("$(shell where cl)","")
 	@echo Unable to locate a valid cl installation. Are you sure you have set up the development environment correctly?
+endif
 endif
 endif
 endif

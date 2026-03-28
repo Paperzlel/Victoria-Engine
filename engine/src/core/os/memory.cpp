@@ -1,5 +1,7 @@
 #include "core/os/memory.h"
 
+#include "core/error/error_macros.h"
+
 #include <stdlib.h>
 #include <string.h>
 
@@ -80,3 +82,9 @@ void *Memory::vcopy_memory(void *p_dest, const void *p_source, uint64_t p_size) 
 void *operator new(size_t p_size, const char *p_description) {
 	return Memory::vallocate(p_size);
 }
+
+#ifdef _MSC_VER
+void operator delete(void *p_mem, const char *p_description) {
+	ERR_COND_FATAL(true); // TODO: Give a reason
+}
+#endif

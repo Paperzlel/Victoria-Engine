@@ -34,6 +34,7 @@
 # Linking files and debug symbols
 *.ilk
 *.pdb
+*.exp
 
 # Build artifacts
 bin/

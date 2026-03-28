@@ -13,6 +13,6 @@ SET globdir=%cdir:misc\windows\=%
 CALL "%cdir%get_vc_env.bat"
 if %ERRORLEVEL% NEQ 0 pause
 
-"%globdir%bin\set_msvc_paths.exe"
-IF %ERRORLEVEL% NEQ 0 echo Unable to locate the file, or this file was not run with administrator permissions. Please run this command appropriately.
+%globdir%bin\vcutil.exe
+IF %ERRORLEVEL% NEQ 0 echo Unable to locate the file, or this file was not run with administrator permissions. Please run this command appropriately. && pause
 ENDLOCAL

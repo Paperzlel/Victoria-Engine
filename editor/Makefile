@@ -17,6 +17,19 @@ endif
 # Make does not offer a recursive wildcard function, so here's one:
 rwildcard=$(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2))
 
+ifeq ($(USE_MSVC), yes)
+ifeq ($(DEBUG), yes)
+	CCFLAGS += /MTd
+else
+	CCFLAGS += /MT
+endif
+
+	LDFLAGS := $(patsubst -l%,%.lib,$(LDFLAGS))
+	LDFLAGS := $(patsubst -L%,/LIBPATH:%,$(LDFLAGS))
+	INCLUDES := $(patsubst -I%,/I%,$(INCLUDES))
+	DEFINES := $(patsubst -D%,/D%,$(DEFINES))
+endif
+
 # Merge CFLAGS, CPPFLAGS and CCFLAGS
 CFLAGS += $(CCFLAGS)
 CPPFLAGS += $(CCFLAGS)
@@ -82,7 +95,12 @@ compile: scaffold
 link: compile $(OBJ_FILES)
 	@echo Done.
 	@echo Building binary...
+ifeq ($(USE_MSVC), yes)
+	@echo $(LDFLAGS)
+	@$(LD) $(OBJ_FILES) /OUT:$(BUILD_DIR)/$(OUTPUT_FILE) $(LDFLAGS)
+else
 	@$(CXX) $(OBJ_FILES) -o $(BUILD_DIR)/$(OUTPUT_FILE) $(LDFLAGS)
+endif
 	@echo $(OUTPUT_FILE) built successfully.
 
 generate_compile_commands:
@@ -103,6 +121,10 @@ endif
 
 $(BUILD_DIR)/$(TARGET)/%.o: src/%.cpp
 	@echo   $<...
+ifeq ($(USE_MSVC), yes)
+	@$(CXX) $< $(CFLAGS) /c /Fo:$@ $(DEFINES) $(INCLUDES)
+else
 	@$(CXX) $< $(CPPFLAGS) -c -o $@ $(DEFINES) $(INCLUDES)
+endif
 
 -include $(OBJ_FILES:.o=.d)

@@ -25,13 +25,16 @@ Python is required in some form on all PCs for the build process, but it should 
 If you are running an older version of Windows and lack native OpenGL support (or if your driver is known to be buggy) you may wish to retrieve ANGLE binaries from our own repository. Windows builds will always come with these binaries as they are needed for certain GPUs.
 
 #### Getting cl on the system PATH
-**DISCLAIMER: THIS IS NOT THE RECOMMENDED WAY TO DO THIS BY MICROSOFT. IT MAY WELL MESS UP OTHER BUILDSYSTEMS AND VISUAL STUDIO. YOU HAVE BEEN WARNED!!!!**
+**DISCLAIMER: THIS IS NOT THE RECOMMENDED WAY TO DO THIS BY MICROSOFT. IT MAY WELL MESS UP OTHER BUILDSYSTEMS AND VISUAL STUDIO.**
 
 For some reason, Windows doesn't set up the system path properly when you install all their compiler options, which is a massive pain for anybody who doesn't want to use Visual Studio. To work around this, we have kindly provided a build script that detects a Visual Studio installation if it exists, and builds an executable to run, which sets up the development environment. To run this:
 1. Navigate to the `misc/windows/` directory.
-2. Run the `build_msvc_helper.bat` file. This should produce an `exe` in the `bin` folder.
+2. Run the `build_msvc_helper.bat` file. This should produce a file named `vcutils.exe` in the `bin` folder.
 3. Run the `call_msvc_helper.bat` file in ADMINISTRATOR mode. One would prefer not to do this, as it's obviously quite dangerous to do so on random stuff, but the source is in `utils/windows/set_msvc_paths.cpp` if you're wondering what it does and (hopefully) it is safe to run.
-This will add all the respective commands (`cl`, `link`) to the system PATH, create the `INCLUDE` variable (the paths to the Visual Studio headers and Windows CRT header) and the `LIB` variable (the path to the Visual Studio libraries and Windows CRT libraries). It will also add the LLVM binaries to the path, if found. 
+
+This will add all the respective commands (`cl`, `link`) to the system PATH, create the `INCLUDE` variable (the paths to the Visual Studio headers and Windows CRT header) and the `LIB` variable (the path to the Visual Studio libraries and Windows CRT libraries). It will also add the LLVM binaries to the path, if found.
+
+We require the batchfiles as we're calling to implement the Visual Studio environment first (with all its variables) before making said variables permanent via the respective options.
 
 **WARNING**: This tool is limited in use - it does not individually detect the existence of each variable and add it to the path if not present. A more conclusive algorithm for this ought to be made which can upgrade detected installations and replace variables individually, but that is far beyond the scope of an indie game engine and will be a project for another time. 
 

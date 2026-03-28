@@ -24,6 +24,10 @@ public:
 
 VAPI void *operator new(size_t p_size, const char *p_description);
 
+#ifdef _MSC_VER
+VAPI void operator delete(void *p_mem, const char *p_description);
+#endif
+
 #define vnew(m_class) ::new ("") m_class
 #define vnew_placement(m_placement, m_class) ::new (m_placement) m_class
 

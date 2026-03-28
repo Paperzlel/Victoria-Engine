@@ -154,6 +154,11 @@ int main(void) {
 	include += "Include\\";
 	include += windows_sdk_version;
 	include += "um;";
+	// Windows SDK shared includes
+	include += windows_sdk;
+	include += "Include\\";
+	include += windows_sdk_version;
+	include += "shared;";
 
 	std::string libs;
 	// MSVC libs
@@ -190,7 +195,9 @@ int main(void) {
 								  &disposition);
 	if (result != ERROR_SUCCESS) {
 		if (result == ERROR_ACCESS_DENIED) {
-			printf("Unable to open the registry key: access is denied (error 0x%lx). Please run this executable with administrator privileges.", result);
+			printf("Unable to open the registry key: access is denied (error 0x%lx). Please run this executable with "
+				   "administrator privileges.",
+				   result);
 			return 2;
 		}
 		printf("Unable to open the registry key for setting the windows environment (error 0x%lx).\n", result);
