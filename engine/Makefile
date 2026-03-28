@@ -270,7 +270,8 @@ endif
 $(BUILD_DIR)/$(TARGET)/%.o: src/%.c
 	@echo   $<...
 ifeq ($(USE_MSVC), yes)
-	@$(CC) $< $(CFLAGS) /c /Fo:$@ $(DEFINES) $(INCLUDES)
+	@$(CC) $< $(CFLAGS) /c /Fo:$@ /Fd$(subst .o,.pdb,$@) /sourceDependencies $(dir $@) $(DEFINES) $(INCLUDES)
+	@$(PYTHON) ../misc/windows/gen_dependency_files.py $< -o $@
 else
 	@$(CC) $< $(CFLAGS) -c -o $@ $(DEFINES) $(INCLUDES)
 endif
@@ -278,7 +279,8 @@ endif
 $(BUILD_DIR)/$(TARGET)/%.o: src/%.cpp
 	@echo   $<...
 ifeq ($(USE_MSVC), yes)
-	@$(CXX) $< $(CFLAGS) /c /Fo:$@ $(DEFINES) $(INCLUDES)
+	@$(CXX) $< $(CFLAGS) /c /Fo:$@ /Fd$(subst .o,.pdb,$@) /sourceDependencies $(dir $@) $(DEFINES) $(INCLUDES)
+	@$(PYTHON) ../misc/windows/gen_dependency_files.py $< -o $@
 else
 	@$(CXX) $< $(CPPFLAGS) -c -o $@ $(DEFINES) $(INCLUDES)
 endif
@@ -287,7 +289,8 @@ endif
 $(BUILD_DIR)/$(TARGET)/thirdparty/%.o: src/thirdparty/%.c
 	@echo 	$<...
 ifeq ($(USE_MSVC), yes)
-	@$(CXX) $< $(CFLAGS) /c /Fo:$@ $(DEFINES) $(INCLUDES)
+	@$(CXX) $< $(CFLAGS) /c /Fo:$@ /Fd$(subst .o,.pdb,$@) /sourceDependencies $(dir $@) $(DEFINES) $(INCLUDES)
+	@$(PYTHON) ../misc/windows/gen_dependency_files.py $< -o $@
 else
 	@$(CC) $< $(THIRDPARTY_CFLAGS) -c -o $@ $(DEFINES) $(INCLUDES)
 endif

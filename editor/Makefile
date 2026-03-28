@@ -74,7 +74,7 @@ ifeq ("$(COMPILER)","")
 all:
 	@$(MAKE) -C ..
 else
-all: test scaffold $(OBJ_FILES) $(BUILD_DIR)/$(OUTPUT_FILE)
+all: scaffold $(OBJ_FILES) $(BUILD_DIR)/$(OUTPUT_FILE)
 endif
 
 
@@ -113,7 +113,6 @@ $(BUILD_DIR)/$(OUTPUT_FILE): $(OBJ_FILES)
 	@echo Done.
 	@echo Building binary...
 ifeq ($(USE_MSVC), yes)
-	@echo $(LDFLAGS)
 	@$(LD) $(OBJ_FILES) /OUT:$(BUILD_DIR)/$(OUTPUT_FILE) $(LDFLAGS)
 else
 	@$(CXX) $(OBJ_FILES) -o $(BUILD_DIR)/$(OUTPUT_FILE) $(LDFLAGS)
@@ -123,7 +122,8 @@ endif
 $(BUILD_DIR)/$(TARGET)/%.o: src/%.cpp
 	@echo   $<...
 ifeq ($(USE_MSVC), yes)
-	@$(CXX) $< $(CFLAGS) /c /Fo:$@ $(DEFINES) $(INCLUDES)
+	@$(CXX) $< $(CFLAGS) /c /Fo:$@ /Fd$(subst .o,.pdb,$@) /sourceDependencies $(dir $@) $(DEFINES) $(INCLUDES)
+	@$(PYTHON) ../misc/windows/gen_dependency_files.py $< -o $@
 else
 	@$(CXX) $< $(CPPFLAGS) -c -o $@ $(DEFINES) $(INCLUDES)
 endif
