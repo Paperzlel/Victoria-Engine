@@ -39,7 +39,9 @@ Ref<FileSystem> FileSystem::open(const String &p_path, FileAccessType access_typ
 		}
 	}
 
-	ERR_COND_NULL_MSG_R(s->handle->f, "The path entered was incorrect.", Ref<Resource>());
+	ERR_COND_NULL_MSG_R(s->handle->f,
+						vformat("The path \"%s\" was invalid.", p_path.get_data()).get_data(),
+						Ref<Resource>());
 	return s;
 }
 

@@ -28,8 +28,13 @@ VAPI void *operator new(size_t p_size, const char *p_description);
 VAPI void operator delete(void *p_mem, const char *p_description);
 #endif
 
-#define vnew(m_class) ::new ("") m_class
-#define vnew_placement(m_placement, m_class) ::new (m_placement) m_class
+template <typename T>
+ALWAYS_INLINE T *_postinit(T *p_obj) {
+	return p_obj;
+}
+
+#define vnew(m_class) _postinit(::new ("") m_class)
+#define vnew_placement(m_placement, m_class) _postinit(::new (m_placement) m_class)
 
 ALWAYS_INLINE bool predelete(void *) {
 	return true;
@@ -51,3 +56,16 @@ void vdelete(T *p_class) {
 
 	Memory::vfree(p_class);
 }
+
+template <typename T>
+class DefaultTypedAllocator {
+public:
+	template <typename... Args>
+	FORCE_INLINE T *new_allocation(Args &&...p_args) {
+		return vnew(T(p_args...));
+	}
+
+	FORCE_INLINE void delete_allocation(T *p_allocation) {
+		vdelete(p_allocation);
+	}
+};

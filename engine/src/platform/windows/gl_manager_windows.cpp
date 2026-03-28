@@ -62,6 +62,11 @@ const wchar_t *app_name = L"victoria.exe";
 
 static bool nvapi_check_error(const char *msg, int status) {
 	if (status != 0) {
+		// I'm on a multi-driver system (Intel + NVIDIA) now so this can trip us up when it shouldn't.
+		// Don't print an error, instead simply fail silently.
+		if (status == NVAPI_NVIDIA_DEVICE_NOT_FOUND) {
+			return false;
+		}
 		NvAPI_ShortString err_desc = {0};
 		NvAPI_GetErrorMessage_((NvAPI_Status)status, err_desc);
 		OS::get_singleton()->printerr("%s: %s(code: %d)", msg, err_desc, status);

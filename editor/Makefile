@@ -1,3 +1,5 @@
+include ../utils/general.mk
+
 # Marginally more generic version of the Makefile we'll let end-users use to compile their own projects.
 TARGET := editor
 INCLUDES += -Iinclude -I../engine/include
@@ -69,14 +71,8 @@ endif
 
 
 .PHONY: scaffold generate_compile_commands clean
-# If make was invoked in the directory, call upwards to gather compiler information.
-ifeq ("$(COMPILER)","")
-all:
-	@$(MAKE) -C ..
-else
-all: scaffold $(OBJ_FILES) $(BUILD_DIR)/$(OUTPUT_FILE)
-endif
 
+all: scaffold $(OBJ_FILES) $(BUILD_DIR)/$(OUTPUT_FILE)
 
 scaffold:
 	@echo Creating project structure...

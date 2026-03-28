@@ -1,3 +1,5 @@
+include ../utils/general.mk
+
 TARGET := engine
 # We keep third-party, platform and driver specific code hidden from the user.
 INCLUDES += -Iinclude -Isrc/include -Isrc/thirdparty/freetype/include -Isrc/thirdparty/glad/include -Isrc/thirdparty
@@ -9,6 +11,7 @@ ifeq ($(DEBUG), yes)
 ifeq ($(USE_MSVC), yes)
 	THIRDPARTY_CFLAGS += /Zi /Z7
 	CCFLAGS += /MDd
+	LDFLAGS += /NATVIS:src/platform/windows/libvictoria.natvis
 else
 	THIRDPARTY_CFLAGS += -O0
 ifeq ($(PLATFORM), win32)
@@ -207,13 +210,8 @@ endif
 endif
 
 .PHONY: test scaffold generate_compile_commands clean
-# If make was invoked in the directory, call upwards to gather compiler information.
-ifeq ("$(COMPILER)","")
-all:
-	@$(MAKE) -C ..
-else
+
 all: test scaffold $(OBJ_FILES) $(BUILD_DIR)/$(OUTPUT_FILE)
-endif
 
 # Look for if certain files are downloaded prior to building
 test:
@@ -228,8 +226,10 @@ endif
 scaffold: test
 	@echo Creating project structure...
 ifeq ($(PLATFORM), win32)
+	-@mkdir $(subst /,\,$(BUILD_DIR)), 2>NUL || cd .
 	-@mkdir $(subst /,\,$(BUILD_DIR)/$(TARGET)) 2>NUL || cd .
 	-@mkdir $(subst /,\,$(addprefix $(BUILD_DIR)/$(TARGET)/,$(DIRECTORIES))) 2>NUL || cd .
+	-@xcopy "assets\" "$(subst /,\,$(BUILD_DIR)/assets)\" /q /y
 endif
 ifeq ($(PLATFORM), linux)
 	@mkdir -p $(BUILD_DIR)/$(TARGET)

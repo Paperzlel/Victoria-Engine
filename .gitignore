@@ -48,3 +48,12 @@ temp.json
 # Clangd cache
 .cache/
 .clangd/
+
+# Visual Studio files
+.vs/
+*.sln
+*.vcxproj
+*.vcxproj.*
+x64/
+*.user
+Debug/

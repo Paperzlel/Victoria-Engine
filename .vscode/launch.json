@@ -2,6 +2,8 @@
     "version": "0.2.0",
     "configurations": [
         {
+            // WARNING: This extension may not work well for MSVC-based builds or on certain versions of Windows.
+            // Try using the native but proprietary "cppvsdbg" in regular VSCode,
             "name": "Launch (CodeLLDB) (Windows)",
             "type": "lldb",
             "request": "launch",
@@ -11,6 +13,24 @@
             "cwd": "${workspaceFolder}\\bin\\",
             "env": {},
             "console": "integratedTerminal",
+        },
+        {
+            "name": "Launch (GDB) (Linux)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}\\bin\\victoria.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}\\bin\\",
+            "environment": [],
+            "symbolLoadInfo": {
+                "loadAll": true,
+                "exceptionList": ""
+            },
+            "windows": {
+                "MIMode": "lldb",
+                "miDebuggerPath": "C:\\Program Files\\LLVM\\bin\\lldb.exe"
+            }
         },
         {
             "name": "Launch (CodeLLDB) (Linux)",
