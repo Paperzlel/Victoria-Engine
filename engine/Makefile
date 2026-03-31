@@ -1,3 +1,4 @@
+include ../utils/core.mk
 include ../utils/general.mk
 
 TARGET := engine
@@ -201,12 +202,19 @@ OBJ_FILES := $(patsubst src/%.cpp, $(BUILD_DIR)/$(TARGET)/%.o, $(CPP_FILES)) $(p
 # Setup final binary
 OUTPUT_NAME := libvictoria
 OUTPUT_FILE := $(OUTPUT_NAME)
+BINARY_COMMAND :=
 ifeq ($(PLATFORM), win32)
 	OUTPUT_FILE := $(OUTPUT_FILE).dll
 else
 ifeq ($(PLATFORM), linux)
 	OUTPUT_FILE := $(OUTPUT_FILE).so
 endif
+endif
+
+ifeq ($(USE_MSVC), yes)
+	BINARY_COMMAND := /OUT:$(BUILD_DIR)/$(OUTPUT_FILE)
+else
+	BINARY_COMMAND := -o $(BUILD_DIR)/$(OUTPUT_FILE)
 endif
 
 .PHONY: test scaffold generate_compile_commands clean
@@ -265,11 +273,7 @@ endif
 $(BUILD_DIR)/$(OUTPUT_FILE): $(OBJ_FILES)
 	@echo Done.
 	@echo Building binary...
-ifeq ($(USE_MSVC), yes)
-	@$(LD) $(OBJ_FILES) /OUT:$(BUILD_DIR)/$(OUTPUT_FILE) $(LDFLAGS)
-else
-	@$(CXX) $(OBJ_FILES) -o $(BUILD_DIR)/$(OUTPUT_FILE) $(LDFLAGS)
-endif
+	@$(LD) $(OBJ_FILES) $(BINARY_COMMAND) $(LDFLAGS)
 	@echo $(OUTPUT_FILE) built successfully.
 
 $(BUILD_DIR)/$(TARGET)/%.o: src/%.c

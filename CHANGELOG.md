@@ -1,6 +1,13 @@
 # Changelog
 Changes exist in chronological order (i.e. new changes are to be appended to the end of the file). Dates are done in DD/MM/YYYY format with the version number applied to each date if needed.
 
+## 29/3/2026
+- Buildsystem:
+	- Allow each part of the engine to be built from their own Makefile, assuming the required dependencies exist.
+		- Allows project-based IDEs (Visual Studio) to compiler their constituent parts. Further work to allow for Visual Studio projects is required.
+	- We now automatically detect as to whether a compiler exists on the user's system, so as to prevent errors from arising as a result of compiling without the proper tools or command-line options enabled.
+		- As a consequence, GCC is now the default compiler for non-Windows OSes, since it is far more common than Clang.
+
 ## 21/3/2026
 - Buildsystem:
 	- Overhauled the buildsystem to be far more feature-rich and modular. We now generate `compile_commands.json`, use `clangd` and `clang-format` for debugging and formattings, and generally have updated how we approach building files to now minimize external dependencies.

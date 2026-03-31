@@ -1,12 +1,12 @@
-export PYTHON := python
+include utils/core.mk
 
 .PHONY: all all-debug all-release generate_compile_commands clean
 
 all-debug:
-	@$(MAKE) -f $(lastword $(MAKEFILE_LIST)) all DEBUG=yes
+	@$(MAKE) -f $(firstword $(MAKEFILE_LIST)) all DEBUG=yes
 
 all-release:
-	@$(MAKE) -f $(lastword $(MAKEFILE_LIST)) all DEBUG=no
+	@$(MAKE) -f $(firstword $(MAKEFILE_LIST)) all DEBUG=no
 
 all:
 	@$(MAKE) all -C engine 

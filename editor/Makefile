@@ -1,3 +1,4 @@
+include ../utils/core.mk
 include ../utils/general.mk
 
 # Marginally more generic version of the Makefile we'll let end-users use to compile their own projects.

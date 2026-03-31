@@ -2,6 +2,30 @@
     "version": "2.0.0",
     "tasks" : [
         {
+            "label": "Build All (Debug)",
+            "type": "shell",
+            "command": "make DEBUG=yes",
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
+        {
+            "label": "Build All (Release)",
+            "type": "shell",
+            "command": "make",
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+        },
+        {
             "label": "Build All (Windows, Debug, MSVC)",
             "type": "shell",
             "command": "make DEBUG=yes USE_MSVC=yes",
@@ -10,7 +34,7 @@
             ],
             "group": {
                 "kind": "build",
-                "isDefault": true
+                "isDefault": false
             },
         },
         {
@@ -22,7 +46,7 @@
             ],
             "group": {
                 "kind": "build",
-                "isDefault": true
+                "isDefault": false
             }
         },
         {

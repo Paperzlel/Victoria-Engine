@@ -1,17 +1,3 @@
-# Find out what OS the user is running prior to building.
-export PLATFORM :=
-
-ifeq ($(OS), Windows_NT)
-	PLATFORM := win32
-else
-	PLATFORM := $(shell sh -c 'uname 2>/dev/null || echo Unknown')
-endif
-
-ifeq ($(PLATFORM), Linux)
-	PLATFORM := linux
-endif
-# NOTE: Add other options here, but we ignore them for now.
-
 # Utilities
 
 # Make does not offer a recursive wildcard function, so here's one:
@@ -23,26 +9,11 @@ export RUN_TESTS := no
 
 # Build options
 export COMPILER :=
-export PYTHON :=
-export FIND :=
-export ARCH :=
 # Build binary files in the "lib" directory
 export BUILD_DIR := ../bin
 # If false, uses MSVC. If not, will throw an error.
 export USE_MINGW := no
 export USE_MSVC := no
-
-# Linux platform detection
-ifeq ($(PLATFORM), linux)
-	PYTHON := python3
-	FIND := whereis
-endif
-
-# Windows platform detection
-ifeq ($(PLATFORM), win32)
-	PYTHON := python
-	FIND := where
-endif
 
 ifeq ($(USE_MSVC), yes)
 	COMPILER := msvc
@@ -167,7 +138,12 @@ else
 ifeq ($(COMPILER), gcc)
 	CC := gcc
 	CXX := g++
-	LD := ld
+	LD := g++
+endif
+ifeq ($(COMPILER), clang)
+	CC := clang
+	CXX := clang++
+	LD := clang++
 endif
 	CCFLAGS += -Wall -Werror
 	CFLAGS += -std=c17
