@@ -182,9 +182,10 @@ ifeq ($(USE_MSVC), yes)
 	LDFLAGS += /DEBUG:FULL
 	DEFINES += /D_DEBUG
 # Pass -MD to clang directly, MSVC doesn't autogen otherwise.
-ifeq ($(COMPILER), clang)
-	CCFLAGS += /clang:-MD
-endif
+# TODO: Clang-cl bug prevents this from working properly, so it's disabled for now.
+# ifeq ($(COMPILER), clang)
+# 	CCFLAGS += /clang:-MD
+# endif
 else
 	CCFLAGS += -MD -O0
 	LDFLAGS += -g

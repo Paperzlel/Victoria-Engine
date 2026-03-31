@@ -61,12 +61,19 @@ OBJ_FILES := $(patsubst src/%.cpp, $(BUILD_DIR)/$(TARGET)/%.o, $(CPP_FILES)) $(p
 # Setup final binary
 OUTPUT_NAME := victoria
 OUTPUT_FILE := $(OUTPUT_NAME)
+BINARY_COMMAND :=
 ifeq ($(PLATFORM), win32)
 	OUTPUT_FILE := $(OUTPUT_FILE).exe
 else
 ifeq ($(PLATFORM), linux)
 	OUTPUT_FILE := $(OUTPUT_FILE).x86_64
 endif
+endif
+
+ifeq ($(USE_MSVC), yes)
+	BINARY_COMMAND := /OUT:$(BUILD_DIR)/$(OUTPUT_FILE)
+else
+	BINARY_COMMAND := -o $(BUILD_DIR)/$(OUTPUT_FILE)
 endif
 
 
@@ -108,17 +115,13 @@ endif
 $(BUILD_DIR)/$(OUTPUT_FILE): $(OBJ_FILES)
 	@echo Done.
 	@echo Building binary...
-ifeq ($(USE_MSVC), yes)
-	@$(LD) $(OBJ_FILES) /OUT:$(BUILD_DIR)/$(OUTPUT_FILE) $(LDFLAGS)
-else
-	@$(CXX) $(OBJ_FILES) -o $(BUILD_DIR)/$(OUTPUT_FILE) $(LDFLAGS)
-endif
+	@$(LD) $(OBJ_FILES) $(BINARY_COMMAND) $(LDFLAGS)
 	@echo $(OUTPUT_FILE) built successfully.
 
 $(BUILD_DIR)/$(TARGET)/%.o: src/%.cpp
 	@echo   $<...
-ifeq ($(USE_MSVC), yes)
-	@$(CXX) $< $(CFLAGS) /c /Fo:$@ /Fd$(subst .o,.pdb,$@) /sourceDependencies $(dir $@) $(DEFINES) $(INCLUDES)
+ifeq ($(COMPILER), msvc)
+	@$(CXX) $< $(CPPFLAGS) /c /Fo:$@ /Fd$(subst .o,.pdb,$@) /sourceDependencies $(dir $@) $(DEFINES) $(INCLUDES)
 	@$(PYTHON) ../misc/windows/gen_dependency_files.py $< -o $@
 else
 	@$(CXX) $< $(CPPFLAGS) -c -o $@ $(DEFINES) $(INCLUDES)

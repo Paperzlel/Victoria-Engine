@@ -287,7 +287,7 @@ ifeq ($(COMPILER), msvc)
 	@$(CXX) $< $(CPPFLAGS) /c /Fo:$@ /Fd$(subst .o,.pdb,$@) /sourceDependencies $(dir $@) $(DEFINES) $(INCLUDES)
 	@$(PYTHON) ../misc/windows/gen_dependency_files.py $< -o $@
 else
-	@$(CXX) -v $< $(CPPFLAGS) -c -o $@ $(DEFINES) $(INCLUDES)
+	@$(CXX) $< $(CPPFLAGS) -c -o $@ $(DEFINES) $(INCLUDES)
 endif
 
 # Third-party code has all warnings and errors disabled, except debugging options
