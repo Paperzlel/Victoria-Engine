@@ -1,6 +1,3 @@
-# Declare everything in a singular shell.
-.ONESHELL:
-
 # Find out what OS the user is running prior to building.
 export PLATFORM :=
 
@@ -27,6 +24,7 @@ export RUN_TESTS := no
 # Build options
 export COMPILER :=
 export PYTHON :=
+export FIND :=
 export ARCH :=
 # Build binary files in the "lib" directory
 export BUILD_DIR := ../bin
@@ -37,23 +35,17 @@ export USE_MSVC := no
 # Linux platform detection
 ifeq ($(PLATFORM), linux)
 	PYTHON := python3
+	FIND := whereis
 endif
 
 # Windows platform detection
 ifeq ($(PLATFORM), win32)
 	PYTHON := python
+	FIND := where
+endif
 
-ifeq ($(USE_MINGW), no)
-ifneq ("$(shell where cl)","")
-ifneq ($(COMPILER), clang)
+ifeq ($(USE_MSVC), yes)
 	COMPILER := msvc
-endif
-	USE_MSVC := yes
-endif
-else
-# Use MinGW
-	TMP := $(shell echo MinGW is currently not supported.)
-endif
 endif
 
 # Compiler options. None by default.
@@ -67,11 +59,81 @@ export INCLUDES :=
 export LDFLAGS :=
 export DEFINES :=
 
-ifeq ($(COMPILER), gcc)
-	CXX := g++
-	CC := gcc
-	LD := ld
+# Check compiler availability. If none is selected, the "COMPILER" variable will be empty and an error should
+# be thrown at the earliest convenience. 
+export ERROR_THROW := no
+
+# Check MSVC support first. Only Windows is supported.
+# windows
+ifeq ($(PLATFORM), win32)
+# cl is present
+ifneq ("$(shell $(FIND) cl)","")
+	COMPILER := msvc
+	USE_MSVC := yes
+else
+# cl not present, clang-cl is present
+ifneq ("$(shell $(FIND) clang-cl)","")
+	COMPILER := clang
+	USE_MSVC := yes
 endif
+endif
+endif
+
+# has msvc
+ifeq ($(USE_MSVC), yes)
+# compiler is cl
+ifeq ($(COMPILER), msvc)
+# cl not present
+ifeq ("$(shell $(FIND) cl)","")
+	TMP := $(shell echo Unable to use the MSVC compiler as it is not present on the system PATH. Try launching this makefiles from Visual Studio, or by using the VS command prompt. Attempting to fall back to clang-cl.)
+	COMPILER := clang
+endif
+endif
+# compiler is clang-cl
+ifeq ($(COMPILER), clang)
+# clang-cl not present
+ifeq ("$(shell $(FIND) clang-cl)","")
+	TMP := $(shell echo Unable to use clang-cl as it is not present on the system PATH. Falling back to regular clang.)
+	USE_MSVC := no
+endif
+endif
+endif
+
+# Check GCC after MSVC. If present, try to use it by default on non-Windows distros.
+# not windows
+ifneq ($(PLATFORM), win32)
+# gcc is present
+ifneq ("$(shell $(FIND) gcc)","")
+# no compiler specified
+ifeq ("$(COMPILER)","")
+	COMPILER := gcc
+endif
+# gcc not present. assume clang.
+else
+	COMPILER := clang
+endif
+endif
+
+# compiler is gcc
+ifeq ($(COMPILER), gcc)
+# gcc not present (assume overridden)
+ifeq ("$(shell $(FIND) gcc)","")
+	TMP := $(shell echo Unable to use gcc as it is not present on the system PATH. Falling back to clang.)
+	COMPILER := clang
+endif
+endif
+
+# Check regular clang last. This will always be the default on Windows if MSVC and GCC are not present.
+# is clang
+ifeq ($(COMPILER), clang)
+# clang not present
+ifeq ("$(shell $(FIND) clang)","")
+	TMP := $(shell echo Unable to use clang as it is not present on the system PATH. No compiler is available unable to build.)
+	ERROR_THROW := yes
+endif
+endif
+
+# Set compiler settings and their respective defaults.
 
 # MSVC only requires its own special variables. Ignore for everybody else.
 ifeq ($(USE_MSVC), yes)
@@ -80,7 +142,6 @@ ifeq ($(COMPILER), clang)
 	CXX := clang-cl
 	LD := lld-link
 else
-ifeq ($(COMPILER), msvc)
 	CC := cl
 	CXX := cl
 	LD := link
@@ -94,21 +155,20 @@ ifeq ($(COMPILER), msvc)
 	/wd4267\
 	/wd4251\
 	/wd4305
-endif
-	CCFLAGS += /nologo /W3 /permissive- /Zc:__cplusplus /EHsc
-	CFLAGS += /std:c17
-	CPPFLAGS += /std:c++17
+	CCFLAGS += /nologo /W3 /Zc:__cplusplus /EHsc
 	LDFLAGS += /nologo
 endif
-# NOTE: MinGW might need an early exit to use the below commands.
+# Disable universal cl stuff
+	CCFLAGS += /permissive-
+	CFLAGS += /std:c17
+	CPPFLAGS += /std:c++17
 else
-ifeq ("$(COMPILER)","")
-	COMPILER := clang
-	CXX := clang++
-	CC := clang
-	LD := clang++
+# Not MSVC
+ifeq ($(COMPILER), gcc)
+	CC := gcc
+	CXX := g++
+	LD := ld
 endif
-# Real world
 	CCFLAGS += -Wall -Werror
 	CFLAGS += -std=c17
 	CPPFLAGS += -std=c++17
@@ -121,16 +181,19 @@ ifeq ($(USE_MSVC), yes)
 	CCFLAGS += /Zi /FS 
 	LDFLAGS += /DEBUG:FULL
 	DEFINES += /D_DEBUG
-else 
+# Pass -MD to clang directly, MSVC doesn't autogen otherwise.
+ifeq ($(COMPILER), clang)
+	CCFLAGS += /clang:-MD
+endif
+else
 	CCFLAGS += -MD -O0
 	LDFLAGS += -g
 ifeq ($(PLATFORM), win32)
-# ifeq ($(COMPILER), clang)
-# 	CCFLAGS += -g
-# else
-# 	CCFLAGS += -g
-# endif
-	CCFLAGS += -g
+ifeq ($(COMPILER), clang)
+	CCFLAGS += -gdwarf-4
+else
+	CCFLAGS += -gdwarf-5
+endif
 	DEFINES += -D_DEBUG
 	LDFLAGS += -lucrtd -lmsvcrtd -lvcruntimed
 else
