@@ -109,8 +109,8 @@ protected:
 	void copy_from_unchecked(const char *p_str, const int p_length);
 };
 
-String operator+(const char *p_lhs, const String &p_rhs);
-String itos(int64_t p_int);
-String ftos(double p_double);
+VAPI String operator+(const char *p_lhs, const String &p_rhs);
+VAPI String itos(int64_t p_int);
+VAPI String ftos(double p_double);
 
-String vformat(const char *p_string, ...);
+VAPI String vformat(const char *p_string, ...);

@@ -1,11 +1,9 @@
 #include "test_event.h"
+#include "test_macros.h"
+#include "test_manager.h"
 
-#ifdef TESTS_ENABLED
-
-#	include "core/data/event.h"
-#	include "core/variant/variant.h"
-#	include "tests/test_macros.h"
-#	include "tests/test_manager.h"
+#include <core/data/event.h>
+#include <core/variant/variant.h>
 
 void testfunc1() {}
 void testfunc2() {}
@@ -77,5 +75,3 @@ static bool run_event_tests() {
 void event_register_tests() {
 	register_test(run_event_tests, "Runs all of the event tests.");
 }
-
-#endif // TESTS_ENABLED

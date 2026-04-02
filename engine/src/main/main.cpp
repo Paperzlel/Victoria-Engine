@@ -65,7 +65,6 @@ void Main::print_help() {
 	OS::get_singleton()->print(version_str);
 	print_help_option("Main command-line options: ", "", true);
 	print_help_option("-h --help", "Prints this help message");
-	print_help_option("--run-tests", "Runs all the pre-defined unit tests for every component");
 	print_help_option("-v --verbose",
 					  "Loads the engine in verbose printing mode, putting far more information into the console.");
 	print_help_option("--version", "Prints the current version of the application");
@@ -134,9 +133,8 @@ Error Main::setup(int argc, char *argv[]) {
 		}
 
 		if (arg == "--run-tests") {
-			ERR_WARN(
-				"--run-tests was specified on the command line, but Victoria Engine was not compiled for unit tests. "
-				"Please compile a version of the engine that has support for unit tests before using this command.");
+			ERR_WARN("\'--run-tests\' is a deprecated command-line option. Run the \'victoria.tests\' command-line "
+					 "tool instead.");
 		}
 
 		if (arg == "-v" || arg == "--verbose") {

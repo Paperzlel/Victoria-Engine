@@ -1,10 +1,8 @@
 #include "test_hashtable.h"
+#include "test_macros.h"
+#include "test_manager.h"
 
-#ifdef TESTS_ENABLED
-
-#	include "core/data/hashtable.h"
-#	include "tests/test_macros.h"
-#	include "tests/test_manager.h"
+#include <core/data/hashtable.h>
 
 struct hashstruct1 {
 	bool used;
@@ -66,5 +64,3 @@ void hashtable_register_tests() {
 	register_test(hashtable_test_struct, "Hashtable reading and writing with a struct");
 	register_test(hashtable_test_hashing, "Hashing results with similar inputs");
 }
-
-#endif // TESTS_ENABLED

@@ -1,9 +1,8 @@
+#include "test_macros.h"
+#include "test_manager.h"
 #include "test_vector.h"
 
-#ifdef TESTS_ENABLED
-
-#	include "tests/test_macros.h"
-#	include "tests/test_manager.h"
+#include <core/data/vector.h>
 
 struct vectortest1 {
 	int a;
@@ -141,5 +140,3 @@ void vector_register_tests() {
 	register_test(vector_test_pointers, "Vector reading and writing to direct pointers");
 	register_test(vector_test_iterators_constructors, "Vector constructors, destructors and iterators");
 }
-
-#endif // TESTS_ENABLED

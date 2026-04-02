@@ -24,6 +24,9 @@ protected:
 
 public:
 	static OS *get_singleton();
+	// WARNING: This method needs to exist so that test suites can print to the console, but it shouldn't be used
+	// outside of that context. Use generic initialization methods instead.
+	static OS *initialize_for_tests();
 
 	uint8_t get_exit_code() const;
 	void set_exit_code(uint8_t p_id);

@@ -1,10 +1,9 @@
 #include "test_array.h"
-#ifdef TESTS_ENABLED
+#include "test_macros.h"
+#include "test_manager.h"
 
-#	include "core/variant/array.h"
-#	include "core/variant/variant.h"
-#	include "tests/test_macros.h"
-#	include "tests/test_manager.h"
+#include <core/variant/array.h>
+#include <core/variant/variant.h>
 
 static bool array_test_basic() {
 	Array a;
@@ -24,5 +23,3 @@ static bool array_test_basic() {
 void array_register_tests() {
 	register_test(array_test_basic, "Array reading, writing and clearing with atomic datatypes");
 }
-
-#endif // TESTS_ENABLED

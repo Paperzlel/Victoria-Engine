@@ -1,9 +1,15 @@
 #include "core/os/os.h"
 
+#include "core/os/os_internal.h"
+
 OS *OS::singleton = nullptr;
 
 OS *OS::get_singleton() {
 	return singleton;
+}
+
+OS *OS::initialize_for_tests() {
+	return os_initialize_internal();
 }
 
 /**

@@ -16,7 +16,7 @@ void static_method_call_varargs(void (*p_method)(Args...), const Variant **p_arg
 }
 
 template <typename C, typename... Args>
-class CallableMethodPointer : public CallableMethodBase {
+class VAPI CallableMethodPointer : public CallableMethodBase {
 	C *instance_ptr = nullptr;
 	void (C::*method_ptr)(Args...) = nullptr;
 
@@ -36,7 +36,7 @@ public:
 };
 
 template <typename C, typename... Args>
-CallableMethod create_callable_method_pointer(C *p_instance, const char *p_name, void (C::*p_method)(Args...)) {
+VAPI CallableMethod create_callable_method_pointer(C *p_instance, const char *p_name, void (C::*p_method)(Args...)) {
 	typedef CallableMethodPointer<C, Args...> CMP;
 	CMP *cmp = vnew(CMP(p_instance, p_name, p_method));
 	cmp->set_name(p_name + 1);
@@ -46,7 +46,7 @@ CallableMethod create_callable_method_pointer(C *p_instance, const char *p_name,
 #define callable_mp(m_c, m_p) create_callable_method_pointer(m_c, #m_p, m_p)
 
 template <typename... Args>
-class CallableMethodPointerStatic : public CallableMethodBase {
+class VAPI CallableMethodPointerStatic : public CallableMethodBase {
 	void (*method_ptr)(Args...) = nullptr;
 
 public:
@@ -64,7 +64,7 @@ public:
 };
 
 template <typename... Args>
-CallableMethod create_static_callable_method_pointer(const char *p_name, void (*p_method)(Args...)) {
+VAPI CallableMethod create_static_callable_method_pointer(const char *p_name, void (*p_method)(Args...)) {
 	typedef CallableMethodPointerStatic<Args...> CMPS;
 	CMPS *cmp = vnew(CMPS(p_name, p_method));
 	cmp->set_name(p_name + 1);

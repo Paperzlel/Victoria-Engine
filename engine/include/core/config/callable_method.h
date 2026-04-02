@@ -34,7 +34,7 @@ public:
 	~CallableMethod();
 };
 
-class CallableMethodBase {
+class VAPI CallableMethodBase {
 	friend class CallableMethod;
 	String name;
 	Refcount refcount;

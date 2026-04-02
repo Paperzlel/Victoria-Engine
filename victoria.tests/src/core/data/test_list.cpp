@@ -1,9 +1,8 @@
 #include "test_list.h"
-#ifdef TESTS_ENABLED
+#include "test_macros.h"
+#include "test_manager.h"
 
-#	include "core/data/list.h"
-#	include "tests/test_macros.h"
-#	include "tests/test_manager.h"
+#include <core/data/list.h>
 
 struct liststruct1 {
 	int a;
@@ -55,5 +54,3 @@ void list_register_tests() {
 	register_test(list_test_struct, "List reading and writing with structures");
 	register_test(list_test_length, "List writing to a specific size and clearing itself");
 }
-
-#endif // TESTS_ENABLED

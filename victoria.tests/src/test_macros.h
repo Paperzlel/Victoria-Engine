@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/os/os.h" // IWYU pragma: keep
+#include <core/os/os.h> // IWYU pragma: keep
 
 #define MESSAGE(m_message, ...)                                                                                       \
 	if (OS::get_singleton()) {                                                                                        \

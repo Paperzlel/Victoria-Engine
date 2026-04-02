@@ -5,8 +5,13 @@
 #	include "logger_windows.h"
 
 #	include "main/main.h"
+#	include "core/os/os_internal.h"
 
 typedef int(WINAPI *RtlGetVersion)(LPOSVERSIONINFOEXA);
+
+OS *os_initialize_internal() {
+	return new OSWindows();
+}
 
 /**
  * @brief Method that makes a message box with information appear, and pauses the current thread.

@@ -1,9 +1,8 @@
+#include "test_macros.h"
+#include "test_manager.h"
 #include "test_quaternion.h"
-#ifdef TESTS_ENABLED
 
-#	include "core/math/quaternion.h"
-#	include "tests/test_macros.h"
-#	include "tests/test_manager.h"
+#include <core/math/quaternion.h>
 
 static bool quaternion_test_basic() {
 	Quaternion q;
@@ -27,5 +26,3 @@ void quaternion_register_tests() {
 	register_test(quaternion_test_basic, "Quaternion basic creation and attributes");
 	register_test(quaternion_test_rotation, "Quaternion setting rotations from an axis-angle combination");
 }
-
-#endif // TESTS_ENABLED

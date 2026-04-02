@@ -1,9 +1,8 @@
+#include "test_macros.h"
+#include "test_manager.h"
 #include "test_mat4.h"
-#ifdef TESTS_ENABLED
 
-#	include "core/math/mat4.h"
-#	include "tests/test_macros.h"
-#	include "tests/test_manager.h"
+#include <core/math/mat4.h>
 
 static bool mat4_test_operators() {
 	Mat4 m = Mat4::identity();
@@ -57,5 +56,3 @@ void mat4_register_tests() {
 	register_test(mat4_test_operators, "4x4 matrix operations");
 	register_test(mat4_test_modifiers, "4x4 matrix modifications");
 }
-
-#endif // TESTS_ENABLED
