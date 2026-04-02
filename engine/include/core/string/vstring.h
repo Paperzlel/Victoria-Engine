@@ -57,6 +57,11 @@ public:
 
 	void operator=(const String &p_right);
 	void operator=(const char *p_right);
+
+	void operator=(String &&p_right) {
+		_data = std::move(p_right._data);
+	}
+
 	bool operator==(const String &p_right) const;
 	bool operator==(const char *p_right) const;
 	bool operator==(const char p_right) const;

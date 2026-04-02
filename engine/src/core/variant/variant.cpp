@@ -846,7 +846,7 @@ Variant::Variant(const String &p_string) {
 }
 
 Variant::Variant(const char *const p_cstring) {
-	vnew_placement(_data._mem, String(p_cstring));
+	vnew_placement(_data._mem, String((const char *)p_cstring));
 	type = STRING;
 }
 
@@ -922,4 +922,8 @@ Variant::Variant(const Vector3Array &p_vector3_array) {
 
 Variant::Variant(const Vector4Array &p_vector4_array) {
 	_data._array = ArrayRef<Vector4>::create(p_vector4_array);
+}
+
+Variant::Variant(const Variant &p_other) {
+	_ref(p_other);
 }

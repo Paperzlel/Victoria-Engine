@@ -168,6 +168,15 @@ public:
 
 	void _ref(const Variant &p_other);
 	void operator=(const Variant &p_var);
+	void operator=(Variant &&p_var) {
+		if (this == &p_var) {
+			return;
+		}
+		clear();
+		type = p_var.type;
+		_data = p_var._data;
+		p_var.type = NIL;
+	}
 
 	bool operator==(const Variant &other) const;
 	bool operator!=(const Variant &other) const;
@@ -234,6 +243,15 @@ public:
 	Variant() {
 		type = NIL;
 	}
+
+	Variant(const Variant &p_other);
+	Variant(Variant &&p_other) {
+		// Move operator can skip freeing.
+		type = p_other.type;
+		_data = p_other._data;
+		p_other.type = NIL;
+	}
+
 	~Variant() {
 		clear();
 	}

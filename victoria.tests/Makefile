@@ -27,6 +27,9 @@ endif
 	DEFINES := $(patsubst -D%,/D%,$(DEFINES))
 endif
 
+CFLAGS += $(CCFLAGS)
+CPPFLAGS += $(CCFLAGS)
+
 # Source files and directories
 C_FILES :=
 CPP_FILES :=

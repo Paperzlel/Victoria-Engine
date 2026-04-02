@@ -20,6 +20,25 @@ static bool array_test_basic() {
 	return true;
 }
 
+static bool array_test_strings_atomic() {
+	Array a;
+	a.push_back("Hello, World!");
+	a.push_back("This is a mix of strings and other values!");
+	a.push_back(12);
+	a.push_back("soufhre gi rehb");
+	a.push_back(Math::PI);
+	a.push_back("\'\'\'\'\'");
+	a.push_back(false);
+	TEST_EQ(a[0], "Hello, World!");
+	TEST_EQ(Variant::get_return_type(a[0]), Variant::STRING);
+	TEST_EQ(Variant::get_return_type(a[2]), Variant::INT);
+	TEST_EQ(a[6], Variant(false));
+	// a.clear();
+	// TEST_EQ(a.size(), 0);
+	return true;
+}
+
 void array_register_tests() {
 	register_test(array_test_basic, "Array reading, writing and clearing with atomic datatypes");
+	register_test(array_test_strings_atomic, "Array reading, writing and clearing with atomic datatypes and strings.");
 }

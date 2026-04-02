@@ -32,7 +32,18 @@ private:
 	 * @param p_index The index into the vector we want to retrieve from
 	 * @returns An item of type `T`
 	 */
-	FORCE_INLINE T &get(int64_t p_index) const {
+	FORCE_INLINE T &get(int64_t p_index) {
+		ERR_OUT_OF_BOUNDS_FATAL(p_index, size());
+		_copy_on_write();
+		return _ptr[p_index];
+	}
+
+	/**
+	 * @brief Gets the given item from a given index into the vector.
+	 * @param p_index The index into the vector we want to retrieve from
+	 * @returns An item of type `T`
+	 */
+	FORCE_INLINE const T &get(int64_t p_index) const {
 		ERR_OUT_OF_BOUNDS_FATAL(p_index, size());
 		return _ptr[p_index];
 	}
@@ -161,7 +172,7 @@ public:
 	FORCE_INLINE T &operator[](int64_t index) {
 		// Check for an out of bounds index and throw an error if so
 		ERR_OUT_OF_BOUNDS_FATAL(index, size());
-
+		_copy_on_write();
 		return ((Vector<T> *)(this))->_ptr[index];
 	}
 	/**
@@ -181,6 +192,20 @@ public:
 	 */
 	inline void operator=(const Vector &p_from) {
 		_ref(p_from);
+	}
+
+	FORCE_INLINE void operator=(Vector<T> &&p_from) {
+		if (_ptr == p_from._ptr) {
+			return;
+		}
+
+		_unref();
+		_ptr = p_from._ptr;
+		p_element_count = p_from.p_element_count;
+		p_size = p_from.p_size;
+		refc.set(p_from.refc.get());
+		p_from._ptr = nullptr;
+		refc.set(0);
 	}
 
 	FORCE_INLINE bool operator==(const Vector &p_other) const;
@@ -218,6 +243,7 @@ public:
 	 * @returns The current pointer used to hold all of the items in the vector, with read/write permissions
 	 */
 	FORCE_INLINE T *ptrw() {
+		_copy_on_write();
 		return _ptr;
 	}
 	/**
@@ -301,7 +327,6 @@ void Vector<T>::_ref(const Vector &p_from) {
 	}
 
 	_unref();
-	_ptr = nullptr;
 	p_size = 0;
 	p_element_count = 0;
 
@@ -309,23 +334,12 @@ void Vector<T>::_ref(const Vector &p_from) {
 		return;
 	}
 
-	Error err = _resize(p_from.p_size);
-	ERR_FAIL_COND(err);
-
-	// Increment the other RC
-	if (p_from.get_refc().get() > 0) {
-		p_from.get_refc().ref();
-	}
-	// NOTE: This seems like a hack, but it's done for good reason. Without copying the memory into the location - just
-	// assigning it normally - we would get a free_base error when running, as the memory would be referenced in two
-	// places and still in use - not good. As a result, we copy it in - letting the STL know that it's being used, and
-	// that it should be freed when it is ready to be killed.
-	if (!std::is_trivially_copyable<T>::value) {
-		for (int i = 0; i < size(); i++) {
-			vnew_placement(&_ptr[i], T(p_from._ptr[i]));
-		}
-	} else {
-		Memory::vcopy_memory(_ptr, p_from._ptr, p_from.p_size);
+	// Reference other vector by copying data over.
+	if (p_from.get_refc().refval() > 0) {
+		_ptr = p_from._ptr;
+		p_size = p_from.p_size;
+		p_element_count = p_from.p_element_count;
+		refc.set(p_from.get_refc().get());
 	}
 }
 
@@ -343,6 +357,8 @@ void Vector<T>::_unref() {
 	// Data used is shared elsewhere in the application, don't free.
 	if (refc.unrefval() > 0) {
 		_ptr = nullptr;
+		p_size = 0;
+		p_element_count = 0;
 		return;
 	}
 
@@ -350,17 +366,23 @@ void Vector<T>::_unref() {
 		int64_t current_size = size();
 
 		for (int i = 0; i < current_size; i++) {
-			T *t = &_ptr[i];
-			t->~T();
+			_ptr[i].~T();
 		}
 	}
 
-	Memory::vfree(_ptr);
+	// Set pointer to null and free a copy of it.
+	T *prev = _ptr;
+	_ptr = nullptr;
+	p_size = 0;
+	p_element_count = 0;
+
+	Memory::vfree(prev);
 }
 
 template <typename T>
 void Vector<T>::_copy_on_write() {
-	if (refc.get() > 1) {
+	// Only copy if a non-singlular refcount.
+	if (refc.get() != 1) {
 		T *new_data = (T *)Memory::vallocate(p_size);
 		ERR_COND_FATAL(new_data == nullptr);
 
@@ -605,7 +627,7 @@ template <typename T>
 void Vector<T>::push_back(T item) {
 	Error err = _resize(get_ptr_size() + sizeof(T));
 	ERR_FAIL_COND(err);
-	set(item, size() - 1);
+	vnew_placement(_ptr + size() - 1, T(std::move(item)));
 }
 
 /**
