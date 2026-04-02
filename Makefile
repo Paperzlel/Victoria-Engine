@@ -15,7 +15,7 @@ all:
 generate_compile_commands:
 	@$(MAKE) generate_compile_commands -C engine
 	@$(MAKE) generate_compile_commands -C editor
-	@$(PYTHON) misc/gen_compile_commands.py --search editor engine
+	@$(PYTHON) utils/gen_compile_commands.py --search editor engine
 
 clean:
 	@$(MAKE) clean -C engine

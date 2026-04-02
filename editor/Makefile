@@ -100,8 +100,8 @@ endif
 
 generate_compile_commands:
 	@echo Getting compile commands from $(TARGET)...
-	@$(PYTHON) ../misc/gen_tmp_commands.py --extension .cpp --arg_path src --args $(CXX) $(CPPFLAGS) -c $(DEFINES) $(INCLUDES)
-	@$(PYTHON) ../misc/gen_tmp_commands.py --sources $(CPP_FILES) $(C_FILES) --objects $(OBJ_FILES)
+	@$(PYTHON) ../utils/gen_tmp_commands.py --extension .cpp --arg_path src --args $(CXX) $(CPPFLAGS) -c $(DEFINES) $(INCLUDES)
+	@$(PYTHON) ../utils/gen_tmp_commands.py --sources $(CPP_FILES) $(C_FILES) --objects $(OBJ_FILES)
 
 clean:
 ifeq ($(PLATFORM), win32)
@@ -123,7 +123,7 @@ $(BUILD_DIR)/$(TARGET)/%.o: src/%.cpp
 	@echo   $<...
 ifeq ($(COMPILER), msvc)
 	@$(CXX) $< $(CPPFLAGS) /c /Fo:$@ /Fd$(subst .o,.pdb,$@) /sourceDependencies $(dir $@) $(DEFINES) $(INCLUDES)
-	@$(PYTHON) ../misc/windows/gen_dependency_files.py $< -o $@
+	@$(PYTHON) ../utils/windows/gen_dependency_files.py $< -o $@
 else
 	@$(CXX) $< $(CPPFLAGS) -c -o $@ $(DEFINES) $(INCLUDES)
 endif
