@@ -9,3 +9,4 @@
 class OS;
 
 OS *os_initialize_internal();
+void os_delete_internal();

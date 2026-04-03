@@ -1,7 +1,5 @@
 #include "core/os/memory.h"
 
-#include "core/error/error_macros.h"
-
 #include <stdlib.h>
 #include <string.h>
 
@@ -77,6 +75,10 @@ void Memory::vset_memory(void *p_dest, int p_value, uint64_t p_size) {
 
 void *Memory::vcopy_memory(void *p_dest, const void *p_source, uint64_t p_size) {
 	return memcpy(p_dest, p_source, p_size);
+}
+
+void *Memory::vmemmove(void *p_dest, const void *p_source, size_t p_count) {
+	return memmove(p_dest, p_source, p_count);
 }
 
 void *operator new(size_t p_size, const char *p_description) {

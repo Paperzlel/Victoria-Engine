@@ -33,8 +33,13 @@ static bool array_test_strings_atomic() {
 	TEST_EQ(Variant::get_return_type(a[0]), Variant::STRING);
 	TEST_EQ(Variant::get_return_type(a[2]), Variant::INT);
 	TEST_EQ(a[6], Variant(false));
-	// a.clear();
-	// TEST_EQ(a.size(), 0);
+	Variant first = a.pop_front();
+	TEST_EQ(Variant::get_return_type(first), Variant::STRING);
+	TEST_EQ(a.size(), 6);
+	first = a.pop_back();
+	TEST_EQ(Variant::get_return_type(first), Variant::BOOL);
+	a.clear();
+	TEST_EQ(a.size(), 0);
 	return true;
 }
 

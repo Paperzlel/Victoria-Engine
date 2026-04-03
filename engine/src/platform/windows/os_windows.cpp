@@ -13,6 +13,10 @@ OS *os_initialize_internal() {
 	return new OSWindows();
 }
 
+void os_delete_internal() {
+	delete static_cast<OSWindows *>(OS::get_singleton());
+}
+
 /**
  * @brief Method that makes a message box with information appear, and pauses the current thread.
  * @param message The message to enter in the message box

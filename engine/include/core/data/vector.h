@@ -18,15 +18,40 @@ class Vector {
 private:
 	friend class String;
 
-	// The reference count for this array
-	Refcount refc;
-	// The size of the array in bytes
-	uint64_t p_size = 0;
-	// The number of elements in the array
-	uint64_t p_element_count = 0;
-	// The internal pointer that makes up the actual array in memory
-	T *_ptr = nullptr;
+	// The refcount offset pointer.
+	static constexpr size_t REFC_OFFSET = 0;
+	static constexpr size_t SIZE_OFFSET = REFC_OFFSET + sizeof(AtomicCounter<uint64_t>);
+	static constexpr size_t DATA_OFFSET = SIZE_OFFSET + sizeof(uint64_t);
 
+	// The internal pointer that makes up the actual array in memory
+	mutable T *_ptr = nullptr;
+
+	/**
+	 * @brief Gets the reference count from the pointer. Assumes the pointer is not null.
+	 * @return A pointer to the reference count object.
+	 */
+	FORCE_INLINE AtomicCounter<uint64_t> *_get_refc() const {
+		return (AtomicCounter<uint64_t> *)(((uint8_t *)_ptr) - DATA_OFFSET + REFC_OFFSET);
+	}
+
+	/**
+	 * @brief Gets the element count from the pointer. Assumes the pointer is not null.
+	 * @return A pointer to the element count.
+	 */
+	FORCE_INLINE uint64_t *_get_size() const {
+		return (uint64_t *)(((uint8_t *)_ptr) - DATA_OFFSET + SIZE_OFFSET);
+	}
+
+	FORCE_INLINE void _ref(const Vector &p_from);
+	FORCE_INLINE void _unref();
+	FORCE_INLINE void _copy_on_write();
+	FORCE_INLINE Error _resize(int64_t n_size);
+
+	FORCE_INLINE Error _copy_to_new_buffer(uint64_t p_size);
+	FORCE_INLINE Error _alloc_buffer(uint64_t p_size);
+	FORCE_INLINE Error _realloc_buffer(uint64_t p_size);
+
+public:
 	/**
 	 * @brief Gets the given item from a given index into the vector.
 	 * @param p_index The index into the vector we want to retrieve from
@@ -62,13 +87,6 @@ private:
 		_ptr[p_index] = item;
 	}
 
-	FORCE_INLINE void _ref(const Vector &p_from);
-	FORCE_INLINE void _unref();
-	FORCE_INLINE void _copy_on_write();
-	FORCE_INLINE Error _resize(int64_t n_size);
-	FORCE_INLINE Error _realloc(int64_t n_size);
-
-public:
 	// Iterator structure, is used by a C++ for loop in order to find an element at a given point in the vector. Its
 	// operators are used to find the adjacent values in memory.
 	struct Iterator {
@@ -114,7 +132,7 @@ public:
 
 	// Constructs an `Iterator` from the last element in the vector.
 	FORCE_INLINE Iterator end() {
-		return Iterator(_ptr + p_element_count);
+		return Iterator(_ptr + size());
 	}
 
 	struct ConstIterator {
@@ -161,7 +179,7 @@ public:
 
 	// Constructs a `ConstIterator from the last element in the vector
 	FORCE_INLINE ConstIterator end() const {
-		return ConstIterator(_ptr + p_element_count);
+		return ConstIterator(_ptr + size());
 	}
 
 	/**
@@ -201,11 +219,7 @@ public:
 
 		_unref();
 		_ptr = p_from._ptr;
-		p_element_count = p_from.p_element_count;
-		p_size = p_from.p_size;
-		refc.set(p_from.refc.get());
 		p_from._ptr = nullptr;
-		refc.set(0);
 	}
 
 	FORCE_INLINE bool operator==(const Vector &p_other) const;
@@ -217,24 +231,26 @@ public:
 	 * @returns A value for the number of elements in the vector
 	 */
 	FORCE_INLINE int64_t size() const {
-		return p_element_count;
+		return _ptr ? *_get_size() : 0;
 	};
 	/**
 	 * @brief Method to find out if a vector type has any values in it.
 	 * @returns `TRUE` if the vector is empty, `FALSE` if it is not.
 	 */
 	FORCE_INLINE bool is_empty() const {
-		return p_element_count == 0;
+		return _ptr == nullptr || *_get_size() == 0;
 	};
 	/**
 	 * @brief Gets the number of bytes the vector currently has allocated to itself.
 	 * @returns The size of the vector in bytes
 	 */
 	FORCE_INLINE uint64_t get_ptr_size() const {
-		return p_size;
+		return _ptr != nullptr ? *_get_size() * sizeof(T) : 0;
 	};
 
-	// NOTE: probably unsafe for now
+	FORCE_INLINE uint64_t get_reference_count() const {
+		return _ptr ? _get_refc()->get() : 0;
+	}
 
 	/**
 	 * @brief Gets the current pointer of the vector, with read and write permissions. It is strongly advised to not
@@ -253,13 +269,6 @@ public:
 	 */
 	FORCE_INLINE const T *ptr() const {
 		return _ptr;
-	}
-
-	/**
-	 * @brief Obtains the current refcount object.
-	 */
-	FORCE_INLINE Refcount &get_refc() const {
-		return ((Vector<T> *)(this))->refc;
 	}
 
 	/**
@@ -303,21 +312,22 @@ public:
 	FORCE_INLINE Vector(std::initializer_list<T> p_init) {
 		ERR_FAIL_COND(_resize(p_init.size() * sizeof(T)) != OK);
 
-		p_element_count = 0;
+		int i = 0;
 		for (const T &element : p_init) {
-			_ptr[p_element_count] = element;
+			_ptr[i] = element;
 
-			p_element_count++;
+			i++;
 		}
+
+		*_get_size() = i;
 	}
 
 	FORCE_INLINE ~Vector();
 };
 
 /**
- * @brief Private initializer method. It's used instead of simply copying memory over, as there are several steps one
- * may need to go through in order for the data to be copied properly, namely any datatypes than cannot be trivially
- * copied over.
+ * @brief Private initializer method. Unreferences any data currently held, and copies the pointer to the incoming
+ * vector. Does not fire if the two are the same.
  * @param p_from The other vector to copy data from
  */
 template <typename T>
@@ -327,26 +337,20 @@ void Vector<T>::_ref(const Vector &p_from) {
 	}
 
 	_unref();
-	p_size = 0;
-	p_element_count = 0;
 
 	if (!p_from._ptr) {
 		return;
 	}
 
-	// Reference other vector by copying data over.
-	if (p_from.get_refc().refval() > 0) {
+	// Reference other vector by copying the pointer.
+	if (p_from._get_refc()->conditional_increment() > 0) {
 		_ptr = p_from._ptr;
-		p_size = p_from.p_size;
-		p_element_count = p_from.p_element_count;
-		refc.set(p_from.get_refc().get());
 	}
 }
 
 /**
- * @brief Frees all of the data currently held within the vector, and sets the pointer to null. Since not all data is
- * easy to get rid of (and can have some very bad side effects), we use this method instead as it prevents any issue
- * with non-trivial types being corrupted in any way.
+ * @brief Frees all of the data currently held within the vector, and sets the pointer to null if we are said pointer's
+ * only owner. If not, it sets this pointer to null and returns early, but does not free the data.
  */
 template <typename T>
 void Vector<T>::_unref() {
@@ -355,10 +359,8 @@ void Vector<T>::_unref() {
 	}
 
 	// Data used is shared elsewhere in the application, don't free.
-	if (refc.unrefval() > 0) {
+	if (_get_refc()->decrement() > 0) {
 		_ptr = nullptr;
-		p_size = 0;
-		p_element_count = 0;
 		return;
 	}
 
@@ -373,36 +375,24 @@ void Vector<T>::_unref() {
 	// Set pointer to null and free a copy of it.
 	T *prev = _ptr;
 	_ptr = nullptr;
-	p_size = 0;
-	p_element_count = 0;
-
-	Memory::vfree(prev);
-}
-
-template <typename T>
-void Vector<T>::_copy_on_write() {
-	// Only copy if a non-singlular refcount.
-	if (refc.get() != 1) {
-		T *new_data = (T *)Memory::vallocate(p_size);
-		ERR_COND_FATAL(new_data == nullptr);
-
-		if (!std::is_trivially_copyable<T>::value) {
-			for (int i = 0; i < size(); i++) {
-				vnew_placement(&new_data[i], T(_ptr[i]));
-			}
-		} else {
-			Memory::vcopy_memory(new_data, _ptr, p_size);
-		}
-
-		_unref();
-		_ptr = new_data;
-		refc.set(1);
-	}
+	Memory::vfree((((uint8_t *)prev) - DATA_OFFSET));
 }
 
 /**
- * @brief Changes the size of the current vector to a new given size. Sets `p_size` and `p_element_count` itself in
- * order to prevent any potential errors otherwise.
+ * @brief Copies the data to a new buffer, as it expects a new version of the vector is about to be created. Does not
+ * copy if the number of references is one, since that data is not shared and can be left as-is.
+ */
+template <typename T>
+void Vector<T>::_copy_on_write() {
+	if (!_ptr || _get_refc()->get() == 1) {
+		return;
+	}
+
+	_copy_to_new_buffer(size());
+}
+
+/**
+ * @brief Changes the size of the current vector to a new given size.
  * @param n_size The new size of the vector in bytes
  * @return `OK` if the vector was able to be resized, and returns a given error message if something went wrong.
  */
@@ -417,72 +407,94 @@ Error Vector<T>::_resize(int64_t n_size) {
 		return OK; // no need for changes
 	}
 
-	if (n_size == 0) {
-		_unref();
-		_ptr = nullptr;
-		p_size = 0;
-		p_element_count = 0;
-		return OK;
-	}
-
-	// copy data to a new alloc beforehand
-	_copy_on_write();
-
 	if (current_size < n_size) {
-		// Allocate if the current size is 0
-		if (current_size == 0) {
-			T *n_data = (T *)Memory::vallocate(n_size);
-			ERR_COND_NULL_R(n_data, ERR_OUT_OF_MEMORY);
-			_ptr = n_data;
-			refc.set(1);
+		if (!_ptr) {
+			Error err = _alloc_buffer(n_element_count);
+			if (err) {
+				return err;
+			}
+		} else if (_get_refc()->get() == 1) {
+			Error err = _realloc_buffer(n_element_count);
+			if (err) {
+				return err;
+			}
 		} else {
-			Error err = _realloc(n_size);
+			Error err = _copy_to_new_buffer(n_element_count);
 			if (err) {
 				return err;
 			}
 		}
-
-		// Check if the classes can't be constructed easily, if not call constructors (because this happens before raw
-		// assignment, it prevents data being wiped)
-		if (!std::is_trivially_constructible<T>::value) {
-			for (uint64_t i = (get_ptr_size() / sizeof(T)); i < n_element_count; i++) {
-				vnew_placement(&_ptr[i], T);
-			}
-		} else {
-			// Zero out the memory so that garbage data isn't read
-			Memory::vzero(_ptr + p_element_count, n_size - p_size);
-		}
-		p_size = n_size;
-
 	} else if (current_size > n_size) {
 		// Destroy items that are no longer needed in the vector
-		if (!std::is_trivially_destructible<T>::value) {
-			for (uint64_t i = n_size; i < p_size; i++) {
-				T *t = &_ptr[i];
-				t->~T();
-				vdelete(&_ptr[i]); // Call delete here rather than in `_unref()`, because we no longer need these
-								   // specific values, but still require the array as a whole.
+		if (n_size == 0) {
+			_unref();
+			return OK;
+		} else if (_get_refc()->get() == 1) {
+			if (!std::is_trivially_destructible<T>::value) {
+				for (uint64_t i = n_element_count; i < *_get_size(); i++) {
+					_ptr[i].~T();
+				}
 			}
-		}
 
-		Error err = _realloc(n_size);
-		if (err) {
-			return err;
+			Error err = _realloc_buffer(n_element_count);
+			if (err) {
+				return err;
+			}
+		} else {
+			return _copy_to_new_buffer(n_element_count);
 		}
-		p_size = n_size;
 	}
-	p_element_count = n_element_count;
-
 	return OK;
 }
 
 template <typename T>
-Error Vector<T>::_realloc(int64_t n_size) {
-	T *n_data = (T *)Memory::vreallocate(_ptr, n_size);
-	ERR_COND_NULL_R(n_data, ERR_OUT_OF_MEMORY);
+Error Vector<T>::_copy_to_new_buffer(uint64_t p_count) {
+	const Vector prev;
+	prev._ptr = _ptr;
+	_ptr = nullptr;
 
-	refc.set(1); // Reset refcount due to unique size
-	_ptr = n_data;
+	Error err = _alloc_buffer(p_count);
+	if (err) {
+		_ptr = prev._ptr;
+		prev._ptr = nullptr;
+		return err;
+	}
+
+	memcpy_arr_placement(_ptr, prev._ptr, p_count);
+	return OK;
+}
+
+/**
+ * @brief Allocates a new pointer to the current buffer, as well as placing a new AtomicCounter in its slot and setting
+ * the element count to the proper value.
+ * @param p_element_count The new element count for the buffer.
+ * @return `OK` on success, and `ERR_OUT_OF_MEMORY` if failed, which should crash.
+ */
+template <typename T>
+Error Vector<T>::_alloc_buffer(uint64_t p_element_count) {
+	T *ptr = (T *)Memory::vallocate((p_element_count * sizeof(T)) + DATA_OFFSET);
+	ERR_COND_NULL_R(ptr, ERR_OUT_OF_MEMORY);
+
+	_ptr = (T *)(((uint8_t *)ptr) + DATA_OFFSET);
+
+	new (_get_refc()) AtomicCounter<uint64_t>(1);
+	*_get_size() = p_element_count;
+	return OK;
+}
+
+/**
+ * @brief Reallocates the current buffer to a new size.
+ * @param p_element_count The new number of elements in the buffer.
+ * @return `OK` on success, and `ERR_OUT_OF_MEMORY` on failure, which should crash.
+ */
+template <typename T>
+Error Vector<T>::_realloc_buffer(uint64_t p_element_count) {
+	T *nptr = (T *)Memory::vreallocate(((uint8_t *)_ptr) - DATA_OFFSET, (p_element_count * sizeof(T)) + DATA_OFFSET);
+	ERR_COND_NULL_R(nptr, ERR_OUT_OF_MEMORY);
+
+	_ptr = (T *)(((uint8_t *)nptr) + DATA_OFFSET);
+	ERR_FAIL_COND_R(_get_refc()->get() != 1, ERR_BUG);
+	*_get_size() = p_element_count;
 	return OK;
 }
 
@@ -548,37 +560,36 @@ void Vector<T>::remove_at(int64_t index) {
 	// Check if the index is out of bounds or not
 	ERR_OUT_OF_BOUNDS(index, size());
 
-	// Get a list of every other index less than the given index
-	int less_than = index;
+	uint64_t old_size = size();
 
-	Vector<T> less_arr;
-	for (int i = 0; i < less_than; i++) {
-		less_arr.append(this->operator[](i));
+	if (old_size == 1) {
+		_unref();
+		return;
 	}
 
-	Vector<T> greater_arr;
-	for (int i = index + 1; i < size(); i++) {
-		greater_arr.append(this->operator[](i));
-	}
+	uint64_t new_size = old_size - 1;
 
-	uint64_t new_size = (p_element_count - 1) * sizeof(T);
-
-	ERR_FAIL_COND(_resize(new_size) != OK);
-
-	for (int i = 0; i < size(); i++) {
-		if (less_arr.size() == 0) {
-			_ptr[i] = greater_arr[i];
-			continue;
-		}
-		if (greater_arr.size() == 0) {
-			_ptr[i] = less_arr[i];
-			continue;
-		}
-
-		if (i <= less_than - 1) {
-			_ptr[i] = less_arr[i];
+	if (_get_refc()->get() == 1) {
+		_ptr[index].~T();
+		// Copy data down to the current pointer position.
+		Memory::vmemmove(_ptr + index, _ptr + index + 1, (new_size - index) * sizeof(T));
+		// Delete content at the end of the buffer
+		ERR_FAIL_COND(_resize((*_get_size() - 1) * sizeof(T)) != OK);
+	} else {
+		// Copy data to a new buffer
+		T *other = _ptr;
+		_ptr = (T *)Memory::vallocate(new_size);
+		if (std::is_trivially_copyable<T>::value) {
+			Memory::vcopy_memory(_ptr, other, index * sizeof(T));
+			Memory::vcopy_memory(_ptr + index, other + index, (new_size - index) * sizeof(T));
 		} else {
-			_ptr[i] = greater_arr[i - less_than];
+			for (int i = 0; i < index; i++) {
+				vnew_placement(_ptr + i, T(other[i]));
+			}
+
+			for (uint64_t i = index; i < new_size; i++) {
+				vnew_placement(_ptr + i, T(other[i]));
+			}
 		}
 	}
 }
@@ -636,8 +647,9 @@ void Vector<T>::push_back(T item) {
  */
 template <typename T>
 T Vector<T>::pop_back() {
-	T item = get(p_element_count - 1);
-	remove_at(p_element_count - 1);
+	int64_t end = *_get_size() - 1;
+	T item = get(end);
+	remove_at(end);
 	return item;
 }
 
@@ -648,8 +660,6 @@ T Vector<T>::pop_back() {
 template <typename T>
 void Vector<T>::clear() {
 	_resize(0);
-	p_element_count = 0;
-	p_size = 0;
 }
 
 /**

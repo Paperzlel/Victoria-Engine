@@ -12,6 +12,10 @@ OS *OS::initialize_for_tests() {
 	return os_initialize_internal();
 }
 
+void OS::destroy() {
+	os_delete_internal();
+}
+
 /**
  * @brief Gets the currently set return code of the application.
  * @returns The currently set exit code.

@@ -27,6 +27,7 @@ public:
 	// WARNING: This method needs to exist so that test suites can print to the console, but it shouldn't be used
 	// outside of that context. Use generic initialization methods instead.
 	static OS *initialize_for_tests();
+	static void destroy();
 
 	uint8_t get_exit_code() const;
 	void set_exit_code(uint8_t p_id);
@@ -90,5 +91,5 @@ public:
 	virtual void run() = 0;
 
 	OS();
-	~OS();
+	virtual ~OS();
 };

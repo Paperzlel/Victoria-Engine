@@ -8,5 +8,6 @@ int main(void) {
 
 	register_all_tests();
 	run_all_tests();
+	OS::destroy();
 	return 0;
 }

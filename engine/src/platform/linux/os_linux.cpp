@@ -31,6 +31,10 @@ OS *os_initialize_internal() {
 	return new OSLinux();
 }
 
+void os_delete_internal() {
+	delete static_cast<OSLinux *>(OS::get_singleton());
+}
+
 /**
  * @brief Prints a message to the currently active console.
  * @param message The message to print
