@@ -2,25 +2,34 @@
 
 #include <core/os/os.h>
 #include <core/typedefs.h>
-#include <libvictoria.h>
+#include <main/main.h>
+#include <runtime/main.h>
 #include <scene/main/scene_tree.h>
 #include <scene/main/window.h>
 
 int main(int argc, char *argv[]) {
-	VictoriaInstance *inst = victoria_create_instance(argc, argv);
-	if (!inst) {
+	(void)OS::initialize_for_tests();
+	Error err = Main::setup(argc, argv);
+	if (err) {
 		return -1;
+	}
+	err = runtime_setup();
+	if (err) {
+		return -2;
 	}
 
 	// Initialize editor class here
 	Editor *editor = vnew(Editor);
 	SceneTree::get_singleton()->get_root()->add_child(editor);
 
-	while (inst->iteration()) {
+	// Doesn't need to quit
+	while (!runtime_iteration()) {
 		// Run
 	}
 
 	int exit_code = OS::get_singleton()->get_exit_code();
-	victoria_destroy_instance(inst);
+	runtime_finalize();
+	Main::finalize();
+	OS::destroy();
 	return exit_code;
 }

@@ -194,3 +194,7 @@ endif
 
 # Globalize build directory
 BUILD_DIR := $(abspath $(BUILD_DIR))
+
+ifneq ($(USE_MSVC), yes)
+	LDFLAGS += -L$(BUILD_DIR) -Wl,-rpath='$$ORIGIN'
+endif

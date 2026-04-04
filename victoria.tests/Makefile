@@ -2,16 +2,12 @@ include ../utils/core.mk
 include ../utils/general.mk
 
 TARGET := victoria_tests
-INCLUDES += -Isrc -I../engine/include
-LDFLAGS += -L$(BUILD_DIR)
-DIR :=
+INCLUDES += -Isrc -I../victoria.core/src
 
 ifeq ($(PLATFORM), win32)
-	LDFLAGS += -llibvictoria
-	DIR := $(subst \,/,$(shell cd))
+	LDFLAGS += -llibvictoria.core
 else
-	LDFLAGS += -lvictoria -Wl,-rpath='$$ORIGIN'
-	DIR := $(PWD)
+	LDFLAGS += -lvictoria.core
 endif
 
 ifeq ($(USE_MSVC), yes)
@@ -67,6 +63,7 @@ endif
 .PHONY: scaffold generate_compile_commands clean
 
 all: scaffold $(OBJ_FILES) $(BUILD_DIR)/$(OUTPUT_FILE)
+	@echo All tasks built successfully.
 
 scaffold:
 	@echo Creating project structure...

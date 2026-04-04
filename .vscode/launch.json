@@ -36,7 +36,7 @@
             "name": "Launch (CodeLLDB) (Linux)",
             "type": "lldb",
             "request": "launch",
-            "program": "${workspaceFolder}/bin/victoria.tests",
+            "program": "${workspaceFolder}/bin/victoria.x86_64",
             "args": [],
             "stopOnEntry": false,
             "cwd": "${workspaceFolder}/bin/",
