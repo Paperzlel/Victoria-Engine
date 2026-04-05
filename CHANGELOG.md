@@ -1,6 +1,9 @@
 # Changelog
 Changes exist in chronological order (i.e. new changes are to be appended to the end of the file). Dates are done in DD/MM/YYYY format with the version number applied to each date if needed.
 
+## 5/4/2026
+- Reordered the engine into separate "modules" for simplicity purposes. Core engine code, including platform init/shutdown, the type system, templates and core I/O now reside in `victoria.core`, with runtime features including rendering, asset importing, scene information and so forth being available via the `victoria.runtime` library. Freetype and GLAD have been split into two separate libraries that are not intended to be used by end-user code.
+
 ## 29/3/2026
 - Buildsystem:
 	- Allow each part of the engine to be built from their own Makefile, assuming the required dependencies exist.
