@@ -2,7 +2,6 @@
 #if PLATFORM_LINUX
 
 #	include "core/os/os.h"
-#	include "main/main.h"
 
 #	include <stdlib.h>
 
@@ -244,14 +243,14 @@ void DisplayManagerX11::process_events() {
 				if (event.xclient.data.l[0] == (int64_t)window->wm_close_atom) {
 					window->notification_callback.fire(NOTIFICATION_WM_WINDOW_CLOSE, window->id);
 					OS::get_singleton()->set_exit_code(0);
-					Main::set_should_quit(true);
+					OS::get_singleton()->set_should_quit(true);
 					return;
 				}
 			} break;
 			case DestroyNotify: {
 				window->notification_callback.fire(NOTIFICATION_WM_WINDOW_CLOSE, window->id);
 				OS::get_singleton()->set_exit_code(0);
-				Main::set_should_quit(true);
+				OS::get_singleton()->set_should_quit(true);
 			} break;
 			case PropertyNotify: {
 				if (event.xproperty.atom == window->wm_state_atom) {

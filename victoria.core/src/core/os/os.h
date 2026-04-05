@@ -18,6 +18,7 @@ protected:
 
 	bool stdout_verbose = false;
 	bool suspended = false;
+	bool should_quit = false;
 
 	String device_vendor;
 	String device_name;
@@ -26,9 +27,7 @@ protected:
 
 public:
 	static OS *get_singleton();
-	// WARNING: This method needs to exist so that test suites can print to the console, but it shouldn't be used
-	// outside of that context. Use generic initialization methods instead.
-	static OS *initialize_for_tests();
+	static OS *create();
 	static void destroy();
 
 	uint8_t get_exit_code() const;
@@ -36,6 +35,14 @@ public:
 
 	bool is_suspended() const;
 	void set_is_suspended(bool p_value);
+
+	bool is_going_to_quit() const {
+		return should_quit;
+	}
+
+	void set_should_quit(bool p_value) {
+		should_quit = p_value;
+	}
 
 	uint64_t get_timer_frequency() {
 		return timer_frequency;

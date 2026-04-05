@@ -5,7 +5,6 @@
 #	include "core/io/input.h"
 #	include "core/os/memory.h"
 #	include "core/os/os.h"
-#	include "main/main.h"
 
 #	include <string.h>
 
@@ -201,7 +200,7 @@ void DisplayManagerWayland::_on_xdg_toplevel_configure(void *p_data,
 
 void DisplayManagerWayland::_on_xdg_toplevel_close(void *p_data, struct xdg_toplevel *p_toplevel) {
 	OS::get_singleton()->set_exit_code(0);
-	Main::set_should_quit(true);
+	OS::get_singleton()->set_should_quit(true);
 }
 
 void DisplayManagerWayland::_on_xdg_wm_base_ping(void *p_data, struct xdg_wm_base *p_base, uint32_t p_serial) {

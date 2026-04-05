@@ -3,8 +3,8 @@
 #include <core/os/os.h>
 
 int main(void) {
-	// Don't need result and it produces an error.
-	(void)OS::initialize_for_tests();
+	// Only create the OS since it should create stdout for us as well, don't need the other core features.
+	(void)OS::create();
 
 	register_all_tests();
 	run_all_tests();

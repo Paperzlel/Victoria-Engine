@@ -1,4 +1,4 @@
-#include "main/main.h"
+#include "core/main.h"
 
 #include "core/io/input.h"
 #include "core/io/resource_importer.h"
@@ -18,7 +18,6 @@ static ResourceImporter *resource_importer = nullptr;
 static DisplayManager *display_manager = nullptr;
 
 static String version_str;
-static bool should_quit = false;
 static String rendering_backend = "";
 
 /**
@@ -51,7 +50,7 @@ void print_help_option(const char *command, const char *description, bool is_hea
 /**
  * @brief Prints the command line options available whenever the user opens the application
  */
-void Main::print_help() {
+void core_print_help() {
 	OS::get_singleton()->print(version_str);
 	print_help_option("Main command-line options: ", "", true);
 	print_help_option("-h --help", "Prints this help message");
@@ -68,14 +67,6 @@ void Main::print_help() {
 					  "Load a specific rendering driver. Can choose from: \"opengl\", \"opengl_es\"");
 }
 
-void Main::set_should_quit(bool p_value) {
-	should_quit = p_value;
-}
-
-bool Main::get_should_quit() {
-	return should_quit;
-}
-
 /**
  * @brief The first initialisation of the engine. Sets up all the core types, determines whether the engine is a game
  * or not, parses the command-line arguments, and so on.
@@ -83,7 +74,8 @@ bool Main::get_should_quit() {
  * @param argv A array of strings containing each argument
  * @returns `OK` if no errors were detected, and various error messages if otherwise.
  */
-Error Main::setup(int argc, char *argv[]) {
+Error core_initialize(int argc, char *argv[]) {
+	OS::create();
 	OS::get_singleton()->initialize();
 
 	// Setup version string
@@ -110,7 +102,7 @@ Error Main::setup(int argc, char *argv[]) {
 	while (e) {
 		String arg = e->get();
 		if (arg == "--help" || arg == "-h") {
-			print_help();
+			core_print_help();
 			return ERR_HELP;
 		}
 
@@ -183,7 +175,9 @@ Error Main::setup(int argc, char *argv[]) {
  * @brief Method that un-initializes all of the information tied into main, and calls to destroy all of the data used
  * up to this point.
  */
-void Main::finalize() {
+void core_finalize() {
 	vdelete(inputs);
 	vdelete(resource_importer);
+
+	OS::destroy();
 }

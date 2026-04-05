@@ -6,7 +6,6 @@
 
 #	include "core/config/callable_method_pointer.h"
 #	include "core/io/input.h"
-#	include "main/main.h"
 
 #	include <drivers/opengl/rendering_server_gl.h>
 
@@ -232,7 +231,7 @@ LRESULT DisplayManagerWindows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 		case WM_CLOSE: {
 			window->notification_callback.fire(NOTIFICATION_WM_WINDOW_CLOSE, window_id);
 			OS::get_singleton()->set_exit_code(0);
-			Main::set_should_quit(true);
+			OS::get_singleton()->set_should_quit(true);
 			return 0;
 		}
 		case WM_DESTROY: {

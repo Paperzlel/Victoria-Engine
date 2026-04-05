@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/typedefs.h"
+#include <core/typedefs.h>
 
 typedef bool (*PFN_test)();
 

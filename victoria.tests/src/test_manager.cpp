@@ -1,14 +1,14 @@
 #include "test_macros.h"
 #include "test_manager.h"
 
-#include "core/data/test_event.h"
-#include "core/data/test_hashtable.h"
-#include "core/data/test_list.h"
-#include "core/data/test_vector.h"
-#include "core/data/vector.h"
-#include "core/math/test_mat4.h"
-#include "core/math/test_quaternion.h"
-#include "core/variant/test_array.h"
+#include <core/data/test_event.h>
+#include <core/data/test_hashtable.h>
+#include <core/data/test_list.h>
+#include <core/data/test_vector.h>
+#include <core/data/vector.h>
+#include <core/math/test_mat4.h>
+#include <core/math/test_quaternion.h>
+#include <core/variant/test_array.h>
 
 struct Test {
 	PFN_test func = nullptr;

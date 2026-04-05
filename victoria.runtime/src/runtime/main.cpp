@@ -12,7 +12,6 @@
 #include <core/io/resource_importer.h>
 #include <core/os/display_manager.h>
 #include <core/os/os.h>
-#include <main/main.h>
 
 static MainLoop *main_loop = nullptr;
 static RenderingServer *rendering_server = nullptr;
@@ -65,7 +64,7 @@ bool runtime_iteration() {
 	// events.
 	DisplayManager::get_singleton()->process_events();
 	// TODO: OS should notify about a quit event instead of main, since that is Godot concepts and out of date.
-	should_quit = Main::get_should_quit();
+	should_quit = OS::get_singleton()->is_going_to_quit();
 	// By default, the OS should not draw if the application is in a "suspended" state.
 	if (OS::get_singleton()->is_suspended()) {
 		return should_quit;

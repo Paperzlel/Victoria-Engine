@@ -8,7 +8,7 @@ OS *OS::get_singleton() {
 	return singleton;
 }
 
-OS *OS::initialize_for_tests() {
+OS *OS::create() {
 	return os_initialize_internal();
 }
 
@@ -26,7 +26,7 @@ uint8_t OS::get_exit_code() const {
 
 /**
  * @brief Method that sets the exit code of the given application. Exit codes when set will not escape the application
- * itself, and will rely on using `Main::quit()` to actually break out of the loop.
+ * itself, and will rely on using `set_should_quit()` to actually break out of the loop.
  * @param p_id The quit message used by the user to end the application loop.
  */
 void OS::set_exit_code(uint8_t p_id) {
