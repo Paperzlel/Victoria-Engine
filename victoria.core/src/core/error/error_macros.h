@@ -74,13 +74,6 @@ VAPI const char *get_error_message(Error p_id);
 // Wrapper for the function-finding macro that doesn't highlight properly in some IDEs.
 #define FUNCTION_STR __FUNCTION__
 
-// Wrapper to make it so that a condition given can be expressed properly. Some evaluations do not work without this.
-#ifdef __GNUC__
-#	define cond(x) __builtin_expect(!!(x), 1)
-#else
-#	define cond(x) x
-#endif
-
 /**
  * GENERIC ERRORS
  */
@@ -130,6 +123,19 @@ VAPI const char *get_error_message(Error p_id);
 #define ERR_WARN(m_msg) _err_print_err(__FILE__, FUNCTION_STR, __LINE__, m_msg, "", ERROR_WARNING);
 
 /**
+ * @brief Sends a warning to the user one when triggered. Useful in code which is called multiple times from startup.
+ * @param m_msg The message to give the user once.
+ */
+#define ERR_WARN_ONCE(m_msg)                                                                                          \
+	{                                                                                                                 \
+		static bool __warned = false;                                                                                 \
+		if (unlikely(__warned == false)) {                                                                            \
+			_err_print_err(__FILE__, FUNCTION_STR, __LINE__, m_msg, "", ERROR_WARNING);                               \
+			__warned = true;                                                                                          \
+		}                                                                                                             \
+	}
+
+/**
  * INDEX OUT OF BOUNDS ERRORS
  */
 
@@ -140,7 +146,7 @@ VAPI const char *get_error_message(Error p_id);
  * @param m_size The total element count of the array
  */
 #define ERR_OUT_OF_BOUNDS(m_index, m_size)                                                                            \
-	if ((m_index) < 0 || (m_index) >= (m_size)) {                                                                     \
+	if (unlikely((m_index) < 0 || (m_index) >= (m_size))) {                                                           \
 		_err_print_index_err(__FILE__, FUNCTION_STR, __LINE__, m_index, m_size, "Index given was out of bounds.");    \
 		return;                                                                                                       \
 	}
@@ -154,7 +160,7 @@ VAPI const char *get_error_message(Error p_id);
  * @param m_msg The error message to send to the console when the given index is out of bounds
  */
 #define ERR_OUT_OF_BOUNDS_MSG(m_index, m_size, m_msg)                                                                 \
-	if ((m_index) < 0 || (m_index) >= (m_size)) {                                                                     \
+	if (unlikely((m_index) < 0 || (m_index) >= (m_size))) {                                                           \
 		_err_print_index_err(__FILE__,                                                                                \
 							 FUNCTION_STR,                                                                            \
 							 __LINE__,                                                                                \
@@ -173,7 +179,7 @@ VAPI const char *get_error_message(Error p_id);
  * @returns Whatever value m_retval is set to
  */
 #define ERR_OUT_OF_BOUNDS_R(m_index, m_size, m_retval)                                                                \
-	if ((m_index) < 0 || (m_index) >= (m_size)) {                                                                     \
+	if (unlikely((m_index) < 0 || (m_index) >= (m_size))) {                                                           \
 		_err_print_index_err(__FILE__,                                                                                \
 							 FUNCTION_STR,                                                                            \
 							 __LINE__,                                                                                \
@@ -195,7 +201,7 @@ VAPI const char *get_error_message(Error p_id);
  * @returns Whatever value `m_retval` is set to
  */
 #define ERR_OUT_OF_BOUNDS_MSG_R(m_index, m_size, m_msg, m_retval)                                                     \
-	if ((m_index) < 0 || (m_index) >= (m_size)) {                                                                     \
+	if (unlikely((m_index) < 0 || (m_index) >= (m_size))) {                                                           \
 		_err_print_index_err(__FILE__,                                                                                \
 							 FUNCTION_STR,                                                                            \
 							 __LINE__,                                                                                \
@@ -230,7 +236,7 @@ VAPI const char *get_error_message(Error p_id);
  * @param m_cond The given condition to assess
  */
 #define ERR_FAIL_COND(m_cond)                                                                                         \
-	if (cond(m_cond)) {                                                                                               \
+	if (unlikely(m_cond)) {                                                                                           \
 		_err_print_err(__FILE__, FUNCTION_STR, __LINE__, "Condition \"" _STR(m_cond) "\" was true.");                 \
 		return;                                                                                                       \
 	}
@@ -242,7 +248,7 @@ VAPI const char *get_error_message(Error p_id);
  * @param m_msg The given error message to send to the console when the given condition is true
  */
 #define ERR_FAIL_COND_MSG(m_cond, m_msg)                                                                              \
-	if (cond(m_cond)) {                                                                                               \
+	if (unlikely(m_cond)) {                                                                                           \
 		_err_print_err(__FILE__, FUNCTION_STR, __LINE__, "Condition \"" _STR(m_cond) "\" was true.", m_msg);          \
 		return;                                                                                                       \
 	}
@@ -256,7 +262,7 @@ VAPI const char *get_error_message(Error p_id);
  * @returns Whatever value `m_retval` is set to
  */
 #define ERR_FAIL_COND_R(m_cond, m_retval)                                                                             \
-	if (cond(m_cond)) {                                                                                               \
+	if (unlikely(m_cond)) {                                                                                           \
 		_err_print_err(__FILE__,                                                                                      \
 					   FUNCTION_STR,                                                                                  \
 					   __LINE__,                                                                                      \
@@ -275,7 +281,7 @@ VAPI const char *get_error_message(Error p_id);
  * @returns Whatever value `m_retval` is set to
  */
 #define ERR_FAIL_COND_MSG_R(m_cond, m_msg, m_retval)                                                                  \
-	if (cond(m_cond)) {                                                                                               \
+	if (unlikely(m_cond)) {                                                                                           \
 		_err_print_err(__FILE__,                                                                                      \
 					   FUNCTION_STR,                                                                                  \
 					   __LINE__,                                                                                      \
@@ -291,7 +297,7 @@ VAPI const char *get_error_message(Error p_id);
  * @param m_cond The given condition to assess
  */
 #define ERR_COND_FATAL(m_cond)                                                                                        \
-	if (cond(m_cond)) {                                                                                               \
+	if (unlikely(m_cond)) {                                                                                           \
 		_err_print_err(__FILE__,                                                                                      \
 					   FUNCTION_STR,                                                                                  \
 					   __LINE__,                                                                                      \
@@ -309,7 +315,7 @@ VAPI const char *get_error_message(Error p_id);
  * @param m_item The given item to assess as null
  */
 #define ERR_COND_NULL(m_item)                                                                                         \
-	if (cond(m_item == nullptr)) {                                                                                    \
+	if (unlikely(m_item == nullptr)) {                                                                                \
 		_err_print_err(__FILE__, FUNCTION_STR, __LINE__, "Item \"" _STR(m_item) "\" is null.");                       \
 		return;                                                                                                       \
 	}
@@ -322,7 +328,7 @@ VAPI const char *get_error_message(Error p_id);
  * @param m_msg The given error message to send to the console when the given item is null
  */
 #define ERR_COND_NULL_MSG(m_item, m_msg)                                                                              \
-	if (cond(m_item == nullptr)) {                                                                                    \
+	if (unlikely(m_item == nullptr)) {                                                                                \
 		_err_print_err(__FILE__, FUNCTION_STR, __LINE__, "Item \"" _STR(m_item) "\" is null.", m_msg);                \
 		return;                                                                                                       \
 	}
@@ -336,7 +342,7 @@ VAPI const char *get_error_message(Error p_id);
  * @returns Whatever value `m_retval` is set to
  */
 #define ERR_COND_NULL_R(m_item, m_retval)                                                                             \
-	if (cond(m_item == nullptr)) {                                                                                    \
+	if (unlikely(m_item == nullptr)) {                                                                                \
 		_err_print_err(__FILE__,                                                                                      \
 					   FUNCTION_STR,                                                                                  \
 					   __LINE__,                                                                                      \
@@ -355,7 +361,7 @@ VAPI const char *get_error_message(Error p_id);
  * @returns Whatever value `m_retval` is set to
  */
 #define ERR_COND_NULL_MSG_R(m_item, m_msg, m_retval)                                                                  \
-	if (cond(m_item == nullptr)) {                                                                                    \
+	if (unlikely(m_item == nullptr)) {                                                                                \
 		_err_print_err(__FILE__,                                                                                      \
 					   FUNCTION_STR,                                                                                  \
 					   __LINE__,                                                                                      \
@@ -371,7 +377,7 @@ VAPI const char *get_error_message(Error p_id);
  * @param m_item The given item to assess as null
  */
 #define ERR_COND_NULL_FATAL(m_item)                                                                                   \
-	if (cond(m_item == nullptr)) {                                                                                    \
+	if (unlikely(m_item == nullptr)) {                                                                                \
 		_err_print_err(__FILE__,                                                                                      \
 					   FUNCTION_STR,                                                                                  \
 					   __LINE__,                                                                                      \

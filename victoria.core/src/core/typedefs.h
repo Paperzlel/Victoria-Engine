@@ -58,6 +58,15 @@
 #	endif
 #endif
 
+// Wrapper to make it so that a condition given can be expressed properly. Some evaluations do not work without this.
+#ifdef __GNUC__
+#	define likely(x) __builtin_expect(!!(x), 1)
+#	define unlikely(x) __builtin_expect(!!(x), 0)
+#else
+#	define likely(x) x
+#	define unlikely(x) x
+#endif
+
 // Define size_t
 #if PLATFORM_LINUX
 typedef __SIZE_TYPE__ size_t;
