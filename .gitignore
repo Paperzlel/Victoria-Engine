@@ -25,7 +25,7 @@
 *.la
 *.a
 *.lib
-
+w
 # Executables
 *.exe
 *.out
@@ -37,3 +37,7 @@
 
 # Other excludes
 bin/
+.cache/
+*.gen.*
+compile_flags.txt
+compile_commands.json
