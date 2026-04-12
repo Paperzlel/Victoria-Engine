@@ -3,44 +3,35 @@
 #include <core/data/vector.h>
 #include <core/string/vstring.h>
 
-struct Uniform {
-	String name;
-	int loc;
-};
-
-struct UBO {
-	String name;
-	int index;
-};
-
-struct ShaderData {
+class GLShader {
 	uint32_t id;
-	uint32_t vert_id;
-	uint32_t frag_id;
+
+	String _add_shader_information(const char *p_shader);
+
+public:
+	struct Uniform {
+		const char *name;
+		int loc;
+	};
+
+	struct UBO {
+		const char *name;
+		int index;
+	};
+
+	// NOTE: A FixedVector of some description would be better to avoid CoW semantics
 
 	Vector<Uniform> uniforms;
 	Vector<UBO> ubos;
 
 	void shader_set_active();
-	void shader_find_uniforms_from_source(const String &p_source);
-	Error _setup(const String &p_source_path); // WARNING: DO NOT CALL!!!! IS CALLED BY THE OVERRIDE
-	virtual Error _init() = 0;
+	void shader_delete();
 
-	ShaderData() {
-		id = 0;
-		vert_id = 0;
-		frag_id = 0;
-	}
-};
-
-struct SceneShader : ShaderData {
-	virtual Error _init() override;
-};
-
-struct CanvasShader : ShaderData {
-	virtual Error _init() override;
-};
-
-struct CopyShader : ShaderData {
-	virtual Error _init() override;
+	virtual void _init() = 0;
+	void _setup(const char *p_vertex_source,
+				const char *p_fragment_source,
+				const char **p_uniforms,
+				int p_uniform_count,
+				UBO *p_ubos,
+				int p_ubo_count);
 };

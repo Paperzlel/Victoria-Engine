@@ -99,28 +99,9 @@ Error RenderingServerGL::initialize() {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
 
-	Error err = shaders.scene_shader._init();
-	if (err != OK) {
-		OS::get_singleton()->print_error(__FILE__,
-										 FUNCTION_STR,
-										 __LINE__,
-										 "OpenGL: Scene shader failed to compile.",
-										 get_error_message(err));
-	}
-
-	err = shaders.canvas_shader._init();
-	if (err != OK) {
-		OS::get_singleton()->print_error(__FILE__,
-										 FUNCTION_STR,
-										 __LINE__,
-										 "OpenGL: Canvas shader failed to compile.",
-										 get_error_message(err));
-	}
-
-	err = shaders.copy_shader._init();
-	if (err != OK) {
-		ERR_FAIL_MSG_R("OpenGL: Copy shader failed to compile.", err);
-	}
+	shaders.scene_shader._init();
+	shaders.canvas_shader._init();
+	shaders.copy_shader._init();
 
 	return OK;
 }
@@ -138,9 +119,9 @@ void RenderingServerGL::finalize() {
 		texture_free(p_rid);
 	}
 
-	glDeleteProgram(shaders.scene_shader.id);
-	glDeleteProgram(shaders.canvas_shader.id);
-	glDeleteProgram(shaders.copy_shader.id);
+	shaders.scene_shader.shader_delete();
+	shaders.canvas_shader.shader_delete();
+	shaders.copy_shader.shader_delete();
 
 	Memory::vfree(scene_data.point_lights);
 	utils->free_buffer(GL_UNIFORM_BUFFER, sizeof(SceneData::PointLight) * 32, &scene_data.point_light_buffer);
@@ -286,7 +267,7 @@ void RenderingServerGL::_render_scene(RenderData *r_data, Viewport *p_viewport, 
 		uint32_t point_light_count = 0;
 		uint32_t directional_light_count = 0;
 		uint32_t spot_light_count = 0;
-		Vector<Uniform> scene_uniforms = shaders.scene_shader.uniforms;
+		Vector<GLShader::Uniform> scene_uniforms = shaders.scene_shader.uniforms;
 
 		Vector<RID> instance_list;
 		instance_owner.get_owned_list(&instance_list);
@@ -420,16 +401,16 @@ void RenderingServerGL::_render_scene(RenderData *r_data, Viewport *p_viewport, 
 		}
 
 		// Bind item-independent uniforms
-		for (const Uniform &u : scene_uniforms) {
-			if (u.name == "view_pos") {
+		for (const GLShader::Uniform &u : scene_uniforms) {
+			if (vstring_compare(u.name, "view_pos")) {
 				// Get position data (since the camera is already inverted position-wise, invert it again)
 				Vector3 pos = cam->view.position.inverse();
 				set_uniform_vec3(u.loc, pos);
 			}
-			if (u.name == "point_lights_used") {
+			if (vstring_compare(u.name, "point_lights_used")) {
 				glUniform1ui(u.loc, scene_data.point_light_count);
 			}
-			if (u.name == "spot_lights_used") {
+			if (vstring_compare(u.name, "spot_lights_used")) {
 				glUniform1ui(u.loc, scene_data.spot_light_count);
 			}
 		}
@@ -442,8 +423,8 @@ void RenderingServerGL::_render_scene(RenderData *r_data, Viewport *p_viewport, 
 				continue;
 			}
 
-			for (const Uniform &u : scene_uniforms) {
-				if (u.name == "transform") {
+			for (const GLShader::Uniform &u : scene_uniforms) {
+				if (vstring_compare(u.name, "transform")) {
 					set_uniform_mat4(u.loc, inst.transform.get_model());
 					break;
 				}
@@ -755,10 +736,18 @@ void RenderingServerGL::_render_viewport(RenderData *r_data, Viewport *p_viewpor
 
 	shaders.copy_shader.shader_set_active();
 
-	if (shaders.copy_shader.uniforms[0].name != "offset_size") {
-		return;
+	int offset_size_loc = -1;
+	for (int i = 0; i < shaders.copy_shader.uniforms.size(); i++) {
+		if (vstring_compare(shaders.copy_shader.uniforms[i].name, "offset_size")) {
+			offset_size_loc = shaders.copy_shader.uniforms[i].loc;
+			break;
+		}
 	}
-	set_uniform_vec4(shaders.copy_shader.uniforms[0].loc, screenrect);
+	if (offset_size_loc >= 0) {
+		set_uniform_vec4(offset_size_loc, screenrect);
+	} else {
+		ERR_WARN("Unable to locate the \"offset_size\" shader uniform. Copy shaders may not function correctly.");
+	}
 
 	glBindVertexArray(canvas_data.screen_quad_array);
 	glDrawArrays(GL_TRIANGLES, 0, 6);

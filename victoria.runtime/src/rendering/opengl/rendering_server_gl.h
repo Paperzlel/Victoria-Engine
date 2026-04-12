@@ -1,7 +1,9 @@
 #pragma once
 
+#include "rendering/opengl/shaders/canvas.gen.h"
+#include "rendering/opengl/shaders/copy.gen.h"
+#include "rendering/opengl/shaders/scene.gen.h"
 #include "rendering/rendering_server.h"
-#include "shaders_gl.h"
 #include "utilities.h"
 
 #include <core/data/rid_owner.h>
@@ -313,9 +315,9 @@ private:
 	RID default_texture = RID();
 
 	struct Shaders {
-		SceneShader scene_shader;
-		CanvasShader canvas_shader;
-		CopyShader copy_shader;
+		GLSceneShader scene_shader;
+		GLCanvasShader canvas_shader;
+		GLCopyShader copy_shader;
 	} shaders;
 
 	static bool use_gles_over_gl;

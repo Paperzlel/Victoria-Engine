@@ -15,28 +15,10 @@
             "console": "integratedTerminal",
         },
         {
-            "name": "Launch (GDB) (Linux)",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}\\bin\\victoria.x86_64",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}\\bin\\",
-            "environment": [],
-            "symbolLoadInfo": {
-                "loadAll": true,
-                "exceptionList": ""
-            },
-            "windows": {
-                "MIMode": "lldb",
-                "miDebuggerPath": "C:\\Program Files\\LLVM\\bin\\lldb.exe"
-            }
-        },
-        {
             "name": "Launch (CodeLLDB) (Linux)",
             "type": "lldb",
             "request": "launch",
-            "program": "${workspaceFolder}/bin/victoria.x86_64",
+            "program": "${workspaceFolder}/bin/victoria",
             "args": [],
             "stopOnEntry": false,
             "cwd": "${workspaceFolder}/bin/",
@@ -46,7 +28,7 @@
             "name": "Launch (GDB) (Linux)",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/bin/victoria.x86_64",
+            "program": "${workspaceFolder}/bin/victoria",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/bin/",

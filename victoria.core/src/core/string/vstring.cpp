@@ -660,3 +660,7 @@ String vformat(const char *p_string, ...) {
 	ret[n_size + 1] = 0;
 	return ret;
 }
+
+bool vstring_compare(const char *p_lhs, const char *p_rhs) {
+	return strcmp(p_lhs, p_rhs) == 0;
+}

@@ -148,13 +148,11 @@ ifeq ($(PLATFORM), win32)
 	-@mkdir $(subst /,\,$(BUILD_DIR)), 2>NUL || cd .
 	-@mkdir $(subst /,\,$(BUILD_DIR)/$(TARGET)) 2>NUL || cd .
 	-@mkdir $(subst /,\,$(addprefix $(BUILD_DIR)/$(TARGET)/,$(DIRECTORIES))) 2>NUL || cd .
-	-@xcopy "assets\" "$(subst /,\,$(BUILD_DIR)/assets)\" /q /y 2>NUL || cd .
 endif
 ifeq ($(PLATFORM), linux)
 	@mkdir -p $(BUILD_DIR)
 	@mkdir -p $(BUILD_DIR)/$(TARGET)
 	@mkdir -p $(addprefix $(BUILD_DIR)/$(TARGET)/,$(DIRECTORIES))
-	@cp -r assets $(BUILD_DIR)
 endif
 	@echo Done.
 	@echo Compiling...
@@ -170,14 +168,11 @@ clean:
 ifeq ($(PLATFORM), win32)
 	@rmdir $(subst /,\,$(BUILD_DIR)/$(TARGET)) /S /Q 2>NUL || cd .
 	@del /F /Q $(subst /,\,$(BUILD_DIR)/$(OUTPUT_NAME).*) /Q 2>NUL || cd .
-	@del /F /Q $(subst /,\,$(BUILD_DIR)/assets) 2>NUL || cd .
-	@rmdir $(subst /,\,$(BUILD_DIR)/assets) /S /Q 2>NUL || cd .
 endif
 ifeq ($(PLATFORM), linux)
 	@rm -rf $(BUILD_DIR)/$(TARGET)
 	@rm -f $(BUILD_DIR)/$(OUTPUT_FILE)
 	@rm -rf $(WAYLAND_PROTOCOLS)
-	@rm -rf $(BUILD_DIR)/assets
 endif
 
 $(BUILD_DIR)/$(OUTPUT_FILE): $(OBJ_FILES)

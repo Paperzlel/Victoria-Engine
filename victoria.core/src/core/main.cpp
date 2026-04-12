@@ -114,7 +114,7 @@ Error core_initialize(int argc, char *argv[]) {
 		if (arg == "-v" || arg == "--verbose") {
 			OS::get_singleton()->set_stdout_verbose(true);
 			print_verbose(
-				"Running editor in verbose mode, remove the -v/--verbose tags when running in order to disable it.");
+				"Running engine in verbose mode, remove the -v/--verbose tags when running in order to disable it.");
 		}
 
 		if (arg == "--version") {

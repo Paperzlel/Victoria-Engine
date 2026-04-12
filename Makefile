@@ -14,7 +14,7 @@ all:
 	@$(MAKE) all -C victoria.core
 	@$(MAKE) all -C victoria.runtime
 	@$(MAKE) all -C victoria.tests 
-	@$(MAKE) all -C editor
+	@$(MAKE) all -C victoria.testbed
 
 generate_compile_commands:
 	@$(MAKE) generate_compile_commands -C freetype
@@ -22,13 +22,13 @@ generate_compile_commands:
 	@$(MAKE) generate_compile_commands -C victoria.core
 	@$(MAKE) generate_compile_commands -C victoria.runtime
 	@$(MAKE) generate_compile_commands -C victoria.tests
-	@$(MAKE) generate_compile_commands -C editor
-	@$(PYTHON) utils/gen_compile_commands.py --search editor victoria.tests victoria.core victoria.runtime glad freetype
+	@$(MAKE) generate_compile_commands -C victoria.testbed
+	@$(PYTHON) utils/gen_compile_commands.py --search victoria.testbed victoria.tests victoria.core victoria.runtime glad freetype
 
 clean:
 	@$(MAKE) clean -C victoria.core
 	@$(MAKE) clean -C victoria.runtime
-	@$(MAKE) clean -C editor
+	@$(MAKE) clean -C victoria.testbed
 	@$(MAKE) clean -C victoria.tests
 
 clean-all: clean

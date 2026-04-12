@@ -119,3 +119,5 @@ VAPI String itos(int64_t p_int);
 VAPI String ftos(double p_double);
 
 VAPI String vformat(const char *p_string, ...);
+
+VAPI bool vstring_compare(const char *p_lhs, const char *p_rhs);

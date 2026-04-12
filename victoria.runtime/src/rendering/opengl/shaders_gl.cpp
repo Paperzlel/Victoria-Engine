@@ -2,148 +2,104 @@
 #include "rendering/opengl/utilities.h"
 
 #include <core/io/filesystem.h>
+#include <core/os/os.h>
 #include <glad/gl.h>
 
 using namespace GL;
 
-void ShaderData::shader_set_active() {
+String GLShader::_add_shader_information(const char *p_shader) {
+	if (!p_shader) {
+		return nullptr;
+	}
+
+	String ret;
+	if (OS::get_singleton()->is_gles_over_gl()) {
+		ret += "#version 300 es\n\n";
+	} else {
+		ret += "#version 330 core\n\n";
+	}
+
+	ret += "precision mediump float;\n\n";
+	ret += p_shader;
+	return ret;
+}
+
+void GLShader::shader_set_active() {
 	glUseProgram(id);
 }
 
-Error ShaderData::_setup(const String &p_source_path) {
-	Ref<FileSystem> fs;
+void GLShader::shader_delete() {
+	glDeleteProgram(id);
+	id = 0;
+}
 
-	Error err;
-
-	// Vertex shader stage
+void GLShader::_setup(const char *p_vertex_source,
+					  const char *p_fragment_source,
+					  const char **p_uniforms,
+					  int p_uniform_count,
+					  UBO *p_ubos,
+					  int p_ubo_count) {
+	Error err = OK;
+	GLuint vert = 0;
+	GLuint frag = 0;
 	{
-		String n_vert_path = p_source_path + ".vert.glsl";
-		fs = FileSystem::open(n_vert_path, FileSystem::FILE_ACCESS_READ);
-		String vertex_contents = fs->get_contents_as_string();
-		fs->close();
-		// Manual cast as otherwise the data is lost
-		const char *vertex_cstr = vertex_contents.get_data();
+		// Cannot get pointer to an rvalue, so save as a const pointer
+		String vertex_source = _add_shader_information(p_vertex_source);
+		const char *cstr = vertex_source.ptr();
 
-		vert_id = glCreateShader(GL_VERTEX_SHADER);
-		glShaderSource(vert_id, 1, &vertex_cstr, nullptr);
-		glCompileShader(vert_id);
-
-		err = Utilities::get_singleton()->check_pipeline_errors(vert_id, Utilities::STATUS_COMPILE);
+		vert = glCreateShader(GL_VERTEX_SHADER);
+		glShaderSource(vert, 1, &cstr, nullptr);
+		glCompileShader(vert);
+		Error err = Utilities::get_singleton()->check_pipeline_errors(vert, Utilities::STATUS_COMPILE);
 		if (err != OK) {
-			ERR_FAIL_MSG_R("Failed to compile vertex shader.", err);
+			ERR_FAIL_MSG("Failed to compile vertex shader.");
 		}
-
-		shader_find_uniforms_from_source(vertex_contents);
 	}
 
-	// Fragment shader stage
 	{
-		String n_vert_path = p_source_path + ".frag.glsl";
-		fs = FileSystem::open(n_vert_path, FileSystem::FILE_ACCESS_READ);
-		String fragment_contents = fs->get_contents_as_string();
-		fs->close();
-		const char *fragment_cstr = fragment_contents.get_data();
+		// Cannot get pointer to an rvalue, so save as a const pointer
+		String fragment_source = _add_shader_information(p_fragment_source);
+		const char *cstr = fragment_source.ptr();
 
-		frag_id = glCreateShader(GL_FRAGMENT_SHADER);
-		glShaderSource(frag_id, 1, &fragment_cstr, nullptr);
-		glCompileShader(frag_id);
-
-		err = Utilities::get_singleton()->check_pipeline_errors(frag_id, Utilities::STATUS_COMPILE);
+		frag = glCreateShader(GL_FRAGMENT_SHADER);
+		glShaderSource(frag, 1, &cstr, nullptr);
+		glCompileShader(frag);
+		Error err = Utilities::get_singleton()->check_pipeline_errors(frag, Utilities::STATUS_COMPILE);
 		if (err != OK) {
-			ERR_FAIL_MSG_R(vformat("Failed to compile fragment shader \'%s\'", n_vert_path.get_data()), err);
+			ERR_FAIL_MSG("Failed to compile fragment shader.");
 		}
-
-		shader_find_uniforms_from_source(fragment_contents);
 	}
 
-	// Shader linking stage
-	{
-		id = glCreateProgram();
-		glAttachShader(id, vert_id);
-		glAttachShader(id, frag_id);
-		glLinkProgram(id);
-
-		err = Utilities::get_singleton()->check_pipeline_errors(id, Utilities::STATUS_LINK);
-		if (err != OK) {
-			return err;
-		}
-
-		glDeleteShader(vert_id);
-		glDeleteShader(frag_id);
+	id = glCreateProgram();
+	glAttachShader(id, vert);
+	glAttachShader(id, frag);
+	glLinkProgram(id);
+	err = Utilities::get_singleton()->check_pipeline_errors(id, Utilities::STATUS_LINK);
+	if (err != OK) {
+		ERR_FAIL_MSG("Failed to link shader program.");
 	}
+
+	glDeleteShader(vert);
+	glDeleteShader(frag);
 
 	glUseProgram(id);
-	// Get uniform locations and bind them
-	for (int i = 0; i < uniforms.size(); i++) {
-		Uniform &u = uniforms[i];
-		u.loc = glGetUniformLocation(id, u.name);
-		if (u.loc == -1) {
-			u.loc = 0;
-			// This should NEVER happen, since we get the uniforms from the code itself
-			ERR_WARN(vformat("The uniform \"%s\" does not exist within the shader.", u.name.get_data()));
-			continue;
-		}
+	// Setup uniforms
+	for (int i = 0; i < p_uniform_count; i++) {
+		Uniform u;
+		u.name = p_uniforms[i];
+		u.loc = glGetUniformLocation(id, p_uniforms[i]);
+		// Don't bother with uniform check since they should ALWAYS be in the shader at compile time.
+		uniforms.append(u);
 	}
 
-	for (int i = 0; i < ubos.size(); i++) {
-		UBO &ub = ubos[i];
-		int loc = glGetUniformBlockIndex(id, ub.name.get_data());
+	// Setup UBOs
+	for (int i = 0; i < p_ubo_count; i++) {
+		int loc = glGetUniformBlockIndex(id, p_ubos[i].name);
 		if (loc >= 0) {
-			glUniformBlockBinding(id, loc, ub.index);
+			glUniformBlockBinding(id, loc, p_ubos[i].index);
 		}
+		ubos.append(p_ubos[i]);
 	}
 
 	glUseProgram(0);
-	return OK;
-}
-
-void ShaderData::shader_find_uniforms_from_source(const String &p_source) {
-	Vector<String> lines = p_source.split("\n");
-	for (String &line : lines) {
-		if (line.begins_with("//")) {
-			continue;
-		}
-
-		int comment_pos = line.find("//");
-		if (comment_pos != -1) {
-			if (!line.contains("ubo")) {
-				line = line.left(comment_pos);
-			}
-		}
-
-		// Check for CR (since splitting by CRLF doesn't work on every file system)
-		if (line.ends_with("\r")) {
-			line = line.left(-1);
-		}
-
-		// Could be a uniform
-		if (line.contains("uniform")) {
-			Vector<String> indicators = line.split(" ");
-			// is a UBO
-			if (line.contains("layout")) {
-				UBO ub;
-				ub.name = indicators[2]; // Should be #3 in the array, could change if someone uses manual bindings
-				// Binding a UBO to a layout goes something like "{ // ubo:2"
-				ub.index = indicators[5].right(1).to_int();
-				ubos.push_back(ub);
-			} else {
-				Uniform un;
-				un.name = indicators[2].left(-1);
-				un.loc = 0;
-				uniforms.push_back(un);
-			}
-		}
-	}
-}
-
-Error SceneShader::_init() {
-	return _setup("assets/scene_shader");
-}
-
-Error CanvasShader::_init() {
-	return _setup("assets/canvas_shader");
-}
-
-Error CopyShader::_init() {
-	return _setup("assets/copy");
 }

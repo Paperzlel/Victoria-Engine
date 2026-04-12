@@ -25,8 +25,8 @@ A list of all things that are on the current plan for the engine, whether short-
 - [ ] Implement scene loaders
 - [ ] Implement `Dictionaries`
 - [ ] Define more math functions like `floor()` and `log()`
-- [ ] Optimise `Vector<T>` and other classes to have a singular pointer to save class size
-- [ ] Use move semantics in `Vector<T>` where applicable
+- [x] Optimise `Vector<T>` and other classes to have a singular pointer to save class size
+- [x] Use move semantics in `Vector<T>` where applicable
 
 ## Drivers
 - [x] Add `resize_viewport` command to EGL
@@ -58,7 +58,7 @@ A list of all things that are on the current plan for the engine, whether short-
 ## Platform
 - [x] Fix X11 displays not resizing when using EGL
 - [ ] Add `set_window_resize_callback` to Windows
-- [ ] Add `is_suspended` and `set_is_suspended` to Windows
+- [x] Add `is_suspended` and `set_is_suspended` to Windows
 - [ ] Add OS-specific library loading
 - [ ] Add `get_environment` and `set_environment` to Windows
 - [ ] Update Windows to use the new window settings and `r_error` in construction

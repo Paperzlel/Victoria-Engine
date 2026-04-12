@@ -2,7 +2,7 @@ include ../utils/core.mk
 include ../utils/general.mk
 
 # Marginally more generic version of the Makefile we'll let end-users use to compile their own projects.
-TARGET := editor
+TARGET := victoria_testbed
 INCLUDES += -Isrc -I../victoria.core/src -I../victoria.runtime/src
 LDFLAGS += -L$(BUILD_DIR)
 DIR := 
@@ -62,19 +62,13 @@ OBJ_FILES := $(patsubst src/%.cpp, $(BUILD_DIR)/$(TARGET)/%.o, $(CPP_FILES)) $(p
 # Setup final binary
 OUTPUT_NAME := victoria
 OUTPUT_FILE := $(OUTPUT_NAME)
-BINARY_COMMAND :=
+BINARY_COMMAND := -o $(BUILD_DIR)/$(OUTPUT_FILE)
 ifeq ($(PLATFORM), win32)
 	OUTPUT_FILE := $(OUTPUT_FILE).exe
-else
-ifeq ($(PLATFORM), linux)
-	OUTPUT_FILE := $(OUTPUT_FILE).x86_64
-endif
 endif
 
 ifeq ($(USE_MSVC), yes)
 	BINARY_COMMAND := /OUT:$(BUILD_DIR)/$(OUTPUT_FILE)
-else
-	BINARY_COMMAND := -o $(BUILD_DIR)/$(OUTPUT_FILE)
 endif
 
 
@@ -87,6 +81,7 @@ scaffold:
 ifeq ($(PLATFORM), win32)
 	-@mkdir $(subst /,\,$(BUILD_DIR)/$(TARGET)) 2>NUL || cd .
 	-@mkdir $(subst /,\,$(addprefix $(BUILD_DIR)/$(TARGET)/,$(DIRECTORIES))) 2>NUL || cd .
+	-@xcopy "assets\" "$(subst /,\,$(BUILD_DIR)/assets)\" /q /y 2>NUL || cd .
 endif
 ifeq ($(PLATFORM), linux)
 	@mkdir -p $(BUILD_DIR)/$(TARGET)
@@ -94,6 +89,7 @@ ifeq ($(PLATFORM), linux)
 ifneq ("$(DIRECTORIES)","")
 	@mkdir -p $(addprefix $(BUILD_DIR)/$(TARGET)/,$(DIRECTORIES))
 endif
+	@cp -r assets $(BUILD_DIR)
 endif
 	@echo Done.
 	@echo Compiling...
@@ -107,10 +103,13 @@ clean:
 ifeq ($(PLATFORM), win32)
 	@rmdir $(subst /,\,$(BUILD_DIR)/$(TARGET)) /S /Q 2>NUL || cd .
 	@del /F /Q $(subst /,\,$(BUILD_DIR)/$(OUTPUT_NAME).*) /Q 2>NUL || cd .
+	@del /F /Q $(subst /,\,$(BUILD_DIR)/assets) 2>NUL || cd .
+	@rmdir $(subst /,\,$(BUILD_DIR)/assets) /S /Q 2>NUL || cd .
 endif
 ifeq ($(PLATFORM), linux)
 	@rm -rf $(BUILD_DIR)/$(TARGET)
 	@rm -f $(BUILD_DIR)/$(OUTPUT_FILE)
+	@rm -rf $(BUILD_DIR)/assets
 endif
 
 $(BUILD_DIR)/$(OUTPUT_FILE): $(OBJ_FILES)

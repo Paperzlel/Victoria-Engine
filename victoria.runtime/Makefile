@@ -7,6 +7,8 @@ INCLUDES += -Isrc -Isrc/thirdparty -I../glad/include -I../victoria.core/src
 LDFLAGS += -lGLAD -lvictoria.core
 DEFINES += -DVEXPORT -DGLAD_GLX_NO_X11
 
+# Set shader directory
+GLSL_SHADER_DIR := src/rendering/opengl/shaders
 
 # Module options
 export USE_FREETYPE := yes
@@ -51,17 +53,22 @@ CPPFLAGS += $(CCFLAGS)
 ifeq ($(PLATFORM), win32)
 	C_FILES := $(call rwildcard,*,*.c)
 	CPP_FILES := $(call rwildcard,*,*.cpp)
-	DIRECTORIES := $(patsubst src,,$(patsubst src\\%,%,$(subst $(shell cd)\,,$(shell dir src /s /AD /B)))))
+	DIRECTORIES := $(patsubst src,,$(patsubst src\\%,%,$(subst $(shell cd)\,,$(shell dir src /s /AD /B))))
+	SHADERS := $(call rwildcard,*,*.glsl)
 else
 ifeq ($(PLATFORM), linux)
 	CPP_FILES := $(shell find src -type f -name "*.cpp")
 	C_FILES := $(shell find src -type f -name "*.c")
 	DIRECTORIES := $(patsubst src/%,%,$(shell find src -type d -not -path "src"))
+	SHADERS := $(shell find src -type f -name "*.glsl")
 endif
 endif
 
 # Collect object files
 OBJ_FILES := $(patsubst src/%.cpp, $(BUILD_DIR)/$(TARGET)/%.o, $(CPP_FILES)) $(patsubst src/%.c, $(BUILD_DIR)/$(TARGET)/%.o, $(C_FILES))
+
+# Collect generated headers
+GEN_FILES := $(patsubst src/%.glsl, src/%.gen.h, $(SHADERS))
 
 # Setup final binary
 OUTPUT_NAME := libvictoria.runtime
@@ -83,7 +90,7 @@ endif
 
 .PHONY: scaffold generate_compile_commands clean
 
-all: scaffold $(OBJ_FILES) $(BUILD_DIR)/$(OUTPUT_FILE)
+all: scaffold $(GEN_FILES) $(OBJ_FILES) $(BUILD_DIR)/$(OUTPUT_FILE)
 	@echo All tasks built successfully.
 
 scaffold:
@@ -107,13 +114,15 @@ clean:
 ifeq ($(PLATFORM), win32)
 	@rmdir $(subst /,\,$(BUILD_DIR)/$(TARGET)) /S /Q 2>NUL || cd .
 	@del /F /Q $(subst /,\,$(BUILD_DIR)/$(OUTPUT_NAME).*) /Q 2>NUL || cd .
+	@del /F /Q $(subst /,\,$(GLSL_SHADER_DIR)/*.gen.h) 2>NUL || cd .
 endif
 ifeq ($(PLATFORM), linux)
 	@rm -rf $(BUILD_DIR)/$(TARGET)
 	@rm -f $(BUILD_DIR)/$(OUTPUT_FILE)
+	@rm -f $(GLSL_SHADER_DIR)/*.gen.h
 endif
 
-$(BUILD_DIR)/$(OUTPUT_FILE): $(OBJ_FILES)
+$(BUILD_DIR)/$(OUTPUT_FILE): $(GEN_FILES) $(OBJ_FILES)
 	@echo Done.
 	@echo Building binary...
 	@$(LD) $(OBJ_FILES) $(BINARY_COMMAND) $(LDFLAGS)
@@ -136,5 +145,9 @@ ifeq ($(COMPILER), msvc)
 else
 	@$(CXX) $< $(CPPFLAGS) -c -o $@ $(DEFINES) $(INCLUDES)
 endif
+
+$(GLSL_SHADER_DIR)/%.gen.h: $(GLSL_SHADER_DIR)/%.glsl
+	@echo Generating $@...
+	@$(PYTHON) glsl_builders.py $<
 
 -include $(OBJ_FILES:.o=.d)
