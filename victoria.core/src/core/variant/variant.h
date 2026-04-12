@@ -162,8 +162,8 @@ private:
 public:
 	String stringify(int recursion_count = 0) const;
 
-	static Type get_return_type(const Variant &p_var) {
-		return p_var.type;
+	Type get_type() {
+		return type;
 	}
 
 	void _ref(const Variant &p_other);
@@ -179,7 +179,9 @@ public:
 	}
 
 	bool operator==(const Variant &other) const;
-	bool operator!=(const Variant &other) const;
+	bool operator!=(const Variant &other) const {
+		return !(*this == other);
+	}
 
 	bool hash_compare(const Variant &p_other, int recursion_count) const;
 

@@ -259,10 +259,6 @@ bool Variant::operator==(const Variant &other) const {
 	return hash_compare(other, 0);
 }
 
-bool Variant::operator!=(const Variant &other) const {
-	return !hash_compare(other, 0);
-}
-
 bool Variant::hash_compare(const Variant &p_other, int recursion_count) const {
 	if (type != p_other.type) {
 		return false;

@@ -75,7 +75,11 @@ VAPI const char *get_error_message(Error p_id);
 #define FUNCTION_STR __FUNCTION__
 
 // Wrapper to make it so that a condition given can be expressed properly. Some evaluations do not work without this.
-#define cond(x) x
+#ifdef __GNUC__
+#	define cond(x) __builtin_expect(!!(x), 1)
+#else
+#	define cond(x) x
+#endif
 
 /**
  * GENERIC ERRORS

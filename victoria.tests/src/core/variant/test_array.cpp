@@ -1,4 +1,4 @@
-#include "test_array.h"
+#include "core/variant/test_array.h"
 #include "test_macros.h"
 #include "test_manager.h"
 
@@ -30,14 +30,14 @@ static bool array_test_strings_atomic() {
 	a.push_back("\'\'\'\'\'");
 	a.push_back(false);
 	TEST_EQ(a[0], "Hello, World!");
-	TEST_EQ(Variant::get_return_type(a[0]), Variant::STRING);
-	TEST_EQ(Variant::get_return_type(a[2]), Variant::INT);
+	TEST_EQ(a[0].get_type(), Variant::STRING);
+	TEST_EQ(a[2].get_type(), Variant::INT);
 	TEST_EQ(a[6], Variant(false));
 	Variant first = a.pop_front();
-	TEST_EQ(Variant::get_return_type(first), Variant::STRING);
+	TEST_EQ(first.get_type(), Variant::STRING);
 	TEST_EQ(a.size(), 6);
 	first = a.pop_back();
-	TEST_EQ(Variant::get_return_type(first), Variant::BOOL);
+	TEST_EQ(first.get_type(), Variant::BOOL);
 	a.clear();
 	TEST_EQ(a.size(), 0);
 	return true;
