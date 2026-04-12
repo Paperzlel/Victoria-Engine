@@ -34,10 +34,29 @@ w
 # Linking files and debug symbols
 *.ilk
 *.pdb
+*.exp
 
-# Other excludes
+# Build artifacts
 bin/
-.cache/
-*.gen.*
-compile_flags.txt
 compile_commands.json
+compile_flags.txt
+temp.json
+
+# Generated files 
+*.gen.*
+
+# Clangd cache
+.cache/
+.clangd/
+
+# Visual Studio files
+.vs/
+*.sln
+*.vcxproj
+*.vcxproj.*
+x64/
+*.user
+Debug/
+
+# Temporary keepsakes
+!cube.obj

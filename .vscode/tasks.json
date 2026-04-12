@@ -2,31 +2,117 @@
     "version": "2.0.0",
     "tasks" : [
         {
-            "label": "Build Engine",
+            "label": "Build All (Debug)",
             "type": "shell",
-            "windows" : {
-                "command": "${workspaceFolder}\\build.bat",
-            },
-            "linux" : {
-                "command": "${workspaceFolder}/build.sh",
-            },
+            "command": "make DEBUG=yes",
             "problemMatcher": [
                 "$gcc"
             ],
             "group": {
                 "kind": "build",
                 "isDefault": true
+            },
+        },
+        {
+            "label": "Build All (Release)",
+            "type": "shell",
+            "command": "make",
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+        },
+        {
+            "label": "Build All (Windows, Debug, MSVC)",
+            "type": "shell",
+            "command": "make DEBUG=yes USE_MSVC=yes",
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+        },
+        {
+            "label": "Build Engine (Linux, Debug, Clang)",
+            "type": "shell",
+            "command": "make DEBUG=yes",
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": false
             }
         },
         {
-            "label": "Clean Binaries",
+            "label": "Build Engine (Debug, GCC)",
             "type": "shell",
-            "windows": {
-                "command": "${workspaceFolder}\\clean.bat"
-            },
-            "linux": {
-                "command": "${workspaceFolder}/clean.sh"
-            },
+            "command": "make DEBUG=yes COMPILER=gcc",
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
+        {
+            "label": "Build Engine (Release, Clang)",
+            "type": "shell",
+            "command": "make",
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
+        {
+            "label": "Build Engine (Release, GCC)",
+            "type": "shell",
+            "command": "make COMPILER=gcc",
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
+        {
+            "label": "Clean Output",
+            "type": "shell",
+            "command": "make clean",
+            "problemMatcher": [
+                "$gcc"
+            ],
+        },
+        {
+            "label": "Rebuild compile_commands.json (Debug)",
+            "type": "shell",
+            "command": "make generate_compile_commands DEBUG=yes",
+            "problemMatcher": [
+                "$python"
+            ]
+        },
+        {
+            "label": "Rebuild compile_commands.json (Release)",
+            "type": "shell",
+            "command": "make generate_compile_commands",
+            "problemMatcher": [
+                "$python"
+            ]
+        },
+        {
+            "label": "Run All Tests",
+            "type": "process",
+            "command": "bin/victoria.tests",
             "problemMatcher": [
                 "$gcc"
             ]

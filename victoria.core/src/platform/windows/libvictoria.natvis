@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+	<Type Name="Vector&lt;*&gt;">
+		<Expand>
+			<Item Name="[size]">_ptr ? element_count : 0</Item>
+			<ArrayItems>
+				<Size>_ptr ? element_count : 0</Size>
+				<ValuePointer>($T1 *)_ptr</ValuePointer>
+			</ArrayItems>
+		</Expand>
+	</Type>
+	
+	<Type Name="String">
+		<DisplayString Condition="_data._ptr == 0">[empty]</DisplayString>
+		<DisplayString Condition="_data._ptr != 0">{_data._ptr,s8}</DisplayString>
+		<StringView Condition="_data._ptr != 0">_data._ptr,s8</StringView>
+	</Type>
+	
+	<Type Name="Array">
+		<Expand>
+			<Item Name="[size]">_data->_array._ptr ? _data->_array._ptr.element_count : 0</Item>
+			<ArrayItems>
+				<Size>_data->_array._ptr ? _data->_array._ptr.element_count : 0</Size>
+				<ValuePointer>(Variant *)_data->_array._ptr</ValuePointer>
+			</ArrayItems>
+		</Expand>
+	</Type>
+
+	<Type Name="List&lt;*&gt;">
+		<Expand>
+			<Item Name="[size]">element_count</Item>
+			<LinkedListItems>
+				<Size>element_count</Size>
+				<HeadPointer>head</HeadPointer>
+				<NextPointer>next_ptr</NextPointer>
+				<ValueNode>value</ValueNode>
+			</LinkedListItems>
+		</Expand>
+	</Type>
+	
+	<Type Name="HashTableElement&lt;*,*&gt;">
+		<DisplayString>{{Key = {($T1 *) &amp;data.key} Value = {($T2 *) &amp;data.value}}}</DisplayString>
+		<Expand>
+			<Item Name="[key]">($T1 *) &amp;data.key</Item>
+			<Item Name="[value]">($T2 *) &amp;data.value</Item>
+		</Expand>
+	</Type>
+	
+	<Type Name="HashTable&lt;*,*,*,*&gt;">
+		<Expand>
+			<Item Name="[size]">_head ? element_count : 0</Item>
+			<LinkedListItems>
+				<Size>_head ? element_count : 0</Size>
+				<HeadPointer>_head</HeadPointer>
+				<NextPointer>next</NextPointer>
+				<ValueNode>(*this)</ValueNode>
+			</LinkedListItems>
+		</Expand>
+	</Type>
+
+	<Type Name="KeyValue&lt;*,*&gt;">
+		<DisplayString>{value}</DisplayString>
+	</Type>
+
+	<Type Name="Variant">
+		<DisplayString Condition="type == Variant::NIL">nil</DisplayString>
+		<DisplayString Condition="type == Variant::BOOL">{_data._bool}</DisplayString>
+		<DisplayString Condition="type == Variant::INT">{_data._int}</DisplayString>
+		<DisplayString Condition="type == Variant::FLOAT">{_data._float}</DisplayString>
+		<DisplayString Condition="type == Variant::STRING">{*(String *)_data._mem}</DisplayString>
+		<DisplayString Condition="type == Variant::VECTOR2">{*(Vector2 *)_data._mem}</DisplayString>
+		<DisplayString Condition="type == Variant::VECTOR2I">{*(Vector2i *)_data._mem}</DisplayString>
+		<DisplayString Condition="type == Variant::VECTOR3">{*(Vector3 *)_data._mem}</DisplayString>
+		<DisplayString Condition="type == Variant::VECTOR3I">{*(Vector3i *)_data._mem}</DisplayString>
+		<DisplayString Condition="type == Variant::VECTOR4">{*(Vector4 *)_data._mem}</DisplayString>
+		<DisplayString Condition="type == Variant::VECTOR4I">{*(Vector4i *)_data._mem}</DisplayString>
+		<DisplayString Condition="type == Variant::ARRAY">{*(Array *)_data._mem}</DisplayString>
+		<DisplayString Condition="type == Variant::BYTE_ARRAY">{reinterpret_cast&lt;const Variant::ArrayRef&lt;unsigned char&gt;*&gt;(_data._array)->array}</DisplayString>
+		<DisplayString Condition="type == Variant::INT32_ARRAY">{reinterpret_cast&lt;const Variant::ArrayRef&lt;int&gt;*&gt;(_data._array)->array}</DisplayString>
+		<DisplayString Condition="type == Variant::INT64_ARRAY">{reinterpret_cast&lt;const Variant::ArrayRef&lt;signed long long&gt;*&gt;(_data._array)->array}</DisplayString>
+		<DisplayString Condition="type == Variant::FLOAT32_ARRAY">{reinterpret_cast&lt;const Variant::ArrayRef&lt;float&gt;*&gt;(_data._array)->array}</DisplayString>
+		<DisplayString Condition="type == Variant::FLOAT64_ARRAY">{reinterpret_cast&lt;const Variant::ArrayRef&lt;double&gt;*&gt;(_data._array)->array}</DisplayString>
+		<DisplayString Condition="type == Variant::VECTOR2_ARRAY">{reinterpret_cast&lt;const Variant::ArrayRef&lt;Vector2&gt;*&gt;(_data._array)->array}</DisplayString>
+		<DisplayString Condition="type == Variant::VECTOR3_ARRAY">{reinterpret_cast&lt;const Variant::ArrayRef&lt;Vector3&gt;*&gt;(_data._array)->array}</DisplayString>
+		<DisplayString Condition="type == Variant::VECTOR4_ARRAY">{reinterpret_cast&lt;const Variant::ArrayRef&lt;Vector4&gt;*&gt;(_data._array)->array}</DisplayString>
+		<DisplayString Condition="type == Variant::VARIANT_MAX">[INVALID]</DisplayString>
+
+		<StringView Condition="type == Variant::STRING &amp;&amp; ((String *)(_data._mem))->_data._ptr">((String *)(_data._mem))->_data._ptr,s8</StringView>
+
+		<Expand>
+			<Item Name="[value]" Condition="type == Variant::BOOL">_data._bool</Item>
+			<Item Name="[value]" Condition="type == Variant::INT">_data._int</Item>
+			<Item Name="[value]" Condition="type == Variant::FLOAT">_data._float</Item>
+			<Item Name="[value]" Condition="type == Variant::STRING">*(String *)_data._mem</Item>
+			<Item Name="[value]" Condition="type == Variant::VECTOR2">*(Vector2 *)_data._mem</Item>
+			<Item Name="[value]" Condition="type == Variant::VECTOR2I">*(Vector2i *)_data._mem</Item>
+			<Item Name="[value]" Condition="type == Variant::VECTOR3">*(Vector3 *)_data._mem</Item>
+			<Item Name="[value]" Condition="type == Variant::VECTOR3I">*(Vector3i *)_data._mem</Item>
+			<Item Name="[value]" Condition="type == Variant::VECTOR4">*(Vector4 *)_data._mem</Item>
+			<Item Name="[value]" Condition="type == Variant::VECTOR4I">*(Vector4i *)_data._mem</Item>
+			<Item Name="[value]" Condition="type == Variant::ARRAY">*(Array *)_data._mem</Item>
+			<Item Name="[value]" Condition="type == Variant::BYTE_ARRAY">reinterpret_cast&lt;const Variant::ArrayRef&lt;unsigned char&gt;*&gt;(_data._array)->array</Item>
+			<Item Name="[value]" Condition="type == Variant::INT32_ARRAY">reinterpret_cast&lt;const Variant::ArrayRef&lt;int&gt;*&gt;(_data._array)->array</Item>
+			<Item Name="[value]" Condition="type == Variant::INT64_ARRAY">reinterpret_cast&lt;const Variant::ArrayRef&lt;signed long long&gt;*&gt;(_data._array)->array</Item>
+			<Item Name="[value]" Condition="type == Variant::FLOAT32_ARRAY">reinterpret_cast&lt;const Variant::ArrayRef&lt;float&gt;*&gt;(_data._array)->array</Item>
+			<Item Name="[value]" Condition="type == Variant::FLOAT64_ARRAY">reinterpret_cast&lt;const Variant::ArrayRef&lt;double&gt;*&gt;(_data._array)->array</Item>
+			<Item Name="[value]" Condition="type == Variant::VECTOR2_ARRAY">reinterpret_cast&lt;const Variant::ArrayRef&lt;Vector2&gt;*&gt;(_data._array)->array</Item>
+			<Item Name="[value]" Condition="type == Variant::VECTOR3_ARRAY">reinterpret_cast&lt;const Variant::ArrayRef&lt;Vector3&gt;*&gt;(_data._array)->array</Item>
+			<Item Name="[value]" Condition="type == Variant::VECTOR4_ARRAY">reinterpret_cast&lt;const Variant::ArrayRef&lt;Vector4&gt;*&gt;(_data._array)->array</Item>
+			
+		</Expand>
+	</Type>
+
+	<Type Name="Vector2">
+		<DisplayString>({x,g}, {y,g})</DisplayString>
+		<Expand>
+			<Item Name="[x]">x</Item>
+			<Item Name="[y]">y</Item>
+		</Expand>
+	</Type>
+	
+	<Type Name="Vector2i">
+		<DisplayString>({x}, {y})</DisplayString>
+		<Expand>
+			<Item Name="[x]">x</Item>
+			<Item Name="[y]">y</Item>
+		</Expand>
+	</Type>
+
+	<Type Name="Vector3">
+		<DisplayString>({x,g}, {y,g}, {z,g})</DisplayString>
+		<Expand>
+			<Item Name="[x]">x</Item>
+			<Item Name="[y]">y</Item>
+			<Item Name="[z]">z</Item>
+		</Expand>
+	</Type>
+
+	<Type Name="Vector3i">
+		<DisplayString>({x}, {y}, {z})</DisplayString>
+		<Expand>
+			<Item Name="[x]">x</Item>
+			<Item Name="[y]">y</Item>
+			<Item Name="[z]">z</Item>
+		</Expand>
+	</Type>
+	
+	<Type Name="Vector4">
+		<DisplayString>({x,g}, {y,g}, {z,g}, {w,g})</DisplayString>
+		<Expand>
+			<Item Name="[x]">x</Item>
+			<Item Name="[y]">y</Item>
+			<Item Name="[z]">z</Item>
+			<Item Name="[w]">w</Item>
+		</Expand>
+	</Type>
+
+	<Type Name="Vector4i">
+		<DisplayString>({x}, {y}, {z}, {w})</DisplayString>
+		<Expand>
+			<Item Name="[x]">x</Item>
+			<Item Name="[y]">y</Item>
+			<Item Name="[z]">z</Item>
+			<Item Name="[w]">w</Item>
+		</Expand>
+	</Type>
+	
+</AutoVisualizer>

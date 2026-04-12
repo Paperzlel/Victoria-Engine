@@ -1,0 +1,22 @@
+#include "core/math/vector4.h"
+
+#include "core/math/vector4i.h"
+#include "core/string/vstring.h"
+
+/**
+ * @brief Take the current vector and makes it into a string, which can then be printed to the console if needed.
+ * @returns The current vector as a string
+ */
+String Vector4::stringify() const {
+	String ret;
+	ret += "(" + ftos(x) + ", " + ftos(y) + ", " + ftos(z) + ", " + ftos(w) + ")";
+	return ret;
+}
+
+Vector4::operator String() const {
+	return stringify();
+}
+
+Vector4::operator Vector4i() const {
+	return Vector4i((int64_t)x, (int64_t)y, (int64_t)z, (int64_t)w);
+}

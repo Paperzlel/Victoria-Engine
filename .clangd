@@ -1,0 +1,21 @@
+--- 
+
+CompileFlags:
+  Add:
+    - -ferror-limit=100
+
+If:
+  PathMatch: [.*\.h, .*\.c]
+Completion:
+  AllScopes: Yes
+# Disabled, seems to not exist on newer versions of clangd
+# Documentation:
+#   CommentFormat: Doxygen
+
+---
+
+If:
+  PathMatch: [src/thirdparty/.*\.h, src/thirdparty/.*\.c]
+
+Diagnostics:
+  Suppress: "*"
