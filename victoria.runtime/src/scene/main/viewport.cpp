@@ -1,6 +1,6 @@
-#include "rendering/rendering_server.h"
 #include "scene/main/viewport.h"
 
+#include "rendering/rendering_server.h"
 #include "scene/3d/camera_3d.h"
 #include "scene/main/canvas_item.h"
 #include "scene/main/window.h"

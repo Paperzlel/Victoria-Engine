@@ -1,6 +1,6 @@
-#include "rendering/rendering_server.h"
 #include "scene/gui/text.h"
 
+#include "rendering/rendering_server.h"
 #include "scene/main/viewport.h"
 
 void Text::_notification(int p_what) {

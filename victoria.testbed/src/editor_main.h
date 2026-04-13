@@ -1,7 +1,7 @@
 #pragma once
 
 #include <core/config/class_registry.h>
-#include <core/typedefs.h>
+
 #include <scene/gui/object_ui.h>
 #include <scene/main/object.h>
 #include <scene/resources/font.h>

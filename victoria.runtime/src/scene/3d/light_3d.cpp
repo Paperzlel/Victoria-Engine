@@ -1,5 +1,6 @@
-#include "rendering/rendering_server.h"
 #include "scene/3d/light_3d.h"
+
+#include "rendering/rendering_server.h"
 
 RID Light3D::get_light() const {
 	return light;

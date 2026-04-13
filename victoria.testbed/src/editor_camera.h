@@ -1,7 +1,7 @@
 #pragma once
 
 #include <core/math/vector2.h>
-#include <core/typedefs.h>
+
 #include <scene/3d/camera_3d.h>
 
 class EditorCamera : public Camera3D {

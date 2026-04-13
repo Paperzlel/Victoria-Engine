@@ -6,6 +6,7 @@
 #include <core/math/transform_3d.h>
 #include <core/os/os.h>
 #include <core/string/print_string.h>
+
 #include <glad/egl.h>
 #include <glad/gl.h>
 #include <stb/stb_image.h>

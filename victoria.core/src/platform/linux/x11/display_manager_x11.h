@@ -1,7 +1,6 @@
 #pragma once
 
 #include "core/typedefs.h"
-
 #if PLATFORM_LINUX
 
 #	include "gl_manager_egl_x11.h"

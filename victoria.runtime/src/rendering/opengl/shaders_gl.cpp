@@ -1,8 +1,10 @@
 #include "rendering/opengl/shaders_gl.h"
+
 #include "rendering/opengl/utilities.h"
 
 #include <core/io/filesystem.h>
 #include <core/os/os.h>
+
 #include <glad/gl.h>
 
 using namespace GL;

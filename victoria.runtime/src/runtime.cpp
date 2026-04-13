@@ -1,10 +1,10 @@
+#include "runtime.h"
+
 #include "importers/resource_importer_font.h"
 #include "importers/resource_importer_image.h"
 #include "importers/resource_importer_obj.h"
 #include "rendering/opengl/rendering_server_gl.h"
 #include "rendering/rendering_server.h"
-#include "runtime/main.h"
-
 #include "scene/main/scene_tree.h"
 #include "scene/register_scene_classes.h"
 

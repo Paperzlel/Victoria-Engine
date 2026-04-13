@@ -7,8 +7,6 @@
 #include "core/os/memory.h"
 #include "core/typedefs.h"
 
-#include <type_traits>
-
 // To read:
 // - Hash key
 // - Check against hash in slot

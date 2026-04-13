@@ -1,4 +1,4 @@
-#include "core/main.h"
+#include "core.h"
 
 #include "core/io/input.h"
 #include "core/io/resource_importer.h"

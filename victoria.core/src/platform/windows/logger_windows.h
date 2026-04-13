@@ -1,8 +1,8 @@
 #pragma once
 
 #include "core/typedefs.h"
-
 #if PLATFORM_WINDOWS
+
 #	include "core/io/logger.h"
 
 /**

@@ -5,6 +5,7 @@
 #include <core/data/rid.h>
 #include <core/data/vector.h>
 #include <core/math/mat4.h>
+
 #include <glad/gl.h>
 
 namespace GL {

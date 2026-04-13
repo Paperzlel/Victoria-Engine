@@ -1,6 +1,6 @@
-#include "rendering/rendering_server.h"
-
 #include "scene/gui/object_ui.h"
+
+#include "rendering/rendering_server.h"
 #include "scene/main/viewport.h"
 
 #include <core/config/class_registry.h>

@@ -8,7 +8,6 @@
 #include "core/math/vector4.h"
 #include "core/math/vector4i.h"
 #include "core/string/vstring.h"
-#include "core/typedefs.h"
 #include "core/variant/array.h"
 
 typedef Vector<uint8_t> ByteArray;

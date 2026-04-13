@@ -1,7 +1,5 @@
 #pragma once
 
-#include "error_types.h"
-
 #include "core/typedefs.h"
 
 enum ErrorType {

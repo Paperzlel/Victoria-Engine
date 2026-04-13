@@ -1,10 +1,12 @@
 #include "editor_main.h"
 
-#include <core/main.h>
 #include <core/os/os.h>
-#include <runtime/main.h>
+
 #include <scene/main/scene_tree.h>
 #include <scene/main/window.h>
+
+#include <core.h>
+#include <runtime.h>
 
 int main(int argc, char *argv[]) {
 	Error err = core_initialize(argc, argv);

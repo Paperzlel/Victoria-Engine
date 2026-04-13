@@ -1,10 +1,11 @@
 #pragma once
 
+#include "utilities.h"
+
 #include "rendering/opengl/shaders/canvas.gen.h"
 #include "rendering/opengl/shaders/copy.gen.h"
 #include "rendering/opengl/shaders/scene.gen.h"
 #include "rendering/rendering_server.h"
-#include "utilities.h"
 
 #include <core/data/rid_owner.h>
 

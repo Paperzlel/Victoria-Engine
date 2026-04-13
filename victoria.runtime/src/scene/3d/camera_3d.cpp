@@ -1,6 +1,6 @@
-#include "rendering/rendering_server.h"
-
 #include "scene/3d/camera_3d.h"
+
+#include "rendering/rendering_server.h"
 #include "scene/main/viewport.h"
 
 void Camera3D::_update_camera() {

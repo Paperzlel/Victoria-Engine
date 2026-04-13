@@ -1,6 +1,6 @@
-#include "rendering/rendering_server.h"
 #include "scene/main/canvas_item.h"
 
+#include "rendering/rendering_server.h"
 #include "scene/main/viewport.h"
 
 void CanvasItem::_set_transforms_dirty() {

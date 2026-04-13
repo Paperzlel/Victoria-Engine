@@ -1,8 +1,7 @@
 #pragma once
 
 #include "scene/3d/visual_instance_3d.h"
-
-#include <scene/resources/mesh.h>
+#include "scene/resources/mesh.h"
 
 class VAPI Mesh3D : public VisualInstance3D {
 	VREGISTER_CLASS(Mesh3D, VisualInstance3D)

@@ -1,10 +1,12 @@
 #include "importers/resource_importer_image.h"
+
 #include "rendering/rendering_server.h"
+#include "scene/resources/texture.h"
 
 #include <core/io/filesystem.h>
 #include <core/variant/array.h>
 #include <core/variant/variant.h>
-#include <scene/resources/texture.h>
+
 #include <stb/stb_image.h>
 
 Ref<Resource> ResourceFormatImporterImage::_import(const String &p_file, int p_argc, Variant *p_args) {

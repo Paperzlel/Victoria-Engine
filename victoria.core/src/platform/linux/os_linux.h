@@ -1,7 +1,6 @@
 #pragma once
 
 #include "core/typedefs.h"
-
 #if PLATFORM_LINUX
 
 #	include "core/data/hashtable.h"

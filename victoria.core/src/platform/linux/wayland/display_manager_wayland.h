@@ -1,7 +1,6 @@
 #pragma once
 
 #include "core/typedefs.h"
-
 #if PLATFORM_LINUX
 #	ifdef WAYLAND_ENABLED
 
@@ -89,39 +88,34 @@ private:
 	static void
 	_on_zxdg_decoration_manager_configure(void *p_data, struct zxdg_toplevel_decoration_v1 *p_decor, uint32_t p_mode);
 
-	static constexpr struct wl_registry_listener global_listener{
+	static constexpr struct wl_registry_listener global_listener {
 		.global = DisplayManagerWayland::_on_registry_global,
 		.global_remove = DisplayManagerWayland::_on_registry_global_remove,
 	};
 
-	static constexpr struct wl_seat_listener seat_listener{
-		.capabilities = _on_seat_capabilities_changed,
-		.name = _on_seat_name_changed,
+	static constexpr struct wl_seat_listener seat_listener {
+		.capabilities = _on_seat_capabilities_changed, .name = _on_seat_name_changed,
 	};
 
-	static constexpr struct wl_pointer_listener pointer_listener{
-		.enter = _on_pointer_enter,
-		.leave = _on_pointer_leave,
-		.motion = _on_pointer_motion,
-		.button = _on_pointer_button,
-		.axis = _on_pointer_axis,
-		.frame = _on_pointer_frame,
+	static constexpr struct wl_pointer_listener pointer_listener {
+		.enter = _on_pointer_enter, .leave = _on_pointer_leave, .motion = _on_pointer_motion,
+		.button = _on_pointer_button, .axis = _on_pointer_axis, .frame = _on_pointer_frame,
 	};
 
-	static constexpr struct xdg_surface_listener surface_listener{
+	static constexpr struct xdg_surface_listener surface_listener {
 		.configure = DisplayManagerWayland::_on_xdg_surface_configure,
 	};
 
-	static constexpr struct xdg_toplevel_listener toplevel_listener{
+	static constexpr struct xdg_toplevel_listener toplevel_listener {
 		.configure = DisplayManagerWayland::_on_xdg_toplevel_configure,
 		.close = DisplayManagerWayland::_on_xdg_toplevel_close,
 	};
 
-	static constexpr struct xdg_wm_base_listener wm_base_listener{
+	static constexpr struct xdg_wm_base_listener wm_base_listener {
 		.ping = DisplayManagerWayland::_on_xdg_wm_base_ping,
 	};
 
-	static constexpr struct zxdg_toplevel_decoration_v1_listener toplevel_decor_listener{
+	static constexpr struct zxdg_toplevel_decoration_v1_listener toplevel_decor_listener {
 		.configure = DisplayManagerWayland::_on_zxdg_decoration_manager_configure,
 	};
 

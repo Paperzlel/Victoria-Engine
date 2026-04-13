@@ -1,5 +1,6 @@
-#include "rendering/rendering_server.h"
 #include "scene/main/window.h"
+
+#include "rendering/rendering_server.h"
 
 #include <core/config/callable_method_pointer.h>
 

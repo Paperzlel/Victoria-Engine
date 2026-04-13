@@ -1,5 +1,6 @@
-#include "rendering/opengl/rendering_server_gl.h"
 #include "rendering/opengl/utilities.h"
+
+#include "rendering/opengl/rendering_server_gl.h"
 
 #include <core/os/os.h>
 #include <core/string/print_string.h>

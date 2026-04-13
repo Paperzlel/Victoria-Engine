@@ -1,6 +1,6 @@
 #include "importers/resource_importer_font.h"
-#include "rendering/rendering_server.h"
 
+#include "rendering/rendering_server.h"
 #include "scene/resources/font.h"
 
 #ifdef FREETYPE_ENABLED

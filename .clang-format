@@ -20,13 +20,13 @@ Cpp11BracedListStyle: true
 IndentAccessModifiers: false
 IncludeBlocks: Regroup
 IncludeCategories:
-  - Regex: ^"(core|drivers|scene)/.*"$
+  - Regex: ^"(core|drivers)/.*"$
     Priority: 2
-  - Regex: ^"(importers|platform|rendering|runtime)/.*"$
+  - Regex: ^"(importers|platform|rendering|scene)/.*"$
     Priority: 3
-  - Regex: ^<(core|drivers|scene)/.*>$
+  - Regex: ^<(core|drivers)/.*>$
     Priority: 4
-  - Regex: ^<(importers|platform|rendering|runtime)/.*>$
+  - Regex: ^<(importers|platform|rendering|scene)/.*>$
     Priority: 5
   - Regex: ^<.*\.h>$
     Priority: 6
