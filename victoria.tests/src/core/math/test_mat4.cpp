@@ -1,6 +1,7 @@
+#include "core/math/test_mat4.h"
+
 #include "test_macros.h"
 #include "test_manager.h"
-#include "test_mat4.h"
 
 #include <core/math/mat4.h>
 

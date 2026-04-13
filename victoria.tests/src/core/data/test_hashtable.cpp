@@ -1,4 +1,5 @@
-#include "test_hashtable.h"
+#include "core/data/test_hashtable.h"
+
 #include "test_macros.h"
 #include "test_manager.h"
 

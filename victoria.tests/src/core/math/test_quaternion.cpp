@@ -1,6 +1,7 @@
+#include "core/math/test_quaternion.h"
+
 #include "test_macros.h"
 #include "test_manager.h"
-#include "test_quaternion.h"
 
 #include <core/math/quaternion.h>
 

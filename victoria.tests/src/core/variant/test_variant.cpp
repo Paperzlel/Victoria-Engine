@@ -1,4 +1,5 @@
 #include "core/variant/test_variant.h"
+
 #include "test_macros.h"
 #include "test_manager.h"
 

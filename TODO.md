@@ -89,8 +89,8 @@ A list of all things that are on the current plan for the engine, whether short-
 - [ ] Add tests for `RBMaps`, `RIDs` and `RIDOwners`.
 - [ ] Add tests for all `VectorN` and `VectorNi` classes.
 - [ ] Add tests for `Transform2D` and `Transform3D`.
-- [ ] Improve tests for `Array`.
-- [ ] Add tests for `Variant`.
+- [x] Improve tests for `Array`.
+- [x] Add tests for `Variant`.
 - [ ] Add tests for `String`.
 - [ ] Add tests for `Input`.
 - [ ] Add tests for `Memory`.

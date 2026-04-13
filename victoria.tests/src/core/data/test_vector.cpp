@@ -1,6 +1,7 @@
+#include "core/data/test_vector.h"
+
 #include "test_macros.h"
 #include "test_manager.h"
-#include "test_vector.h"
 
 #include <core/data/vector.h>
 

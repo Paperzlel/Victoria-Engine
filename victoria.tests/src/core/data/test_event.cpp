@@ -1,4 +1,5 @@
-#include "test_event.h"
+#include "core/data/test_event.h"
+
 #include "test_macros.h"
 #include "test_manager.h"
 

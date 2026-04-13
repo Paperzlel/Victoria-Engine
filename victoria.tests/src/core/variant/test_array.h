@@ -1,5 +1,3 @@
-#pragma once 
-
-#include "core/typedefs.h"
+#pragma once
 
 void array_register_tests();

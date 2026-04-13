@@ -9,10 +9,6 @@
 #include "core/variant/variant.h"
 #include "core/version.h"
 
-#ifdef TESTS_ENABLED
-#	include "tests/test_manager.h"
-#endif // TESTS_ENABLED
-
 static Input *inputs = nullptr;
 static ResourceImporter *resource_importer = nullptr;
 static DisplayManager *display_manager = nullptr;

@@ -1,5 +1,6 @@
-#include "test_macros.h"
 #include "test_manager.h"
+
+#include "test_macros.h"
 
 #include "core/data/test_event.h"
 #include "core/data/test_hashtable.h"
@@ -31,11 +32,15 @@ void register_test(PFN_test p_test, const char *p_desc) {
 	tests.push_back(t);
 }
 
+/**
+ * @brief Calls every `register_test` function to properly append the tests and allow for them to be called when we run
+ * the tests.
+ */
 void register_all_tests() {
+	vector_register_tests();
+	list_register_tests();
 	event_register_tests();
 	hashtable_register_tests();
-	list_register_tests();
-	vector_register_tests();
 
 	mat4_register_tests();
 	quaternion_register_tests();
@@ -44,6 +49,10 @@ void register_all_tests() {
 	array_register_tests();
 }
 
+/**
+ * @brief Runs every registered test, in order, from first to last. Order is preserved from the order they are called
+ * in.
+ */
 void run_all_tests() {
 	int passed = 0;
 	int failed = 0;
@@ -60,4 +69,14 @@ void run_all_tests() {
 	}
 
 	MESSAGE("All tests have now ran.\nPASSED: %i\nFAILED: %i", passed, failed);
+}
+
+int main(void) {
+	// Needs stdout for pretty-printing.
+	(void)OS::create();
+
+	register_all_tests();
+	run_all_tests();
+	OS::destroy();
+	return 0;
 }

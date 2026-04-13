@@ -79,11 +79,6 @@ typedef __SIZE_TYPE__ size_t;
 #	define RELEASE_ENABLED
 #endif
 
-// Unit tests enabled/disabled
-#ifdef TESTS
-#	define TESTS_ENABLED
-#endif
-
 // Generic clamping function
 #define CLAMP(value, min, max) (value <= min) ? min : (value >= max) ? max : value
 

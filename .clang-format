@@ -20,16 +20,20 @@ Cpp11BracedListStyle: true
 IndentAccessModifiers: false
 IncludeBlocks: Regroup
 IncludeCategories:
-  - Regex: ^"(core|drivers|main|scene|servers|tests)/.*"$
-    Priority: 1
-  - Regex: ^"(modules|platform)/.*"$
+  - Regex: ^"(core|drivers|scene)/.*"$
     Priority: 2
-  - Regex: ^<.*\.h>$
+  - Regex: ^"(importers|platform|rendering|runtime)/.*"$
     Priority: 3
-  - Regex: ^<.*>$
+  - Regex: ^<(core|drivers|scene)/.*>$
     Priority: 4
+  - Regex: ^<(importers|platform|rendering|runtime)/.*>$
+    Priority: 5
+  - Regex: ^<.*\.h>$
+    Priority: 6
+  - Regex: ^<.*>$
+    Priority: 7
   - Regex: ^".*"$
-    Priority: 0
+    Priority: 1
 IndentCaseLabels: true
 IndentWidth: 4
 IndentPPDirectives: AfterHash
