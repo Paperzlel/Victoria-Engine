@@ -1,6 +1,12 @@
 # Changelog
 Changes exist in chronological order (i.e. new changes are to be appended to the end of the file). Dates are done in DD/MM/YYYY format with the version number applied to each date if needed.
 
+## 13/4/2026
+- Runtime:
+	- UI:
+		- Fix position not being applied properly when using non-top-left anchors.
+			- Fixes a longstanding issue with how anchors were not acting properly. Also removes the `position` and `size` factors entirely to prevent further issues with the system.
+
 ## 5/4/2026
 - Reordered the engine into separate "modules" for simplicity purposes. Core engine code, including platform init/shutdown, the type system, templates and core I/O now reside in `victoria.core`, with runtime features including rendering, asset importing, scene information and so forth being available via the `victoria.runtime` library. Freetype and GLAD have been split into two separate libraries that are not intended to be used by end-user code.
 

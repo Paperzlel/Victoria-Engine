@@ -3,7 +3,7 @@
 void ColourRect::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_DRAW: {
-			canvas_set_rect(get_transform().position, get_size());
+			canvas_set_rect(get_position(), get_size());
 			canvas_set_colour(colour);
 		} break;
 	}

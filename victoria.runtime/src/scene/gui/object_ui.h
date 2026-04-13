@@ -27,19 +27,17 @@ public:
 private:
 	struct Data {
 		Transform2D transform;
-		Vector2i size = Vector2i(40, 40);
 		Vector2i min_size = Vector2i(40, 40);
 
-		Vector2i position;	  // Actual position of the object
-		Vector2i pos_cached;  // Cached position for when we change size but don't want to update yet
-		Vector2i size_cached; // Cached size for above reasons
+		Vector2i pos_cache;	 // Cached position for when we change size but don't want to update yet
+		Vector2i size_cache; // Cached size for above reasons
 
 		double anchor_factor[2] = {0.0, 0.0}; // X/Y factor for each anchor
 
 		ObjectUI *ui_parent = nullptr;
 	} data;
 
-	void _rect_changed();
+	void _size_changed();
 	void _update_minimum_size();
 	void _update_anchors(Anchor p_anchor, bool p_keep_position = false);
 	void _update_anchor(Axis p_axis, double p_factor, bool p_keep_position);

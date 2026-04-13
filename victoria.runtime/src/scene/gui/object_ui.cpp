@@ -5,22 +5,18 @@
 
 #include <core/config/class_registry.h>
 
-void ObjectUI::_rect_changed() {
+void ObjectUI::_size_changed() {
+	// Update size
+	// Size change assumes that offsets haven't been grown properly.
+	// Also assumes that the user isn't overriding size manually. Will need a better system in the future.
 	Vector2i parent_size = get_parent_rect();
-
-	// Position is overwritten by viewport changes. Size changes from anchor position
-	// So to change pos, use the previous anchor factor * viewport size - new size * anchor factor
-
-	int change[2];
-
+	int edges[2];
 	for (int i = 0; i < 2; i++) {
-		int parent = parent_size[i];
-		// This doesn't work with anchor factor 0.
-		change[i] = parent * data.anchor_factor[i] - data.size_cached[i] * data.anchor_factor[i];
+		edges[i] = parent_size[i] * data.anchor_factor[i] - data.size_cache[i] * data.anchor_factor[i];
 	}
 
-	Vector2i new_pos = Vector2i(change[0], change[1]);
-	Vector2i new_size = data.size_cached;
+	Vector2i new_pos = Vector2i(edges[0], edges[1]);
+	Vector2i new_size = data.size_cache;
 
 	if (data.min_size.x > new_size.x) {
 		new_size.x = data.min_size.x;
@@ -30,14 +26,14 @@ void ObjectUI::_rect_changed() {
 		new_size.y = data.min_size.y;
 	}
 
-	bool pos_changed = new_pos != data.position;
-	bool size_changed = new_size != data.size;
+	bool pos_changed = new_pos != data.pos_cache;
+	bool size_changed = new_size != data.size_cache;
 
 	if (pos_changed) {
-		data.position = new_pos;
+		data.pos_cache = new_pos;
 	}
 	if (size_changed) {
-		data.size = new_size;
+		data.size_cache = new_size;
 	}
 }
 
@@ -51,7 +47,7 @@ void ObjectUI::_update_minimum_size() {
 	Vector2 parent_min_size = parent->data.min_size;
 	if (parent_min_size.x > data.min_size.x || parent_min_size.y > data.min_size.y) {
 		data.min_size = parent_min_size;
-		_rect_changed();
+		_size_changed();
 	}
 }
 
@@ -103,7 +99,7 @@ void ObjectUI::_update_anchors(Anchor p_anchor, bool p_keep_position) {
 		force_redraw();
 	}
 
-	_rect_changed();
+	_size_changed();
 }
 
 void ObjectUI::_update_anchor(Axis p_axis, double p_factor, bool p_keep_position) {
@@ -115,14 +111,14 @@ void ObjectUI::_update_anchor(Axis p_axis, double p_factor, bool p_keep_position
 	// So, we can write the X/Y factor out to a vector, then re-calculate the below position.
 
 	data.anchor_factor[p_axis & 1] = p_factor;
-	int new_pos = parent_size[p_axis & 1] * p_factor + (p_keep_position ? data.position[p_axis & 1] : 0) -
-				  data.size[p_axis & 1] * p_factor;
-	data.pos_cached[p_axis & 1] = new_pos;
+	int new_pos = parent_size[p_axis & 1] * p_factor + (p_keep_position ? data.pos_cache[p_axis & 1] : 0) -
+				  data.size_cache[p_axis & 1] * p_factor;
+	data.pos_cache[p_axis & 1] = new_pos;
 }
 
 void ObjectUI::_update_canvas_item_transform() {
 	Transform2D t = get_transform();
-	t.position += data.position;
+	t.position += data.pos_cache;
 
 	RS::get_singleton()->item_set_transform(get_canvas_item(), t);
 }
@@ -144,11 +140,11 @@ void ObjectUI::_notification(int p_what) {
 
 			Viewport *v = get_viewport();
 			if (v) {
-				v->connect_method("size_changed", callable_mp(this, &ObjectUI::_rect_changed));
+				v->connect_method("size_changed", callable_mp(this, &ObjectUI::_size_changed));
 			}
 
 			_update_minimum_size();
-			_rect_changed();
+			_size_changed();
 			_update_anchors(anchor_location, true);
 		} break;
 		case NOTIFICATION_DRAW: {
@@ -169,11 +165,11 @@ void ObjectUI::set_transform(const Transform2D &p_transform) {
 }
 
 Vector2i ObjectUI::get_position() const {
-	return data.position;
+	return data.pos_cache;
 }
 
 void ObjectUI::set_position(const Vector2i &p_pos) {
-	data.position = p_pos;
+	data.pos_cache = p_pos;
 	_propagate_transform_changed(this);
 }
 
@@ -205,12 +201,12 @@ void ObjectUI::set_anchor_location(Anchor p_location) {
 }
 
 Vector2i ObjectUI::get_size() const {
-	return data.size;
+	return data.size_cache;
 }
 
 void ObjectUI::set_size(const Vector2i &p_size) {
-	data.size_cached = p_size;
-	_rect_changed();
+	data.size_cache = p_size;
+	_size_changed();
 }
 
 Vector2i ObjectUI::get_parent_rect() const {
