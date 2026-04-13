@@ -19,7 +19,7 @@ static RenderingServer *rendering_server = nullptr;
 static uint64_t frame_count = 0;
 static bool should_quit = false;
 
-Error runtime_setup() {
+Error runtime_initialize() {
 	// Create RenderingServer
 	String backend = OS::get_singleton()->get_rendering_driver();
 	if (backend == "opengl") {

@@ -4,16 +4,20 @@
 #	include "display_manager_windows.h"
 #	include "logger_windows.h"
 
-#	include "core/os/os_internal.h"
-
 typedef int(WINAPI *RtlGetVersion)(LPOSVERSIONINFOEXA);
 
-OS *os_initialize_internal() {
-	return new OSWindows();
+OS *OS::create() {
+	if (singleton == nullptr) {
+		return new OSWindows(nullptr);
+	}
+
+	return singleton;
 }
 
-void os_delete_internal() {
-	delete static_cast<OSWindows *>(OS::get_singleton());
+void OS::destroy() {
+	if (singleton) {
+		delete OS::get_singleton();
+	}
 }
 
 /**

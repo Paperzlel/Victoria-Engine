@@ -11,7 +11,7 @@ int main(int argc, char *argv[]) {
 	if (err) {
 		return -1;
 	}
-	err = runtime_setup();
+	err = runtime_initialize();
 	if (err) {
 		return -2;
 	}

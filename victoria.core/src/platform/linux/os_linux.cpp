@@ -1,7 +1,6 @@
 #include "os_linux.h"
 
 #include "core/error/error_macros.h"
-#include "core/os/os_internal.h"
 #if PLATFORM_LINUX
 
 #	include "logger_linux.h"
@@ -25,12 +24,19 @@
 #		error "Require a POSIX-compliant system of a high enough version!"
 #	endif
 
-OS *os_initialize_internal() {
-	return new OSLinux();
+OS *OS::create() {
+	if (singleton == nullptr) {
+		return new OSLinux();
+	}
+
+	// Could warn but it's not a method most users will use.
+	return singleton;
 }
 
-void os_delete_internal() {
-	delete static_cast<OSLinux *>(OS::get_singleton());
+void OS::destroy() {
+	if (singleton) {
+		delete OS::get_singleton();
+	}
 }
 
 /**

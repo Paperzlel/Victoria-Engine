@@ -1,19 +1,9 @@
 #include "core/os/os.h"
 
-#include "core/os/os_internal.h"
-
 OS *OS::singleton = nullptr;
 
 OS *OS::get_singleton() {
 	return singleton;
-}
-
-OS *OS::create() {
-	return os_initialize_internal();
-}
-
-void OS::destroy() {
-	os_delete_internal();
 }
 
 /**
