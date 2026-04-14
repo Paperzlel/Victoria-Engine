@@ -111,15 +111,22 @@ void Utilities::allocate_buffer(const GLenum p_type, uint64_t p_size, const GLen
 void Utilities::free_buffer(const GLenum p_type, uint64_t p_size, const GLuint *p_buffer) {
 	glDeleteBuffers(1, p_buffer);
 
+	int bufloc = -1;
+	bool should_free = false;
 	for (Buffer &b : allocations) {
 		if (b.type == p_type) {
+			bufloc = allocations.find(b);
 			b.size -= p_size;
 			if (b.size <= 0) {
-				int idx = allocations.find(b);
-				allocations.remove_at(idx);
-				continue;
+				should_free = true;
 			}
+
+			break;
 		}
+	}
+
+	if (should_free) {
+		allocations.remove_at(bufloc);
 	}
 }
 

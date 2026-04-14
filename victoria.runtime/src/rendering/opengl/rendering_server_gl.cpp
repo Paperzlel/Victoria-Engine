@@ -152,7 +152,7 @@ void RenderingServerGL::finalize() {
 	utils->free_buffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * 6, &canvas_data.rect_index_buffer);
 	glDeleteVertexArrays(1, &canvas_data.rect_vertex_array);
 
-	glDeleteBuffers(GL_ARRAY_BUFFER, &canvas_data.screen_quad);
+	glDeleteBuffers(1, &canvas_data.screen_quad);
 	glDeleteVertexArrays(1, &canvas_data.screen_quad_array);
 
 	canvas_data.batches.clear();
@@ -1743,8 +1743,8 @@ RenderingServerGL::RenderingServerGL() {
 		glBindBuffer(GL_ARRAY_BUFFER, canvas_data.screen_quad);
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), nullptr);
 		glEnableVertexAttribArray(0);
-		glBindVertexArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
 	}
 
 	// Allocate canvas instance UBO
