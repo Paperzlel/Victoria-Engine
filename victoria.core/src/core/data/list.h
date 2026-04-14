@@ -156,6 +156,33 @@ public:
 		return tail;
 	}
 
+	FORCE_INLINE void operator=(const List &p_other) {
+		if (this == &p_other) {
+			return;
+		}
+
+		clear();
+		const Element *ptr = p_other.front();
+		while (ptr) {
+			push_back(ptr->get());
+			ptr = ptr->next_ptr;
+		}
+	}
+
+	FORCE_INLINE void operator=(List &&p_other) {
+		if (this == &p_other) {
+			return;
+		}
+
+		clear();
+		head = p_other.head;
+		tail = p_other.tail;
+		element_count = p_other.element_count;
+		p_other.head = nullptr;
+		p_other.tail = nullptr;
+		p_other.element_count = 0;
+	}
+
 	FORCE_INLINE Element *push_front(const T &p_item) {
 		Element *e = vnew(Element);
 		e->value = p_item;
@@ -229,10 +256,8 @@ public:
 	}
 
 	FORCE_INLINE void clear() {
-		Element *e = front();
-		while (e) {
-			erase(e);
-			e = front();
+		while (front()) {
+			erase(front());
 		}
 	}
 
@@ -286,4 +311,25 @@ public:
 	}
 
 	List() {}
+
+	List(const List &p_other) {
+		const Element *ptr = p_other.front();
+		while (ptr) {
+			push_back(ptr->get());
+			ptr = ptr->next_ptr;
+		}
+	}
+
+	List(List &&p_other) {
+		head = p_other.head;
+		tail = p_other.tail;
+		element_count = p_other.element_count;
+		head = nullptr;
+		tail = nullptr;
+		element_count = 0;
+	}
+
+	~List() {
+		clear();
+	}
 };

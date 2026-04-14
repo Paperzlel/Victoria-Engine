@@ -103,12 +103,12 @@ bool runtime_iteration() {
 }
 
 void runtime_finalize() {
+	// Main loop is managed by the runtime, so destroy it here.
 	OS::get_singleton()->get_main_loop()->finalize();
 	OS::get_singleton()->delete_main_loop();
 
 	// Get rid of all the displays used up to this point
 	RenderingServer::get_singleton()->finalize();
-	DisplayManager::get_singleton()->finalize();
 	// Remove all singletons allocated during setup()
 	vdelete(rendering_server);
 

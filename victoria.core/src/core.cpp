@@ -172,8 +172,11 @@ Error core_initialize(int argc, char *argv[]) {
  * up to this point.
  */
 void core_finalize() {
+	DisplayManager::get_singleton()->finalize();
+
 	vdelete(inputs);
 	vdelete(resource_importer);
+	vdelete(display_manager);
 
 	OS::destroy();
 }

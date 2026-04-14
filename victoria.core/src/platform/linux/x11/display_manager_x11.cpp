@@ -128,9 +128,7 @@ uint8_t DisplayManagerX11::create_window(const String &p_name,
 	win_data->position = Vector2i(x, y);
 	win_data->size = Vector2i(width, height);
 	win_data->window_attribs = window_attribs;
-
-	CallableMethod cm = static_callable_mp(_notification_callback);
-	win_data->notification_callback.connect(cm, false);
+	win_data->notification_callback = static_callable_mp(_notification_callback);
 
 	Atom wm_close_atom = XInternAtom(display, "WM_DELETE_WINDOW", true);
 	XSetWMProtocols(display, win, &wm_close_atom, 1);
@@ -241,14 +239,14 @@ void DisplayManagerX11::process_events() {
 			} break;
 			case ClientMessage: {
 				if (event.xclient.data.l[0] == (int64_t)window->wm_close_atom) {
-					window->notification_callback.fire(NOTIFICATION_WM_WINDOW_CLOSE, window->id);
+					window->notification_callback.call(NOTIFICATION_WM_WINDOW_CLOSE, window->id);
 					OS::get_singleton()->set_exit_code(0);
 					OS::get_singleton()->set_should_quit(true);
 					return;
 				}
 			} break;
 			case DestroyNotify: {
-				window->notification_callback.fire(NOTIFICATION_WM_WINDOW_CLOSE, window->id);
+				window->notification_callback.call(NOTIFICATION_WM_WINDOW_CLOSE, window->id);
 				OS::get_singleton()->set_exit_code(0);
 				OS::get_singleton()->set_should_quit(true);
 			} break;

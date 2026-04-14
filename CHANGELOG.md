@@ -1,6 +1,11 @@
 # Changelog
 Changes exist in chronological order (i.e. new changes are to be appended to the end of the file). Dates are done in DD/MM/YYYY format with the version number applied to each date if needed.
 
+## 14/4/2026
+- Core:
+	- Fixed some general memory leaks, most notably `List<T>` having no destructor, `display_manager` not being freed and a use-after-free with the `Event` setup in `DisplayManagerX11`.
+		- The Event class may well be deprecated in favour of signals, as it is only used in the `DisplayManager` for destroying windows when requested which is done anyway during `DisplayManager::finalize()`.
+
 ## 13/4/2026
 - Core:
 	- OS:

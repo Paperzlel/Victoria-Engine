@@ -6,7 +6,6 @@
 #	include "gl_manager_egl_x11.h"
 #	include "gl_manager_x11.h"
 
-#	include "core/data/event.h"
 #	include "core/io/input.h"
 #	include "core/os/display_manager.h"
 
@@ -45,7 +44,7 @@ private:
 		Atom wm_close_atom;
 
 		// An event callback to occur whenever the window is requested to close
-		Event<WindowNotification, uint8_t> notification_callback;
+		CallableMethod notification_callback;
 		CallableMethod window_resize_callback;
 
 		// Position of the window
@@ -58,7 +57,7 @@ private:
 		bool maximised = false;
 	};
 
-	bool first_frame;
+	bool first_frame = true;
 	uint16_t old_x = 0;
 	uint16_t old_y = 0;
 	Vector2i centre;
