@@ -1,4 +1,4 @@
-#include "core/config/callable_method.h"
+#include "core/object/callable_method.h"
 
 void CallableMethod::callp(const Variant **p_args, Error &r_error) const {
 	r_error = OK;

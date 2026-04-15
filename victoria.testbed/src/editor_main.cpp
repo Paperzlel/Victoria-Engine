@@ -47,7 +47,7 @@ Editor::Editor() {
 	ColourRect *crect = vnew(ColourRect);
 	add_child(crect);
 	crect->set_colour(Vector4(1.0, 0.5, 0.5, 1.0));
-	crect->set_anchor_location(ObjectUI::ANCHOR_CENTERED);
+	crect->set_anchor_location(UIObject::ANCHOR_CENTERED);
 }
 
 Editor::~Editor() {}

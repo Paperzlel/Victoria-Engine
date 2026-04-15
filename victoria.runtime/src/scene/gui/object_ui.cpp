@@ -3,9 +3,9 @@
 #include "rendering/rendering_server.h"
 #include "scene/main/viewport.h"
 
-#include <core/config/class_registry.h>
+#include <core/object/class_registry.h>
 
-void ObjectUI::_size_changed() {
+void UIObject::_size_changed() {
 	// Update size
 	// Size change assumes that offsets haven't been grown properly.
 	// Also assumes that the user isn't overriding size manually. Will need a better system in the future.
@@ -37,8 +37,8 @@ void ObjectUI::_size_changed() {
 	}
 }
 
-void ObjectUI::_update_minimum_size() {
-	ObjectUI *parent = Item::cast_to<ObjectUI>(get_parent());
+void UIObject::_update_minimum_size() {
+	UIObject *parent = Object::cast_to<UIObject>(get_parent());
 
 	if (!parent) {
 		return;
@@ -51,7 +51,7 @@ void ObjectUI::_update_minimum_size() {
 	}
 }
 
-void ObjectUI::_update_anchors(Anchor p_anchor, bool p_keep_position) {
+void UIObject::_update_anchors(Anchor p_anchor, bool p_keep_position) {
 	if (!is_inside_tree()) {
 		return;
 	}
@@ -102,7 +102,7 @@ void ObjectUI::_update_anchors(Anchor p_anchor, bool p_keep_position) {
 	_size_changed();
 }
 
-void ObjectUI::_update_anchor(Axis p_axis, double p_factor, bool p_keep_position) {
+void UIObject::_update_anchor(Axis p_axis, double p_factor, bool p_keep_position) {
 	Vector2i parent_size = get_parent_rect();
 
 	// New position = offset in parent size + offset if needed
@@ -116,20 +116,20 @@ void ObjectUI::_update_anchor(Axis p_axis, double p_factor, bool p_keep_position
 	data.pos_cache[p_axis & 1] = new_pos;
 }
 
-void ObjectUI::_update_canvas_item_transform() {
+void UIObject::_update_canvas_item_transform() {
 	Transform2D t = get_transform();
 	t.position += data.pos_cache;
 
 	RS::get_singleton()->item_set_transform(get_canvas_item(), t);
 }
 
-void ObjectUI::_notification(int p_what) {
+void UIObject::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_ENTER_TREE: {
-			Object *parent = get_parent();
+			GameObject *parent = get_parent();
 
 			while (parent != nullptr) {
-				ObjectUI *ui_p = Item::cast_to<ObjectUI>(parent);
+				UIObject *ui_p = Object::cast_to<UIObject>(parent);
 				if (ui_p) {
 					data.ui_parent = ui_p;
 					break;
@@ -140,7 +140,7 @@ void ObjectUI::_notification(int p_what) {
 
 			Viewport *v = get_viewport();
 			if (v) {
-				v->connect_method("size_changed", callable_mp(this, &ObjectUI::_size_changed));
+				v->connect_method("size_changed", callable_mp(this, &UIObject::_size_changed));
 			}
 
 			_update_minimum_size();
@@ -154,62 +154,62 @@ void ObjectUI::_notification(int p_what) {
 	}
 }
 
-Transform2D ObjectUI::get_transform() const {
+Transform2D UIObject::get_transform() const {
 	Transform2D ret = data.transform;
 	return ret;
 }
 
-void ObjectUI::set_transform(const Transform2D &p_transform) {
+void UIObject::set_transform(const Transform2D &p_transform) {
 	data.transform = p_transform;
 	_propagate_transform_changed(this);
 }
 
-Vector2i ObjectUI::get_position() const {
+Vector2i UIObject::get_position() const {
 	return data.pos_cache;
 }
 
-void ObjectUI::set_position(const Vector2i &p_pos) {
+void UIObject::set_position(const Vector2i &p_pos) {
 	data.pos_cache = p_pos;
 	_propagate_transform_changed(this);
 }
 
-double ObjectUI::get_rotation() const {
+double UIObject::get_rotation() const {
 	return data.transform.get_rotation();
 }
 
-void ObjectUI::set_rotation(double p_angle) {
+void UIObject::set_rotation(double p_angle) {
 	data.transform.set_rotation(p_angle);
 	_propagate_transform_changed(this);
 }
 
-Vector2 ObjectUI::get_scale() const {
+Vector2 UIObject::get_scale() const {
 	return data.transform.get_scale();
 }
 
-void ObjectUI::set_scale(const Vector2 &p_scale) {
+void UIObject::set_scale(const Vector2 &p_scale) {
 	data.transform.set_scale(p_scale);
 	_propagate_transform_changed(this);
 }
 
-ObjectUI::Anchor ObjectUI::get_anchor_location() const {
+UIObject::Anchor UIObject::get_anchor_location() const {
 	return anchor_location;
 }
 
-void ObjectUI::set_anchor_location(Anchor p_location) {
+void UIObject::set_anchor_location(Anchor p_location) {
 	anchor_location = p_location;
 	_update_anchors(anchor_location);
 }
 
-Vector2i ObjectUI::get_size() const {
+Vector2i UIObject::get_size() const {
 	return data.size_cache;
 }
 
-void ObjectUI::set_size(const Vector2i &p_size) {
+void UIObject::set_size(const Vector2i &p_size) {
 	data.size_cache = p_size;
 	_size_changed();
 }
 
-Vector2i ObjectUI::get_parent_rect() const {
+Vector2i UIObject::get_parent_rect() const {
 	if (!is_inside_tree()) {
 		return Vector2i();
 	}
@@ -223,6 +223,6 @@ Vector2i ObjectUI::get_parent_rect() const {
 	return Vector2i();
 }
 
-void ObjectUI::_bind_methods() {
+void UIObject::_bind_methods() {
 	ClassRegistry::add_signal(get_class_name_static(), "size_changed");
 }

@@ -3,7 +3,7 @@
 void ViewportContainer::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_CHILD_ENTERED_TREE: {
-			Viewport *c = Item::cast_to<Viewport>(get_child(0));
+			Viewport *c = Object::cast_to<Viewport>(get_child(0));
 			if (c) {
 				set_size(c->get_viewport_size());
 				viewport_texture = c->get_texture();
@@ -11,7 +11,7 @@ void ViewportContainer::_notification(int p_what) {
 			}
 		} break;
 		case NOTIFICATION_DRAW: {
-			Viewport *c = Item::cast_to<Viewport>(get_child(0));
+			Viewport *c = Object::cast_to<Viewport>(get_child(0));
 
 			if (c) {
 				set_size(c->get_viewport_size());

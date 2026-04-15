@@ -1,9 +1,9 @@
 #pragma once
 
-#include "item.h"
+#include "core/object/object.h"
 
-class VAPI MainLoop : public Item {
-	VREGISTER_CLASS(MainLoop, Item);
+class VAPI MainLoop : public Object {
+	VREGISTER_CLASS(MainLoop, Object);
 
 public:
 	virtual void initialize();

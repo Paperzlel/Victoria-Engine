@@ -6,7 +6,7 @@
 #include <core/math/vector3.h>
 
 class VAPI Material : public Resource {
-	VREGISTER_CLASS(Material, Resource)
+	VREGISTER_CLASS(Material, Resource);
 
 	RID material;
 	Vector4 colour;

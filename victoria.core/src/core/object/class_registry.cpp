@@ -1,8 +1,8 @@
-#include "core/config/class_registry.h"
+#include "core/object/class_registry.h"
 
 HashTable<String, ClassRegistry::ClassInfo> ClassRegistry::classes;
 
-Item *ClassRegistry::instantiate(const String &p_class) {
+Object *ClassRegistry::instantiate(const String &p_class) {
 	ClassInfo *ci;
 
 	ci = classes.get_ptr(p_class);
@@ -18,6 +18,7 @@ Item *ClassRegistry::instantiate(const String &p_class) {
 
 void ClassRegistry::add_signal(const String &p_class, const String &p_signal) {
 	ClassInfo *c = classes.get_ptr(p_class);
+	ERR_COND_NULL_MSG(c, vformat("Class \'%s\' is null.", p_class.get_data()));
 
 	if (c->signals.has(p_signal)) {
 		return;

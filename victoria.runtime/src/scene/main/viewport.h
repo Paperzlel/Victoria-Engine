@@ -1,6 +1,6 @@
 #pragma once
 
-#include "scene/main/object.h"
+#include "scene/main/game_object.h"
 #include "scene/resources/texture.h"
 
 #include <core/data/rid.h>
@@ -10,7 +10,7 @@ class Window;
 class Camera3D;
 
 class VAPI ViewportTexture : public Texture {
-	VREGISTER_CLASS(ViewportTexture, Texture)
+	VREGISTER_CLASS(ViewportTexture, Texture);
 
 	friend class Viewport;
 	Viewport *viewport = nullptr;
@@ -19,8 +19,8 @@ public:
 	ViewportTexture() {}
 };
 
-class VAPI Viewport : public Object {
-	VREGISTER_CLASS(Viewport, Object)
+class VAPI Viewport : public GameObject {
+	VREGISTER_CLASS(Viewport, GameObject);
 
 	RID viewport;
 	RID canvas;
@@ -45,7 +45,7 @@ protected:
 	friend class Camera3D;
 	bool _set_camera_3d(Camera3D *p_camera);
 
-	void _propagate_size_changed(Object *p_object);
+	void _propagate_size_changed(GameObject *p_object);
 
 	static void _bind_methods();
 

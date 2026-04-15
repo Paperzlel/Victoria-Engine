@@ -2,8 +2,8 @@
 
 #include "scene/2d/object_2d.h"
 
-class VAPI Sprite2D : public Object2D {
-	VREGISTER_CLASS(Sprite2D, Object2D)
+class VAPI Sprite2D : public GameObject2D {
+	VREGISTER_CLASS(Sprite2D, GameObject2D);
 
 	Ref<Texture> texture;
 	bool centred = false;

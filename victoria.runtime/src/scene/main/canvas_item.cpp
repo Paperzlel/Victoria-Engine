@@ -12,10 +12,10 @@ void CanvasItem::_propagate_transform_changed(CanvasItem *p_canvas_item) {
 		return;
 	}
 
-	List<Object *> children = get_children();
+	List<GameObject *> children = get_children();
 
-	for (Object *&obj : children) {
-		CanvasItem *c = Item::cast_to<CanvasItem>(obj);
+	for (GameObject *&obj : children) {
+		CanvasItem *c = Object::cast_to<CanvasItem>(obj);
 
 		if (c) {
 			c->_propagate_transform_changed(p_canvas_item);
@@ -51,7 +51,7 @@ RID CanvasItem::get_canvas_item() const {
 }
 
 Transform2D CanvasItem::get_global_transform() const {
-	CanvasItem *ci = Item::cast_to<CanvasItem>(get_parent());
+	CanvasItem *ci = Object::cast_to<CanvasItem>(get_parent());
 	if (transforms_dirty) {
 		Transform2D n_transform;
 		if (ci) {

@@ -4,7 +4,7 @@
 #include "scene/main/viewport.h"
 
 class VAPI ViewportContainer : public Container {
-	VREGISTER_CLASS(ViewportContainer, Container)
+	VREGISTER_CLASS(ViewportContainer, Container);
 
 	Ref<ViewportTexture> viewport_texture;
 

@@ -1,12 +1,12 @@
 #include "scene/gui/vbox_container.h"
 
 void VBoxContainer::_resize() {
-	List<Object *> children = get_children();
+	List<GameObject *> children = get_children();
 	Vector2 parent_size = get_size();
 	Vector2 parent_pos = get_transform().position;
 	Vector2 cumulative_child_size = Vector2(parent_size.x, 0);
-	for (Object *child : children) {
-		ObjectUI *c = Item::cast_to<ObjectUI>(child);
+	for (GameObject *child : children) {
+		UIObject *c = Object::cast_to<UIObject>(child);
 		// Is not a GUI object, ignore.
 		if (c == nullptr) {
 			continue;

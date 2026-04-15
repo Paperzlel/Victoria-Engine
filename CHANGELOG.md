@@ -1,6 +1,21 @@
 # Changelog
 Changes exist in chronological order (i.e. new changes are to be appended to the end of the file). Dates are done in DD/MM/YYYY format with the version number applied to each date if needed.
 
+## 15/4/2026
+- Core:
+	- Renamed `Item` to `Object` and `Instance` to `RefCounted`. 
+		- This is closer to Godot, but the naming convention is too convenient to pass up. The function is the same, so familiarity is better.
+	- Fixed an issue with `HashTable`s whereby the size was not updated to reflect the new size, leading to incorrect hashing information on retrieval. 
+- Runtime:
+	- Renamed `Object` to `GameObject` and updated derivatives.
+		- Required for the above change to work. A longer name, but ultimately better for clarity. `Node` would fir the naming conventions but I would like to keep a semblance of uniqueness.
+	- Changed `ObjectUI` to `UIObject`.
+		- `GameObjectUI` would be correct, but UI will be used for the editor so the name doesn't quite work. It still inherits from `GameObject` (which is, admittedly, a poor name and might be changed) but it is unique enough to deserve a proper name like this.
+- Testbed:
+	- Updated editor to have a register/unregister classes method.
+		- Seemed to fix an invalid access bug, but it may have been the result of the change from `Object` -> `GameObject` not being updated properly.
+	- The editor code will be moved to a separate subfolder and developed once the game creation process is understood, for ideally obvious reasons. How APIs and scripting will work is up for debate.
+
 ## 14/4/2026
 - Core:
 	- Fixed some general memory leaks, most notably `List<T>` having no destructor, `display_manager` not being freed and a use-after-free with the `Event` setup in `DisplayManagerX11`.

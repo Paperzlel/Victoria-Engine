@@ -1,4 +1,5 @@
 #include "editor_main.h"
+#include "register_editor_classes.h"
 
 #include <core/os/os.h>
 
@@ -18,6 +19,8 @@ int main(int argc, char *argv[]) {
 		return -2;
 	}
 
+	register_editor_classes();
+
 	// Initialize editor class here
 	Editor *editor = vnew(Editor);
 	SceneTree::get_singleton()->get_root()->add_child(editor);
@@ -26,6 +29,8 @@ int main(int argc, char *argv[]) {
 	while (!runtime_iteration()) {
 		// Run
 	}
+
+	unregister_editor_classes();
 
 	int exit_code = OS::get_singleton()->get_exit_code();
 	runtime_finalize();

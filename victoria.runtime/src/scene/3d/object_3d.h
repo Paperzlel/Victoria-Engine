@@ -1,11 +1,11 @@
 #pragma once
 
-#include "scene/main/object.h"
+#include "scene/main/game_object.h"
 
 #include <core/math/transform_3d.h>
 
-class VAPI Object3D : public Object {
-	VREGISTER_CLASS(Object3D, Object)
+class VAPI GameObject3D : public GameObject {
+	VREGISTER_CLASS(GameObject3D, GameObject);
 
 	struct Data {
 		mutable Transform3D local_transform;
@@ -13,7 +13,7 @@ class VAPI Object3D : public Object {
 		bool transforms_dirty;
 	} data;
 
-	void _propagate_transform_changed(Object3D *p_object);
+	void _propagate_transform_changed(GameObject3D *p_object);
 
 protected:
 	void _notification(int p_what);
@@ -50,6 +50,6 @@ public:
 	void look_at(const Vector3 &p_target, const Vector3 &p_up = Vector3(0, 1, 0));
 	void look_at_from(const Vector3 &p_position, const Vector3 &p_target, const Vector3 &p_up = Vector3(0, 1, 0));
 
-	Object3D();
-	~Object3D();
+	GameObject3D();
+	~GameObject3D();
 };

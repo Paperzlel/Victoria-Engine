@@ -3,8 +3,8 @@
 #include "scene/gui/object_ui.h"
 #include "scene/resources/font.h"
 
-class VAPI Text : public ObjectUI {
-	VREGISTER_CLASS(Text, ObjectUI)
+class VAPI Text : public UIObject {
+	VREGISTER_CLASS(Text, UIObject);
 
 	struct Character {
 		RID id;

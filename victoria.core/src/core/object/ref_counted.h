@@ -1,16 +1,15 @@
 #pragma once
 
-#include "item.h"
-
 #include "core/data/atomic_counter.h"
+#include "core/object/object.h"
 #include "core/typedefs.h"
 
 /**
  * @brief Base class for all refcounted objects. Ref-counted, so that multiple bits of code can call to the same region
  * of memory.
  */
-class VAPI Instance : public Item {
-	VREGISTER_CLASS(Instance, Item);
+class VAPI RefCounted : public Object {
+	VREGISTER_CLASS(RefCounted, Object);
 
 	// The reference counter
 	Refcount refcount;
@@ -53,19 +52,19 @@ public:
 	}
 
 	/**
-	 * @brief Instance class constructor.
+	 * @brief RefCounted class constructor.
 	 */
-	Instance();
+	RefCounted();
 
 	/**
-	 * @brief Instance class destructor.
+	 * @brief RefCounted class destructor.
 	 */
-	~Instance();
+	~RefCounted();
 };
 
 /**
- * @brief Template class for use with a ref-counted object, or any API-compliant class that extends Instance. Should be
- * used over a raw Instance, as it handles much of the referencing for the user.
+ * @brief Template class for use with a ref-counted object, or any API-compliant class that extends RefCounted. Should
+ * be used over a raw RefCounted, as it handles much of the referencing for the user.
  */
 template <typename T>
 class Ref {
@@ -143,7 +142,7 @@ public:
 
 	template <typename TOther>
 	FORCE_INLINE void operator=(const Ref<TOther> &p_other) {
-		ref_ptr<false>(Item::cast_to<T>(p_other.ptr()));
+		ref_ptr<false>(Object::cast_to<T>(p_other.ptr()));
 	}
 
 	FORCE_INLINE void operator=(T *p_ref) {

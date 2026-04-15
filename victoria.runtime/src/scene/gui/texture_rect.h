@@ -3,8 +3,8 @@
 #include "scene/gui/object_ui.h"
 #include "scene/resources/texture.h"
 
-class VAPI TextureRect : public ObjectUI {
-	VREGISTER_CLASS(TextureRect, CanvasItem)
+class VAPI TextureRect : public UIObject {
+	VREGISTER_CLASS(TextureRect, UIObject);
 
 	Ref<Texture> texture;
 

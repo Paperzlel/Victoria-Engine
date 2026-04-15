@@ -9,12 +9,12 @@ SceneTree *SceneTree::get_singleton() {
 	return singleton;
 }
 
-void SceneTree::queue_delete(Object *p_object) {
+void SceneTree::queue_delete(GameObject *p_object) {
 	queued_nodes_for_deletion.push_back(p_object);
 }
 
 void SceneTree::flush_delete_queue() {
-	for (Object *o : queued_nodes_for_deletion) {
+	for (GameObject *o : queued_nodes_for_deletion) {
 		o->notification(NOTIFICATION_PREDELETE);
 	}
 

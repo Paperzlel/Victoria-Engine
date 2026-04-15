@@ -4,8 +4,8 @@
 
 #include <core/data/rid.h>
 
-class VAPI VisualInstance3D : public Object3D {
-	VREGISTER_CLASS(VisualInstance3D, Object3D)
+class VAPI VisualInstance3D : public GameObject3D {
+	VREGISTER_CLASS(VisualInstance3D, GameObject3D);
 
 	RID instance;
 	RID base;

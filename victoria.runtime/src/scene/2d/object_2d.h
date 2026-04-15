@@ -4,8 +4,8 @@
 
 #include <core/math/transform_2d.h>
 
-class VAPI Object2D : public CanvasItem {
-	VREGISTER_CLASS(Object2D, CanvasItem)
+class VAPI GameObject2D : public CanvasItem {
+	VREGISTER_CLASS(GameObject2D, CanvasItem);
 
 	Transform2D transform;
 
@@ -46,6 +46,6 @@ public:
 	void set_transform(const Transform2D &p_transform);
 	void set_global_transform(const Transform2D &p_transform);
 
-	Object2D();
-	~Object2D();
+	GameObject2D();
+	~GameObject2D();
 };

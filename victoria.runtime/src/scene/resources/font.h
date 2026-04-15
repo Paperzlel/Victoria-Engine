@@ -5,7 +5,8 @@
 #include <core/math/vector2i.h>
 
 class VAPI Font : public Resource {
-	VREGISTER_CLASS(Font, Resource)
+	VREGISTER_CLASS(Font, Resource);
+
 public:
 	struct Character {
 		RID texture;

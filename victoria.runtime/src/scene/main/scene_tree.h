@@ -1,26 +1,28 @@
 #pragma once
 
-#include <core/config/main_loop.h>
 #include <core/data/list.h>
+#include <core/object/main_loop.h>
 
 #ifdef Window
 #	undef Window
 #endif
 
-class Object;
+class GameObject;
 class Window;
 class Camera3D;
 
 class VAPI SceneTree : public MainLoop {
+	VREGISTER_CLASS(SceneTree, MainLoop);
+
 private:
 	static SceneTree *singleton;
-	friend class Object;
+	friend class GameObject;
 
 	Window *root = nullptr;
 	Camera3D *active_camera = nullptr;
 	double update_time = 0.0;
 
-	List<Object *> queued_nodes_for_deletion;
+	List<GameObject *> queued_nodes_for_deletion;
 
 public:
 	static SceneTree *get_singleton();
@@ -29,7 +31,7 @@ public:
 		return root;
 	}
 
-	void queue_delete(Object *p_object);
+	void queue_delete(GameObject *p_object);
 	void flush_delete_queue();
 
 	double get_update_time() const;

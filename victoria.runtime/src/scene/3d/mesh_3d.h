@@ -4,7 +4,7 @@
 #include "scene/resources/mesh.h"
 
 class VAPI Mesh3D : public VisualInstance3D {
-	VREGISTER_CLASS(Mesh3D, VisualInstance3D)
+	VREGISTER_CLASS(Mesh3D, VisualInstance3D);
 
 	Ref<Mesh> mesh;
 

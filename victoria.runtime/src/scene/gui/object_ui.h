@@ -4,8 +4,9 @@
 
 #include <core/variant/variant_caster.h>
 
-class VAPI ObjectUI : public CanvasItem {
-	VREGISTER_CLASS(ObjectUI, CanvasItem)
+class VAPI UIObject : public CanvasItem {
+	VREGISTER_CLASS(UIObject, CanvasItem);
+
 public:
 	enum Anchor {
 		ANCHOR_CENTERED,
@@ -34,7 +35,7 @@ private:
 
 		double anchor_factor[2] = {0.0, 0.0}; // X/Y factor for each anchor
 
-		ObjectUI *ui_parent = nullptr;
+		UIObject *ui_parent = nullptr;
 	} data;
 
 	void _size_changed();
@@ -73,9 +74,9 @@ public:
 
 	Vector2i get_parent_rect() const;
 
-	ObjectUI() {}
-	~ObjectUI() {}
+	UIObject() {}
+	~UIObject() {}
 };
 
-VARIANT_CAST_ENUM(ObjectUI::Anchor);
-VARIANT_CAST_ENUM(ObjectUI::Axis);
+VARIANT_CAST_ENUM(UIObject::Anchor);
+VARIANT_CAST_ENUM(UIObject::Axis);

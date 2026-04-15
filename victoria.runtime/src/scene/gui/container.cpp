@@ -1,7 +1,7 @@
 #include "scene/gui/container.h"
 
-ObjectUI *Container::as_gui_object(Object *p_obj) const {
-	ObjectUI *u = Item::cast_to<ObjectUI>(p_obj);
+UIObject *Container::as_gui_object(GameObject *p_obj) const {
+	UIObject *u = Object::cast_to<UIObject>(p_obj);
 	if (!u) {
 		return nullptr;
 	}
@@ -9,7 +9,7 @@ ObjectUI *Container::as_gui_object(Object *p_obj) const {
 	return u;
 }
 
-void Container::fit_child_in_rect(ObjectUI *p_child, Vector2i p_pos, Vector2i p_size) {
+void Container::fit_child_in_rect(UIObject *p_child, Vector2i p_pos, Vector2i p_size) {
 	// Vector2i size = get_size();
 
 	// Passes pre-determine size.

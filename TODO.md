@@ -20,18 +20,20 @@ A list of all things that are on the current plan for the engine, whether short-
 - [x] Add a `NOTIFICATION_DRAW` to update canvas items whenever is needed
 - [x] Optimise `HashTable` to reduce memory allocations (most memory allocations are from HashTables) and improve searching algorithms (maybe do some looking up on the best and implement that?)
 - [ ] Add method binds to `ClassRegistry` to enable API generation
-- [ ] Add a `Type` class to `Item` so that classes can be determined faster
+- [ ] Add a `Type` class to `Object` so that classes can be determined faster
 - [ ] Implement project configs and their loaders
 - [ ] Implement scene loaders
 - [ ] Implement `Dictionaries`
 - [ ] Define more math functions like `floor()` and `log()`
 - [x] Optimise `Vector<T>` and other classes to have a singular pointer to save class size
 - [x] Use move semantics in `Vector<T>` where applicable
+- [ ] Add a `CommandQueue` structure to be used for processing end-of-frame logic and other places a queue would be appropriate
+- [ ] Add multithreading support in the form of `Mutex`es, `Semaphore`s, `Thread`s and a `WorkerThreadPool`
 
 ## Drivers
 - [x] Add `resize_viewport` command to EGL
 
-## Editor
+## Editor (on hold)
 - [x] Move 3D data to a sub-viewport (as the editor is 2D)
 - [ ] Create a logger sub-class
 - [ ] Add the `EditorLogger` to the bottom panel
@@ -57,10 +59,10 @@ A list of all things that are on the current plan for the engine, whether short-
 
 ## Platform
 - [x] Fix X11 displays not resizing when using EGL
-- [ ] Add `set_window_resize_callback` to Windows
+- [x] Add `set_window_resize_callback` to Windows
 - [x] Add `is_suspended` and `set_is_suspended` to Windows
 - [ ] Add OS-specific library loading
-- [ ] Add `get_environment` and `set_environment` to Windows
+- [x] Add `get_environment` and `set_environment` to Windows
 - [ ] Update Windows to use the new window settings and `r_error` in construction
 - [x] Fully implement Wayland as a display manager option
 - [x] Rework DisplayManagers so that they fall back to the other if they are unable to be created
@@ -89,6 +91,7 @@ A list of all things that are on the current plan for the engine, whether short-
 - [ ] Add tests for `RBMaps`, `RIDs` and `RIDOwners`.
 - [ ] Add tests for all `VectorN` and `VectorNi` classes.
 - [ ] Add tests for `Transform2D` and `Transform3D`.
+- [ ] Improve tests for `HashTable` and other basic datatypes.
 - [x] Improve tests for `Array`.
 - [x] Add tests for `Variant`.
 - [ ] Add tests for `String`.

@@ -1,12 +1,12 @@
 #pragma once
 
-#include "scene/main/object.h"
+#include "scene/main/game_object.h"
 #include "scene/resources/mesh.h"
 
 #include <core/math/transform_2d.h>
 
-class VAPI CanvasItem : public Object {
-	VREGISTER_CLASS(CanvasItem, Object)
+class VAPI CanvasItem : public GameObject {
+	VREGISTER_CLASS(CanvasItem, GameObject);
 
 	RID item;
 

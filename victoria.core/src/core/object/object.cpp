@@ -1,13 +1,13 @@
-#include "core/config/item.h"
+#include "core/object/object.h"
 
-#include "core/config/class_registry.h"
+#include "core/object/class_registry.h"
 
-bool Item::_predelete() {
+bool Object::_predelete() {
 	notification(NOTIFICATION_PREDELETE);
 	return true;
 }
 
-void Item::notification(int p_what, bool p_reversed) {
+void Object::notification(int p_what, bool p_reversed) {
 	if (p_reversed) {
 		_notification_backwardv(p_what);
 	} else {
@@ -15,7 +15,7 @@ void Item::notification(int p_what, bool p_reversed) {
 	}
 }
 
-Error Item::connect_method(const String &p_name, const CallableMethod &p_method) {
+Error Object::connect_method(const String &p_name, const CallableMethod &p_method) {
 	// Avoid crashes by inserting the method beforehand
 	if (callables.get_element_count() == 0 && ClassRegistry::has_signal(get_class_name(), p_name)) {
 		callables.insert(p_name, List<CallableMethod>());
@@ -31,7 +31,7 @@ Error Item::connect_method(const String &p_name, const CallableMethod &p_method)
 	return OK;
 }
 
-Error Item::emit_methodp(const String &p_name, const Variant **p_args, int p_argc) {
+Error Object::emit_methodp(const String &p_name, const Variant **p_args, int p_argc) {
 	List<CallableMethod> *list = callables.get_ptr(p_name);
 	if (!list) {
 		return ERR_UNAVAILABLE;
@@ -49,7 +49,7 @@ Error Item::emit_methodp(const String &p_name, const Variant **p_args, int p_arg
 	return OK;
 }
 
-void Item::initialize_class() {
+void Object::initialize_class() {
 	static bool init = false;
 	if (init) {
 		return;
@@ -59,10 +59,10 @@ void Item::initialize_class() {
 	init = true;
 }
 
-Item::Item() {}
+Object::Object() {}
 
-Item::~Item() {}
+Object::~Object() {}
 
-bool predelete(Item *p_item) {
+bool predelete(Object *p_item) {
 	return p_item->_predelete();
 }

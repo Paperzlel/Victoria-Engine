@@ -1,9 +1,8 @@
 #pragma once
 
-#include "callable_method_pointer.h" // IWYU pragma: keep
-
 #include "core/data/hashtable.h"
 #include "core/data/list.h"
+#include "core/object/callable_method_pointer.h" // IWYU pragma: keep
 #include "core/string/vstring.h"
 #include "core/typedefs.h"
 
@@ -34,8 +33,8 @@ public:                                                                         
 	}                                                                                                                 \
                                                                                                                       \
 protected:                                                                                                            \
-	FORCE_INLINE void (Item::*_get_notification() const)(int) {                                                       \
-		return (void(Item::*)(int)) & m_class::_notification;                                                         \
+	FORCE_INLINE void (Object::*_get_notification() const)(int) {                                                     \
+		return (void(Object::*)(int)) & m_class::_notification;                                                       \
 	}                                                                                                                 \
                                                                                                                       \
 	FORCE_INLINE static void (*_get_bind_methods())() {                                                               \
@@ -78,7 +77,7 @@ protected:                                                                      
 private:
 
 /**
- * @brief Every possible notification that could be sent. Notifications are a way of sending updates to a given Item
+ * @brief Every possible notification that could be sent. Notifications are a way of sending updates to a given Object
  * and its respective children whenever its state needs to be changed.
  */
 enum Notification {
@@ -100,7 +99,7 @@ enum Notification {
  * @brief Base class for all API-compliant classes. This class is not ref-counted, nor does it have a tree, so any
  * systems that may be unique from derived classes should use this one instead of other derived classes.
  */
-class VAPI Item {
+class VAPI Object {
 	friend class ClassRegistry;
 
 	HashTable<String, List<CallableMethod>> callables;
@@ -109,7 +108,7 @@ public:
 	virtual void _notification_forwardv(int p_what) {}
 	virtual void _notification_backwardv(int p_what) {}
 
-	VAPI friend bool predelete(Item *);
+	VAPI friend bool predelete(Object *);
 	bool _predelete();
 
 	/**
@@ -119,7 +118,7 @@ public:
 	 * @returns The class casted depending on T.
 	 */
 	template <typename T>
-	static T *cast_to(Item *p_object) {
+	static T *cast_to(Object *p_object) {
 		return p_object ? dynamic_cast<T *>(p_object) : nullptr;
 	}
 
@@ -130,13 +129,13 @@ public:
 	 * @returns Const version of the class casted depending on T.
 	 */
 	template <typename T>
-	static const T *cast_to(const Item *p_object) {
+	static const T *cast_to(const Object *p_object) {
 		return p_object ? dynamic_cast<const T *>(p_object) : nullptr;
 	}
 
 	/**
-	 * @brief Base notification function. Call on an Item or derived class whenever a notification needs to be sent up
-	 * or down its derived classes.
+	 * @brief Base notification function. Call on an Object or derived class whenever a notification needs to be sent
+	 * up or down its derived classes.
 	 */
 	void notification(int p_what, bool p_reversed = false);
 
@@ -162,7 +161,7 @@ public:
 	 * @returns A String of the class name.
 	 */
 	virtual String get_class_name() const {
-		return "Item";
+		return "Object";
 	}
 
 	/**
@@ -178,7 +177,7 @@ public:
 	 * @brief Obtains the given classes' name. Static method for when the class name alone is needed.
 	 */
 	static String get_class_name_static() {
-		return "Item";
+		return "Object";
 	}
 
 	/**
@@ -202,12 +201,12 @@ protected:
 	 * calls.
 	 * @returns The function pointer to the notification function.
 	 */
-	FORCE_INLINE void (Item::*_get_notification() const)(int) {
-		return &Item::_notification;
+	FORCE_INLINE void (Object::*_get_notification() const)(int) {
+		return &Object::_notification;
 	}
 
 	FORCE_INLINE static void (*_get_bind_methods())() {
-		return &Item::_bind_methods;
+		return &Object::_bind_methods;
 	}
 
 	virtual void _initialize_classv() {
@@ -220,14 +219,14 @@ public:
 	static void initialize_class();
 
 	/**
-	 * @brief Item class constructor.
+	 * @brief Object class constructor.
 	 */
-	Item();
+	Object();
 
 	/**
-	 * @brief Item class destructor. Virtual to allow for derived classes' destructors.
+	 * @brief Object class destructor. Virtual to allow for derived classes' destructors.
 	 */
-	virtual ~Item();
+	virtual ~Object();
 };
 
-VAPI bool predelete(Item *p_item);
+VAPI bool predelete(Object *p_item);

@@ -2,8 +2,8 @@
 
 #include "scene/gui/object_ui.h"
 
-class VAPI Panel : public ObjectUI {
-	VREGISTER_CLASS(Panel, ObjectUI)
+class VAPI Panel : public UIObject {
+	VREGISTER_CLASS(Panel, UIObject);
 
 	Vector4 colour;
 

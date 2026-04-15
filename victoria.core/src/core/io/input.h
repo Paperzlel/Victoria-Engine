@@ -1,7 +1,7 @@
 #pragma once
 
-#include "core/config/instance.h"
 #include "core/math/vector2i.h"
+#include "core/object/ref_counted.h"
 #include "core/typedefs.h"
 #include "core/variant/variant_caster.h"
 
@@ -150,8 +150,9 @@ public:
 	Vector2i position;
 };
 
-class VAPI InputEvent : public Instance {
-	VREGISTER_CLASS(InputEvent, Instance)
+class VAPI InputEvent : public RefCounted {
+	VREGISTER_CLASS(InputEvent, RefCounted);
+
 public:
 	bool pressed = false;
 
@@ -159,7 +160,8 @@ public:
 };
 
 class InputEventKey : public InputEvent {
-	VREGISTER_CLASS(InputEventKey, InputEvent)
+	VREGISTER_CLASS(InputEventKey, InputEvent);
+
 public:
 	Key key;
 
@@ -167,13 +169,15 @@ public:
 };
 
 class InputEventMouse : public InputEvent {
-	VREGISTER_CLASS(InputEventMouse, InputEvent)
+	VREGISTER_CLASS(InputEventMouse, InputEvent);
+
 public:
 	InputEventMouse() {}
 };
 
 class InputEventMouseButton : public InputEventMouse {
-	VREGISTER_CLASS(InputEventMouseButton, InputEventMouse)
+	VREGISTER_CLASS(InputEventMouseButton, InputEventMouse);
+
 public:
 	MouseButton mb;
 
@@ -181,7 +185,8 @@ public:
 };
 
 class InputEventMouseMotion : public InputEventMouse {
-	VREGISTER_CLASS(InputEventMouseMotion, InputEventMouse)
+	VREGISTER_CLASS(InputEventMouseMotion, InputEventMouse);
+
 public:
 	Vector2i absolute;
 	Vector2i relative;
@@ -190,7 +195,8 @@ public:
 };
 
 class InputEventMouseScroll : public InputEventMouse {
-	VREGISTER_CLASS(InputEventMouseScroll, InputEventMouse)
+	VREGISTER_CLASS(InputEventMouseScroll, InputEventMouse);
+
 public:
 	uint8_t scroll;
 
@@ -200,9 +206,7 @@ public:
 /**
  * @brief Input singleton class.
  */
-class VAPI Input : public Instance {
-	VREGISTER_CLASS(Input, Instance)
-
+class VAPI Input {
 	Keyboard current_keyboard;
 	Keyboard previous_keyboard;
 

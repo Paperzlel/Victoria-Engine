@@ -5,7 +5,9 @@
 #include "core/data/list.h"
 #include "core/typedefs.h"
 
-class VAPI ResourceFormatImporter : public Instance {
+class VAPI ResourceFormatImporter : public RefCounted {
+	VREGISTER_CLASS(ResourceFormatImporter, RefCounted);
+
 protected:
 	List<String> supported_formats;
 

@@ -2,8 +2,8 @@
 
 #include "list.h"
 
-#include "core/config/callable_method_pointer.h" // IWYU pragma: keep
 #include "core/error/error_macros.h"
+#include "core/object/callable_method_pointer.h" // IWYU pragma: keep
 #include "core/typedefs.h"
 
 /**

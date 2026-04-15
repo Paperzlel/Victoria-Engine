@@ -7,7 +7,7 @@
 #include <core/variant/array.h>
 
 class VAPI Mesh : public Resource {
-	VREGISTER_CLASS(Mesh, Resource)
+	VREGISTER_CLASS(Mesh, Resource);
 
 	RID mesh;
 	Ref<Material> material;

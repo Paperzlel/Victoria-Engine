@@ -5,7 +5,7 @@
 #include <core/os/display_manager.h>
 
 class VAPI Window : public Viewport {
-	VREGISTER_CLASS(Window, Viewport)
+	VREGISTER_CLASS(Window, Viewport);
 
 	uint8_t window_id = DisplayManager::INVALID_WINDOW_ID;
 

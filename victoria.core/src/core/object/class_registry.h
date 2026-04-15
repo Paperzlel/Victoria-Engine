@@ -1,16 +1,16 @@
 #pragma once
 
 #include "callable_method_pointer.h" // IWYU pragma: keep
-#include "item.h"
 
 #include "core/data/hashtable.h"
+#include "core/object/object.h"
 #include "core/string/print_string.h"
 #include "core/typedefs.h"
 
 class VAPI ClassRegistry {
 private:
 	struct ClassInfo {
-		Item *(*creation_func)() = nullptr;
+		Object *(*creation_func)() = nullptr;
 		String name;
 		String inherits;
 		List<String> signals;
@@ -19,8 +19,8 @@ private:
 	static HashTable<String, ClassInfo> classes;
 
 	template <typename T>
-	static Item *creator() {
-		Item *obj = vnew(T);
+	static Object *creator() {
+		Object *obj = vnew(T);
 		return obj;
 	}
 
@@ -53,7 +53,7 @@ public:
 	static void add_signal(const String &p_class, const String &p_signal);
 	static bool has_signal(const String &p_class, const String &p_signal);
 
-	static Item *instantiate(const String &p_class);
+	static Object *instantiate(const String &p_class);
 };
 
 #define REGISTER_CLASS(m_class) ClassRegistry::register_class<m_class>();

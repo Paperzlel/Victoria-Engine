@@ -11,7 +11,8 @@ class FileHandler;
  * @brief Class that represents a handle to a file in the user's filesystem.
  */
 class VAPI FileSystem : public Resource {
-	VREGISTER_CLASS(FileSystem, Resource)
+	VREGISTER_CLASS(FileSystem, Resource);
+
 protected:
 	FileHandler *handle = nullptr;
 	bool is_read_only = false;

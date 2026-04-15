@@ -5,7 +5,7 @@
 #include "scene/main/canvas_item.h"
 #include "scene/main/window.h"
 
-#include <core/config/class_registry.h>
+#include <core/object/class_registry.h>
 
 void Viewport::_size_changed() {
 	texture_proxy->texture = RS::get_singleton()->viewport_get_texture(viewport);
@@ -49,13 +49,13 @@ bool Viewport::_set_camera_3d(Camera3D *p_camera) {
 	return ret;
 }
 
-void Viewport::_propagate_size_changed(Object *p_object) {
+void Viewport::_propagate_size_changed(GameObject *p_object) {
 	if (!is_inside_tree()) {
 		return;
 	}
 
 	if (p_object != this) {
-		CanvasItem *ci = Item::cast_to<CanvasItem>(p_object);
+		CanvasItem *ci = Object::cast_to<CanvasItem>(p_object);
 
 		if (ci) {
 			ci->force_redraw();

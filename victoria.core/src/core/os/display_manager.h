@@ -1,7 +1,7 @@
 #pragma once
 
-#include "core/config/callable_method.h"
 #include "core/math/vector2i.h"
+#include "core/object/callable_method.h"
 #include "core/string/vstring.h"
 #include "core/typedefs.h"
 #include "core/variant/variant_caster.h"

@@ -16,7 +16,7 @@
 #include "scene/gui/texture_rect.h"
 #include "scene/gui/viewport_container.h"
 #include "scene/main/canvas_item.h"
-#include "scene/main/object.h"
+#include "scene/main/game_object.h"
 #include "scene/main/scene_tree.h"
 #include "scene/main/viewport.h"
 #include "scene/main/window.h"
@@ -25,11 +25,12 @@
 #include "scene/resources/mesh.h"
 #include "scene/resources/texture.h"
 
-#include <core/config/class_registry.h>
 #include <core/io/resource.h>
+#include <core/object/class_registry.h>
 
 void register_scene_classes() {
-	REGISTER_CLASS(Object);
+	REGISTER_CLASS(GameObject);
+	REGISTER_CLASS(SceneTree);
 	REGISTER_ABSTRACT_CLASS(CanvasItem);
 	REGISTER_CLASS(Viewport);
 	REGISTER_CLASS(Window);
@@ -41,7 +42,7 @@ void register_scene_classes() {
 	REGISTER_CLASS(Texture);
 	REGISTER_CLASS(ViewportTexture);
 
-	REGISTER_CLASS(ObjectUI);
+	REGISTER_CLASS(UIObject);
 	REGISTER_CLASS(ColourRect);
 	REGISTER_CLASS(TextureRect);
 	REGISTER_CLASS(Panel);
@@ -49,11 +50,11 @@ void register_scene_classes() {
 	REGISTER_CLASS(Container);
 	REGISTER_CLASS(ViewportContainer);
 
-	REGISTER_CLASS(Object2D);
+	REGISTER_CLASS(GameObject2D);
 	REGISTER_CLASS(Mesh2D);
 	REGISTER_CLASS(Sprite2D);
 
-	REGISTER_CLASS(Object3D);
+	REGISTER_CLASS(GameObject3D);
 	REGISTER_CLASS(Camera3D);
 	REGISTER_CLASS(VisualInstance3D);
 	REGISTER_CLASS(Mesh3D);

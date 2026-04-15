@@ -180,6 +180,8 @@ class HashTable : private Allocator {
 		// Check if a resize is needed (most of the table is now being occupied)
 		if (element_count + 1 > 0.8 * size) {
 			_resize_and_remap(size, PRIMES[++_prime_idx]);
+			// Modify size since it's just changed
+			size = PRIMES[_prime_idx];
 		}
 
 		HashTableElement<TKey, TValue> *elem =

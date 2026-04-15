@@ -4,7 +4,7 @@
 #	include "os_windows.h"
 #	include "wgl_detect_version.h"
 
-#	include "core/config/callable_method_pointer.h"
+#	include "core/object/callable_method_pointer.h"
 #	include "core/io/input.h"
 
 #	include <drivers/opengl/rendering_server_gl.h>

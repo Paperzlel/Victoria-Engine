@@ -2,8 +2,8 @@
 
 #include "scene/gui/object_ui.h"
 
-class VAPI ColourRect : public ObjectUI {
-	VREGISTER_CLASS(ColourRect, ObjectUI)
+class VAPI ColourRect : public UIObject {
+	VREGISTER_CLASS(ColourRect, UIObject);
 
 	Vector4 colour;
 

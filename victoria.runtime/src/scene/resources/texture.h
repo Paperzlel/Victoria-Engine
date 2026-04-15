@@ -4,7 +4,8 @@
 #include <core/variant/variant_caster.h>
 
 class VAPI Texture : public Resource {
-	VREGISTER_CLASS(Texture, Resource)
+	VREGISTER_CLASS(Texture, Resource);
+
 public:
 	enum TextureFormat {
 		FORMAT_R,

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "core/config/main_loop.h"
 #include "core/error/error_macros.h"
 #include "core/io/logger.h"
+#include "core/object/main_loop.h"
 #include "core/string/vstring.h"
 
 class VAPI OS {

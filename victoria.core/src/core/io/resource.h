@@ -1,11 +1,11 @@
 #pragma once
 
-#include "core/config/instance.h"
 #include "core/data/rid.h" // IWYU pragma: keep
+#include "core/object/ref_counted.h"
 #include "core/typedefs.h"
 
-class VAPI Resource : public Instance {
-	VREGISTER_CLASS(Resource, Instance)
+class VAPI Resource : public RefCounted {
+	VREGISTER_CLASS(Resource, RefCounted);
 
 	String name = "";
 	String path = "";
