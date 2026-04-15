@@ -1,6 +1,6 @@
 #include "scene/main/viewport.h"
 
-#include "rendering/rendering_server.h"
+#include "rendering/rendering_manager.h"
 #include "scene/3d/camera_3d.h"
 #include "scene/main/canvas_item.h"
 #include "scene/main/window.h"
@@ -8,7 +8,7 @@
 #include <core/object/class_registry.h>
 
 void Viewport::_size_changed() {
-	texture_proxy->texture = RS::get_singleton()->viewport_get_texture(viewport);
+	texture_proxy->texture = RM::get_singleton()->viewport_get_texture(viewport);
 	texture_proxy->format = Texture::FORMAT_RGBA;
 	texture_proxy->width = data.viewport_size.x;
 	texture_proxy->height = data.viewport_size.y;
@@ -22,16 +22,16 @@ void Viewport::_notification(int p_what) {
 
 			if (get_parent()) {
 				Viewport *parent = get_parent()->get_viewport();
-				RS::get_singleton()->viewport_set_parent(viewport, parent->get_viewport_rid());
+				RM::get_singleton()->viewport_set_parent(viewport, parent->get_viewport_rid());
 			}
 
-			RS::get_singleton()->viewport_set_active(viewport, true);
+			RM::get_singleton()->viewport_set_active(viewport, true);
 		} break;
 		case NOTIFICATION_EXIT_TREE: {
 			// De-activate viewport, no longer in tree
 
-			RS::get_singleton()->viewport_set_parent(viewport, RID());
-			RS::get_singleton()->viewport_set_active(viewport, false);
+			RM::get_singleton()->viewport_set_parent(viewport, RID());
+			RM::get_singleton()->viewport_set_active(viewport, false);
 		} break;
 	}
 }
@@ -41,9 +41,9 @@ bool Viewport::_set_camera_3d(Camera3D *p_camera) {
 	// TODO: Camera removed notification
 	camera_3d = p_camera;
 	if (p_camera) {
-		RS::get_singleton()->viewport_attach_camera(viewport, p_camera->get_camera());
+		RM::get_singleton()->viewport_attach_camera(viewport, p_camera->get_camera());
 	} else {
-		RS::get_singleton()->viewport_attach_camera(viewport, RID());
+		RM::get_singleton()->viewport_attach_camera(viewport, RID());
 	}
 
 	return ret;
@@ -100,7 +100,7 @@ void Viewport::set_viewport_size(const Vector2i &p_size) {
 		data.viewport_size = p_size;
 	}
 
-	RS::get_singleton()->viewport_set_size(viewport, p_size);
+	RM::get_singleton()->viewport_set_size(viewport, p_size);
 
 	// Change viewport texture prior to notifying canvas items in case they need the texture
 	_size_changed();
@@ -116,7 +116,7 @@ Vector2i Viewport::get_viewport_offset() const {
 
 void Viewport::set_viewport_offset(const Vector2i &p_offset) {
 	data.viewport_offset = p_offset;
-	RS::get_singleton()->viewport_set_position(viewport, p_offset);
+	RM::get_singleton()->viewport_set_position(viewport, p_offset);
 }
 
 Vector2i Viewport::get_minimum_size() const {
@@ -132,16 +132,16 @@ void Viewport::set_minimum_size(const Vector2i &p_size) {
 }
 
 Viewport::Viewport() {
-	viewport = RS::get_singleton()->viewport_allocate();
-	canvas = RS::get_singleton()->canvas_allocate();
-	RS::get_singleton()->viewport_attach_canvas(viewport, canvas);
+	viewport = RM::get_singleton()->viewport_allocate();
+	canvas = RM::get_singleton()->canvas_allocate();
+	RM::get_singleton()->viewport_attach_canvas(viewport, canvas);
 
 	texture_proxy.instantiate();
 	texture_proxy->viewport = this;
-	texture_proxy->texture = RS::get_singleton()->viewport_get_texture(viewport);
+	texture_proxy->texture = RM::get_singleton()->viewport_get_texture(viewport);
 }
 
 Viewport::~Viewport() {
-	RS::get_singleton()->canvas_free(canvas);
-	RS::get_singleton()->viewport_free(viewport);
+	RM::get_singleton()->canvas_free(canvas);
+	RM::get_singleton()->viewport_free(viewport);
 }

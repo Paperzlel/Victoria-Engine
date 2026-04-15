@@ -1,6 +1,6 @@
 #include "scene/gui/ui_object.h"
 
-#include "rendering/rendering_server.h"
+#include "rendering/rendering_manager.h"
 #include "scene/main/viewport.h"
 
 #include <core/object/class_registry.h>
@@ -120,7 +120,7 @@ void UIObject::_update_canvas_item_transform() {
 	Transform2D t = get_transform();
 	t.position += data.pos_cache;
 
-	RS::get_singleton()->item_set_transform(get_canvas_item(), t);
+	RM::get_singleton()->item_set_transform(get_canvas_item(), t);
 }
 
 void UIObject::_notification(int p_what) {

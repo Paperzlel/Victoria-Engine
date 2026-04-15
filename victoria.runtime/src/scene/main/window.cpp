@@ -1,6 +1,6 @@
 #include "scene/main/window.h"
 
-#include "rendering/rendering_server.h"
+#include "rendering/rendering_manager.h"
 
 #include <core/object/callable_method_pointer.h>
 
@@ -17,7 +17,7 @@ void Window::_notification(int p_what) {
 				// Is root window
 				window_id = 0;
 				set_viewport_size(DisplayManager::get_singleton()->get_window_rect());
-				RS::get_singleton()->viewport_set_window(get_viewport_rid(), window_id);
+				RM::get_singleton()->viewport_set_window(get_viewport_rid(), window_id);
 
 				DisplayManager::get_singleton()->set_window_resize_callback(
 					callable_mp(this, &Window::_window_resize_callback),

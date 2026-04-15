@@ -1,4 +1,4 @@
-#include "rendering/opengl/rendering_server_gl.h"
+#include "rendering/opengl/rendering_manager_gl.h"
 
 #include <core/io/input.h>
 #include <core/math/mat4.h>
@@ -19,7 +19,7 @@ static void *_egl_load_function_wrapper(const char *data) {
 	return (void *)eglGetProcAddress(data);
 }
 
-bool RenderingServerGL::use_gles_over_gl = false;
+bool RenderingManagerGL::use_gles_over_gl = false;
 
 typedef void(GLAPIENTRY *PFNDEBUGMESSAGECALLBACK)(GLDEBUGPROC, const void *);
 
@@ -43,7 +43,7 @@ Transform3D transform2d_to_3d(const Transform2D &p_base) {
  * @param p_location The location of the given shader in our current GL context
  * @param p_matrix The matrix to set the uniform location to
  */
-void RenderingServerGL::set_uniform_mat4(int p_location, const Mat4 &p_matrix) {
+void RenderingManagerGL::set_uniform_mat4(int p_location, const Mat4 &p_matrix) {
 	float matrix[16];
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
@@ -54,7 +54,7 @@ void RenderingServerGL::set_uniform_mat4(int p_location, const Mat4 &p_matrix) {
 	glUniformMatrix4fv(p_location, 1, GL_TRUE, matrix);
 }
 
-void RenderingServerGL::set_uniform_vec3(int p_location, const Vector3 &p_vector) {
+void RenderingManagerGL::set_uniform_vec3(int p_location, const Vector3 &p_vector) {
 	float vec[3];
 	for (int i = 0; i < 3; i++) {
 		vec[i] = p_vector[i];
@@ -63,7 +63,7 @@ void RenderingServerGL::set_uniform_vec3(int p_location, const Vector3 &p_vector
 	glUniform3fv(p_location, 1, &vec[0]);
 }
 
-void RenderingServerGL::set_uniform_vec4(int p_location, const Vector4 &p_vector) {
+void RenderingManagerGL::set_uniform_vec4(int p_location, const Vector4 &p_vector) {
 	float vec[4];
 	for (int i = 0; i < 4; i++) {
 		vec[i] = p_vector[i];
@@ -72,7 +72,7 @@ void RenderingServerGL::set_uniform_vec4(int p_location, const Vector4 &p_vector
 	glUniform4fv(p_location, 1, &vec[0]);
 }
 
-void RenderingServerGL::transform2d_store_mat2x3(const Transform2D &p_transform, float *mat2x3) {
+void RenderingManagerGL::transform2d_store_mat2x3(const Transform2D &p_transform, float *mat2x3) {
 	mat2x3[0] = p_transform.basis[0];
 	mat2x3[1] = p_transform.basis[1];
 	mat2x3[2] = p_transform.basis[2];
@@ -81,17 +81,17 @@ void RenderingServerGL::transform2d_store_mat2x3(const Transform2D &p_transform,
 	mat2x3[5] = p_transform.position[1];
 }
 
-bool RenderingServerGL::owns_mesh(RID p_mesh) {
+bool RenderingManagerGL::owns_mesh(RID p_mesh) {
 	Mesh *mesh = mesh_owner.get_or_null(p_mesh);
 	return mesh != nullptr;
 }
 
-bool RenderingServerGL::owns_light(RID p_light) {
+bool RenderingManagerGL::owns_light(RID p_light) {
 	Light *light = light_owner.get_or_null(p_light);
 	return light != nullptr;
 }
 
-Error RenderingServerGL::initialize() {
+Error RenderingManagerGL::initialize() {
 	set_depth_testing(true);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
@@ -107,7 +107,7 @@ Error RenderingServerGL::initialize() {
 	return OK;
 }
 
-void RenderingServerGL::finalize() {
+void RenderingManagerGL::finalize() {
 	Vector<RID> owned_meshes;
 	mesh_owner.get_owned_list(&owned_meshes);
 	for (RID &p_rid : owned_meshes) {
@@ -168,7 +168,7 @@ void RenderingServerGL::finalize() {
  * viewport's texture, the most nested viewport must be drawn first to give the correct texture to the other viewports.
  * @returns The sorted viewports.
  */
-Vector<RenderingServerGL::Viewport *> RenderingServerGL::_get_sorted_viewports() {
+Vector<RenderingManagerGL::Viewport *> RenderingManagerGL::_get_sorted_viewports() {
 	// Sort from right to left, since render order must be in reverse tree order
 
 	Vector<Viewport *> sorted;
@@ -209,7 +209,7 @@ Vector<RenderingServerGL::Viewport *> RenderingServerGL::_get_sorted_viewports()
 	return sorted;
 }
 
-void RenderingServerGL::_render_internal(RenderData *r_data) {
+void RenderingManagerGL::_render_internal(RenderData *r_data) {
 	if (Input::get_singleton()->is_key_just_released(KEY_F3)) {
 		utils->report_buffer_allocations();
 	}
@@ -256,7 +256,7 @@ void RenderingServerGL::_render_internal(RenderData *r_data) {
 	r_data->render_time = end_time - start_time;
 }
 
-void RenderingServerGL::_render_scene(RenderData *r_data, Viewport *p_viewport, Camera *p_camera) {
+void RenderingManagerGL::_render_scene(RenderData *r_data, Viewport *p_viewport, Camera *p_camera) {
 	// Scene pass
 	{
 		Transform3D inv_cam_view = p_camera->view.inverse();
@@ -482,7 +482,7 @@ void RenderingServerGL::_render_scene(RenderData *r_data, Viewport *p_viewport, 
 	}
 }
 
-void RenderingServerGL::_render_canvas(RenderData *r_data, Viewport *p_viewport, Canvas *p_canvas) {
+void RenderingManagerGL::_render_canvas(RenderData *r_data, Viewport *p_viewport, Canvas *p_canvas) {
 	// No children to draw, leave
 	if (p_canvas->child_items.is_empty()) {
 		return;
@@ -701,7 +701,7 @@ void RenderingServerGL::_render_canvas(RenderData *r_data, Viewport *p_viewport,
 	glUseProgram(0);
 }
 
-void RenderingServerGL::_prepare_viewport(Viewport *p_viewport) {
+void RenderingManagerGL::_prepare_viewport(Viewport *p_viewport) {
 	int fbo = p_viewport->framebuffer_id;
 
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
@@ -714,7 +714,7 @@ void RenderingServerGL::_prepare_viewport(Viewport *p_viewport) {
 	}
 }
 
-void RenderingServerGL::_render_viewport(RenderData *r_data, Viewport *p_viewport) {
+void RenderingManagerGL::_render_viewport(RenderData *r_data, Viewport *p_viewport) {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	Vector4i rect;
@@ -761,7 +761,7 @@ void RenderingServerGL::_render_viewport(RenderData *r_data, Viewport *p_viewpor
 	glUseProgram(0);
 }
 
-void RenderingServerGL::_rebuild_viewport_texture(Viewport *p_viewport, Vector2i p_size) {
+void RenderingManagerGL::_rebuild_viewport_texture(Viewport *p_viewport, Vector2i p_size) {
 	// Check if the new size is different to the old
 	// If so, destroy and re-build the texture, re-assign it to the framebuffer, done.
 	if (p_size == p_viewport->size) {
@@ -832,18 +832,18 @@ void RenderingServerGL::_rebuild_viewport_texture(Viewport *p_viewport, Vector2i
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-RID RenderingServerGL::instance_allocate() {
+RID RenderingManagerGL::instance_allocate() {
 	RID inst = instance_owner.make_rid();
 	Instance *i = instance_owner.get_or_null(inst);
 	i->self = inst;
 	return inst;
 }
 
-void RenderingServerGL::instance_free(RID p_inst) {
+void RenderingManagerGL::instance_free(RID p_inst) {
 	instance_owner.free(p_inst);
 }
 
-void RenderingServerGL::instance_set_base(RID p_inst, RID p_base) {
+void RenderingManagerGL::instance_set_base(RID p_inst, RID p_base) {
 	ERR_FAIL_COND_MSG(!p_inst.is_valid(), "Cannot assign a base to an invalid instance.");
 
 	Instance *inst = instance_owner.get_or_null(p_inst);
@@ -864,17 +864,17 @@ void RenderingServerGL::instance_set_base(RID p_inst, RID p_base) {
 	}
 }
 
-void RenderingServerGL::instance_set_transform(RID p_inst, const Transform3D &p_transform) {
+void RenderingManagerGL::instance_set_transform(RID p_inst, const Transform3D &p_transform) {
 	Instance *inst = instance_owner.get_or_null(p_inst);
 	ERR_COND_NULL(inst);
 	inst->transform = p_transform;
 }
 
-RID RenderingServerGL::mesh_allocate() {
+RID RenderingManagerGL::mesh_allocate() {
 	return mesh_owner.make_rid();
 }
 
-void RenderingServerGL::mesh_free(RID p_rid) {
+void RenderingManagerGL::mesh_free(RID p_rid) {
 	if (mesh_owner.owns(p_rid)) {
 		Mesh *mesh = mesh_owner.get_or_null(p_rid);
 
@@ -892,7 +892,7 @@ void RenderingServerGL::mesh_free(RID p_rid) {
 	}
 }
 
-void RenderingServerGL::mesh_set_from_data(RID p_mesh, const MeshData &p_data) {
+void RenderingManagerGL::mesh_set_from_data(RID p_mesh, const MeshData &p_data) {
 	Mesh *m = mesh_owner.get_or_null(p_mesh);
 	ERR_COND_NULL(m);
 
@@ -980,7 +980,7 @@ void RenderingServerGL::mesh_set_from_data(RID p_mesh, const MeshData &p_data) {
 	glBindVertexArray(0);
 }
 
-void RenderingServerGL::mesh_set_material(RID p_mesh, RID p_material) {
+void RenderingManagerGL::mesh_set_material(RID p_mesh, RID p_material) {
 	Mesh *m = mesh_owner.get_or_null(p_mesh);
 	ERR_COND_NULL(m);
 	if (p_material.is_valid()) {
@@ -992,11 +992,11 @@ void RenderingServerGL::mesh_set_material(RID p_mesh, RID p_material) {
 
 /* MATERIAL API */
 
-RID RenderingServerGL::material_allocate() {
+RID RenderingManagerGL::material_allocate() {
 	return material_owner.make_rid();
 }
 
-void RenderingServerGL::material_free(RID p_material) {
+void RenderingManagerGL::material_free(RID p_material) {
 	if (material_owner.owns(p_material)) {
 		Material *m = material_owner.get_or_null(p_material);
 		vdelete(m->data);
@@ -1006,7 +1006,7 @@ void RenderingServerGL::material_free(RID p_material) {
 	}
 }
 
-void RenderingServerGL::material_set_colour(RID p_material, const Vector4 &p_colour) {
+void RenderingManagerGL::material_set_colour(RID p_material, const Vector4 &p_colour) {
 	Material *m = material_owner.get_or_null(p_material);
 	ERR_COND_NULL(m);
 
@@ -1018,7 +1018,7 @@ void RenderingServerGL::material_set_colour(RID p_material, const Vector4 &p_col
 	m->data->shininess = 32.0; // TODO: Set this elsewhere
 }
 
-void RenderingServerGL::material_set_specular(RID p_material, const Vector3 &p_specular) {
+void RenderingManagerGL::material_set_specular(RID p_material, const Vector3 &p_specular) {
 	Material *m = material_owner.get_or_null(p_material);
 
 	if (!m->data) {
@@ -1027,7 +1027,7 @@ void RenderingServerGL::material_set_specular(RID p_material, const Vector3 &p_s
 	GL::Utilities::store_vec3(p_specular, &m->data->specular[0]);
 }
 
-void RenderingServerGL::material_set_texture(RID p_material, RID p_texture) {
+void RenderingManagerGL::material_set_texture(RID p_material, RID p_texture) {
 	Material *m = material_owner.get_or_null(p_material);
 	ERR_COND_NULL(m);
 
@@ -1040,47 +1040,47 @@ void RenderingServerGL::material_set_texture(RID p_material, RID p_texture) {
 
 /* Light API */
 
-RID RenderingServerGL::light_allocate() {
+RID RenderingManagerGL::light_allocate() {
 	return light_owner.make_rid();
 }
 
-void RenderingServerGL::light_free(RID p_light) {
+void RenderingManagerGL::light_free(RID p_light) {
 	if (light_owner.owns(p_light)) {
 		light_owner.free(p_light);
 	}
 }
 
-void RenderingServerGL::light_set_type(RID p_light, LightType p_type) {
+void RenderingManagerGL::light_set_type(RID p_light, LightType p_type) {
 	Light *l = light_owner.get_or_null(p_light);
 	ERR_COND_NULL(l);
 	l->type = p_type;
 }
 
-void RenderingServerGL::light_set_ambient(RID p_light, const Vector3 &p_ambient) {
+void RenderingManagerGL::light_set_ambient(RID p_light, const Vector3 &p_ambient) {
 	Light *l = light_owner.get_or_null(p_light);
 	ERR_COND_NULL(l);
 	l->ambient = p_ambient;
 }
 
-void RenderingServerGL::light_set_diffuse(RID p_light, const Vector3 &p_diffuse) {
+void RenderingManagerGL::light_set_diffuse(RID p_light, const Vector3 &p_diffuse) {
 	Light *l = light_owner.get_or_null(p_light);
 	ERR_COND_NULL(l);
 	l->diffuse = p_diffuse;
 }
 
-void RenderingServerGL::light_set_specular(RID p_light, const Vector3 &p_specular) {
+void RenderingManagerGL::light_set_specular(RID p_light, const Vector3 &p_specular) {
 	Light *l = light_owner.get_or_null(p_light);
 	ERR_COND_NULL(l);
 	l->specular = p_specular;
 }
 
-void RenderingServerGL::light_set_range(RID p_light, float p_range) {
+void RenderingManagerGL::light_set_range(RID p_light, float p_range) {
 	Light *l = light_owner.get_or_null(p_light);
 	ERR_COND_NULL(l);
 	l->range = p_range;
 }
 
-void RenderingServerGL::light_set_radii(RID p_light, float p_inner_radius, float p_outer_radius) {
+void RenderingManagerGL::light_set_radii(RID p_light, float p_inner_radius, float p_outer_radius) {
 	Light *l = light_owner.get_or_null(p_light);
 	ERR_COND_NULL(l);
 
@@ -1092,23 +1092,23 @@ void RenderingServerGL::light_set_radii(RID p_light, float p_inner_radius, float
 
 /* Camera API */
 
-RID RenderingServerGL::camera_allocate() {
+RID RenderingManagerGL::camera_allocate() {
 	return camera_owner.make_rid();
 }
 
-void RenderingServerGL::camera_free(RID p_rid) {
+void RenderingManagerGL::camera_free(RID p_rid) {
 	if (camera_owner.owns(p_rid)) {
 		camera_owner.free(p_rid);
 	}
 }
 
-void RenderingServerGL::camera_set_transform(RID p_rid, const Transform3D &p_transform) {
+void RenderingManagerGL::camera_set_transform(RID p_rid, const Transform3D &p_transform) {
 	Camera *c = camera_owner.get_or_null(p_rid);
 	ERR_COND_NULL(c);
 	c->view = p_transform;
 }
 
-void RenderingServerGL::camera_set_projection(RID p_rid, const Mat4 &p_projection) {
+void RenderingManagerGL::camera_set_projection(RID p_rid, const Mat4 &p_projection) {
 	Camera *c = camera_owner.get_or_null(p_rid);
 	ERR_COND_NULL(c);
 	c->projection = p_projection;
@@ -1118,20 +1118,20 @@ void RenderingServerGL::camera_set_projection(RID p_rid, const Mat4 &p_projectio
 
 /* CanvasItem API */
 
-RID RenderingServerGL::item_allocate() {
+RID RenderingManagerGL::item_allocate() {
 	RID id = canvas_item_owner.make_rid();
 	Item *i = canvas_item_owner.get_or_null(id);
 	i->self = id;
 	return id;
 }
 
-void RenderingServerGL::item_free(RID p_item) {
+void RenderingManagerGL::item_free(RID p_item) {
 	if (canvas_item_owner.owns(p_item)) {
 		canvas_item_owner.free(p_item);
 	}
 }
 
-void RenderingServerGL::item_set_parent(RID p_item, RID p_parent) {
+void RenderingManagerGL::item_set_parent(RID p_item, RID p_parent) {
 	Item *i = canvas_item_owner.get_or_null(p_item);
 	if (i->parent.is_valid()) {
 		Canvas *c = canvas_owner.get_or_null(p_parent);
@@ -1153,28 +1153,28 @@ void RenderingServerGL::item_set_parent(RID p_item, RID p_parent) {
 	i->parent = p_parent;
 }
 
-void RenderingServerGL::item_set_transform(RID p_item, const Transform2D &p_transform) {
+void RenderingManagerGL::item_set_transform(RID p_item, const Transform2D &p_transform) {
 	Item *i = canvas_item_owner.get_or_null(p_item);
 	ERR_COND_NULL(i);
 
 	i->transform = p_transform;
 }
 
-void RenderingServerGL::item_set_colour(RID p_item, const Vector4 &p_colour) {
+void RenderingManagerGL::item_set_colour(RID p_item, const Vector4 &p_colour) {
 	Item *i = canvas_item_owner.get_or_null(p_item);
 	ERR_COND_NULL(i);
 
 	i->colour = p_colour;
 }
 
-void RenderingServerGL::item_set_ysort(RID p_item, int p_sort) {
+void RenderingManagerGL::item_set_ysort(RID p_item, int p_sort) {
 	Item *i = canvas_item_owner.get_or_null(p_item);
 	ERR_COND_NULL(i);
 
 	i->ysort = p_sort;
 }
 
-void RenderingServerGL::item_set_rect(RID p_item, const Vector2 &p_position, const Vector2 &p_size) {
+void RenderingManagerGL::item_set_rect(RID p_item, const Vector2 &p_position, const Vector2 &p_size) {
 	Item *i = canvas_item_owner.get_or_null(p_item);
 	ERR_COND_NULL(i);
 
@@ -1189,7 +1189,7 @@ void RenderingServerGL::item_set_rect(RID p_item, const Vector2 &p_position, con
 	i->flags |= Item::ITEM_FLAG_USE_RECT;
 }
 
-void RenderingServerGL::item_set_rect_offset(RID p_item, const Vector2 &p_offset) {
+void RenderingManagerGL::item_set_rect_offset(RID p_item, const Vector2 &p_offset) {
 	Item *i = canvas_item_owner.get_or_null(p_item);
 	ERR_COND_NULL(i);
 	ERR_FAIL_COND_MSG((i->base == nullptr) || i->base->type != Item::TYPE_RECT, "Item was not a Rect");
@@ -1198,7 +1198,7 @@ void RenderingServerGL::item_set_rect_offset(RID p_item, const Vector2 &p_offset
 	r->rect_offset = p_offset;
 }
 
-void RenderingServerGL::item_set_flag(RID p_item, ItemFlag p_flag) {
+void RenderingManagerGL::item_set_flag(RID p_item, ItemFlag p_flag) {
 	Item *i = canvas_item_owner.get_or_null(p_item);
 	ERR_COND_NULL(i);
 
@@ -1209,10 +1209,10 @@ void RenderingServerGL::item_set_flag(RID p_item, ItemFlag p_flag) {
 	i->flags |= p_flag;
 }
 
-void RenderingServerGL::item_set_texture_rect(RID p_item,
-											  RID p_texture,
-											  const Vector2 &p_position,
-											  const Vector2 &p_size) {
+void RenderingManagerGL::item_set_texture_rect(RID p_item,
+											   RID p_texture,
+											   const Vector2 &p_position,
+											   const Vector2 &p_size) {
 	Item *i = canvas_item_owner.get_or_null(p_item);
 	ERR_COND_NULL(i);
 
@@ -1244,7 +1244,7 @@ void RenderingServerGL::item_set_texture_rect(RID p_item,
 	i->flags |= Item::ITEM_FLAG_USE_RECT;
 }
 
-void RenderingServerGL::item_set_uv_rect(RID p_item, Vector2 p_offset, Vector2 p_size) {
+void RenderingManagerGL::item_set_uv_rect(RID p_item, Vector2 p_offset, Vector2 p_size) {
 	Item *i = canvas_item_owner.get_or_null(p_item);
 	ERR_COND_NULL(i);
 
@@ -1265,7 +1265,7 @@ void RenderingServerGL::item_set_uv_rect(RID p_item, Vector2 p_offset, Vector2 p
 	r->uv_size = p_size;
 }
 
-void RenderingServerGL::item_set_mesh(RID p_item, RID p_mesh) {
+void RenderingManagerGL::item_set_mesh(RID p_item, RID p_mesh) {
 	Item *i = canvas_item_owner.get_or_null(p_item);
 	Mesh *mesh = mesh_owner.get_or_null(p_mesh);
 	ERR_COND_NULL(i);
@@ -1286,7 +1286,7 @@ void RenderingServerGL::item_set_mesh(RID p_item, RID p_mesh) {
 	m->material = mesh->material;
 }
 
-void RenderingServerGL::item_set_material(RID p_item, RID p_material) {
+void RenderingManagerGL::item_set_material(RID p_item, RID p_material) {
 	Item *i = canvas_item_owner.get_or_null(p_item);
 	ERR_COND_NULL(i);
 
@@ -1297,21 +1297,21 @@ void RenderingServerGL::item_set_material(RID p_item, RID p_material) {
 	i->base->material = p_material;
 }
 
-RID RenderingServerGL::canvas_allocate() {
+RID RenderingManagerGL::canvas_allocate() {
 	return canvas_owner.make_rid();
 }
 
-void RenderingServerGL::canvas_free(RID p_canvas) {
+void RenderingManagerGL::canvas_free(RID p_canvas) {
 	if (canvas_owner.owns(p_canvas)) {
 		canvas_owner.free(p_canvas);
 	}
 }
 
-RID RenderingServerGL::texture_allocate() {
+RID RenderingManagerGL::texture_allocate() {
 	return texture_owner.make_rid();
 }
 
-void RenderingServerGL::texture_free(RID p_texture) {
+void RenderingManagerGL::texture_free(RID p_texture) {
 	if (texture_owner.owns(p_texture)) {
 		Texture *t = texture_owner.get_or_null(p_texture);
 		glDeleteTextures(1, &t->texture_buffer);
@@ -1319,12 +1319,12 @@ void RenderingServerGL::texture_free(RID p_texture) {
 	}
 }
 
-void RenderingServerGL::texture_set_from_data(RID p_texture,
-											  const uint8_t *p_data,
-											  int p_width,
-											  int p_height,
-											  TextureFormat p_format,
-											  TextureMask p_mask) {
+void RenderingManagerGL::texture_set_from_data(RID p_texture,
+											   const uint8_t *p_data,
+											   int p_width,
+											   int p_height,
+											   TextureFormat p_format,
+											   TextureMask p_mask) {
 	Texture *tex = texture_owner.get_or_null(p_texture);
 	ERR_COND_NULL(tex);
 
@@ -1395,50 +1395,50 @@ void RenderingServerGL::texture_set_from_data(RID p_texture,
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-RID RenderingServerGL::viewport_allocate() {
+RID RenderingManagerGL::viewport_allocate() {
 	RID rid = viewport_owner.make_rid();
 	Viewport *v = viewport_owner.get_or_null(rid);
 	v->self = rid;
 	return rid;
 }
 
-void RenderingServerGL::viewport_free(RID p_viewport) {
+void RenderingManagerGL::viewport_free(RID p_viewport) {
 	if (viewport_owner.owns(p_viewport)) {
 		viewport_owner.free(p_viewport);
 	}
 }
 
-void RenderingServerGL::viewport_set_position(RID p_viewport, Vector2i p_position) {
+void RenderingManagerGL::viewport_set_position(RID p_viewport, Vector2i p_position) {
 	Viewport *v = viewport_owner.get_or_null(p_viewport);
 	ERR_COND_NULL(v);
 	v->position = p_position;
 }
 
-void RenderingServerGL::viewport_set_size(RID p_viewport, Vector2i p_size) {
+void RenderingManagerGL::viewport_set_size(RID p_viewport, Vector2i p_size) {
 	Viewport *v = viewport_owner.get_or_null(p_viewport);
 	ERR_COND_NULL(v);
 	_rebuild_viewport_texture(v, p_size);
 }
 
-void RenderingServerGL::viewport_set_window(RID p_viewport, int p_window_id) {
+void RenderingManagerGL::viewport_set_window(RID p_viewport, int p_window_id) {
 	Viewport *v = viewport_owner.get_or_null(p_viewport);
 	ERR_COND_NULL(v);
 	v->viewport_to_window = p_window_id;
 }
 
-void RenderingServerGL::viewport_attach_camera(RID p_viewport, RID p_camera) {
+void RenderingManagerGL::viewport_attach_camera(RID p_viewport, RID p_camera) {
 	Viewport *v = viewport_owner.get_or_null(p_viewport);
 	ERR_COND_NULL(v);
 	v->camera = p_camera;
 }
 
-void RenderingServerGL::viewport_set_parent(RID p_viewport, RID p_parent) {
+void RenderingManagerGL::viewport_set_parent(RID p_viewport, RID p_parent) {
 	Viewport *v = viewport_owner.get_or_null(p_viewport);
 	ERR_COND_NULL(v);
 	v->parent = p_parent;
 }
 
-void RenderingServerGL::viewport_set_active(RID p_viewport, bool p_active) {
+void RenderingManagerGL::viewport_set_active(RID p_viewport, bool p_active) {
 	Viewport *v = viewport_owner.get_or_null(p_viewport);
 	ERR_COND_NULL(v);
 
@@ -1449,25 +1449,25 @@ void RenderingServerGL::viewport_set_active(RID p_viewport, bool p_active) {
 	}
 }
 
-void RenderingServerGL::viewport_attach_canvas(RID p_viewport, RID p_canvas) {
+void RenderingManagerGL::viewport_attach_canvas(RID p_viewport, RID p_canvas) {
 	Viewport *v = viewport_owner.get_or_null(p_viewport);
 	ERR_COND_NULL(v);
 	v->canvas = p_canvas;
 }
 
-RID RenderingServerGL::viewport_get_texture(RID p_viewport) {
+RID RenderingManagerGL::viewport_get_texture(RID p_viewport) {
 	Viewport *v = viewport_owner.get_or_null(p_viewport);
 	ERR_COND_NULL_R(v, RID());
 	return v->colour_texture;
 }
 
-void RenderingServerGL::texture_use_sdf(RID p_texture, bool p_value) {
+void RenderingManagerGL::texture_use_sdf(RID p_texture, bool p_value) {
 	Texture *t = texture_owner.get_or_null(p_texture);
 	ERR_COND_NULL(t);
 	t->use_sdf = p_value;
 }
 
-void RenderingServerGL::free(RID p_rid) {
+void RenderingManagerGL::free(RID p_rid) {
 	if (instance_owner.owns(p_rid)) {
 		instance_owner.free(p_rid);
 	} else if (mesh_owner.owns(p_rid)) {
@@ -1484,7 +1484,7 @@ void RenderingServerGL::free(RID p_rid) {
 	}
 }
 
-void RenderingServerGL::_enable_attributes(uint32_t p_start, uint32_t p_rate) {
+void RenderingManagerGL::_enable_attributes(uint32_t p_start, uint32_t p_rate) {
 	for (int i = 4; i < 9; i++) {
 		glBindVertexArray(canvas_data.rect_vertex_array);
 
@@ -1505,7 +1505,7 @@ void RenderingServerGL::_enable_attributes(uint32_t p_start, uint32_t p_rate) {
 /**
  * @brief Creates a new batch to manage instance information.
  */
-void RenderingServerGL::_new_canvas_batch() {
+void RenderingManagerGL::_new_canvas_batch() {
 	if (canvas_data.batches.size() == 0) {
 		CanvasBatch cb;
 		canvas_data.batches.push_back(cb);
@@ -1525,7 +1525,7 @@ void RenderingServerGL::_new_canvas_batch() {
 	canvas_data.current_batch++;
 }
 
-RenderingServerGL::RenderingServerGL() {
+RenderingManagerGL::RenderingManagerGL() {
 	print_verbose("Registering OpenGL rendering server");
 	// Load GLAD function pointers here
 	bool is_egl = eglGetProcAddress != nullptr;
@@ -1761,6 +1761,6 @@ RenderingServerGL::RenderingServerGL() {
 	OS::get_singleton()->print("OpenGL v3.3.0 - using device %s", OS::get_singleton()->get_device_name().get_data());
 }
 
-RenderingServerGL::~RenderingServerGL() {
+RenderingManagerGL::~RenderingManagerGL() {
 	vdelete(utils);
 }

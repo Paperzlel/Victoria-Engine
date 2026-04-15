@@ -11,6 +11,8 @@ Changes exist in chronological order (i.e. new changes are to be appended to the
 		- Required for the above change to work. A longer name, but ultimately better for clarity. `Node` would fir the naming conventions but I would like to keep a semblance of uniqueness.
 	- Changed `ObjectUI` to `UIObject`.
 		- `GameObjectUI` would be correct, but UI will be used for the editor so the name doesn't quite work. It still inherits from `GameObject` (which is, admittedly, a poor name and might be changed) but it is unique enough to deserve a proper name like this.
+	- Renamed `RenderingServer` to `RenderingManager`.
+		- The server API is an idea from Godot. We prefer "managers" as our terminology but functionally they can go either way. 
 - Testbed:
 	- Updated editor to have a register/unregister classes method.
 		- Seemed to fix an invalid access bug, but it may have been the result of the change from `Object` -> `GameObject` not being updated properly.

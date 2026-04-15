@@ -1,6 +1,6 @@
 #pragma once
 
-#include "rendering/rendering_server.h"
+#include "rendering/rendering_manager.h"
 
 #include <core/data/rid.h>
 #include <core/data/vector.h>
@@ -67,7 +67,7 @@ namespace GL {
 										   const GLchar *p_message,
 										   const void *p_user_param);
 
-		RS::InstanceType get_base_type(RID p_base);
+		RM::InstanceType get_base_type(RID p_base);
 
 		Utilities();
 		~Utilities();

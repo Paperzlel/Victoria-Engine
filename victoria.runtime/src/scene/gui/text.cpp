@@ -1,6 +1,6 @@
 #include "scene/gui/text.h"
 
-#include "rendering/rendering_server.h"
+#include "rendering/rendering_manager.h"
 #include "scene/main/viewport.h"
 
 void Text::_notification(int p_what) {
@@ -10,13 +10,13 @@ void Text::_notification(int p_what) {
 			for (const Character &c : text_charlist) {
 				Transform2D c_t = t;
 				c_t.position += c.position;
-				RS::get_singleton()->item_set_rect_offset(c.id, c_t.position);
+				RM::get_singleton()->item_set_rect_offset(c.id, c_t.position);
 			}
 		} break;
 		case NOTIFICATION_ENTER_TREE: {
 			RID cv = get_viewport()->get_canvas_rid();
 			for (const Character &c : text_charlist) {
-				RS::get_singleton()->item_set_parent(c.id, cv);
+				RM::get_singleton()->item_set_parent(c.id, cv);
 			}
 		} break;
 	}
@@ -42,7 +42,7 @@ String Text::get_text() const {
 void Text::set_text(const String &p_text) {
 	text = p_text;
 	for (Character &c : text_charlist) {
-		RS::get_singleton()->item_free(c.id);
+		RM::get_singleton()->item_free(c.id);
 	}
 	text_charlist.clear();
 
@@ -69,15 +69,15 @@ void Text::set_text(const String &p_text) {
 			new_size.x += (loaded_char.advance >> 6);
 			continue;
 		}
-		ch.id = RS::get_singleton()->item_allocate();
+		ch.id = RM::get_singleton()->item_allocate();
 
 		uint32_t bmp_size = font->get_bitmap_size();
 		Vector2i pos = Vector2i(x + loaded_char.bearing.x, y + baseline - loaded_char.bearing.y);
-		RS::get_singleton()->item_set_texture_rect(ch.id, loaded_char.texture, pos, loaded_char.size);
-		RS::get_singleton()->item_set_uv_rect(ch.id,
+		RM::get_singleton()->item_set_texture_rect(ch.id, loaded_char.texture, pos, loaded_char.size);
+		RM::get_singleton()->item_set_uv_rect(ch.id,
 											  (Vector2)loaded_char.origin / bmp_size,
 											  (Vector2)loaded_char.size / bmp_size);
-		RS::get_singleton()->item_set_ysort(ch.id, get_ysort());
+		RM::get_singleton()->item_set_ysort(ch.id, get_ysort());
 
 		ch.position = pos;
 		text_charlist.push_back(ch);
@@ -90,7 +90,7 @@ void Text::set_text(const String &p_text) {
 }
 
 Text::Text() {
-	RS::get_singleton()->item_set_parent(get_canvas_item(), RID());
+	RM::get_singleton()->item_set_parent(get_canvas_item(), RID());
 	// set_skip_draw(true);
 	set_ysort(1);
 }

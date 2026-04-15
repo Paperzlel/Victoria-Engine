@@ -1,6 +1,6 @@
 #include "scene/resources/material.h"
 
-#include "rendering/rendering_server.h"
+#include "rendering/rendering_manager.h"
 
 RID Material::get_material() const {
 	return material;
@@ -8,7 +8,7 @@ RID Material::get_material() const {
 
 void Material::set_material(RID p_rid) {
 	if (material.is_valid()) {
-		RS::get_singleton()->material_free(material);
+		RM::get_singleton()->material_free(material);
 	}
 
 	if (p_rid.is_null()) {
@@ -24,7 +24,7 @@ Vector4 Material::get_colour() const {
 
 void Material::set_colour(const Vector4 &p_colour) {
 	colour = p_colour;
-	RS::get_singleton()->material_set_colour(material, colour);
+	RM::get_singleton()->material_set_colour(material, colour);
 }
 
 Vector3 Material::get_specular() const {
@@ -33,7 +33,7 @@ Vector3 Material::get_specular() const {
 
 void Material::set_specular(const Vector3 &p_specular) {
 	specular = p_specular;
-	RS::get_singleton()->material_set_specular(material, specular);
+	RM::get_singleton()->material_set_specular(material, specular);
 }
 
 Ref<Texture> Material::get_texture() const {
@@ -59,18 +59,18 @@ void Material::set_texture(const Ref<Texture> &p_tex) {
 		tex_rid = p_tex->get_texture();
 	}
 
-	RS::get_singleton()->material_set_texture(material, tex_rid);
+	RM::get_singleton()->material_set_texture(material, tex_rid);
 }
 
 Material::Material() {
-	material = RS::get_singleton()->material_allocate();
+	material = RM::get_singleton()->material_allocate();
 	set_colour(Vector4(1, 1, 1, 1));
 	set_specular(Vector3(0.5, 0.5, 0.5));
 }
 
 Material::~Material() {
 	if (material.is_valid()) {
-		RS::get_singleton()->material_free(material);
+		RM::get_singleton()->material_free(material);
 	}
 
 	material = RID();

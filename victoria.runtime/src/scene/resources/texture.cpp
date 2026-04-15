@@ -1,6 +1,6 @@
 #include "scene/resources/texture.h"
 
-#include "rendering/rendering_server.h"
+#include "rendering/rendering_manager.h"
 
 RID Texture::get_texture() const {
 	return texture;
@@ -34,11 +34,11 @@ void Texture::set_data(int p_width, int p_height, int p_channel_count, TextureFo
 }
 
 Texture::Texture() {
-	texture = RS::get_singleton()->texture_allocate();
+	texture = RM::get_singleton()->texture_allocate();
 }
 
 Texture::~Texture() {
 	if (texture.is_valid()) {
-		RS::get_singleton()->texture_free(texture);
+		RM::get_singleton()->texture_free(texture);
 	}
 }

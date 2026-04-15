@@ -5,11 +5,11 @@
 #include "rendering/opengl/shaders/canvas.gen.h"
 #include "rendering/opengl/shaders/copy.gen.h"
 #include "rendering/opengl/shaders/scene.gen.h"
-#include "rendering/rendering_server.h"
+#include "rendering/rendering_manager.h"
 
 #include <core/data/rid_owner.h>
 
-class RenderingServerGL : public RenderingServer {
+class RenderingManagerGL : public RenderingManager {
 private:
 	GL::Utilities *utils;
 
@@ -323,8 +323,8 @@ private:
 
 	static bool use_gles_over_gl;
 
-	static RenderingServer *_create() {
-		return vnew(RenderingServerGL);
+	static RenderingManager *_create() {
+		return vnew(RenderingManagerGL);
 	}
 
 	void _enable_attributes(uint32_t p_start, uint32_t p_rate = 1);
@@ -473,6 +473,6 @@ public:
 
 	void free(RID p_rid);
 
-	RenderingServerGL();
-	~RenderingServerGL();
+	RenderingManagerGL();
+	~RenderingManagerGL();
 };

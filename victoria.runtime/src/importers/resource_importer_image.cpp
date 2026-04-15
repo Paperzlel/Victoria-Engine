@@ -1,6 +1,6 @@
 #include "importers/resource_importer_image.h"
 
-#include "rendering/rendering_server.h"
+#include "rendering/rendering_manager.h"
 #include "scene/resources/texture.h"
 
 #include <core/io/filesystem.h>
@@ -23,20 +23,20 @@ Ref<Resource> ResourceFormatImporterImage::_import(const String &p_file, int p_a
 	int width, height, channel_count;
 	uint8_t *data = stbi_load_from_memory(buf.ptr(), buf.size(), &width, &height, &channel_count, 0);
 
-	RS::TextureFormat format;
+	RM::TextureFormat format;
 	switch (channel_count) {
 		case 3: {
-			format = RS::FORMAT_RGB;
+			format = RM::FORMAT_RGB;
 		} break;
 		case 4: {
-			format = RS::FORMAT_RGBA;
+			format = RM::FORMAT_RGBA;
 		} break;
 		default:
-			format = RS::FORMAT_RGB;
+			format = RM::FORMAT_RGB;
 	}
 	t->set_data(width, height, channel_count, (Texture::TextureFormat)format);
 
-	RS::get_singleton()->texture_set_from_data(t->get_texture(), data, width, height, RS::FORMAT_RGB);
+	RM::get_singleton()->texture_set_from_data(t->get_texture(), data, width, height, RM::FORMAT_RGB);
 
 	stbi_image_free(data);
 

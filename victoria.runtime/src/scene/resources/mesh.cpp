@@ -1,6 +1,6 @@
 #include "scene/resources/mesh.h"
 
-#include "rendering/rendering_server.h"
+#include "rendering/rendering_manager.h"
 
 #include <core/variant/variant.h>
 
@@ -42,7 +42,7 @@ RID Mesh::get_mesh() const {
 
 void Mesh::set_mesh(RID p_mesh) {
 	if (mesh.is_valid()) {
-		RS::get_singleton()->mesh_free(mesh);
+		RM::get_singleton()->mesh_free(mesh);
 	}
 
 	if (p_mesh.is_valid()) {
@@ -51,10 +51,10 @@ void Mesh::set_mesh(RID p_mesh) {
 }
 
 void Mesh::create_from_array(const Array &p_arr) {
-	RS::MeshData data;
+	RM::MeshData data;
 
 	if (mesh_is_2d) {
-		data.format |= RS::FORMAT_USE_2D_VERTICES;
+		data.format |= RM::FORMAT_USE_2D_VERTICES;
 	}
 
 	for (int i = 0; i < ARRAY_MAX; i++) {
@@ -88,7 +88,7 @@ void Mesh::create_from_array(const Array &p_arr) {
 		}
 	}
 
-	RS::get_singleton()->mesh_set_from_data(mesh, data);
+	RM::get_singleton()->mesh_set_from_data(mesh, data);
 }
 
 Ref<Material> Mesh::get_material() const {
@@ -104,7 +104,7 @@ void Mesh::set_material(const Ref<Material> &p_material) {
 		material.unref();
 	}
 	material = p_material;
-	RS::get_singleton()->mesh_set_material(mesh, material.is_null() ? RID() : material->get_material());
+	RM::get_singleton()->mesh_set_material(mesh, material.is_null() ? RID() : material->get_material());
 }
 
 void Mesh::force_2d() {
@@ -120,9 +120,9 @@ Vector3 Mesh::get_size() const {
 }
 
 Mesh::Mesh() {
-	mesh = RS::get_singleton()->mesh_allocate();
+	mesh = RM::get_singleton()->mesh_allocate();
 }
 
 Mesh::~Mesh() {
-	RS::get_singleton()->mesh_free(mesh);
+	RM::get_singleton()->mesh_free(mesh);
 }

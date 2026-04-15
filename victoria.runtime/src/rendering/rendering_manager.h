@@ -13,19 +13,19 @@
 #include <core/math/vector2.h>
 #include <core/variant/variant_caster.h>
 
-class VAPI RenderingServer {
+class VAPI RenderingManager {
 protected:
-	static RenderingServer *singleton;
-	static RenderingServer *(*_create_func)();
+	static RenderingManager *singleton;
+	static RenderingManager *(*_create_func)();
 
 	RenderData *frame_data = nullptr;
 
 	virtual void _render_internal(RenderData *r_data) = 0;
 
 public:
-	static RenderingServer *get_singleton();
+	static RenderingManager *get_singleton();
 
-	static RenderingServer *create();
+	static RenderingManager *create();
 
 	/* Basic functionality */
 
@@ -186,14 +186,14 @@ public:
 
 	/* Miscellaneous */
 
-	RenderingServer();
-	virtual ~RenderingServer();
+	RenderingManager();
+	virtual ~RenderingManager();
 };
 
-typedef RenderingServer RS;
+typedef RenderingManager RM;
 
-VARIANT_CAST_ENUM(RenderingServer::InstanceType);
-VARIANT_CAST_ENUM(RenderingServer::LightType);
-VARIANT_CAST_ENUM(RenderingServer::ItemFlag);
-VARIANT_CAST_ENUM(RenderingServer::TextureFormat);
-VARIANT_CAST_ENUM(RenderingServer::TextureMask);
+VARIANT_CAST_ENUM(RenderingManager::InstanceType);
+VARIANT_CAST_ENUM(RenderingManager::LightType);
+VARIANT_CAST_ENUM(RenderingManager::ItemFlag);
+VARIANT_CAST_ENUM(RenderingManager::TextureFormat);
+VARIANT_CAST_ENUM(RenderingManager::TextureMask);

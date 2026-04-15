@@ -7,8 +7,6 @@
 #	include "core/object/callable_method_pointer.h"
 #	include "core/io/input.h"
 
-#	include <drivers/opengl/rendering_server_gl.h>
-
 void DisplayManagerWindows::finalize() {
 	if (gl_manager_windows) {
 		gl_manager_windows->finalize();

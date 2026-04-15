@@ -1,6 +1,6 @@
 #include "scene/main/canvas_item.h"
 
-#include "rendering/rendering_server.h"
+#include "rendering/rendering_manager.h"
 #include "scene/main/viewport.h"
 
 void CanvasItem::_set_transforms_dirty() {
@@ -34,14 +34,14 @@ void CanvasItem::_notification(int p_what) {
 			// Add to canvas
 			RID cv = get_viewport()->get_canvas_rid();
 			if (cv.is_valid()) {
-				RS::get_singleton()->item_set_parent(get_canvas_item(), cv);
+				RM::get_singleton()->item_set_parent(get_canvas_item(), cv);
 			}
 
 			force_redraw();
 		} break;
 
 		case NOTIFICATION_TRANSFORM_CHANGED: {
-			RS::get_singleton()->item_set_transform(get_canvas_item(), get_global_transform());
+			RM::get_singleton()->item_set_transform(get_canvas_item(), get_global_transform());
 		} break;
 	}
 }
@@ -76,33 +76,33 @@ void CanvasItem::force_redraw() {
 }
 
 void CanvasItem::canvas_set_colour(const Vector4 &p_colour) {
-	RS::get_singleton()->item_set_colour(get_canvas_item(), p_colour);
+	RM::get_singleton()->item_set_colour(get_canvas_item(), p_colour);
 }
 
 void CanvasItem::canvas_set_rect(const Vector2 &p_position, const Vector2 &p_size) {
-	RS::get_singleton()->item_set_rect(get_canvas_item(), p_position, p_size);
+	RM::get_singleton()->item_set_rect(get_canvas_item(), p_position, p_size);
 }
 
 void CanvasItem::canvas_set_texture_rect(const Ref<Texture> &p_tex, const Vector2 &p_position, const Vector2 &p_size) {
 	if (!skip_draw) {
-		RS::get_singleton()->item_set_texture_rect(get_canvas_item(), p_tex->get_texture(), p_position, p_size);
+		RM::get_singleton()->item_set_texture_rect(get_canvas_item(), p_tex->get_texture(), p_position, p_size);
 	}
 }
 
 void CanvasItem::canvas_set_mesh(const Ref<Mesh> &p_mesh) {
 	if (!skip_draw) {
-		RS::get_singleton()->item_set_mesh(item, p_mesh->get_mesh());
+		RM::get_singleton()->item_set_mesh(item, p_mesh->get_mesh());
 	}
 }
 
 void CanvasItem::canvas_flip_y(bool p_value) {
-	RS::get_singleton()->item_set_flag(get_canvas_item(),
-									   (p_value ? RenderingServer::ITEM_FLAG_FLIP_Y : RS::ITEM_FLAG_NONE));
+	RM::get_singleton()->item_set_flag(get_canvas_item(),
+									   (p_value ? RenderingManager::ITEM_FLAG_FLIP_Y : RM::ITEM_FLAG_NONE));
 }
 
 void CanvasItem::canvas_set_material(const Ref<Material> &p_material) {
 	if (!skip_draw) {
-		RS::get_singleton()->item_set_material(item, p_material->get_material());
+		RM::get_singleton()->item_set_material(item, p_material->get_material());
 	}
 }
 
@@ -112,7 +112,7 @@ int CanvasItem::get_ysort() const {
 
 void CanvasItem::set_ysort(int p_value) {
 	ysort = p_value;
-	RS::get_singleton()->item_set_ysort(get_canvas_item(), ysort);
+	RM::get_singleton()->item_set_ysort(get_canvas_item(), ysort);
 }
 
 bool CanvasItem::get_skip_draw() const {
@@ -124,11 +124,11 @@ void CanvasItem::set_skip_draw(bool p_value) {
 }
 
 CanvasItem::CanvasItem() {
-	item = RS::get_singleton()->item_allocate();
+	item = RM::get_singleton()->item_allocate();
 }
 
 CanvasItem::~CanvasItem() {
 	if (item.is_valid()) {
-		RS::get_singleton()->item_free(item);
+		RM::get_singleton()->item_free(item);
 	}
 }

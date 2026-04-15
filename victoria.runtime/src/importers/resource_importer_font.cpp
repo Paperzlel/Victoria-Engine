@@ -1,6 +1,6 @@
 #include "importers/resource_importer_font.h"
 
-#include "rendering/rendering_server.h"
+#include "rendering/rendering_manager.h"
 #include "scene/resources/font.h"
 
 #ifdef FREETYPE_ENABLED
@@ -22,7 +22,7 @@ Ref<Resource> ResourceFormatImporterFont::_import(const String &p_file, int p_ar
 		ERR_FAIL_COND_MSG_R(FT_Init_FreeType(&freetype_lib) != 0, "Unable to load FreeType library", Ref<Resource>());
 	}
 
-	RS *rs = static_cast<RS *>(RS::get_singleton());
+	RM *rs = static_cast<RM *>(RM::get_singleton());
 	Ref<Font> f;
 	f.instantiate();
 
@@ -152,7 +152,7 @@ Ref<Resource> ResourceFormatImporterFont::_import(const String &p_file, int p_ar
 		f->set_max_font_height(max_height_pos + max_height_neg);
 		f->set_font_baseline_offset(max_height_pos);
 
-		rs->texture_set_from_data(r, bitmap, bitmap_size, bitmap_size, RS::FORMAT_R, RS::MASK_FILTER_NEAREST);
+		rs->texture_set_from_data(r, bitmap, bitmap_size, bitmap_size, RM::FORMAT_R, RM::MASK_FILTER_NEAREST);
 
 		Memory::vfree(bitmap);
 	} else {
@@ -183,8 +183,8 @@ Ref<Resource> ResourceFormatImporterFont::_import(const String &p_file, int p_ar
 									  slot->bitmap.buffer,
 									  ch.size.x,
 									  ch.size.y,
-									  RS::FORMAT_R,
-									  RS::MASK_FILTER_NEAREST);
+									  RM::FORMAT_R,
+									  RM::MASK_FILTER_NEAREST);
 
 			f->set_character(c, ch);
 		}

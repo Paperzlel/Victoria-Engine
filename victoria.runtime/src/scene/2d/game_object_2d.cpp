@@ -1,12 +1,12 @@
 #include "scene/2d/game_object_2d.h"
 
-#include "rendering/rendering_server.h"
+#include "rendering/rendering_manager.h"
 
 void GameObject2D::_update_transform() {
 	transform.basis.set_rotation(rotation);
 	transform.basis.set_scale(t_scale);
 
-	RS::get_singleton()->item_set_transform(get_canvas_item(), transform);
+	RM::get_singleton()->item_set_transform(get_canvas_item(), transform);
 }
 
 void GameObject2D::_notification(int p_what) {
@@ -16,7 +16,7 @@ void GameObject2D::_notification(int p_what) {
 		} break;
 		// Update the transforms if they are changed
 		case NOTIFICATION_TRANSFORM_CHANGED: {
-			RS::get_singleton()->item_set_transform(get_canvas_item(), get_global_transform());
+			RM::get_singleton()->item_set_transform(get_canvas_item(), get_global_transform());
 		}
 	}
 }
@@ -28,7 +28,7 @@ Transform2D GameObject2D::get_transform() const {
 void GameObject2D::set_transform(const Transform2D &p_transform) {
 	transform = p_transform;
 
-	RS::get_singleton()->item_set_transform(get_canvas_item(), transform);
+	RM::get_singleton()->item_set_transform(get_canvas_item(), transform);
 
 	_propagate_transform_changed(this);
 }

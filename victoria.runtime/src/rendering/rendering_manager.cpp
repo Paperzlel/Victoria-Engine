@@ -1,16 +1,16 @@
-#include "rendering/rendering_server.h"
+#include "rendering/rendering_manager.h"
 
 #include <core/os/display_manager.h>
 
-RenderingServer *(*RenderingServer::_create_func)() = nullptr;
+RenderingManager *(*RenderingManager::_create_func)() = nullptr;
 
-RenderingServer *RenderingServer::singleton = nullptr;
+RenderingManager *RenderingManager::singleton = nullptr;
 
-RenderingServer *RenderingServer::get_singleton() {
+RenderingManager *RenderingManager::get_singleton() {
 	return singleton;
 }
 
-RenderingServer *RenderingServer::create() {
+RenderingManager *RenderingManager::create() {
 	if (_create_func) {
 		return _create_func();
 	} else {
@@ -19,7 +19,7 @@ RenderingServer *RenderingServer::create() {
 	}
 }
 
-void RenderingServer::draw() {
+void RenderingManager::draw() {
 	Vector2i screen_rect = DisplayManager::get_singleton()->get_window_rect();
 	Mat4 screen_mat = Mat4::orthographic(0, screen_rect.y, 0, screen_rect.x, 100, -100);
 	frame_data->screen_matrix = screen_mat;
@@ -29,16 +29,16 @@ void RenderingServer::draw() {
 	_render_internal(frame_data);
 }
 
-RenderData *RenderingServer::get_render_data() {
+RenderData *RenderingManager::get_render_data() {
 	return frame_data;
 }
 
-RenderingServer::RenderingServer() {
+RenderingManager::RenderingManager() {
 	singleton = this;
 
 	frame_data = vnew(RenderData);
 }
 
-RenderingServer::~RenderingServer() {
+RenderingManager::~RenderingManager() {
 	vdelete(frame_data);
 }

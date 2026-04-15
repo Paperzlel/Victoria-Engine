@@ -1,6 +1,6 @@
 #include "rendering/opengl/utilities.h"
 
-#include "rendering/opengl/rendering_server_gl.h"
+#include "rendering/opengl/rendering_manager_gl.h"
 
 #include <core/os/os.h>
 #include <core/string/print_string.h>
@@ -236,14 +236,14 @@ void Utilities::debug_message_callback(GLenum p_source,
 	}
 }
 
-RS::InstanceType Utilities::get_base_type(RID p_base) {
-	RenderingServerGL *rs = static_cast<RenderingServerGL *>(RS::get_singleton());
+RM::InstanceType Utilities::get_base_type(RID p_base) {
+	RenderingManagerGL *rs = static_cast<RenderingManagerGL *>(RM::get_singleton());
 	if (rs->owns_mesh(p_base)) {
-		return RS::INSTANCE_TYPE_MESH;
+		return RM::INSTANCE_TYPE_MESH;
 	} else if (rs->owns_light(p_base)) {
-		return RS::INSTANCE_TYPE_LIGHT;
+		return RM::INSTANCE_TYPE_LIGHT;
 	} else {
-		return RS::INSTANCE_TYPE_NONE;
+		return RM::INSTANCE_TYPE_NONE;
 	}
 }
 

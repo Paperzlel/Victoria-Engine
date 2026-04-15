@@ -3,8 +3,8 @@
 #include "importers/resource_importer_font.h"
 #include "importers/resource_importer_image.h"
 #include "importers/resource_importer_obj.h"
-#include "rendering/opengl/rendering_server_gl.h"
-#include "rendering/rendering_server.h"
+#include "rendering/opengl/rendering_manager_gl.h"
+#include "rendering/rendering_manager.h"
 #include "scene/main/scene_tree.h"
 #include "scene/register_scene_classes.h"
 
@@ -14,25 +14,25 @@
 #include <core/os/os.h>
 
 static MainLoop *main_loop = nullptr;
-static RenderingServer *rendering_server = nullptr;
+static RenderingManager *rendering_server = nullptr;
 
 static uint64_t frame_count = 0;
 static bool should_quit = false;
 
 Error runtime_initialize() {
-	// Create RenderingServer
+	// Create RenderingManager
 	String backend = OS::get_singleton()->get_rendering_driver();
 	if (backend == "opengl") {
-		RenderingServerGL::make_default(OS::get_singleton()->is_gles_over_gl());
+		RenderingManagerGL::make_default(OS::get_singleton()->is_gles_over_gl());
 	}
-	rendering_server = RenderingServer::create();
+	rendering_server = RenderingManager::create();
 	ERR_COND_FATAL(rendering_server == nullptr);
 
 	// Init scene classes
 	register_scene_classes();
 
 	// Rendering server sets up GLAD, which needs a context to be created, so we do this here
-	Error err = RenderingServer::get_singleton()->initialize();
+	Error err = RenderingManager::get_singleton()->initialize();
 	ERR_FAIL_COND_R(err != OK, err);
 
 	// Initialize resource formats (move it elsewhere if we no longer import non-binary formats)
@@ -81,14 +81,14 @@ bool runtime_iteration() {
 	SceneTree::get_singleton()->update(delta_time);
 
 	if (Input::get_singleton()->is_key_just_pressed(KEY_F2)) {
-		RenderData *rd = RS::get_singleton()->get_render_data();
+		RenderData *rd = RM::get_singleton()->get_render_data();
 		OS::get_singleton()->print("Draw calls: %d\nPrimitives: %d\nOverall time: %fms",
 								   rd->draw_calls,
 								   rd->primitive_count,
 								   rd->render_time * 1000);
 	}
 
-	RenderingServer::get_singleton()->draw();
+	RenderingManager::get_singleton()->draw();
 	DisplayManager::get_singleton()->swap_buffers();
 
 	// Move around inputs at the end of the frame
@@ -108,7 +108,7 @@ void runtime_finalize() {
 	OS::get_singleton()->delete_main_loop();
 
 	// Get rid of all the displays used up to this point
-	RenderingServer::get_singleton()->finalize();
+	RenderingManager::get_singleton()->finalize();
 	// Remove all singletons allocated during setup()
 	vdelete(rendering_server);
 

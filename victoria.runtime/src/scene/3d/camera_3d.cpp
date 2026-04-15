@@ -1,14 +1,14 @@
 #include "scene/3d/camera_3d.h"
 
-#include "rendering/rendering_server.h"
+#include "rendering/rendering_manager.h"
 #include "scene/main/viewport.h"
 
 void Camera3D::_update_camera() {
-	if (RS::get_singleton()) {
+	if (RM::get_singleton()) {
 		// Only grab the data if it's needed (which is not most of the time)
 		Vector2i rect = get_viewport()->get_viewport_size();
 		float aspect_ratio = (float)rect.x / rect.y;
-		RS::get_singleton()->camera_set_projection(camera,
+		RM::get_singleton()->camera_set_projection(camera,
 												   Mat4::perspective(fovy, aspect_ratio, near_plane, far_plane));
 	}
 }
@@ -30,7 +30,7 @@ void Camera3D::_notification(int p_what) {
 			}
 		}
 		case NOTIFICATION_TRANSFORM_CHANGED: {
-			RS::get_singleton()->camera_set_transform(get_camera(), get_camera_transform());
+			RM::get_singleton()->camera_set_transform(get_camera(), get_camera_transform());
 		} break;
 	}
 }
@@ -78,9 +78,9 @@ void Camera3D::set_far(float p_far) {
 }
 
 Camera3D::Camera3D() {
-	camera = RS::get_singleton()->camera_allocate();
+	camera = RM::get_singleton()->camera_allocate();
 }
 
 Camera3D::~Camera3D() {
-	RS::get_singleton()->camera_free(camera);
+	RM::get_singleton()->camera_free(camera);
 }
