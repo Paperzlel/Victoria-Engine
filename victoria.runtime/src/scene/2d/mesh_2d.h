@@ -1,6 +1,6 @@
 #pragma once
 
-#include "scene/2d/object_2d.h"
+#include "scene/2d/game_object_2d.h"
 #include "scene/resources/mesh.h"
 
 class VAPI Mesh2D : public GameObject2D {

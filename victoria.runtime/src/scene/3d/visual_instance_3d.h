@@ -1,6 +1,6 @@
 #pragma once
 
-#include "scene/3d/object_3d.h"
+#include "scene/3d/game_object_3d.h"
 
 #include <core/data/rid.h>
 

@@ -2,7 +2,7 @@
 
 #include <core/object/class_registry.h>
 
-#include <scene/gui/object_ui.h>
+#include <scene/gui/ui_object.h>
 #include <scene/main/game_object.h>
 #include <scene/resources/font.h>
 #include <scene/resources/texture.h>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "scene/gui/object_ui.h"
+#include "scene/gui/ui_object.h"
 #include "scene/resources/texture.h"
 
 class VAPI TextureRect : public UIObject {

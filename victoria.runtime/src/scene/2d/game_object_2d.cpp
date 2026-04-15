@@ -1,4 +1,4 @@
-#include "scene/2d/object_2d.h"
+#include "scene/2d/game_object_2d.h"
 
 #include "rendering/rendering_server.h"
 

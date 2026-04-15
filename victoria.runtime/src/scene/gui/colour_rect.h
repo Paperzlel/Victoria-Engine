@@ -1,6 +1,6 @@
 #pragma once
 
-#include "scene/gui/object_ui.h"
+#include "scene/gui/ui_object.h"
 
 class VAPI ColourRect : public UIObject {
 	VREGISTER_CLASS(ColourRect, UIObject);

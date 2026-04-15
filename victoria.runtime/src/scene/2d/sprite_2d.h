@@ -1,6 +1,6 @@
 #pragma once
 
-#include "scene/2d/object_2d.h"
+#include "scene/2d/game_object_2d.h"
 
 class VAPI Sprite2D : public GameObject2D {
 	VREGISTER_CLASS(Sprite2D, GameObject2D);

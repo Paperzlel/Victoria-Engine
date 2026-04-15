@@ -1,4 +1,4 @@
-#include "scene/gui/object_ui.h"
+#include "scene/gui/ui_object.h"
 
 #include "rendering/rendering_server.h"
 #include "scene/main/viewport.h"

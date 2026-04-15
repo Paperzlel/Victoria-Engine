@@ -1,6 +1,6 @@
 #pragma once
 
-#include "scene/gui/object_ui.h"
+#include "scene/gui/ui_object.h"
 
 // Class needs to do the following:
 // Clip children to the size it is
