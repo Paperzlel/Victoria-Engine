@@ -154,6 +154,30 @@ void DisplayManagerWayland::_on_pointer_frame(void *p_data, struct wl_pointer *p
 	cd->frame_recieved = true;
 }
 
+void DisplayManagerWayland::_on_pointer_axis_source(void *p_data,
+													struct wl_pointer *p_pointer,
+													uint32_t p_axis_source) {}
+
+void DisplayManagerWayland::_on_pointer_axis_stop(void *p_data,
+												  struct wl_pointer *p_pointer,
+												  uint32_t p_time,
+												  uint32_t p_axis) {}
+
+void DisplayManagerWayland::_on_pointer_axis_discrete(void *p_data,
+													  struct wl_pointer *p_pointer,
+													  uint32_t p_axis,
+													  int p_discrete) {}
+
+void DisplayManagerWayland::_on_pointer_axis_value120(void *p_data,
+													  struct wl_pointer *p_pointer,
+													  uint32_t p_axis,
+													  int p_value120) {}
+
+void DisplayManagerWayland::_on_pointer_axis_relative_direction(void *p_data,
+																struct wl_pointer *p_pointer,
+																uint32_t p_axis,
+																uint32_t p_direction) {}
+
 void DisplayManagerWayland::_on_xdg_surface_configure(void *p_data, struct xdg_surface *p_surface, uint32_t p_serial) {
 	// Acknowledge, but do nothing. In most cases EGL will look after window data.
 	xdg_surface_ack_configure(p_surface, p_serial);

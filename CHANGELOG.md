@@ -1,6 +1,18 @@
 # Changelog
 Changes exist in chronological order (i.e. new changes are to be appended to the end of the file). Dates are done in DD/MM/YYYY format with the version number applied to each date if needed.
 
+## 16/4/2026
+- Core:
+	- Platform:
+		- Wayland:
+			- Fixed an issue where scrolling in Wayland windows would crash the application due to an invalid Wayland opcode.
+				- Thanks to InhaledBus for identifying the problem being scrolling.
+	- Math:
+		- Added `lerp()` as a function to the `Math` class and our `Vector` classes.
+- Tests:
+	- Added unit tests for math functions.
+
+
 ## 15/4/2026
 - Core:
 	- Renamed `Item` to `Object` and `Instance` to `RefCounted`. 

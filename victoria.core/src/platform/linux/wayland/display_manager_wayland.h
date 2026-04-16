@@ -73,6 +73,14 @@ private:
 	static void
 	_on_pointer_axis(void *p_data, struct wl_pointer *p_pointer, uint32_t p_time, uint32_t p_axis, wl_fixed_t p_fixed);
 	static void _on_pointer_frame(void *p_data, struct wl_pointer *p_pointer);
+	static void _on_pointer_axis_source(void *p_data, struct wl_pointer *p_pointer, uint32_t p_axis_source);
+	static void _on_pointer_axis_stop(void *p_data, struct wl_pointer *p_pointer, uint32_t p_time, uint32_t p_axis);
+	static void _on_pointer_axis_discrete(void *p_data, struct wl_pointer *p_pointer, uint32_t p_axis, int p_discrete);
+	static void _on_pointer_axis_value120(void *p_data, struct wl_pointer *p_pointer, uint32_t p_axis, int p_value120);
+	static void _on_pointer_axis_relative_direction(void *p_data,
+													struct wl_pointer *p_pointer,
+													uint32_t p_axis,
+													uint32_t p_direction);
 
 	static void _on_xdg_surface_configure(void *p_data, struct xdg_surface *p_surface, uint32_t p_serial);
 
@@ -105,6 +113,11 @@ private:
 		.button = _on_pointer_button,
 		.axis = _on_pointer_axis,
 		.frame = _on_pointer_frame,
+		.axis_source = _on_pointer_axis_source,
+		.axis_stop = _on_pointer_axis_stop,
+		.axis_discrete = _on_pointer_axis_discrete,
+		.axis_value120 = _on_pointer_axis_value120,
+		.axis_relative_direction = _on_pointer_axis_relative_direction,
 	};
 
 	static constexpr struct xdg_surface_listener surface_listener = {
