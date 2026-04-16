@@ -24,7 +24,7 @@ A list of all things that are on the current plan for the engine, whether short-
 - [ ] Implement project configs and their loaders
 - [ ] Implement scene loaders
 - [ ] Implement `Dictionaries`
-- [ ] Define more math functions like `floor()` and `log()`
+- [x] Define more math functions like `floor()` and `log()`
 - [x] Optimise `Vector<T>` and other classes to have a singular pointer to save class size
 - [x] Use move semantics in `Vector<T>` where applicable
 - [ ] Add a `CommandQueue` structure to be used for processing end-of-frame logic and other places a queue would be appropriate

@@ -102,6 +102,7 @@ public:
 	FORCE_INLINE double angle(const Vector2 &p_other) const;
 	FORCE_INLINE double dot(const Vector2 &p_other) const;
 	FORCE_INLINE Vector2 inverse() const;
+	FORCE_INLINE Vector2 lerp(const Vector2 &p_to, double p_factor) const;
 
 	FORCE_INLINE void normalize();
 	FORCE_INLINE Vector2 normalized();
@@ -315,6 +316,20 @@ double Vector2::dot(const Vector2 &p_other) const {
  */
 Vector2 Vector2::inverse() const {
 	return Vector2(-x, -y);
+}
+
+/**
+ * @brief Obtains a `Vector2` that is linearly interpolated between two points defined by the current `Vector2` and the
+ * one passed in. For further information on linear interpolation, see `Math::lerp()`.
+ * @param p_to The other `Vector2` to interpolate towards.
+ * @param p_factor The factor by which the result is interpolated. 0 is the current `Vector2` and 1 is the desination.
+ * @return A `Vector2` linearly interpolated by the given factor.
+ */
+Vector2 Vector2::lerp(const Vector2 &p_to, double p_factor) const {
+	Vector2 ret;
+	ret.x = Math::lerp(x, p_to.x, p_factor);
+	ret.y = Math::lerp(y, p_to.y, p_factor);
+	return ret;
 }
 
 /**

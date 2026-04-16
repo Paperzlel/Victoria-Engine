@@ -2,7 +2,6 @@
 
 #include "core/math/math_funcs.h"
 
-#include <math.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
@@ -521,7 +520,7 @@ String ftos(double p_double) {
 
 	const double abs_val = Math::abs(p_double);
 	if (abs_val > 10) {
-		dp -= (int)floor(log10(abs_val));
+		dp -= (int)Math::floor(Math::log10(abs_val));
 	}
 
 	char fmt[7];

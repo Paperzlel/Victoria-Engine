@@ -9,9 +9,6 @@
 #	include FT_OUTLINE_H
 #endif
 
-// TODO: REMOVE, ADD FLOOR/CEIL TO MATH LIB
-#include <math.h>
-
 #ifdef FREETYPE_ENABLED
 static FT_Library freetype_lib;
 #endif

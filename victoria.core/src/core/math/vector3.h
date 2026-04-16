@@ -117,6 +117,7 @@ public:
 	FORCE_INLINE Vector3 inverse() const;
 	FORCE_INLINE void normalize();
 	FORCE_INLINE Vector3 normalized() const;
+	FORCE_INLINE Vector3 lerp(const Vector3 &p_to, double p_factor) const;
 	String stringify() const;
 
 	FORCE_INLINE bool is_normalized() const;
@@ -315,6 +316,21 @@ void Vector3::normalize() {
 Vector3 Vector3::normalized() const {
 	Vector3 ret = *this;
 	ret.normalize();
+	return ret;
+}
+
+/**
+ * @brief Obtains a `Vector3` that is linearly interpolated between two points defined by the current `Vector3` and
+ * the one passed in. For further information on linear interpolation, see `Math::lerp()`.
+ * @param p_to The other `Vector3` to interpolate towards.
+ * @param p_factor The factor by which the result is interpolated. 0 is the current `Vector3` and 1 is the desination.
+ * @return A `Vector3` linearly interpolated by the given factor.
+ */
+Vector3 Vector3::lerp(const Vector3 &p_to, double p_factor) const {
+	Vector3 ret;
+	ret.x = Math::lerp(x, p_to.x, p_factor);
+	ret.y = Math::lerp(y, p_to.y, p_factor);
+	ret.z = Math::lerp(z, p_to.z, p_factor);
 	return ret;
 }
 

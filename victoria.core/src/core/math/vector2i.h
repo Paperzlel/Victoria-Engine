@@ -100,6 +100,7 @@ public:
 	FORCE_INLINE double length() const;
 	FORCE_INLINE int64_t length_squared() const;
 	FORCE_INLINE Vector2i inverse() const;
+	FORCE_INLINE Vector2i lerp(const Vector2i &p_to, double p_factor) const;
 
 	FORCE_INLINE void normalize();
 	FORCE_INLINE Vector2i normalized();
@@ -276,6 +277,20 @@ int64_t Vector2i::length_squared() const {
  */
 Vector2i Vector2i::inverse() const {
 	return Vector2i(-x, -y);
+}
+
+/**
+ * @brief Obtains a `Vector2i` that is linearly interpolated between two points defined by the current `Vector2i` and
+ * the one passed in. For further information on linear interpolation, see `Math::lerp()`.
+ * @param p_to The other `Vector2i` to interpolate towards.
+ * @param p_factor The factor by which the result is interpolated. 0 is the current `Vector2i` and 1 is the desination.
+ * @return A `Vector2i` linearly interpolated by the given factor.
+ */
+Vector2i Vector2i::lerp(const Vector2i &p_to, double p_factor) const {
+	Vector2i ret;
+	ret.x = (int64_t)Math::lerp((double)x, (double)p_to.x, p_factor);
+	ret.y = (int64_t)Math::lerp((double)y, (double)p_to.y, p_factor);
+	return ret;
 }
 
 /**

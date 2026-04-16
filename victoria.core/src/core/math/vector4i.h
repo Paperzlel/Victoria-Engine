@@ -70,6 +70,7 @@ struct VAPI Vector4i {
 	FORCE_INLINE Vector4i inverse() const;
 	FORCE_INLINE void normalize();
 	FORCE_INLINE Vector4i normalized() const;
+	FORCE_INLINE Vector4i lerp(const Vector4i &p_to, double p_factor) const;
 	String stringify() const;
 
 	FORCE_INLINE bool is_normalized() const;
@@ -231,6 +232,22 @@ void Vector4i::normalize() {
 Vector4i Vector4i::normalized() const {
 	Vector4i ret = *this;
 	ret.normalize();
+	return ret;
+}
+
+/**
+ * @brief Obtains a `Vector4i` that is linearly interpolated between two points defined by the current `Vector4i` and
+ * the one passed in. For further information on linear interpolation, see `Math::lerp()`.
+ * @param p_to The other `Vector4i` to interpolate towards.
+ * @param p_factor The factor by which the result is interpolated. 0 is the current `Vector4i` and 1 is the desination.
+ * @return A `Vector4i` linearly interpolated by the given factor.
+ */
+Vector4i Vector4i::lerp(const Vector4i &p_to, double p_factor) const {
+	Vector4i ret;
+	ret.x = (int)Math::lerp((double)x, (double)p_to.x, p_factor);
+	ret.y = (int)Math::lerp((double)y, (double)p_to.y, p_factor);
+	ret.z = (int)Math::lerp((double)z, (double)p_to.z, p_factor);
+	ret.w = (int)Math::lerp((double)w, (double)p_to.w, p_factor);
 	return ret;
 }
 
