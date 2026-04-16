@@ -1,6 +1,6 @@
 #include "gl_manager_x11.h"
 
-#if PLATFORM_LINUX
+#if defined(PLATFORM_LINUX) && defined(X11_ENABLED)
 
 #	include "display_manager_x11.h"
 
@@ -267,4 +267,4 @@ void GLManagerX11::swap_buffers() const {
  */
 void GLManagerX11::resize_viewport(uint16_t width, uint16_t height) const {}
 
-#endif // PLATFORM_LINUX
+#endif // defined(PLATFORM_LINUX) && defined(X11_ENABLED)

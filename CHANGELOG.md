@@ -4,6 +4,7 @@ Changes exist in chronological order (i.e. new changes are to be appended to the
 ## 16/4/2026
 - Core:
 	- Platform:
+		- Fixed compilation of X11/Wayland not actually disabling the two properly when specified on the command line.
 		- Wayland:
 			- Fixed an issue where scrolling in Wayland windows would crash the application due to an invalid Wayland opcode.
 				- Thanks to InhaledBus for identifying the problem being scrolling.

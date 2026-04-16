@@ -23,8 +23,8 @@ endif
 rwildcard=$(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2))
 
 # Platform-specific options
-export USE_WAYLAND := no
-export USE_X11 := no
+export USE_WAYLAND :=
+export USE_X11 :=
 
 # Wayland generator folder
 WAYLAND_PROTOCOLS := src/platform/linux/wayland/protocols
@@ -32,6 +32,7 @@ WAYLAND_PROTOCOLS := src/platform/linux/wayland/protocols
 ifeq ($(PLATFORM), linux)
 	CCFLAGS += -fPIC -fvisibility=hidden
 	THIRDPARTY_CFLAGS += -fPIC -fvisibility=hidden
+ifeq ("$(USE_WAYLAND)","")
 ifeq ($(shell pkg-config --exists wayland-client; echo $$?),0)
 # Require Wayland EGL support
 ifeq ($(shell pkg-config --exists wayland-egl; echo $$?),0)
@@ -40,10 +41,13 @@ endif
 else
 	USE_WAYLAND := no
 endif
+endif
+ifeq ("$(USE_X11)","")
 ifeq ($(shell pkg-config --exists x11; echo $$?),1)
 	USE_X11 := no
 else
 	USE_X11 := yes
+endif
 endif
 endif
 

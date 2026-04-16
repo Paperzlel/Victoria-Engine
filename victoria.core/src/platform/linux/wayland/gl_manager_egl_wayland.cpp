@@ -1,7 +1,6 @@
 #include "gl_manager_egl_wayland.h"
 
-#if PLATFORM_LINUX
-#	ifdef WAYLAND_ENABLED
+#if defined(PLATFORM_LINUX) && defined(WAYLAND_ENABLED)
 
 EGLenum EGLManagerWayland::_egl_get_platform_enum() {
 	return EGL_PLATFORM_WAYLAND_KHR;
@@ -23,5 +22,4 @@ Vector<EGLint> EGLManagerWayland::_egl_get_context_attribs() {
 	return ret;
 }
 
-#	endif // WAYLAND_ENABLED
-#endif	   // PLATFORM_LINUX
+#endif // defined(PLATFORM_LINUX) && defined(X11_ENABLED)

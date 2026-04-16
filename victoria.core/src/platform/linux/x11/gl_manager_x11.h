@@ -1,7 +1,7 @@
 #pragma once
 
 #include "core/typedefs.h"
-#if PLATFORM_LINUX
+#if defined(PLATFORM_LINUX) && defined(X11_ENABLED)
 
 #	include <X11/Xlib.h>
 #	include <glad/gl.h>
@@ -70,4 +70,4 @@ public:
 	~GLManagerX11() {}
 };
 
-#endif // PLATFORM_LINUX
+#endif // defined(PLATFORM_LINUX) && defined(X11_ENABLED)

@@ -4,6 +4,7 @@
 #if PLATFORM_LINUX
 
 #	include "logger_linux.h"
+#	include "core/string/print_string.h"
 
 #	ifdef X11_ENABLED
 #		include "x11/display_manager_x11.h"
@@ -156,6 +157,7 @@ int OSLinux::get_preferred_display_manager() {
 
 		String display = get_environment("XDG_SESSION_TYPE");
 		if (display == name) {
+			print_verbose(vformat("Using %s as the display driver backend.", name.get_data()));
 			return i;
 		}
 	}

@@ -1,20 +1,19 @@
 #pragma once
 
 #include "core/typedefs.h"
-#if PLATFORM_LINUX
-#	ifdef WAYLAND_ENABLED
+#if defined(PLATFORM_LINUX) && defined(WAYLAND_ENABLED)
 
-#		include "gl_manager_egl_wayland.h"
-#		include "protocols/wayland.gen.h"
-#		include "protocols/xdg_decoration.gen.h"
-#		include "protocols/xdg_shell.gen.h"
-#		include "protocols/cursor_shape.gen.h"
+#	include "gl_manager_egl_wayland.h"
+#	include "protocols/wayland.gen.h"
+#	include "protocols/xdg_decoration.gen.h"
+#	include "protocols/xdg_shell.gen.h"
+#	include "protocols/cursor_shape.gen.h"
 
-#		include "core/data/event.h"
-#		include "core/os/display_manager.h"
+#	include "core/data/event.h"
+#	include "core/os/display_manager.h"
 
-#		include <wayland-client-core.h>
-#		include <wayland-egl-core.h>
+#	include <wayland-client-core.h>
+#	include <wayland-egl-core.h>
 
 class DisplayManagerWayland : public DisplayManager {
 private:
@@ -196,5 +195,4 @@ public:
 	~DisplayManagerWayland();
 };
 
-#	endif // WAYLAND_ENABLED
-#endif	   // PLATFORM_LINUX
+#endif // defined(PLATFORM_LINUX) && defined(WAYLAND_ENABLED)

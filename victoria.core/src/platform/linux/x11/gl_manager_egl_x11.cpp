@@ -1,6 +1,6 @@
 #include "gl_manager_egl_x11.h"
 
-#if PLATFORM_LINUX
+#if defined(PLATFORM_LINUX) && defined(X11_ENABLED)
 
 EGLenum EGLManagerX11::_egl_get_platform_enum() {
 	return EGL_PLATFORM_X11_KHR;
@@ -23,4 +23,4 @@ Vector<EGLint> EGLManagerX11::_egl_get_context_attribs() {
 	return context_attribs;
 }
 
-#endif
+#endif // defined(PLATFORM_LINUX) && defined(X11_ENABLED)

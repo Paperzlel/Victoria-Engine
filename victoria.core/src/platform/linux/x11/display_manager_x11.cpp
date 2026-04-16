@@ -1,5 +1,5 @@
 #include "display_manager_x11.h"
-#if PLATFORM_LINUX
+#if defined(PLATFORM_LINUX) && defined(X11_ENABLED)
 
 #	include "core/os/os.h"
 
@@ -744,4 +744,4 @@ DisplayManagerX11::~DisplayManagerX11() {
 	}
 }
 
-#endif // PLATFORM_LINUX
+#endif // defined(PLATFORM_LINUX) && defined(X11_ENABLED)

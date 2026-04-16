@@ -1,5 +1,5 @@
 #include "display_manager_wayland.h"
-#if PLATFORM_LINUX && defined(WAYLAND_ENABLED)
+#if defined(PLATFORM_LINUX) && defined(WAYLAND_ENABLED)
 
 #	include "core/error/error_macros.h"
 #	include "core/io/input.h"
@@ -486,4 +486,4 @@ DisplayManagerWayland::~DisplayManagerWayland() {
 	}
 }
 
-#endif // PLATFORM_LINUX && WAYLAND_ENABLED
+#endif // defined(PLATFORM_LINUX) && defined(WAYLAND_ENABLED)

@@ -25,7 +25,7 @@ Python is required in some form on all PCs for the build process, but it should 
 If you are running an older version of Windows and lack native OpenGL support (or if your driver is known to be buggy) you may wish to retrieve ANGLE binaries from our own repository. Windows builds will always come with these binaries as they are needed for certain GPUs.
 
 #### Running cl for building
-`cl.exe` is Microsoft's native compiler for Windows. It sucks to use, primarily due to the Visual Studio installer not putting it on the command line for any old tool to reference it. In order to use `cl` for compilation, run a new command to call `utils/windows/build_windows.bat` from the command-line which will build Victoria for you. The reason for this is due to `cl` needing certain environment variables set up so it can be called (namely a temporary update to the system PATH) which exist in a specific Visual Studio file that is called by `get_vc_env.bat`.
+`cl.exe` is Microsoft's native compiler for Windows. It sucks to use, primarily due to the Visual Studio installer not putting it on the command line for any old tool to reference it. In order to use `cl` for compilation, run a new command to call `utils/windows/build_windows.bat` from the command-line which will build Victoria for you. The reason for this is due to `cl` needing certain environment variables set up so it can be called (namely a temporary update to the system PATH) which exists in a specific Visual Studio file that is called by `get_vc_env.bat`.
 
 
 ### Linux
