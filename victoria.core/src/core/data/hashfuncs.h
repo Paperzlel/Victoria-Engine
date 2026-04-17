@@ -24,5 +24,5 @@ uint32_t HasherDefault::hash(uint32_t p_key) {
 	return hash_lowbias32(p_key);
 }
 
-VAPI extern int PRIMES[];
-VAPI extern int PRIMES_SIZE;
+VAPI extern uint32_t PRIMES[];
+VAPI extern uint32_t PRIMES_SIZE;

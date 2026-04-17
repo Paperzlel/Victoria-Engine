@@ -23,7 +23,7 @@ uint32_t hash_lowbias32(uint32_t x) {
 }
 
 /* clang-format off */
-int PRIMES[] = {
+uint32_t PRIMES[] = {
     5,
     11,
     29,
@@ -56,4 +56,4 @@ int PRIMES[] = {
 };
 /* clang-format on */
 
-int PRIMES_SIZE = sizeof(PRIMES) / sizeof(int);
+uint32_t PRIMES_SIZE = sizeof(PRIMES) / sizeof(int);

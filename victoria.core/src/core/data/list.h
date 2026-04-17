@@ -140,11 +140,11 @@ public:
 		return ConstIterator(nullptr);
 	}
 
-	FORCE_INLINE const Element *front() const {
+	FORCE_INLINE Element *front() {
 		return head;
 	}
 
-	FORCE_INLINE Element *front() {
+	FORCE_INLINE const Element *front() const {
 		return head;
 	}
 
@@ -181,6 +181,13 @@ public:
 		p_other.head = nullptr;
 		p_other.tail = nullptr;
 		p_other.element_count = 0;
+	}
+
+	FORCE_INLINE void operator=(std::initializer_list<T> p_init) {
+		clear();
+		for (const T &elem : p_init) {
+			push_back(elem);
+		}
 	}
 
 	FORCE_INLINE Element *push_front(const T &p_item) {
@@ -324,9 +331,15 @@ public:
 		head = p_other.head;
 		tail = p_other.tail;
 		element_count = p_other.element_count;
-		head = nullptr;
-		tail = nullptr;
-		element_count = 0;
+		p_other.head = nullptr;
+		p_other.tail = nullptr;
+		p_other.element_count = 0;
+	}
+
+	List(std::initializer_list<T> p_init) {
+		for (const T &elem : p_init) {
+			push_back(elem);
+		}
 	}
 
 	~List() {

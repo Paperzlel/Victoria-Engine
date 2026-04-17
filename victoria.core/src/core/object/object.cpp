@@ -17,7 +17,7 @@ void Object::notification(int p_what, bool p_reversed) {
 
 Error Object::connect_method(const String &p_name, const CallableMethod &p_method) {
 	// Avoid crashes by inserting the method beforehand
-	if (callables.get_element_count() == 0 && ClassRegistry::has_signal(get_class_name(), p_name)) {
+	if (callables.size() == 0 && ClassRegistry::has_signal(get_class_name(), p_name)) {
 		callables.insert(p_name, List<CallableMethod>());
 	}
 
