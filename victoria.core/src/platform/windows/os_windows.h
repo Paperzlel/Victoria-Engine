@@ -5,7 +5,6 @@
 
 #	include "core/data/hashtable.h"
 #	include "core/os/os.h"
-#	include "scene/main/scene_tree.h" // IWYU pragma: keep Needed for header and main loop creation.
 
 #	define WIN32_LEAN_AND_MEAN
 #	include <windows.h>

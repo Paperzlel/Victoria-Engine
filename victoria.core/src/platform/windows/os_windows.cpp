@@ -4,6 +4,8 @@
 #	include "display_manager_windows.h"
 #	include "logger_windows.h"
 
+#	include "core/object/main_loop.h"
+
 typedef int(WINAPI *RtlGetVersion)(LPOSVERSIONINFOEXA);
 
 OS *OS::create() {

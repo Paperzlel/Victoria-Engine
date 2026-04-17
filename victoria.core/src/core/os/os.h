@@ -2,8 +2,9 @@
 
 #include "core/error/error_macros.h"
 #include "core/io/logger.h"
-#include "core/object/main_loop.h"
 #include "core/string/vstring.h"
+
+class MainLoop;
 
 class VAPI OS {
 protected:

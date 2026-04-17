@@ -5,6 +5,7 @@
 
 #	include "logger_linux.h"
 #	include "core/string/print_string.h"
+#	include "core/object/main_loop.h"
 
 #	ifdef X11_ENABLED
 #		include "x11/display_manager_x11.h"
