@@ -1,6 +1,16 @@
 # Changelog
 Changes exist in chronological order (i.e. new changes are to be appended to the end of the file). Dates are done in DD/MM/YYYY format with the version number applied to each date if needed.
 
+## 17/4/2026
+- Core:
+	- Data: 
+		- Upgraded `HashTable` to be fully documented, as well as having a new `reserve` function and far more class constructors and destructors.
+			- The class is now more usable as it properly handles assigment and construction as opposed to the previous implementations.
+- Tests:
+	- Overhauled unit tests for `HashTable`.
+	- Added a `README.md` for an explanation on how to write unit tests.
+		- More unit tests will be created and existing ones will be overhauled.
+
 ## 16/4/2026
 - Core:
 	- Platform:
