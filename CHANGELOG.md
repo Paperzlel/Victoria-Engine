@@ -1,6 +1,12 @@
 # Changelog
 Changes exist in chronological order (i.e. new changes are to be appended to the end of the file). Dates are done in DD/MM/YYYY format with the version number applied to each date if needed.
 
+## 18/4/2026
+- Core:
+	- Linux/Wayland:
+		- Upgraded the Wayland display manager to properly support `DisplayManager::toggle_mouse_mode()`. In doing so, also took the time to properly destroy any lingering connections, as well as restructured what data goes where, to hopefully convey more sense to the user.
+		- New extensions `staging/pointer-warp`, `unstable/pointer-constraints` and `unstable/relative-pointer` are now used if available. The first has little support but does exist for the most common DEs (KDE, Hyprland and GNOME). The other two are almost entirely supported by all common DEs. 
+
 ## 17/4/2026
 - Core:
 	- Data: 

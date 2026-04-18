@@ -33,7 +33,19 @@ def generate_sources():
         "cursor_shape",
         "src/thirdparty/wayland-protocols/staging/cursor-shape/cursor-shape-v1.xml"
     )
+    create_xml(
+        "pointer_warp",
+        "src/thirdparty/wayland-protocols/staging/pointer-warp/pointer-warp-v1.xml"
+    )
     # Unstable protocols
+    create_xml(
+        "pointer_constraints",
+        "src/thirdparty/wayland-protocols/unstable/pointer-constraints/pointer-constraints-unstable-v1.xml"
+    )
+    create_xml(
+        "relative_pointer",
+        "src/thirdparty/wayland-protocols/unstable/relative-pointer/relative-pointer-unstable-v1.xml"
+    )
     create_xml(
         "xdg_decoration",
         "src/thirdparty/wayland-protocols/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml",

@@ -8,6 +8,9 @@
 #	include "protocols/xdg_decoration.gen.h"
 #	include "protocols/xdg_shell.gen.h"
 #	include "protocols/cursor_shape.gen.h"
+#	include "protocols/pointer_constraints.gen.h"
+#	include "protocols/pointer_warp.gen.h"
+#	include "protocols/relative_pointer.gen.h"
 
 #	include "core/data/event.h"
 #	include "core/os/display_manager.h"
@@ -18,27 +21,98 @@
 class DisplayManagerWayland : public DisplayManager {
 private:
 	struct wl_display *display = nullptr;
+	struct wl_registry *registry = nullptr;
 
 	// The EGL manager for this instance.
 	EGLManagerWayland *egl_manager_wl = nullptr;
 
 	// Data passed from the compositor to the Wayland client.
-	struct ClientData {
-		struct wl_compositor *compositor = nullptr;
-		struct zxdg_decoration_manager_v1 *decor_manager = nullptr;
-		struct xdg_wm_base *wm_base = nullptr;
-		struct wl_seat *seat = nullptr;
-		struct wl_pointer *pointer = nullptr;
-		struct wl_keyboard *keyboard = nullptr;
-		struct wp_cursor_shape_manager_v1 *wp_cursor_shape = nullptr;
-		struct wp_cursor_shape_device_v1 *wp_pointer_shape = nullptr;
+	struct RegistryData {
+		Vector<uint32_t> registry_names;
 
-		bool should_quit = false;
-		bool frame_recieved = false;
-		uint8_t active_window = INVALID_WINDOW_ID;
+		DisplayManagerWayland *wayland = nullptr;
+
+		struct wl_compositor *compositor = nullptr;
+		uint32_t compositor_name = 0;
+
+		struct zxdg_decoration_manager_v1 *zxdg_decor_manager = nullptr;
+		uint32_t zxdg_decor_manager_name = 0;
+
+		struct xdg_wm_base *wm_base = nullptr;
+		uint32_t wm_base_name = 0;
+
+		struct wl_seat *seat = nullptr;
+		uint32_t seat_name = 0;
+
+		struct wp_cursor_shape_manager_v1 *wp_cursor_shape = nullptr;
+		uint32_t wp_cursor_shape_name = 0;
+
+		struct zwp_relative_pointer_manager_v1 *zwp_relative_pointer = nullptr;
+		uint32_t zwp_relative_pointer_name = 0;
+
+		struct zwp_pointer_constraints_v1 *zwp_pointer_constraints = nullptr;
+		uint32_t zwp_pointer_constraints_name = 0;
+
+		struct wp_pointer_warp_v1 *wp_pointer_warp = nullptr;
+		uint32_t wp_pointer_warp_name = 0;
 	};
 
-	ClientData *client_data = nullptr;
+	struct PointerData {
+		Vector2i position;
+		Vector2i relative_position;
+		uint32_t relative_motion_time;
+	};
+
+	struct SeatData {
+		// Quick access to registry global
+		RegistryData *rd = nullptr;
+
+		// Quick access to main class for certain objects
+		DisplayManagerWayland *wayland = nullptr;
+
+		struct wl_seat *seat = nullptr;
+		uint32_t seat_name = 0;
+
+		struct wl_pointer *pointer = nullptr;
+		struct wl_keyboard *keyboard = nullptr;
+		struct wp_cursor_shape_device_v1 *wp_cursor_shape = nullptr;
+		struct zwp_relative_pointer_v1 *zwp_relative_pointer = nullptr;
+		struct zwp_locked_pointer_v1 *zwp_locked_pointer = nullptr;
+		struct zwp_confined_pointer_v1 *zwp_confined_pointer = nullptr;
+
+		bool frame_recieved = false;
+		uint8_t active_window = INVALID_WINDOW_ID;
+		uint32_t active_serial_id = 0;
+
+		// Write pointer data here. Allows us to accumulate info prior to a `pointer_frame` event.
+		PointerData pointer_data_write;
+		// Read pointer data here.
+		PointerData pointer_data_read;
+	};
+
+	struct WindowData {
+		uint8_t id;
+		Vector2i size;
+		Vector2i cached_size;
+		Vector2i position;
+		Event<WindowNotification, uint8_t> notification_callback;
+		CallableMethod resize_callback;
+
+		bool maximised = false;
+		bool fullscreen = false;
+		bool resizing = false;
+		bool is_size_dirty = false;
+
+		struct wl_surface *wl_surface;
+		struct xdg_surface *xdg_surface;
+		struct wl_egl_window *egl_window;
+		struct xdg_toplevel *toplevel;
+		struct zxdg_toplevel_decoration_v1 *toplevel_decoration;
+	};
+
+	RegistryData *rd = nullptr;
+	SeatData *sd = nullptr;
+	WindowData *wd = nullptr;
 
 	static void _on_registry_global(void *p_data,
 									struct wl_registry *p_registry,
@@ -81,6 +155,15 @@ private:
 													uint32_t p_axis,
 													uint32_t p_direction);
 
+	static void _on_relative_pointer_relative_motion(void *p_data,
+													 struct zwp_relative_pointer_v1 *p_relative_pointer,
+													 uint32_t p_utime_high,
+													 uint32_t p_utime_low,
+													 wl_fixed_t p_dx,
+													 wl_fixed_t p_dy,
+													 wl_fixed_t p_dx_unaccel,
+													 wl_fixed_t p_dy_unaccel);
+
 	static void _on_xdg_surface_configure(void *p_data, struct xdg_surface *p_surface, uint32_t p_serial);
 
 	static void _on_xdg_toplevel_configure(void *p_data,
@@ -94,6 +177,9 @@ private:
 
 	static void
 	_on_zxdg_decoration_manager_configure(void *p_data, struct zxdg_toplevel_decoration_v1 *p_decor, uint32_t p_mode);
+
+	static void _on_zwp_locked_pointer_lock(void *p_data, struct zwp_locked_pointer_v1 *p_locked_pointer);
+	static void _on_zwp_locked_pointer_unlock(void *p_data, struct zwp_locked_pointer_v1 *p_locked_pointer);
 
 	static constexpr struct wl_registry_listener global_listener = {
 		.global = DisplayManagerWayland::_on_registry_global,
@@ -119,6 +205,10 @@ private:
 		.axis_relative_direction = _on_pointer_axis_relative_direction,
 	};
 
+	static constexpr struct zwp_relative_pointer_v1_listener zwp_relative_pointer_listener = {
+		.relative_motion = _on_relative_pointer_relative_motion,
+	};
+
 	static constexpr struct xdg_surface_listener surface_listener = {
 		.configure = DisplayManagerWayland::_on_xdg_surface_configure,
 	};
@@ -136,34 +226,15 @@ private:
 		.configure = DisplayManagerWayland::_on_zxdg_decoration_manager_configure,
 	};
 
-	struct WindowData {
-		uint8_t id;
-		Vector2i size;
-		Vector2i cached_size;
-		Vector2i position;
-		Event<WindowNotification, uint8_t> notification_callback;
-		CallableMethod resize_callback;
-
-		Vector2i last_cursor_pos;
-		Vector2i cursor_pos;
-		bool is_first_frame = false;
-
-		bool maximised = false;
-		bool fullscreen = false;
-		bool resizing = false;
-		bool is_size_dirty = false;
-
-		struct wl_surface *wl_surface;
-		struct xdg_surface *xdg_surface;
-		struct wl_egl_window *egl_window;
-		struct xdg_toplevel *toplevel;
-		struct zxdg_toplevel_decoration_v1 *toplevel_decoration;
+	static constexpr struct zwp_locked_pointer_v1_listener zwp_locked_pointer_listener = {
+		.locked = _on_zwp_locked_pointer_lock,
+		.unlocked = _on_zwp_locked_pointer_unlock,
 	};
 
-	WindowData *wd = nullptr;
+	static SeatData *_seat_get_seat_data(struct wl_seat *p_seat);
 
 	uint8_t _get_window_id_from_surface(struct wl_surface *p_surface);
-	void _window_update_cursor_position(uint8_t p_window, const Vector2i &p_position);
+	WindowData *_get_window_data_from_id(uint8_t p_window);
 	void _window_push_event(uint8_t p_window, WindowNotification p_notification);
 
 public:
