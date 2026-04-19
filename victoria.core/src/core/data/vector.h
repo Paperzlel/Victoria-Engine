@@ -668,25 +668,32 @@ void Vector<T>::remove_at(int64_t p_index) {
 
 template <typename T>
 Error Vector<T>::insert(T p_item, int64_t p_index) {
-	ERR_OUT_OF_BOUNDS_R(p_index, size(), ERR_INVALID_PARAMETER);
+	const int64_t new_size = size() + 1;
+	ERR_OUT_OF_BOUNDS_R(p_index, new_size, ERR_INVALID_PARAMETER);
 
-	uint64_t old_size = size();
-	uint64_t new_size = size() + 1;
+	const int64_t old_size = size();
 
-	if (_get_refc()->get() == 1) {
-		Error err = _realloc_buffer(new_size);
+	if (!_ptr) {
+		Error err = _alloc_buffer(new_size);
 		if (err) {
 			return err;
 		}
-
 	} else {
-		Error err = _copy_to_new_buffer(old_size, new_size);
-		if (err) {
-			return err;
+		if (_get_refc()->get() == 1) {
+			Error err = _realloc_buffer(new_size);
+			if (err) {
+				return err;
+			}
+
+		} else {
+			Error err = _copy_to_new_buffer(old_size, new_size);
+			if (err) {
+				return err;
+			}
 		}
+		Memory::vmemmove(_ptr + p_index + 1, _ptr + p_index, (old_size - p_index) * sizeof(T));
 	}
 
-	Memory::vmemmove(_ptr + p_index + 1, _ptr + p_index, (old_size - p_index) * sizeof(T));
 	vnew_placement(_ptr + p_index, T(std::move(p_item)));
 	return OK;
 }
