@@ -112,7 +112,7 @@ void Array::remove_at(uint64_t p_index) {
 void Array::insert(uint64_t p_index, const Variant &p_item) {
 	ERR_FAIL_COND_MSG(_data->read_only, "Can't add elements to a read-only array.");
 	Variant value = p_item;
-	_data->_array.insert_at(value, p_index);
+	_data->_array.insert(value, p_index);
 }
 
 Variant Array::pop_front() {

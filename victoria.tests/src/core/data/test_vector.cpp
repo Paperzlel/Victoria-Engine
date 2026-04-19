@@ -20,6 +20,11 @@ public:
 		other = {1, true};
 	}
 
+	ATestClass(const ATestClass &p_other) {
+		a = p_other.a;
+		other = p_other.other;
+	}
+
 	~ATestClass() {
 		a = 0;
 		other = {};
@@ -77,7 +82,7 @@ static bool vector_test_nontrivial_class() {
 	vec.append(a);
 	vec.append(a);
 	TEST_EQ(vec.size(), 2);
-	vec.insert_at(a, 1);
+	vec.insert(a, 1);
 	vec.remove_at(1);
 	TEST_EQ(vec.size(), 2);
 	TEST_EQ(vec.get_reference_count(), 1);
@@ -123,7 +128,7 @@ static bool vector_test_push_pop() {
 	TEST_EQ(vec[0], 1);
 	TEST_EQ(vec.size(), 4);
 
-	vec.insert_at(3, 2);
+	vec.insert(3, 2);
 	TEST_EQ(vec[2], 3);
 	TEST_EQ(vec.size(), 5);
 

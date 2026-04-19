@@ -42,31 +42,66 @@ private:
 		return (uint64_t *)(((uint8_t *)_ptr) - DATA_OFFSET + SIZE_OFFSET);
 	}
 
-	FORCE_INLINE void _ref(const Vector &p_from);
-	FORCE_INLINE void _unref();
-	FORCE_INLINE void _copy_on_write();
-	FORCE_INLINE Error _resize(int64_t n_size);
+	/**
+	 * @brief Private initializer method. Unreferences any data currently held, and copies the pointer to the incoming
+	 * vector. Does not fire if the two are the same.
+	 * @param p_from The other vector to copy data from
+	 */
+	void _ref(const Vector &p_from);
 
-	FORCE_INLINE Error _copy_to_new_buffer(uint64_t p_size);
-	FORCE_INLINE Error _alloc_buffer(uint64_t p_size);
-	FORCE_INLINE Error _realloc_buffer(uint64_t p_size);
+	/**
+	 * @brief Frees all of the data currently held within the vector, and sets the pointer to null if we are said
+	 * pointer's only owner. If not, it sets this pointer to null and returns early, but does not free the data.
+	 */
+	void _unref();
+
+	/**
+	 * @brief Copies the data to a new buffer, as it expects a new version of the vector is about to be created. Does
+	 * not copy if the number of references is one, since that data is not shared and can be left as-is. Requires the
+	 * result to be read as it pertains important info about the buffer.
+	 */
+	[[nodiscard]] Error _copy_on_write();
+
+	/**
+	 * @brief Copies data from the current buffer to a newly allocated one, by forking the current. Dereferences data
+	 * by forcing the old pointer to go out of scope, which if it is the only one watching the data will cause a free.
+	 * @param p_count The number of elements to copy from the old pointer.
+	 * @return `OK` on success, and `ERR_OUT_OF_MEMORY` on failure, which is a likely crash condition.
+	 */
+	Error _copy_to_new_buffer(uint64_t p_old_count, uint64_t p_new_count);
+
+	/**
+	 * @brief Allocates a new pointer to the current buffer, as well as placing a new AtomicCounter in its slot and
+	 * setting the element count to the proper value.
+	 * @param p_element_count The new element count for the buffer.
+	 * @return `OK` on success, and `ERR_OUT_OF_MEMORY` if failed, which should crash.
+	 */
+	Error _alloc_buffer(uint64_t p_size);
+
+	/**
+	 * @brief Reallocates the current buffer to a new size.
+	 * @param p_element_count The new number of elements in the buffer.
+	 * @return `OK` on success, and `ERR_OUT_OF_MEMORY` on failure, which should crash.
+	 */
+	Error _realloc_buffer(uint64_t p_size);
 
 public:
 	/**
-	 * @brief Gets the given item from a given index into the vector.
-	 * @param p_index The index into the vector we want to retrieve from
-	 * @returns An item of type `T`
+	 * @brief Gets the given item from a given index into the vector. Assumes the user will modify the referenced data,
+	 * so copies the vector to a new buffer.
+	 * @param p_index The index into the vector we want to retrieve the data for
+	 * @returns A reference to the item at the given index.
 	 */
 	FORCE_INLINE T &get(int64_t p_index) {
 		ERR_OUT_OF_BOUNDS_FATAL(p_index, size());
-		_copy_on_write();
+		ERR_COND_FATAL(_copy_on_write() != OK);
 		return _ptr[p_index];
 	}
 
 	/**
-	 * @brief Gets the given item from a given index into the vector.
-	 * @param p_index The index into the vector we want to retrieve from
-	 * @returns An item of type `T`
+	 * @brief Gets the given item from a given index into the vector. Assumes the
+	 * @param p_index The index into the vector we want to retrieve the data for
+	 * @returns A constant reference to the item a the given index.
 	 */
 	FORCE_INLINE const T &get(int64_t p_index) const {
 		ERR_OUT_OF_BOUNDS_FATAL(p_index, size());
@@ -74,17 +109,38 @@ public:
 	}
 
 	/**
-	 * @brief Sets the item at a given index to a specific value.
+	 * @brief Sets the item at a given index to a specific value. Writing to the data means that the pointer is not
+	 * equal across references, so a new array is allocated.
 	 * @param p_index The given index to set it at
 	 * @param item The given item to set
 	 */
-	FORCE_INLINE void set(const T &item, int64_t p_index) {
+	FORCE_INLINE void set(const T &p_item, int64_t p_index) {
 		ERR_OUT_OF_BOUNDS_FATAL(p_index, size());
-		// Since the data is set up so that data isn't unique - not normally a problem for basic (atomic) data, but for
-		// Strings (data types with a nested vector) it has a whole load of problems. To fix this, we need to copy over
-		// data properly, into the block itself
-		_copy_on_write();
-		_ptr[p_index] = item;
+		// Writing to the pointer modifies contents, create new buffer.
+		ERR_COND_FATAL(_copy_on_write() != OK);
+		_ptr[p_index] = p_item;
+	}
+
+	/**
+	 * @brief Operator to access an item at the given index. Assumes the reference taken will modify data, so it copies
+	 * it to a new buffer.
+	 * @param index The index in the vector to access
+	 * @returns A reference to the item at the given index
+	 */
+	FORCE_INLINE T &operator[](int64_t p_index) {
+		// Check for an out of bounds index and throw an error if so
+		ERR_OUT_OF_BOUNDS_FATAL(p_index, size());
+		ERR_COND_FATAL(_copy_on_write() != OK);
+		return ((Vector<T> *)(this))->_ptr[p_index];
+	}
+	/**
+	 * @brief Operator to access the item at the given index.
+	 * @param index The index in the vector to access
+	 * @returns A constant reference to the item at the given index
+	 */
+	FORCE_INLINE const T &operator[](int64_t p_index) const {
+		ERR_OUT_OF_BOUNDS_FATAL(p_index, size());
+		return _ptr[p_index];
 	}
 
 	// Iterator structure, is used by a C++ for loop in order to find an element at a given point in the vector. Its
@@ -125,16 +181,6 @@ public:
 		T *element_ptr = nullptr;
 	};
 
-	// Constructs an `Iterator` from the first element in the vector.
-	FORCE_INLINE Iterator begin() {
-		return Iterator(_ptr);
-	}
-
-	// Constructs an `Iterator` from the last element in the vector.
-	FORCE_INLINE Iterator end() {
-		return Iterator(_ptr + size());
-	}
-
 	struct ConstIterator {
 		FORCE_INLINE const T &operator*() const {
 			return *element_ptr;
@@ -172,6 +218,16 @@ public:
 		const T *element_ptr = nullptr;
 	};
 
+	// Constructs an `Iterator` from the first element in the vector.
+	FORCE_INLINE Iterator begin() {
+		return Iterator(_ptr);
+	}
+
+	// Constructs an `Iterator` from the last element in the vector.
+	FORCE_INLINE Iterator end() {
+		return Iterator(_ptr + size());
+	}
+
 	// Constructs a `ConstIterator` from the first element in the vector
 	FORCE_INLINE ConstIterator begin() const {
 		return ConstIterator(_ptr);
@@ -183,36 +239,18 @@ public:
 	}
 
 	/**
-	 * @brief Operator to access an item at the given index.
-	 * @param index The index in the vector to access
-	 * @returns The item at the given index
-	 */
-	FORCE_INLINE T &operator[](int64_t index) {
-		// Check for an out of bounds index and throw an error if so
-		ERR_OUT_OF_BOUNDS_FATAL(index, size());
-		_copy_on_write();
-		return ((Vector<T> *)(this))->_ptr[index];
-	}
-	/**
-	 * @brief Operator to access the item at the given index.
-	 * @param index The index in the vector to access
-	 * @returns The item at the given index
-	 */
-	FORCE_INLINE const T &operator[](int64_t index) const {
-		ERR_OUT_OF_BOUNDS_FATAL(index, size());
-
-		return _ptr[index];
-	}
-
-	/**
 	 * @brief Operator to assign a vector to another vector.
 	 * @param p_from The other vector to copy into the current vector
 	 */
-	inline void operator=(const Vector &p_from) {
+	void operator=(const Vector &p_from) {
 		_ref(p_from);
 	}
 
-	FORCE_INLINE void operator=(Vector<T> &&p_from) {
+	/**
+	 * @brief Moves the data from the given vector into this vector. Takes ownership of all relevant data.
+	 * @param p_from The vector to move data from
+	 */
+	void operator=(Vector<T> &&p_from) {
 		if (_ptr == p_from._ptr) {
 			return;
 		}
@@ -222,9 +260,16 @@ public:
 		p_from._ptr = nullptr;
 	}
 
-	FORCE_INLINE bool operator==(const Vector &p_other) const;
+	/**
+	 * @brief Equivalence operator to check if two vectors are the same.
+	 * @param p_other The other vector to compare against
+	 * @returns `true` if they are equal, `false` if not
+	 */
+	bool operator==(const Vector &p_other) const;
 
-	FORCE_INLINE bool operator!=(const Vector &p_other) const;
+	bool operator!=(const Vector &p_other) const {
+		return !(*this == p_other);
+	}
 
 	/**
 	 * @brief Gets the number of elements within the vector.
@@ -232,34 +277,32 @@ public:
 	 */
 	FORCE_INLINE int64_t size() const {
 		return _ptr ? *_get_size() : 0;
-	};
+	}
+
 	/**
 	 * @brief Method to find out if a vector type has any values in it.
 	 * @returns `TRUE` if the vector is empty, `FALSE` if it is not.
 	 */
 	FORCE_INLINE bool is_empty() const {
 		return _ptr == nullptr || *_get_size() == 0;
-	};
-	/**
-	 * @brief Gets the number of bytes the vector currently has allocated to itself.
-	 * @returns The size of the vector in bytes
-	 */
-	FORCE_INLINE uint64_t get_ptr_size() const {
-		return _ptr != nullptr ? *_get_size() * sizeof(T) : 0;
-	};
+	}
 
+	/**
+	 * @brief Obtains the number of references to the given vector.
+	 * @return The number of references to the given vector.
+	 */
 	FORCE_INLINE uint64_t get_reference_count() const {
 		return _ptr ? _get_refc()->get() : 0;
 	}
 
 	/**
-	 * @brief Gets the current pointer of the vector, with read and write permissions. It is strongly advised to not
-	 * access this directly unless absolutely necessary, as any modification to the pointer will not update any other
-	 * information it holds.
+	 * @brief Gets the current pointer of the vector, with read and write permissions. Assumes a write is going to
+	 * occur, so it copies all data over to a new buffer prior to being read. This can be expensive, so use `ptr()` for
+	 * reading data without this issue.
 	 * @returns The current pointer used to hold all of the items in the vector, with read/write permissions
 	 */
 	FORCE_INLINE T *ptrw() {
-		_copy_on_write();
+		ERR_COND_FATAL(_copy_on_write() != OK);
 		return _ptr;
 	}
 	/**
@@ -272,27 +315,85 @@ public:
 	}
 
 	/**
-	 * @brief Resizes the vector to a new number of elements. Differs from `_resize` in that it automatically
-	 * calculates the number of bytes per-element.
+	 * @brief Resizes the vector to a new number of elements. Should not be relied on to properly resize the vector,
+	 * and does initialize any new elements in the vector when called if their types are non-trivial.
 	 * @param p_new_size The new number of elements in the vector
 	 */
-	FORCE_INLINE Error resize(int64_t p_new_size) {
-		return _resize(p_new_size * sizeof(T));
-	}
+	Error resize(int64_t p_new_size);
 
-	FORCE_INLINE void append(T item);
-	FORCE_INLINE void append_array(Vector<T> p_other);
-	FORCE_INLINE void remove_at(int64_t index);
-	FORCE_INLINE void insert_at(const T &item, int64_t index);
+	/**
+	 * @brief Removes an item at a given index in the vector.
+	 * @param index The index into the vector to remove from
+	 * @returns `true` if the item was removed successfully, `false` if the index was invalid or the vector could not
+	 * be resized
+	 */
+	void remove_at(int64_t p_index);
 
-	FORCE_INLINE void push_front(T item);
+	/**
+	 * @brief Inserts an item into the vector at a specific index. Takes ownership of the item in question
+	 * @param item The item to move into the vector.
+	 * @param index The index to insert the item at
+	 * @returns `OK` on success, and an error code if something went wrong and the item was unable to be from inserted.
+	 */
+	Error insert(T p_item, int64_t p_index);
+
+	/**
+	 * @brief Appends an item to the end of the vector. Constructs a new version of
+	 * @param item A copy of the item to append onto the end of the vector
+	 */
+	FORCE_INLINE void append(T p_item);
+
+	/**
+	 * @brief Appends another array holding type T to the end of the current array.
+	 * @param p_other The other array to append
+	 */
+	void append_array(Vector<T> p_other);
+
+	/**
+	 * @brief Appends an item to the front of the vector.
+	 * @param item The item to add into the vector
+	 */
+	FORCE_INLINE void push_front(T p_item);
+
+	/**
+	 * @brief Removes and gets the first item in the vector.
+	 * @returns The item at the front of the vector
+	 */
 	FORCE_INLINE T pop_front();
-	FORCE_INLINE void push_back(T item);
+
+	/**
+	 * @brief Appends an item to the end of the vector.
+	 * @param item The item to add into the vector
+	 */
+	void push_back(T p_item);
+
+	/**
+	 * @brief Removes and gets the item at the end of the vector.
+	 * @returns The item at the end of the vector
+	 */
 	FORCE_INLINE T pop_back();
 
-	FORCE_INLINE void clear();
+	/**
+	 * @brief Clears all items out of the vector and set its size to zero. Functionally works like `_unref()` aside
+	 * from freeing the pointer, as it assumes more values will be added within scope.
+	 */
+	FORCE_INLINE void clear() {
+		_unref();
+	}
 
-	FORCE_INLINE int find(const T &p_item) const;
+	/**
+	 * @brief Looks for whether a given item exists within the vector, and gets its respective position. If the item
+	 * cannot be found, it returns `-1`, which should be treated like returning null.
+	 * @param item The item to look for within the vector.
+	 * @returns The index of the given item if it was found, and `-1` if it fails to find the item.
+	 */
+	int find(const T &p_item) const;
+
+	/**
+	 * @brief Checks to see if the given vector has the specified item.
+	 * @param p_item The item to check for
+	 * @return `true` if found, `false` if not.
+	 */
 	FORCE_INLINE bool has(const T &p_item) const;
 
 	/**
@@ -302,7 +403,14 @@ public:
 	 * @returns An instance of the `Vector` class.
 	 */
 	FORCE_INLINE Vector() {}
-	FORCE_INLINE Vector(const Vector &p_from);
+	FORCE_INLINE Vector(const Vector &p_from) {
+		_ref(p_from);
+	}
+
+	FORCE_INLINE Vector(Vector &&p_from) {
+		_ptr = p_from._ptr;
+		p_from._ptr = nullptr;
+	}
 
 	/**
 	 * @brief Class constructor for the `Vector` type, which obtains a set of values from an `std::initializer_list`
@@ -310,7 +418,7 @@ public:
 	 * @param p_init The initializer list to construct the vector from
 	 */
 	FORCE_INLINE Vector(std::initializer_list<T> p_init) {
-		ERR_FAIL_COND(_resize(p_init.size() * sizeof(T)) != OK);
+		ERR_FAIL_COND(resize(p_init.size() * sizeof(T)) != OK);
 
 		int i = 0;
 		for (const T &element : p_init) {
@@ -322,14 +430,11 @@ public:
 		*_get_size() = i;
 	}
 
-	FORCE_INLINE ~Vector();
+	FORCE_INLINE ~Vector() {
+		_unref();
+	}
 };
 
-/**
- * @brief Private initializer method. Unreferences any data currently held, and copies the pointer to the incoming
- * vector. Does not fire if the two are the same.
- * @param p_from The other vector to copy data from
- */
 template <typename T>
 void Vector<T>::_ref(const Vector &p_from) {
 	if (_ptr == p_from._ptr) {
@@ -348,10 +453,6 @@ void Vector<T>::_ref(const Vector &p_from) {
 	}
 }
 
-/**
- * @brief Frees all of the data currently held within the vector, and sets the pointer to null if we are said pointer's
- * only owner. If not, it sets this pointer to null and returns early, but does not free the data.
- */
 template <typename T>
 void Vector<T>::_unref() {
 	if (!_ptr) {
@@ -378,98 +479,89 @@ void Vector<T>::_unref() {
 	Memory::vfree((((uint8_t *)prev) - DATA_OFFSET));
 }
 
-/**
- * @brief Copies the data to a new buffer, as it expects a new version of the vector is about to be created. Does not
- * copy if the number of references is one, since that data is not shared and can be left as-is.
- */
 template <typename T>
-void Vector<T>::_copy_on_write() {
+Error Vector<T>::_copy_on_write() {
 	if (!_ptr || _get_refc()->get() == 1) {
-		return;
+		return OK;
 	}
 
-	_copy_to_new_buffer(size());
+	return _copy_to_new_buffer(size(), size());
 }
 
-/**
- * @brief Changes the size of the current vector to a new given size.
- * @param n_size The new size of the vector in bytes
- * @return `OK` if the vector was able to be resized, and returns a given error message if something went wrong.
- */
 template <typename T>
-Error Vector<T>::_resize(int64_t n_size) {
-	ERR_FAIL_COND_R(n_size < 0, ERR_INVALID_PARAMETER);
+Error Vector<T>::resize(int64_t p_new_size) {
+	ERR_FAIL_COND_R(p_new_size < 0, ERR_INVALID_PARAMETER);
 
-	int64_t current_size = get_ptr_size();
-	uint64_t n_element_count = n_size / sizeof(T);
+	int64_t current_size = size();
 
-	if (current_size == n_size) {
+	if (current_size == p_new_size) {
 		return OK; // no need for changes
 	}
 
-	if (current_size < n_size) {
+	if (current_size < p_new_size) {
 		if (!_ptr) {
-			Error err = _alloc_buffer(n_element_count);
+			Error err = _alloc_buffer(p_new_size);
 			if (err) {
 				return err;
 			}
 		} else if (_get_refc()->get() == 1) {
-			Error err = _realloc_buffer(n_element_count);
+			Error err = _realloc_buffer(p_new_size);
 			if (err) {
 				return err;
 			}
 		} else {
-			Error err = _copy_to_new_buffer(n_element_count);
+			Error err = _copy_to_new_buffer(current_size, p_new_size);
 			if (err) {
 				return err;
 			}
 		}
-	} else if (current_size > n_size) {
+
+		if constexpr (!std::is_trivially_constructible_v<T>) {
+			for (int i = current_size; i < p_new_size; i++) {
+				vnew_placement(_ptr + i, T());
+			}
+		}
+	} else if (current_size > p_new_size) {
 		// Destroy items that are no longer needed in the vector
-		if (n_size == 0) {
+		if (p_new_size == 0) {
 			_unref();
 			return OK;
 		} else if (_get_refc()->get() == 1) {
-			if (!std::is_trivially_destructible<T>::value) {
-				for (uint64_t i = n_element_count; i < *_get_size(); i++) {
+			if constexpr (!std::is_trivially_destructible_v<T>) {
+				for (uint64_t i = p_new_size; i < *_get_size(); i++) {
 					_ptr[i].~T();
 				}
 			}
 
-			Error err = _realloc_buffer(n_element_count);
+			Error err = _realloc_buffer(p_new_size);
 			if (err) {
 				return err;
 			}
 		} else {
-			return _copy_to_new_buffer(n_element_count);
+			return _copy_to_new_buffer(current_size, p_new_size);
 		}
 	}
+
 	return OK;
 }
 
 template <typename T>
-Error Vector<T>::_copy_to_new_buffer(uint64_t p_count) {
+Error Vector<T>::_copy_to_new_buffer(uint64_t p_old_count, uint64_t p_new_count) {
 	const Vector prev;
 	prev._ptr = _ptr;
 	_ptr = nullptr;
 
-	Error err = _alloc_buffer(p_count);
+	Error err = _alloc_buffer(p_new_count);
 	if (err) {
 		_ptr = prev._ptr;
 		prev._ptr = nullptr;
 		return err;
 	}
 
-	memcpy_arr_placement(_ptr, prev._ptr, p_count);
+	memcpy_arr_placement(_ptr, prev._ptr, p_old_count > p_new_count ? p_new_count : p_old_count);
 	return OK;
 }
 
-/**
- * @brief Allocates a new pointer to the current buffer, as well as placing a new AtomicCounter in its slot and setting
- * the element count to the proper value.
- * @param p_element_count The new element count for the buffer.
- * @return `OK` on success, and `ERR_OUT_OF_MEMORY` if failed, which should crash.
- */
 template <typename T>
 Error Vector<T>::_alloc_buffer(uint64_t p_element_count) {
 	T *ptr = (T *)Memory::vallocate((p_element_count * sizeof(T)) + DATA_OFFSET);
@@ -482,11 +574,6 @@ Error Vector<T>::_alloc_buffer(uint64_t p_element_count) {
 	return OK;
 }
 
-/**
- * @brief Reallocates the current buffer to a new size.
- * @param p_element_count The new number of elements in the buffer.
- * @return `OK` on success, and `ERR_OUT_OF_MEMORY` on failure, which should crash.
- */
 template <typename T>
 Error Vector<T>::_realloc_buffer(uint64_t p_element_count) {
 	T *nptr = (T *)Memory::vreallocate(((uint8_t *)_ptr) - DATA_OFFSET, (p_element_count * sizeof(T)) + DATA_OFFSET);
@@ -498,11 +585,6 @@ Error Vector<T>::_realloc_buffer(uint64_t p_element_count) {
 	return OK;
 }
 
-/**
- * @brief Equivalence operator to check if two vectors are the same.
- * @param p_other The other vector to compare against
- * @returns `true` if they are equal, `false` if not
- */
 template <typename T>
 bool Vector<T>::operator==(const Vector &p_other) const {
 	const int s = size();
@@ -519,46 +601,35 @@ bool Vector<T>::operator==(const Vector &p_other) const {
 	return true;
 }
 
-/**
- * @brief Equivalence operator to check if two vectors are not the same.
- * @param p_other The other vector to compare against
- * @returns `true` if they are not the same, and `false` if they are
- */
 template <typename T>
-bool Vector<T>::operator!=(const Vector &p_other) const {
-	return !operator==(p_other);
+void Vector<T>::append(T p_item) {
+	push_back(std::move(p_item));
 }
 
-/**
- * @brief Appends an item to the end of the vector. Acts the same as `push_back`.
- * @param item The item to append onto the end of the vector
- */
-template <typename T>
-void Vector<T>::append(T item) {
-	push_back(item);
-}
-
-/**
- * @brief Appends another array holding type T to the end of the current array.
- * @param p_other The other array to append
- */
 template <typename T>
 void Vector<T>::append_array(Vector<T> p_other) {
-	for (const T &p_item : p_other) {
-		push_back(p_item);
+	uint64_t lsize = size();
+	uint64_t rsize = p_other.size();
+	if (!rsize) {
+		return;
+	}
+
+	if (!lsize) {
+		*this = p_other;
+	}
+
+	Error err = resize(lsize + rsize);
+	ERR_FAIL_COND(err != OK);
+	T *p = ptrw();
+	for (int i = 0; i < rsize; i++) {
+		p[i + lsize] = p_other[i];
 	}
 }
 
-/**
- * @brief Removes an item at a given index in the vector.
- * @param index The index into the vector to remove from
- * @returns `true` if the item was removed successfully, `false` if the index was invalid or the vector could not be
- * resized
- */
 template <typename T>
-void Vector<T>::remove_at(int64_t index) {
+void Vector<T>::remove_at(int64_t p_index) {
 	// Check if the index is out of bounds or not
-	ERR_OUT_OF_BOUNDS(index, size());
+	ERR_OUT_OF_BOUNDS(p_index, size());
 
 	uint64_t old_size = size();
 
@@ -570,59 +641,61 @@ void Vector<T>::remove_at(int64_t index) {
 	uint64_t new_size = old_size - 1;
 
 	if (_get_refc()->get() == 1) {
-		_ptr[index].~T();
+		_ptr[p_index].~T();
 		// Copy data down to the current pointer position.
-		Memory::vmemmove(_ptr + index, _ptr + index + 1, (new_size - index) * sizeof(T));
+		Memory::vmemmove(_ptr + p_index, _ptr + p_index + 1, (new_size - p_index) * sizeof(T));
 		// Delete content at the end of the buffer
-		ERR_FAIL_COND(_resize((*_get_size() - 1) * sizeof(T)) != OK);
+		Error err = _realloc_buffer(new_size);
+		ERR_COND_FATAL(err != OK);
 	} else {
 		// Copy data to a new buffer
 		T *other = _ptr;
 		_ptr = (T *)Memory::vallocate(new_size);
-		if (std::is_trivially_copyable<T>::value) {
-			Memory::vcopy_memory(_ptr, other, index * sizeof(T));
-			Memory::vcopy_memory(_ptr + index, other + index, (new_size - index) * sizeof(T));
+		if (std::is_trivially_copyable_v<T>) {
+			Memory::vcopy_memory(_ptr, other, p_index * sizeof(T));
+			Memory::vcopy_memory(_ptr + p_index, other + p_index, (new_size - p_index) * sizeof(T));
 		} else {
-			for (int i = 0; i < index; i++) {
+			for (int i = 0; i < p_index; i++) {
 				vnew_placement(_ptr + i, T(other[i]));
 			}
 
-			for (uint64_t i = index; i < new_size; i++) {
+			for (uint64_t i = p_index; i < new_size; i++) {
 				vnew_placement(_ptr + i, T(other[i]));
 			}
 		}
 	}
 }
 
-/**
- * @brief Inserts an item into the vector at a specific index.
- * @param item The item to insert
- * @param index The index to insert the item at
- * @returns `true` if successful, `false` if the vector could not be resized
- */
 template <typename T>
-void Vector<T>::insert_at(const T &item, int64_t index) {
-	ERR_FAIL_COND(_resize(get_ptr_size() + sizeof(T)) != OK);
-	for (int i = size() - 1; i > index; i--) {
-		_ptr[i] = _ptr[i - 1];
+Error Vector<T>::insert(T p_item, int64_t p_index) {
+	ERR_OUT_OF_BOUNDS_R(p_index, size(), ERR_INVALID_PARAMETER);
+
+	uint64_t old_size = size();
+	uint64_t new_size = size() + 1;
+
+	if (_get_refc()->get() == 1) {
+		Error err = _realloc_buffer(new_size);
+		if (err) {
+			return err;
+		}
+
+	} else {
+		Error err = _copy_to_new_buffer(old_size, new_size);
+		if (err) {
+			return err;
+		}
 	}
 
-	_ptr[index] = item;
+	Memory::vmemmove(_ptr + p_index + 1, _ptr + p_index, (old_size - p_index) * sizeof(T));
+	vnew_placement(_ptr + p_index, T(std::move(p_item)));
+	return OK;
 }
 
-/**
- * @brief Appends an item to the front of the vector.
- * @param item The item to add into the vector
- */
 template <typename T>
-void Vector<T>::push_front(T item) {
-	insert_at(item, 0);
+void Vector<T>::push_front(T p_item) {
+	insert(p_item, 0);
 }
 
-/**
- * @brief Removes and gets the first item in the vector.
- * @returns The item at the front of the vector
- */
 template <typename T>
 T Vector<T>::pop_front() {
 	T item = get(0);
@@ -630,21 +703,23 @@ T Vector<T>::pop_front() {
 	return item;
 }
 
-/**
- * @brief Appends an item to the end of the vector.
- * @param item The item to add into the vector
- */
 template <typename T>
-void Vector<T>::push_back(T item) {
-	Error err = _resize(get_ptr_size() + sizeof(T));
-	ERR_FAIL_COND(err);
-	vnew_placement(_ptr + size() - 1, T(std::move(item)));
+void Vector<T>::push_back(T p_item) {
+	const uint64_t new_size = size() + 1;
+
+	if (!_ptr) {
+		_alloc_buffer(1);
+	} else if (_get_refc()->get() == 1) {
+		Error err = _realloc_buffer(new_size);
+		ERR_FAIL_COND(err);
+	} else {
+		Error err = _copy_to_new_buffer(size(), new_size);
+		ERR_FAIL_COND(err);
+	}
+
+	vnew_placement(_ptr + new_size - 1, T(std::move(p_item)));
 }
 
-/**
- * @brief Removes and gets the item at the end of the vector.
- * @returns The item at the end of the vector
- */
 template <typename T>
 T Vector<T>::pop_back() {
 	int64_t end = *_get_size() - 1;
@@ -653,23 +728,12 @@ T Vector<T>::pop_back() {
 	return item;
 }
 
-/**
- * @brief Clears all items out of the vector and set its size to zero. Functionally works like `_unref()` aside from
- * freeing the pointer, as it assumes more values will be added within scope.
- */
-template <typename T>
-void Vector<T>::clear() {
-	_resize(0);
-}
-
-/**
- * @brief Looks for whether a given item exists within the vector, and gets its respective position. If the item cannot
- * be found, it returns `-1`, which should be treated like returning null.
- * @param item The item to look for within the vector.
- * @returns The index of the given item if it was found, and `-1` if it fails to find the item.
- */
 template <typename T>
 int Vector<T>::find(const T &p_item) const {
+	if (!_ptr) {
+		return -1;
+	}
+
 	for (int i = 0; i < size(); i++) {
 		if (_ptr[i] == p_item) {
 			return i;
@@ -681,6 +745,10 @@ int Vector<T>::find(const T &p_item) const {
 
 template <typename T>
 bool Vector<T>::has(const T &p_item) const {
+	if (!_ptr) {
+		return false;
+	}
+
 	for (int i = 0; i < size(); i++) {
 		if (_ptr[i] == p_item) {
 			return true;
@@ -688,20 +756,4 @@ bool Vector<T>::has(const T &p_item) const {
 	}
 
 	return false;
-}
-
-/**
- * @brief Class constructor for a new `Vector` type.
- */
-template <typename T>
-Vector<T>::Vector(const Vector &p_from) {
-	_ref(p_from);
-}
-
-/**
- * @brief Class destructor for the `Vector` type.
- */
-template <typename T>
-Vector<T>::~Vector() {
-	_unref();
 }

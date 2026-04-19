@@ -68,7 +68,7 @@ void Mesh::create_from_array(const Array &p_arr) {
 						size = _mesh_get_size(v);
 						data.vertex_data = v;
 						data.vertex_count = v.size();
-						data.normal_offset = v.get_ptr_size() / 2; // since double precision
+						data.normal_offset = (v.size() * sizeof(Vector3Array)) / 2; // since double precision
 					} break;
 					case ARRAY_NORMAL: {
 						data.normal_data = v;

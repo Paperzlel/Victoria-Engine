@@ -183,7 +183,7 @@ Vector<RenderingManagerGL::Viewport *> RenderingManagerGL::_get_sorted_viewports
 		}
 
 		next.push_back(vp);
-		sorted.insert_at(vp, 0);
+		sorted.insert(vp, 0);
 	}
 
 	// Now, sort from linked-list.
@@ -201,7 +201,7 @@ Vector<RenderingManagerGL::Viewport *> RenderingManagerGL::_get_sorted_viewports
 
 			if (!next.find(child)) {
 				next.push_back(child);
-				sorted.insert_at(child, 0);
+				sorted.insert(child, 0);
 			}
 		}
 	}
@@ -953,12 +953,12 @@ void RenderingManagerGL::mesh_set_from_data(RID p_mesh, const MeshData &p_data) 
 
 	glGenBuffers(1, &m->vertex_buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, m->vertex_buffer);
-	utils->allocate_buffer(GL_ARRAY_BUFFER, vertex_data.get_ptr_size(), vertex_data.ptr(), GL_STATIC_DRAW);
+	utils->allocate_buffer(GL_ARRAY_BUFFER, vertex_data.size() * sizeof(float), vertex_data.ptr(), GL_STATIC_DRAW);
 
 	glGenBuffers(1, &m->element_buffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m->element_buffer);
 	utils->allocate_buffer(GL_ELEMENT_ARRAY_BUFFER,
-						   p_data.index_attribs.get_ptr_size(),
+						   p_data.index_attribs.size() * sizeof(int),
 						   p_data.index_attribs.ptr(),
 						   GL_STATIC_DRAW);
 

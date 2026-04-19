@@ -20,7 +20,7 @@ void *Memory::vallocate(uint64_t p_size) {
 	*s = p_size;
 
 	uint64_t max = current_mem_usage.add(p_size);
-	max_mem_usage.exchange_if_greater(max + p_size);
+	max_mem_usage.exchange_if_greater(max);
 
 	return data + DATA_OFFSET;
 }
@@ -43,8 +43,13 @@ void *Memory::vreallocate(void *p_block, uint64_t p_new_size) {
 
 	uint64_t *s = (uint64_t *)data;
 
-	uint64_t max = current_mem_usage.add(p_new_size - *s);
-	max_mem_usage.exchange_if_greater(max + p_new_size - *s);
+	// Cannot add/subtract with unsigned values
+	if (*s < p_new_size) {
+		uint64_t max = current_mem_usage.add(p_new_size - *s);
+		max_mem_usage.exchange_if_greater(max);
+	} else if (*s > p_new_size) {
+		current_mem_usage.sub(*s - p_new_size);
+	}
 
 	*s = p_new_size;
 

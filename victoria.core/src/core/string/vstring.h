@@ -21,7 +21,7 @@ public:
 		return _data.ptr();
 	}
 	FORCE_INLINE Error resize(int p_size) {
-		return _data._resize(p_size);
+		return _data.resize(p_size);
 	}
 
 	FORCE_INLINE char get(int index) const {

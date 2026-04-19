@@ -91,11 +91,11 @@ String &String::operator+=(const char p_right) {
 	int size = length();
 
 	if (!ptrw()) {
-		_data._resize(sizeof(char));
+		_data.resize(sizeof(char) + 1);
 	}
 
 	char *end = ptrw();
-	_data._resize(size + 2);
+	_data.resize(size + 2);
 
 	end[size] = p_right;
 	end[size + 1] = 0;
@@ -345,12 +345,11 @@ Vector<String> String::split(const String &delimiter) const {
 	Vector<String> ret;
 
 	if (is_empty()) {
-		ret.push_back("");
 		return ret;
 	}
 
 	if (delimiter.is_empty()) {
-		ret.push_back(*this);
+		ret.push_back(String(*this));
 		return ret;
 	}
 
@@ -477,7 +476,7 @@ double String::to_float() const {
 
 void String::append(const String &p_string) {
 	int len = length();
-	_data._resize(len + p_string.length() + 1);
+	_data.resize(len + p_string.length() + 1);
 	for (int i = len; i < len + p_string.length(); i++) {
 		_data[i] = p_string[i - len];
 	}
