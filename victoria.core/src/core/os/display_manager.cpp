@@ -41,3 +41,7 @@ void DisplayManager::_notification_callback(WindowNotification notification, uin
 DisplayManager::DisplayManager() {
 	singleton = this;
 }
+
+DisplayManager::~DisplayManager() {
+	singleton = nullptr;
+}

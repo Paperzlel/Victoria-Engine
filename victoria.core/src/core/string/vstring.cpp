@@ -29,7 +29,25 @@ void String::operator=(const char *p_right) {
 }
 
 bool String::operator==(const String &p_right) const {
-	return _data == p_right._data;
+	if (!_data.ptr()) {
+		return false;
+	}
+
+	if (!p_right.ptr()) {
+		return false;
+	}
+
+	if (size() != p_right.size()) {
+		return false;
+	}
+
+	for (int i = 0; i < size(); i++) {
+		if (_data._ptr[i] != p_right._data._ptr[i]) {
+			return false;
+		}
+	}
+
+	return true;
 }
 
 bool String::operator==(const char *p_right) const {
@@ -41,7 +59,7 @@ bool String::operator==(const char p_right) const {
 	if (length() > 1) {
 		return false;
 	}
-	return _data[0] == p_right;
+	return _data.get(0) == p_right;
 }
 
 bool String::operator!=(const String &p_right) const {
@@ -61,11 +79,12 @@ String &String::operator+=(const String &p_right) {
 		*this = p_right;
 		return *this;
 	}
-	int lhs_len = length();
 
 	if (p_right.length() == 0) {
 		return *this;
 	}
+
+	int lhs_len = length();
 	int rhs_len = p_right.length();
 
 	const char *rhs_ptr = p_right.ptr();
@@ -73,37 +92,22 @@ String &String::operator+=(const String &p_right) {
 	// Resize, so the pointer is large enough
 	_data.resize(lhs_len + rhs_len + 1);
 
-	const char *lhs_ptr = ptrw();
-
-	for (int i = 0; i < lhs_len + rhs_len; i++) {
-		if (i < lhs_len) {
-			_data[i] = lhs_ptr[i];
-		} else {
-			_data[i] = rhs_ptr[i - lhs_len];
-		}
+	char *lhs_ptr = ptrw();
+	for (int i = 0; i < rhs_len; i++) {
+		lhs_ptr[lhs_len + i] = rhs_ptr[i];
 	}
 
-	_data[lhs_len + rhs_len] = '\0';
+	_data.set('\0', lhs_len + rhs_len);
 	return *this;
 }
 
 String &String::operator+=(const char p_right) {
-	int size = length();
+	const int size = length();
 
-	if (!ptrw()) {
-		_data.resize(sizeof(char) + 1);
-	}
-
-	char *end = ptrw();
 	_data.resize(size + 2);
 
-	end[size] = p_right;
-	end[size + 1] = 0;
-
-	for (int i = 0; i < size + 1; i++) {
-		_data[i] = end[i];
-	}
-	_data[size + 1] = '\0';
+	_data._ptr[size] = p_right;
+	_data._ptr[size + 1] = 0;
 
 	return *this;
 }
@@ -251,8 +255,10 @@ bool String::begins_with(const String &p_string) const {
 		return true; // Nothing is an acceptable start to the string, however this may change in the future.
 	}
 
+	// Faster but unsafe
+	const char *_ptr = ptr();
 	for (int i = 0; i < len; i++) {
-		if (_data[i] != p_string[i]) {
+		if (_ptr[i] != p_string[i]) {
 			return false;
 		}
 	}
@@ -278,7 +284,7 @@ bool String::ends_with(const String &p_string) const {
 
 	int counter = 0;
 	for (int i = t_len; i > (t_len - s_len - 1); i--) {
-		if (_data[i] == p_string[counter]) {
+		if (_data._ptr[i] == p_string[counter]) {
 			counter++;
 			if (counter == s_len) {
 				return true;
@@ -411,9 +417,11 @@ void String::replace(char p_value, char p_replacement) {
 		return;
 	}
 
+	// Copy pointer data over
+	char *_ptr = ptrw();
 	for (int i = 0; i < length(); i++) {
-		if (_data[i] == p_value) {
-			_data[i] = p_replacement;
+		if (_ptr[i] == p_value) {
+			_ptr[i] = p_replacement;
 		}
 	}
 }
@@ -476,9 +484,18 @@ double String::to_float() const {
 
 void String::append(const String &p_string) {
 	int len = length();
+	if (!p_string.length()) {
+		return;
+	}
+
+	if (!len) {
+		*this = p_string;
+		return;
+	}
+
 	_data.resize(len + p_string.length() + 1);
 	for (int i = len; i < len + p_string.length(); i++) {
-		_data[i] = p_string[i - len];
+		_data._ptr[i] = p_string[i - len];
 	}
 }
 
@@ -589,8 +606,8 @@ String::String(const String &p_from) {
 
 String::String(const char p_from) {
 	resize(2);
-	_data[0] = p_from;
-	_data[1] = 0;
+	_data._ptr[0] = p_from;
+	_data._ptr[1] = 0;
 }
 
 /**

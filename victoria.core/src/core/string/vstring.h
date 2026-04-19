@@ -1,5 +1,6 @@
 #pragma once
 
+#include "core/data/cowdata.h"
 #include "core/data/vector.h"
 #include "core/typedefs.h"
 
@@ -11,7 +12,7 @@
 
 class VAPI String {
 private:
-	Vector<char> _data;
+	CoWData<char> _data;
 
 public:
 	FORCE_INLINE char *ptrw() {
@@ -25,10 +26,10 @@ public:
 	}
 
 	FORCE_INLINE char get(int index) const {
-		return _data[index];
+		return _data.get(index);
 	}
 	FORCE_INLINE void set(int index, char p_item) {
-		_data[index] = p_item;
+		_data.set(p_item, index);
 	}
 	FORCE_INLINE int size() const {
 		return _data.size();
@@ -41,11 +42,11 @@ public:
 	}
 
 	FORCE_INLINE char &operator[](int index) {
-		return _data[index];
+		return _data.get(index);
 	}
 
 	FORCE_INLINE const char &operator[](int index) const {
-		return _data[index];
+		return _data.get(index);
 	}
 
 	FORCE_INLINE int length() const {

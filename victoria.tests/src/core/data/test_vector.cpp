@@ -124,7 +124,7 @@ static bool vector_test_push_pop() {
 	TEST_EQ(vec[2], 6);
 	TEST_EQ(vec.size(), 3);
 
-	vec.push_front(1);
+	vec.insert(1, 0);
 	TEST_EQ(vec[0], 1);
 	TEST_EQ(vec.size(), 4);
 
@@ -132,14 +132,16 @@ static bool vector_test_push_pop() {
 	TEST_EQ(vec[2], 3);
 	TEST_EQ(vec.size(), 5);
 
-	int back = vec.pop_back();
+	int back = vec.get(vec.size() - 1);
+	vec.remove_at(vec.size() - 1);
 	TEST_EQ(back, 6);
 	TEST_EQ(vec.size(), 4);
 
-	int front = vec.pop_front();
+	int front = vec.get(0);
+	vec.remove_at(0);
 	TEST_EQ(front, 1);
 	TEST_EQ(vec.size(), 3);
-	vec.push_front(1);
+	vec.insert(1, 0);
 	TEST_EQ(vec[0], 1);
 	TEST_EQ(vec.size(), 4);
 

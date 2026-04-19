@@ -53,6 +53,9 @@ void DisplayManagerX11::_update_wm_properties() {
 		for (uint64_t i = 0; i < state_count; i++) {
 			local_states[i] = states[i];
 		}
+
+		// Free states (alloc'd by X11)
+		free(states);
 	}
 
 	Atom minimized_atom = XInternAtom(display, "_NET_WM_STATE_HIDDEN", false);

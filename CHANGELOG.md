@@ -1,6 +1,25 @@
 # Changelog
 Changes exist in chronological order (i.e. new changes are to be appended to the end of the file). Dates are done in DD/MM/YYYY format with the version number applied to each date if needed.
 
+## 19/4/2026
+- Core:
+	- Data:
+		- Migrate `Vector<T>` data out to `CoWData<T>`.
+			- In short, the logic behind how we want to control ownership of data in the pointer began to conflict with how `Vector`'s methods were designed, namely `push_back` and `insert`. In the lack of a better name for the class (`SharedVector`, `InternalVector` and `UniqueVector` were considered) we decided to take the Godot name instead since the original class is copied more or less exactly to our own implementation.
+		- Remove the `push_front()`, `pop_front()` and `pop_back()` methods from `Vector<T>`.
+			- Not really useful outside of unit tests and mirroring `Array` logic. Changed for the better.
+		- Rework `Vector<T>` so that invalid read/writes no longer occur.
+			- For some reason, calling `_realloc_buffer` fixed a bunch of issues with vector length. Considering the lack of actual change (the data was doing the same when calling `resize()`) it's beyond me but now it should work.
+		- Remove `get_ptr_size()` from `Vector<T>`.
+			- Not useful. Used in too few a place to warrant existing. Can be and has easily been replaced.
+	- Linux/X11:
+		- Fix a memory leak when calling `XGetWindowProperty` that would not free an X11-alloc'd buffer.
+			- A minor leak but a good catch nonetheless - this method is called whenever the window state is changed and could have become an issue in the future.
+	- Platform:
+		- Made the `DisplayManager` destructor virtual, and actually added it in.
+			- Prior, any data relevant to the `DisplayManager` and its inherited classes would never have been freed, and this memory would have stuck around until the kernel cleans it up. This isn't really an issue (the `DisplayManager` IS allocated only once, after all) but for the sake of being clean about it we free it here.
+			- As a side note, this patch has removed all known memory leaks - all classes can be used without the worry of data leaking over time. GPU drivers are not the same and really suck with how much they leak - but not a lot we can do about that.
+
 ## 18/4/2026
 - Core:
 	- Linux/Wayland:

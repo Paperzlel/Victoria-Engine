@@ -71,6 +71,7 @@ public:
 	virtual void finalize() = 0;
 
 	DisplayManager();
+	virtual ~DisplayManager();
 };
 
 VARIANT_CAST_ENUM(DisplayManager::WindowNotification);

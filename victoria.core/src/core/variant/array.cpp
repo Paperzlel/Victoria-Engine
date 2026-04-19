@@ -118,19 +118,24 @@ void Array::insert(uint64_t p_index, const Variant &p_item) {
 Variant Array::pop_front() {
 	ERR_FAIL_COND_MSG_R(_data->_array.is_empty(), "Cannot remove an item from an empty array.", Variant());
 	ERR_FAIL_COND_MSG_R(_data->read_only, "Can't remove elements from a read-only array.", Variant());
-	return _data->_array.pop_front();
+	Variant ret = _data->_array.get(0);
+	_data->_array.remove_at(0);
+	return ret;
 }
 
 Variant Array::pop_back() {
 	ERR_FAIL_COND_MSG_R(_data->_array.is_empty(), "Cannot remove an item from an empty array.", Variant());
 	ERR_FAIL_COND_MSG_R(_data->read_only, "Can't remove elements from a read-only array.", Variant());
-	return _data->_array.pop_back();
+	int64_t len = _data->_array.size() - 1;
+	Variant ret = _data->_array.get(len);
+	_data->_array.remove_at(len);
+	return ret;
 }
 
 void Array::push_front(const Variant &p_item) {
 	ERR_FAIL_COND_MSG(_data->read_only, "Can't add elements to a read-only array.");
 	Variant value = p_item;
-	_data->_array.push_front(value);
+	_data->_array.insert(value, 0);
 }
 
 void Array::push_back(const Variant &p_item) {

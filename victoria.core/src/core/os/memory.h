@@ -51,7 +51,7 @@ void vdelete(T *p_class) {
 		return;
 	}
 
-	if (!std::is_trivially_destructible<T>::value) {
+	if constexpr (!std::is_trivially_destructible_v<T>) {
 		p_class->~T();
 	}
 
