@@ -5,8 +5,10 @@
 #	include "core/io/input.h"
 #	include "core/os/memory.h"
 #	include "core/os/os.h"
+#	include "core/string/print_string.h"
 
 #	include <string.h>
+#	include <linux/input-event-codes.h>
 
 // Override from the default `wl_array_for_each` as it doesn't work for C++ compilers.
 // Workaround specifically from https://github.com/libretro/RetroArch/commit/8e638f435a37c46195aad1589ab024e443971d12
@@ -276,7 +278,27 @@ void DisplayManagerWayland::_on_pointer_button(void *p_data,
 											   uint32_t p_serial,
 											   uint32_t p_time,
 											   uint32_t p_button,
-											   uint32_t p_state) {}
+											   uint32_t p_state) {
+	SeatData *sd = (SeatData *)p_data;
+	ERR_COND_NULL(sd);
+
+	PointerData &pd = sd->pointer_data_write;
+	bool pressed = p_state == WL_POINTER_BUTTON_STATE_PRESSED;
+	switch (p_button) {
+		case BTN_LEFT:
+			pd.button_pressed[MOUSE_LBUTTON] = pressed;
+			break;
+		case BTN_RIGHT:
+			pd.button_pressed[MOUSE_RBUTTON] = pressed;
+			break;
+		case BTN_MIDDLE:
+			pd.button_pressed[MOUSE_MBUTTON] = pressed;
+			break;
+		default:
+			print_verbose(vformat("Unknown button ID %u pressed.", p_button).get_data());
+			break;
+	}
+}
 
 void DisplayManagerWayland::_on_pointer_axis(void *p_data,
 											 struct wl_pointer *p_pointer,
@@ -632,6 +654,16 @@ void DisplayManagerWayland::process_events() {
 			mm->relative = pd.position - old_pd.position;
 		}
 		Input::get_singleton()->parse_input_event(mm);
+
+		for (int i = 0; i < MOUSE_MAX; i++) {
+			Ref<InputEventMouseButton> mb;
+			mb.instantiate();
+			mb->mb = (MouseButton)i;
+			mb->pressed = pd.button_pressed[i];
+
+			Input::get_singleton()->parse_input_event(mb);
+		}
+
 		old_pd = pd;
 		sd->frame_recieved = false;
 	}

@@ -14,6 +14,7 @@
 
 #	include "core/data/event.h"
 #	include "core/os/display_manager.h"
+#	include "core/io/input.h"
 
 #	include <wayland-client-core.h>
 #	include <wayland-egl-core.h>
@@ -61,6 +62,8 @@ private:
 		Vector2i position;
 		Vector2i relative_position;
 		uint32_t relative_motion_time;
+
+		bool button_pressed[MOUSE_MAX];
 	};
 
 	struct SeatData {
