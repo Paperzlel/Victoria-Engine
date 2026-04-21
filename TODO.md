@@ -61,6 +61,9 @@ A list of all things that are on the current plan for the engine, whether short-
 - [ ] Add a `Theme` class to define things such as colours and fonts used
 - [ ] Add options for theme overrides on specific GUI objects (requires themes)
 
+## Importing
+- [ ] Remove font atlas options from the font importers
+
 ## Platform
 - [x] Fix X11 displays not resizing when using EGL
 - [x] Add `set_window_resize_callback` to Windows

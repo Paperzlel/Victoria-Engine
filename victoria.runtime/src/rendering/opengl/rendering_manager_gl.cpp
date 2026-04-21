@@ -1186,7 +1186,6 @@ void RenderingManagerGL::item_set_rect(RID p_item, const Vector2 &p_position, co
 	Item::Rect *r = static_cast<Item::Rect *>(i->base);
 	r->rect_offset = p_position;
 	r->rect_size = p_size;
-	i->flags |= Item::ITEM_FLAG_USE_RECT;
 }
 
 void RenderingManagerGL::item_set_rect_offset(RID p_item, const Vector2 &p_offset) {
@@ -1241,7 +1240,6 @@ void RenderingManagerGL::item_set_texture_rect(RID p_item,
 	r->texture = p_texture;
 	r->rect_offset = p_position;
 	r->rect_size = p_size;
-	i->flags |= Item::ITEM_FLAG_USE_RECT;
 }
 
 void RenderingManagerGL::item_set_uv_rect(RID p_item, Vector2 p_offset, Vector2 p_size) {

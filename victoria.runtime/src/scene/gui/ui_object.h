@@ -34,6 +34,7 @@ private:
 		Vector2i size_cache; // Cached size for above reasons
 
 		double anchor_factor[2] = {0.0, 0.0}; // X/Y factor for each anchor
+		Vector2i offsets;					  // Offset from the initial anchor position.
 
 		UIObject *ui_parent = nullptr;
 	} data;
@@ -41,6 +42,8 @@ private:
 	void _size_changed();
 	void _update_minimum_size();
 	void _update_anchors(Anchor p_anchor, bool p_keep_position = false);
+	void _update_offsets(const Vector2i &p_position);
+
 	void _update_anchor(Axis p_axis, double p_factor, bool p_keep_position);
 
 	void _update_canvas_item_transform();

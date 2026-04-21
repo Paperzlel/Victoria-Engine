@@ -163,6 +163,7 @@ Error core_initialize(int argc, char *argv[]) {
 		}
 
 		ERR_COND_NULL_MSG_R(display_manager, "Failed to create an appropriate display manager.", ERR_CANT_CREATE);
+		ERR_FAIL_COND_MSG_R(err != OK, "Failed to create an appropriate display manager.", err);
 	}
 	return OK;
 }

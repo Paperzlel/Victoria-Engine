@@ -12,7 +12,7 @@ void UIObject::_size_changed() {
 	Vector2i parent_size = get_parent_rect();
 	int edges[2];
 	for (int i = 0; i < 2; i++) {
-		edges[i] = parent_size[i] * data.anchor_factor[i] - data.size_cache[i] * data.anchor_factor[i];
+		edges[i] = data.offsets[i] + (parent_size[i] * data.anchor_factor[i]);
 	}
 
 	Vector2i new_pos = Vector2i(edges[0], edges[1]);
@@ -116,9 +116,15 @@ void UIObject::_update_anchor(Axis p_axis, double p_factor, bool p_keep_position
 	data.pos_cache[p_axis & 1] = new_pos;
 }
 
+void UIObject::_update_offsets(const Vector2i &p_position) {
+	Vector2i parent_size = get_parent_rect();
+
+	data.offsets[0] = p_position.x - (parent_size.x * data.anchor_factor[0]);
+	data.offsets[1] = p_position.y - (parent_size.y * data.anchor_factor[1]);
+}
+
 void UIObject::_update_canvas_item_transform() {
 	Transform2D t = get_transform();
-	t.position += data.pos_cache;
 
 	RM::get_singleton()->item_set_transform(get_canvas_item(), t);
 }
@@ -156,6 +162,7 @@ void UIObject::_notification(int p_what) {
 
 Transform2D UIObject::get_transform() const {
 	Transform2D ret = data.transform;
+	ret.position = data.pos_cache;
 	return ret;
 }
 
@@ -170,6 +177,9 @@ Vector2i UIObject::get_position() const {
 
 void UIObject::set_position(const Vector2i &p_pos) {
 	data.pos_cache = p_pos;
+
+	_update_offsets(p_pos);
+	_size_changed();
 	_propagate_transform_changed(this);
 }
 

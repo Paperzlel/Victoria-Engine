@@ -10,10 +10,11 @@ layout(location = 6) in highp vec4 instance_data_b;
 layout(location = 7) in highp vec4 instance_data_c;
 layout(location = 8) in highp vec4 instance_data_d;
 
-#define vertex_data instance_data_a.xy
-#define rect_offset instance_data_a.zw
+#define transform_offset instance_data_a.xy
 
+#define rect_offset instance_data_a.zw
 #define rect_size instance_data_b.xy
+
 #define instance_data_mask int(instance_data_b.z)
 #define unused_data instance_data_b.w
 
@@ -24,7 +25,6 @@ layout(location = 8) in highp vec4 instance_data_d;
 #define ITEM_USE_ALPHA_ONLY 1 << 0
 #define ITEM_USE_TEXTURE_SUBCOORDS 1 << 2
 #define ITEM_FLIP_Y 1 << 3
-#define ITEM_USE_RECT 1 << 4
 
 layout(std140) uniform CanvasData { // ubo:1
 	mat4 canvas_projection;
@@ -63,20 +63,14 @@ void main() {
 		}
 	}
 	instance_data_flags = instance_data_mask;
-	vec2 input_vertex;
-	if (bool(instance_data_mask & ITEM_USE_RECT)) {
-		input_vertex = rect_offset;
-	} else {
-		input_vertex = vertex_data;
-	}
 	mat4 model_matrix = mat4(vec4(transform_basis.xy, 0.0, 0.0),
 							 vec4(transform_basis.zw, 0.0, 0.0),
 							 vec4(0.0, 0.0, 1.0, 0.0),
-							 vec4(input_vertex, 0.0, 1.0));
+							 vec4(transform_offset, 0.0, 1.0));
 
 	colour_interp = input_colour;
 
-	vec2 vert = rect_size * vertex;
+	vec2 vert = rect_offset + abs(rect_size) * vertex;
 	vert = (model_matrix * vec4(vert, 0.0, 1.0)).xy;
 	gl_Position = canvas_projection * vec4(vert, 0.0, 1.0);
 }

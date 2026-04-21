@@ -3,7 +3,9 @@
 void TextureRect::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_DRAW: {
-			canvas_set_texture_rect(texture, get_transform().position, get_size());
+			if (texture.is_valid()) {
+				canvas_set_texture_rect(texture, Vector2i(), get_size());
+			}
 		} break;
 	}
 }

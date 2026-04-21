@@ -1,6 +1,27 @@
 # Changelog
 Changes exist in chronological order (i.e. new changes are to be appended to the end of the file). Dates are done in DD/MM/YYYY format with the version number applied to each date if needed.
 
+## 20/4/2026
+- Core:
+	- String:
+		- Fix incorrect format sizing in `vformat`.
+	- Add a check to `core_initialize` that properly returns an error if the display manager could be allocated but not properly initialized (possibly due to an invalid combination, i.e. trying to run Wayland on an X11 client).
+- Runtime:
+	- Importers:
+		- Fixed a segmentation fault that would occur when trying to load file from an invalid path. Previously, there was no check for if `FileSystem::open` would return a valid resource, which it now does. 
+	- Rendering:
+		- Deprecate `ITEM_USE_RECT` and remove its functionality from the OpenGL backend and shaders.
+			- Its functionality ended up limiting how transforms worked with UI code. Now transforms are applied properly in code.
+		- OpenGL:
+			- Changed the error messaging for the OpenGL utilities to properly reflect the error level.
+	- Scene:
+		- Properly set the offset of the transform when returning from `get_transform()` in `UIObject`.
+			- Part of the above changes. Prior, the transform was only changed on a draw step, which meant reading back the transform revealed an identity matrix. Now, all reads from `get_transform()` will return the proper transform.
+		- `ColourRect` and `TextureRect` now don't specify their position when creating their render spaces.
+			- This issue was caused because of how transforms are handled in the canvas shader with the `ITEM_USE_RECT` option now gone. In this command, a position will now act as an offset and can be applied if extending the class.
+		- Added a new entry `offsets` and a new private method `_update_offsets` to `UIObject`.
+			- Assists with the above changes. Offsets are the position relative to an anchor, and thus are modified whenever the user moves an item on-screen.
+
 ## 19/4/2026
 - Core:
 	- Data:

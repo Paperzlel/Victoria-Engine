@@ -11,6 +11,7 @@
 
 Ref<Resource> ResourceFormatImporterImage::_import(const String &p_file, int p_argc, Variant *p_args) {
 	Ref<FileSystem> fs = FileSystem::open(p_file, FileSystem::FILE_ACCESS_READ);
+	ERR_FAIL_COND_R(!fs.is_valid(), Ref<Resource>());
 
 	int len = fs->get_length();
 

@@ -19,7 +19,7 @@ Ref<Resource> ResourceFormatImporterFont::_import(const String &p_file, int p_ar
 		ERR_FAIL_COND_MSG_R(FT_Init_FreeType(&freetype_lib) != 0, "Unable to load FreeType library", Ref<Resource>());
 	}
 
-	RM *rs = static_cast<RM *>(RM::get_singleton());
+	RM *rm = static_cast<RM *>(RM::get_singleton());
 	Ref<Font> f;
 	f.instantiate();
 
@@ -64,9 +64,9 @@ Ref<Resource> ResourceFormatImporterFont::_import(const String &p_file, int p_ar
 		int max_height_neg = 0;
 		int border = 1; // 1 px border
 
-		RID r = rs->texture_allocate();
+		RID r = rm->texture_allocate();
 		if (p_argc >= 3 && p_args[2].operator bool() == true) {
-			rs->texture_use_sdf(r, true);
+			rm->texture_use_sdf(r, true);
 		}
 
 		for (uint8_t i = 0; i < char_map.size(); i++) {
@@ -149,7 +149,7 @@ Ref<Resource> ResourceFormatImporterFont::_import(const String &p_file, int p_ar
 		f->set_max_font_height(max_height_pos + max_height_neg);
 		f->set_font_baseline_offset(max_height_pos);
 
-		rs->texture_set_from_data(r, bitmap, bitmap_size, bitmap_size, RM::FORMAT_R, RM::MASK_FILTER_NEAREST);
+		rm->texture_set_from_data(r, bitmap, bitmap_size, bitmap_size, RM::FORMAT_R, RM::MASK_FILTER_NEAREST);
 
 		Memory::vfree(bitmap);
 	} else {
@@ -163,7 +163,7 @@ Ref<Resource> ResourceFormatImporterFont::_import(const String &p_file, int p_ar
 			}
 
 			Font::Character ch;
-			ch.texture = rs->texture_allocate();
+			ch.texture = rm->texture_allocate();
 			ch.size = Vector2i(slot->bitmap.width, slot->bitmap.rows);
 			ch.bearing = Vector2i(slot->bitmap_left, slot->bitmap_top);
 			ch.advance = slot->advance.x;
@@ -175,8 +175,8 @@ Ref<Resource> ResourceFormatImporterFont::_import(const String &p_file, int p_ar
 
 			// Fix lines problem by using the MASK_FILTER_NEAREST. Saves some time at the cost of making the text
 			// slightly off.
-			rs->texture_use_sdf(ch.texture, true);
-			rs->texture_set_from_data(ch.texture,
+			rm->texture_use_sdf(ch.texture, true);
+			rm->texture_set_from_data(ch.texture,
 									  slot->bitmap.buffer,
 									  ch.size.x,
 									  ch.size.y,

@@ -229,7 +229,8 @@ void Utilities::debug_message_callback(GLenum p_source,
 							   p_message);
 	}
 
-	if (p_severity <= GL_DEBUG_SEVERITY_MEDIUM) {
+	// Only print messages if they're medium/high severity.
+	if (severity < 1) {
 		OS::get_singleton()->printerr(error_string.get_data());
 	} else if (is_printing_verbose()) {
 		OS::get_singleton()->print_error(__FILE__, FUNCTION_STR, __LINE__, error_string, "", ERROR_DEBUG);

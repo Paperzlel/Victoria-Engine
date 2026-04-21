@@ -171,7 +171,6 @@ private:
 			ITEM_FLAG_USE_SDF = 1 << 1,
 			ITEM_FLAG_USE_TEXTURE_SUBCOORDS = 1 << 2,
 			ITEM_FLAG_FLIP_Y = 1 << 3,
-			ITEM_FLAG_USE_RECT = 1 << 4,
 		};
 
 		struct Base {

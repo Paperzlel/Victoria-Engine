@@ -668,11 +668,11 @@ String vformat(const char *p_string, ...) {
 		n_size++;
 	}
 	String ret;
-	ret.resize(n_size + 2);
+	ret.resize(n_size + 1);
 	for (int i = 0; i < n_size; i++) {
 		ret[i] = cstr[i];
 	}
-	ret[n_size + 1] = 0;
+	ret[n_size] = 0;
 	return ret;
 }
 

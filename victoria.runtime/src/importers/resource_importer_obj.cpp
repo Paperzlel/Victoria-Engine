@@ -48,11 +48,7 @@ Ref<Resource> ResourceFormatImporterOBJ::_import(const String &p_path, int p_arg
 	vertex_array.clear();
 	index_array.clear();
 	Ref<FileSystem> fs = FileSystem::open(p_path, FileSystem::FILE_ACCESS_READ);
-
-	// Invalid file contents
-	if (!fs->is_valid_file()) {
-		// return data;
-	}
+	ERR_FAIL_COND_R(!fs.is_valid(), Ref<Resource>());
 
 	Vector<Vector3> vertices;
 	Vector<Vector3> normals;
