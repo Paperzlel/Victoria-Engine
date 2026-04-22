@@ -18,6 +18,7 @@
 
 #	include <wayland-client-core.h>
 #	include <wayland-egl-core.h>
+#	include <xkbcommon/xkbcommon.h>
 
 class DisplayManagerWayland : public DisplayManager {
 private:
@@ -86,6 +87,13 @@ private:
 		struct zwp_relative_pointer_v1 *zwp_relative_pointer = nullptr;
 		struct zwp_locked_pointer_v1 *zwp_locked_pointer = nullptr;
 		struct zwp_confined_pointer_v1 *zwp_confined_pointer = nullptr;
+
+		struct xkb_context *xkb_context = nullptr;
+		struct xkb_keymap *xkb_keymap = nullptr;
+		struct xkb_state *xkb_state = nullptr;
+		void *keymap_buffer = nullptr;
+		uint64_t keymap_buffer_size = 0;
+		HashTable<xkb_keycode_t, Key> pressed_keys;
 
 		bool frame_recieved = false;
 		uint8_t active_window = INVALID_WINDOW_ID;
@@ -171,6 +179,39 @@ private:
 													 wl_fixed_t p_dx_unaccel,
 													 wl_fixed_t p_dy_unaccel);
 
+	static void _on_keyboard_keymap(void *p_data,
+									struct wl_keyboard *p_keyboard,
+									uint32_t p_keyboard_format,
+									int32_t p_fd,
+									uint32_t p_size);
+
+	static void _on_keyboard_enter(void *p_data,
+								   struct wl_keyboard *p_keyboard,
+								   uint32_t p_serial,
+								   struct wl_surface *p_surface,
+								   struct wl_array *p_keys);
+
+	static void
+	_on_keyboard_leave(void *p_data, struct wl_keyboard *p_keyboard, uint32_t p_serial, struct wl_surface *p_surface);
+
+	static void _on_keyboard_key(void *p_data,
+								 struct wl_keyboard *p_keyboard,
+								 uint32_t p_serial,
+								 uint32_t p_time,
+								 uint32_t p_key,
+								 uint32_t p_key_state);
+
+	static void _on_keyboard_modifiers(void *p_data,
+									   struct wl_keyboard *p_keyboard,
+									   uint32_t p_serial,
+									   uint32_t p_mods_depressed,
+									   uint32_t p_mods_latched,
+									   uint32_t p_mods_locked,
+									   uint32_t p_group);
+
+	static void
+	_on_keyboard_repeat_info(void *p_data, struct wl_keyboard *p_keyboard, int32_t p_rate, int32_t p_delay);
+
 	static void _on_xdg_surface_configure(void *p_data, struct xdg_surface *p_surface, uint32_t p_serial);
 
 	static void _on_xdg_toplevel_configure(void *p_data,
@@ -214,6 +255,15 @@ private:
 
 	static constexpr struct zwp_relative_pointer_v1_listener zwp_relative_pointer_listener = {
 		.relative_motion = _on_relative_pointer_relative_motion,
+	};
+
+	static constexpr struct wl_keyboard_listener keyboard_listener = {
+		.keymap = _on_keyboard_keymap,
+		.enter = _on_keyboard_enter,
+		.leave = _on_keyboard_leave,
+		.key = _on_keyboard_key,
+		.modifiers = _on_keyboard_modifiers,
+		.repeat_info = _on_keyboard_repeat_info,
 	};
 
 	static constexpr struct xdg_surface_listener surface_listener = {

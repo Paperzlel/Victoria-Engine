@@ -36,7 +36,7 @@ sudo apt install libx11-dev libgl1-mesa-dev libstdc++-12-dev
 ```
 Fedora-based
 ```
-sudo dnf install libX11-devel wayland-devel
+sudo dnf install libX11-devel wayland-devel libxkbcommon-devel
 ```
 
 ## Debugging

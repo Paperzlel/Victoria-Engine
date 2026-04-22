@@ -80,7 +80,7 @@ bool runtime_iteration() {
 
 	SceneTree::get_singleton()->update(delta_time);
 
-	if (Input::get_singleton()->is_key_just_pressed(KEY_F2)) {
+	if (Input::get_singleton()->is_key_just_pressed(Key::F2)) {
 		RenderData *rd = RM::get_singleton()->get_render_data();
 		OS::get_singleton()->print("Draw calls: %d\nPrimitives: %d\nOverall time: %fms",
 								   rd->draw_calls,

@@ -260,8 +260,8 @@ void DisplayManagerX11::process_events() {
 			} break;
 			case KeyPress:
 			case KeyRelease: {
-				if (Input::get_singleton()->is_key_pressed(KEY_ALT) &&
-					Input::get_singleton()->is_key_pressed(KEY_F4)) {
+				if (Input::get_singleton()->is_key_pressed(Key::ALT) &&
+					Input::get_singleton()->is_key_pressed(Key::F4)) {
 					// Want to quit, so send out a message
 					XEvent ev;
 					ev.xclient.data.l[0] = window->wm_close_atom;
@@ -419,230 +419,230 @@ bool DisplayManagerX11::get_mouse_mode() const {
 Key DisplayManagerX11::translate_keycodes(int p_code) {
 	switch (p_code) {
 		case XK_BackSpace:
-			return KEY_BACKSPACE;
+			return Key::BACKSPACE;
 		case XK_Tab:
-			return KEY_TAB;
+			return Key::TAB;
 		case XK_Clear:
-			return KEY_CLEAR;
+			return Key::CLEAR;
 		case XK_KP_Enter:
-			return KEY_ENTER;
+			return Key::ENTER;
 		// TODO: Send an extra event for ANY shift key being pressed
 		case XK_Shift_L:
-			return KEY_LSHIFT;
+			return Key::LSHIFT;
 		case XK_Shift_R:
-			return KEY_RSHIFT;
+			return Key::RSHIFT;
 		case XK_Control_L:
-			return KEY_LCTRL;
+			return Key::LCTRL;
 		case XK_Control_R:
-			return KEY_RCTRL;
+			return Key::RCTRL;
 		case XK_Alt_L:
-			return KEY_LALT;
+			return Key::LALT;
 		case XK_Alt_R:
-			return KEY_RALT;
+			return Key::RALT;
 		case XK_Caps_Lock:
-			return KEY_CAPSLOCK;
+			return Key::CAPSLOCK;
 		case XK_Escape:
-			return KEY_ESCAPE;
+			return Key::ESCAPE;
 		case XK_space:
-			return KEY_SPACEBAR;
+			return Key::SPACEBAR;
 		case XK_Page_Up:
-			return KEY_PAGEUP;
+			return Key::PAGEUP;
 		case XK_Page_Down:
-			return KEY_PAGEDOWN;
+			return Key::PAGEDOWN;
 		case XK_End:
-			return KEY_END;
+			return Key::END;
 		case XK_Home:
-			return KEY_HOME;
+			return Key::HOME;
 		case XK_Left:
-			return KEY_LEFT;
+			return Key::LEFT;
 		case XK_Up:
-			return KEY_UP;
+			return Key::UP;
 		case XK_Right:
-			return KEY_RIGHT;
+			return Key::RIGHT;
 		case XK_Down:
-			return KEY_DOWN;
+			return Key::DOWN;
 		case XK_Insert:
-			return KEY_INSERT;
+			return Key::INSERT;
 		case XK_Delete:
-			return KEY_DELETE;
+			return Key::DELETE;
 		case XK_0:
-			return KEY_0;
+			return Key::KEY_0;
 		case XK_1:
-			return KEY_1;
+			return Key::KEY_1;
 		case XK_2:
-			return KEY_2;
+			return Key::KEY_2;
 		case XK_3:
-			return KEY_3;
+			return Key::KEY_3;
 		case XK_4:
-			return KEY_4;
+			return Key::KEY_4;
 		case XK_5:
-			return KEY_5;
+			return Key::KEY_5;
 		case XK_6:
-			return KEY_6;
+			return Key::KEY_6;
 		case XK_7:
-			return KEY_7;
+			return Key::KEY_7;
 		case XK_8:
-			return KEY_8;
+			return Key::KEY_8;
 		case XK_9:
-			return KEY_9;
+			return Key::KEY_9;
 		case XK_A:
 		case XK_a:
-			return KEY_A;
+			return Key::A;
 		case XK_B:
 		case XK_b:
-			return KEY_B;
+			return Key::B;
 		case XK_C:
 		case XK_c:
-			return KEY_C;
+			return Key::C;
 		case XK_D:
 		case XK_d:
-			return KEY_D;
+			return Key::D;
 		case XK_E:
 		case XK_e:
-			return KEY_E;
+			return Key::E;
 		case XK_F:
 		case XK_f:
-			return KEY_F;
+			return Key::F;
 		case XK_G:
 		case XK_g:
-			return KEY_G;
+			return Key::G;
 		case XK_H:
 		case XK_h:
-			return KEY_H;
+			return Key::H;
 		case XK_I:
 		case XK_i:
-			return KEY_I;
+			return Key::I;
 		case XK_J:
 		case XK_j:
-			return KEY_J;
+			return Key::J;
 		case XK_K:
 		case XK_k:
-			return KEY_K;
+			return Key::K;
 		case XK_L:
 		case XK_l:
-			return KEY_L;
+			return Key::L;
 		case XK_M:
 		case XK_m:
-			return KEY_M;
+			return Key::M;
 		case XK_N:
 		case XK_n:
-			return KEY_N;
+			return Key::N;
 		case XK_O:
 		case XK_o:
-			return KEY_O;
+			return Key::O;
 		case XK_P:
 		case XK_p:
-			return KEY_P;
+			return Key::P;
 		case XK_Q:
 		case XK_q:
-			return KEY_Q;
+			return Key::Q;
 		case XK_R:
 		case XK_r:
-			return KEY_R;
+			return Key::R;
 		case XK_S:
 		case XK_s:
-			return KEY_S;
+			return Key::S;
 		case XK_T:
 		case XK_t:
-			return KEY_T;
+			return Key::T;
 		case XK_U:
 		case XK_u:
-			return KEY_U;
+			return Key::U;
 		case XK_V:
 		case XK_v:
-			return KEY_V;
+			return Key::V;
 		case XK_W:
 		case XK_w:
-			return KEY_W;
+			return Key::W;
 		case XK_X:
 		case XK_x:
-			return KEY_X;
+			return Key::X;
 		case XK_Y:
 		case XK_y:
-			return KEY_Y;
+			return Key::Y;
 		case XK_Z:
 		case XK_z:
-			return KEY_Z;
+			return Key::Z;
 		case XK_KP_0:
-			return KEY_NUMPAD0;
+			return Key::NUMPAD0;
 		case XK_KP_1:
-			return KEY_NUMPAD1;
+			return Key::NUMPAD1;
 		case XK_KP_2:
-			return KEY_NUMPAD2;
+			return Key::NUMPAD2;
 		case XK_KP_3:
-			return KEY_NUMPAD3;
+			return Key::NUMPAD3;
 		case XK_KP_4:
-			return KEY_NUMPAD4;
+			return Key::NUMPAD4;
 		case XK_KP_5:
-			return KEY_NUMPAD5;
+			return Key::NUMPAD5;
 		case XK_KP_6:
-			return KEY_NUMPAD6;
+			return Key::NUMPAD6;
 		case XK_KP_7:
-			return KEY_NUMPAD7;
+			return Key::NUMPAD7;
 		case XK_KP_8:
-			return KEY_NUMPAD8;
+			return Key::NUMPAD8;
 		case XK_KP_9:
-			return KEY_NUMPAD9;
+			return Key::NUMPAD9;
 		case XK_KP_Multiply:
-			return KEY_NUMPADMULTIPLY;
+			return Key::NUMPADMULTIPLY;
 		case XK_KP_Add:
-			return KEY_NUMPADADD;
+			return Key::NUMPADADD;
 		case XK_KP_Subtract:
-			return KEY_NUMPADSUBTRACT;
+			return Key::NUMPADSUBTRACT;
 		case XK_KP_Decimal:
-			return KEY_NUMPADDECIMAL;
+			return Key::NUMPADDECIMAL;
 		case XK_KP_Divide:
-			return KEY_NUMPADDIVIDE;
+			return Key::NUMPADDIVIDE;
 		case XK_F1:
-			return KEY_F1;
+			return Key::F1;
 		case XK_F2:
-			return KEY_F2;
+			return Key::F2;
 		case XK_F3:
-			return KEY_F3;
+			return Key::F3;
 		case XK_F4:
-			return KEY_F4;
+			return Key::F4;
 		case XK_F5:
-			return KEY_F5;
+			return Key::F5;
 		case XK_F6:
-			return KEY_F6;
+			return Key::F6;
 		case XK_F7:
-			return KEY_F7;
+			return Key::F7;
 		case XK_F8:
-			return KEY_F8;
+			return Key::F8;
 		case XK_F9:
-			return KEY_F9;
+			return Key::F9;
 		case XK_F10:
-			return KEY_F10;
+			return Key::F10;
 		case XK_F11:
-			return KEY_F11;
+			return Key::F11;
 		case XK_F12:
-			return KEY_F12;
+			return Key::F12;
 		case XK_F13:
-			return KEY_F13;
+			return Key::F13;
 		case XK_F14:
-			return KEY_F14;
+			return Key::F14;
 		case XK_F15:
-			return KEY_F15;
+			return Key::F15;
 		case XK_F16:
-			return KEY_F16;
+			return Key::F16;
 		case XK_F17:
-			return KEY_F17;
+			return Key::F17;
 		case XK_F18:
-			return KEY_F18;
+			return Key::F18;
 		case XK_F19:
-			return KEY_F19;
+			return Key::F19;
 		case XK_F20:
-			return KEY_F20;
+			return Key::F20;
 		case XK_F21:
-			return KEY_F21;
+			return Key::F21;
 		case XK_F22:
-			return KEY_F22;
+			return Key::F22;
 		case XK_F23:
-			return KEY_F23;
+			return Key::F23;
 		case XK_F24:
-			return KEY_F24;
+			return Key::F24;
 	}
-	return KEY_MAX_KEYS; // Invalid keycode
+	return Key::NONE; // Invalid keycode
 }
 
 /**

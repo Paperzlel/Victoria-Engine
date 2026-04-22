@@ -1,6 +1,8 @@
 #include "display_manager_wayland.h"
 #if defined(PLATFORM_LINUX) && defined(WAYLAND_ENABLED)
 
+#	include "keyboard_remapping.h"
+
 #	include "core/error/error_macros.h"
 #	include "core/io/input.h"
 #	include "core/os/memory.h"
@@ -9,6 +11,7 @@
 
 #	include <string.h>
 #	include <linux/input-event-codes.h>
+#	include <sys/mman.h>
 
 // Override from the default `wl_array_for_each` as it doesn't work for C++ compilers.
 // Workaround specifically from https://github.com/libretro/RetroArch/commit/8e638f435a37c46195aad1589ab024e443971d12
@@ -207,11 +210,20 @@ void DisplayManagerWayland::_on_seat_capabilities_changed(void *p_data,
 	}
 
 	if (p_capabilities & WL_SEAT_CAPABILITY_KEYBOARD) {
+		if (!sd->xkb_state) {
+			sd->xkb_context = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
+		}
+
 		if (!sd->keyboard) {
 			sd->keyboard = wl_seat_get_keyboard(sd->rd->seat);
-			// TODO: Bind keyboard listener
+			wl_keyboard_add_listener(sd->keyboard, &keyboard_listener, sd);
 		}
 	} else {
+		if (sd->xkb_state) {
+			xkb_context_unref(sd->xkb_context);
+			sd->xkb_context = nullptr;
+		}
+
 		if (sd->keyboard) {
 			wl_keyboard_destroy(sd->keyboard);
 			sd->keyboard = nullptr;
@@ -407,6 +419,112 @@ void DisplayManagerWayland::_on_relative_pointer_relative_motion(void *p_data,
 	pd.relative_position.x = wl_fixed_to_int(p_dx);
 	pd.relative_position.y = wl_fixed_to_int(p_dy);
 	pd.relative_motion_time = p_utime_low;
+}
+
+void DisplayManagerWayland::_on_keyboard_keymap(void *p_data,
+												struct wl_keyboard *p_keyboard,
+												uint32_t p_keyboard_format,
+												int32_t p_fd,
+												uint32_t p_size) {
+	SeatData *sd = (SeatData *)p_data;
+	ERR_COND_NULL(sd);
+
+	if (sd->keymap_buffer) {
+		int res = munmap(sd->keymap_buffer, sd->keymap_buffer_size);
+		ERR_FAIL_COND(res == -1);
+		sd->keymap_buffer = nullptr;
+	}
+
+	sd->keymap_buffer = mmap(nullptr, p_size, PROT_READ, MAP_PRIVATE, p_fd, 0);
+	ERR_FAIL_COND(sd->keymap_buffer == MAP_FAILED);
+	sd->keymap_buffer_size = p_size;
+
+	xkb_keymap_unref(sd->xkb_keymap);
+	sd->xkb_keymap = xkb_keymap_new_from_string(sd->xkb_context,
+												(const char *)sd->keymap_buffer,
+												XKB_KEYMAP_FORMAT_TEXT_V1,
+												XKB_KEYMAP_COMPILE_NO_FLAGS);
+
+	xkb_state_unref(sd->xkb_state);
+	sd->xkb_state = xkb_state_new(sd->xkb_keymap);
+	print_verbose("Keymap activated!");
+}
+
+void DisplayManagerWayland::_on_keyboard_enter(void *p_data,
+											   struct wl_keyboard *p_keyboard,
+											   uint32_t p_serial,
+											   struct wl_surface *p_surface,
+											   struct wl_array *p_keys) {
+	SeatData *sd = (SeatData *)p_data;
+	ERR_COND_NULL(sd);
+}
+
+void DisplayManagerWayland::_on_keyboard_leave(void *p_data,
+											   struct wl_keyboard *p_keyboard,
+											   uint32_t p_serial,
+											   struct wl_surface *p_surface) {
+	SeatData *sd = (SeatData *)p_data;
+	ERR_COND_NULL(sd);
+
+	if (sd->xkb_state != nullptr) {
+		xkb_state_update_mask(sd->xkb_state, 0, 0, 0, 0, 0, 0);
+	}
+}
+
+void DisplayManagerWayland::_on_keyboard_key(void *p_data,
+											 struct wl_keyboard *p_keyboard,
+											 uint32_t p_serial,
+											 uint32_t p_time,
+											 uint32_t p_key,
+											 uint32_t p_key_state) {
+	SeatData *sd = (SeatData *)p_data;
+	ERR_COND_NULL(sd);
+
+	// Convert evdev input to XKB input
+	xkb_keycode_t xkb_keycode = p_key + 8;
+	Key input_key = KeyboardRemapping::get_key_from_xkb_keycode(xkb_keycode);
+
+	// Pressed key
+	bool pressed = p_key_state & WL_KEYBOARD_KEY_STATE_PRESSED;
+	bool just_pressed = sd->pressed_keys.get_ptr(xkb_keycode) == nullptr;
+	bool just_released = sd->pressed_keys.get_ptr(xkb_keycode) != nullptr && !pressed;
+	if (pressed) {
+		sd->pressed_keys.insert(xkb_keycode, input_key);
+	} else {
+		sd->pressed_keys.erase(xkb_keycode);
+	}
+
+	// Only send input event if just pressed or released, Input handles repeats.
+	if (just_pressed || just_released) {
+		Ref<InputEventKey> ke;
+		ke.instantiate();
+		ke->pressed = pressed;
+		ke->key = KeyboardRemapping::get_key_from_xkb_keycode(xkb_keycode);
+		Input::get_singleton()->parse_input_event(ke);
+	}
+
+	print_verbose(vformat("TEST: keycode %x passed.", xkb_keycode));
+}
+
+void DisplayManagerWayland::_on_keyboard_modifiers(void *p_data,
+												   struct wl_keyboard *p_keyboard,
+												   uint32_t p_serial,
+												   uint32_t p_mods_depressed,
+												   uint32_t p_mods_latched,
+												   uint32_t p_mods_locked,
+												   uint32_t p_group) {
+	SeatData *sd = (SeatData *)p_data;
+	ERR_COND_NULL(sd);
+
+	xkb_state_update_mask(sd->xkb_state, p_mods_depressed, p_mods_latched, p_mods_locked, 0, 0, p_group);
+}
+
+void DisplayManagerWayland::_on_keyboard_repeat_info(void *p_data,
+													 struct wl_keyboard *p_keyboard,
+													 int32_t p_rate,
+													 int32_t p_delay) {
+	SeatData *sd = (SeatData *)p_data;
+	ERR_COND_NULL(sd);
 }
 
 void DisplayManagerWayland::_on_xdg_surface_configure(void *p_data, struct xdg_surface *p_surface, uint32_t p_serial) {
@@ -784,6 +902,8 @@ void DisplayManagerWayland::finalize() {
 }
 
 DisplayManagerWayland::DisplayManagerWayland(const String &p_renderer, const Vector2i &p_size, Error *r_error) {
+	KeyboardRemapping::initialize();
+
 	display = wl_display_connect(nullptr);
 	if (!display) {
 		*r_error = ERR_CANT_CREATE;

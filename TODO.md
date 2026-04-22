@@ -64,6 +64,12 @@ A list of all things that are on the current plan for the engine, whether short-
 ## Importing
 - [ ] Remove font atlas options from the font importers
 
+## Input
+- [ ] Move the massive X11 input remap out to a new file (like Wayland) and convert it to a hash table
+- [ ] Rework input so that windows can send input events through the scene tree
+- [ ] Reclassify all keyboard input options
+- [ ] Add the ability to query the string relating to the given keycode
+
 ## Platform
 - [x] Fix X11 displays not resizing when using EGL
 - [x] Add `set_window_resize_callback` to Windows

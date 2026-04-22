@@ -5,7 +5,7 @@
 VAPI uint32_t hash_djb2(uint8_t *str);
 VAPI uint32_t hash_lowbias32(uint32_t x);
 
-class HasherDefault {
+struct HasherDefault {
 public:
 	static FORCE_INLINE uint32_t hash(uint8_t *p_key);
 	static FORCE_INLINE uint32_t hash(const char *p_key);

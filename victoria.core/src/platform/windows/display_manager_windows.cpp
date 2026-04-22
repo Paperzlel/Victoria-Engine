@@ -261,7 +261,7 @@ LRESULT DisplayManagerWindows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 		case WM_KEYUP:
 		case WM_SYSKEYUP: {
 			// Since we override the syskey settings, make a custom binding for alt+f4
-			if (Input::get_singleton()->is_key_pressed(KEY_ALT) && Input::get_singleton()->is_key_pressed(KEY_F4)) {
+			if (Input::get_singleton()->is_key_pressed(Key::ALT) && Input::get_singleton()->is_key_pressed(Key::F4)) {
 				SendMessage(hWnd, WM_CLOSE, wParam, lParam);
 			}
 

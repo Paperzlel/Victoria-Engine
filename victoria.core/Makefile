@@ -68,8 +68,11 @@ ifeq ($(PLATFORM), linux)
 ifeq ($(USE_WAYLAND), yes)
 	DEFINES += -DWAYLAND_ENABLED
 	LDFLAGS += $(shell pkg-config --libs wayland-egl)
-	CFLAGS += -Wno-unused-const-variable
 	TMP := $(shell $(PYTHON) src/platform/linux/wayland/generate_protocols.py)
+ifeq ($(shell pkg-config --exists xkbcommon; echo $$?),0)
+	CFLAGS += $(shell pkg-config xkbcommon --cflags)
+	LDFLAGS += $(shell pkg-config xkbcommon --libs)
+endif
 endif
 ifeq ($(USE_X11), yes)
 	DEFINES += -DX11_ENABLED

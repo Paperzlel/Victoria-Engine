@@ -16,8 +16,8 @@ Input *Input::get_singleton() {
  * @brief Checks if the given key is currently being held down by the user.
  */
 bool Input::is_key_pressed(Key p_key) {
-	ERR_FAIL_COND_MSG_R((int)p_key >= KEY_MAX_KEYS, "Keycode given was too large.", false);
-	return current_keyboard.keys[p_key] == true;
+	ERR_FAIL_COND_MSG_R(p_key >= Key::MAX_KEYS, "Keycode given was too large.", false);
+	return current_keyboard.keys[(int)p_key] == true;
 }
 
 /**
@@ -25,16 +25,16 @@ bool Input::is_key_pressed(Key p_key) {
  * the user begins to hold down the key.
  */
 bool Input::is_key_just_pressed(Key p_key) {
-	ERR_FAIL_COND_MSG_R((int)p_key >= KEY_MAX_KEYS, "Keycode given was too large.", false);
-	return current_keyboard.keys[p_key] == true && previous_keyboard.keys[p_key] == false;
+	ERR_FAIL_COND_MSG_R(p_key >= Key::MAX_KEYS, "Keycode given was too large.", false);
+	return current_keyboard.keys[(int)p_key] == true && previous_keyboard.keys[(int)p_key] == false;
 }
 
 /**
  * @brief Checks if the given key is not being held down by the user.
  */
 bool Input::is_key_released(Key p_key) {
-	ERR_FAIL_COND_MSG_R((int)p_key >= KEY_MAX_KEYS, "Keycode given was too large.", false);
-	return current_keyboard.keys[p_key] == false;
+	ERR_FAIL_COND_MSG_R(p_key >= Key::MAX_KEYS, "Keycode given was too large.", false);
+	return current_keyboard.keys[(int)p_key] == false;
 }
 
 /**
@@ -42,8 +42,8 @@ bool Input::is_key_released(Key p_key) {
  * the user begins to hold down the key.
  */
 bool Input::is_key_just_released(Key p_key) {
-	ERR_FAIL_COND_MSG_R((int)p_key >= KEY_MAX_KEYS, "Keycode given was too large.", false);
-	return current_keyboard.keys[p_key] == false && previous_keyboard.keys[p_key] == true;
+	ERR_FAIL_COND_MSG_R(p_key >= Key::MAX_KEYS, "Keycode given was too large.", false);
+	return current_keyboard.keys[(int)p_key] == false && previous_keyboard.keys[(int)p_key] == true;
 }
 
 /**
@@ -109,17 +109,17 @@ void Input::parse_input_event(const Ref<InputEvent> &p_event) {
 			ERR_FAIL_MSG(vformat("Key code %i was too large", int(key)));
 		}
 
-		current_keyboard.keys[key] = key_event->pressed;
+		current_keyboard.keys[(int)key] = key_event->pressed;
 		// Send off additional calls for if the left/right control keys are pressed, since their modifiers will also
 		// affect the default keys.
-		if (key == KEY_LCTRL || key == KEY_RCTRL) {
-			current_keyboard.keys[KEY_CTRL] = key_event->pressed;
+		if (key == Key::LCTRL || key == Key::RCTRL) {
+			current_keyboard.keys[(int)Key::CTRL] = key_event->pressed;
 		}
-		if (key == KEY_LSHIFT || key == KEY_RSHIFT) {
-			current_keyboard.keys[KEY_SHIFT] = key_event->pressed;
+		if (key == Key::LSHIFT || key == Key::RSHIFT) {
+			current_keyboard.keys[(int)Key::SHIFT] = key_event->pressed;
 		}
-		if (key == KEY_LALT || key == KEY_RALT) {
-			current_keyboard.keys[KEY_ALT] = key_event->pressed;
+		if (key == Key::LALT || key == Key::RALT) {
+			current_keyboard.keys[(int)Key::ALT] = key_event->pressed;
 		}
 	}
 

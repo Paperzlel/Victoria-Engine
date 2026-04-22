@@ -1,6 +1,18 @@
 # Changelog
 Changes exist in chronological order (i.e. new changes are to be appended to the end of the file). Dates are done in DD/MM/YYYY format with the version number applied to each date if needed.
 
+## 22/4/2026
+- Core:
+	- Linux/Wayland:
+		- Implement keyboard input for the Wayland backend.
+			- These are sent whenever the hardware calls to the `_key` function, and not during processing. To do so requires a message queue which we have no yet set up.
+		- Added `libxkbcommon` as a dependency to Wayland.
+			- Part of the above changes.
+	- Input:
+		- Added new keyboard keys and redefine the enum as a class.
+			- The `enum class` just allows us to keep all the keys out of the global scope, which could conflict with the `linux/input-event-codes.h` as some names do collide.
+			- Windows now needs to have its own keyboard remapping, since it's out of date. It will be further once the changes I have planned are done.
+
 ## 20/4/2026
 - Core:
 	- String:

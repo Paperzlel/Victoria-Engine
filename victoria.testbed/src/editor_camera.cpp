@@ -5,7 +5,7 @@
 #include <core/os/os.h>
 
 void EditorCamera::_update(double p_delta) {
-	if (Input::get_singleton()->is_key_pressed(KEY_ESCAPE)) {
+	if (Input::get_singleton()->is_key_pressed(Key::ESCAPE)) {
 		DisplayManager::get_singleton()->toggle_mouse_mode(false);
 	}
 	if (Input::get_singleton()->is_mouse_button_pressed(MOUSE_LBUTTON)) {
@@ -15,22 +15,22 @@ void EditorCamera::_update(double p_delta) {
 	speed = 5.0 * p_delta;
 
 	if (DisplayManager::get_singleton()->get_mouse_mode()) {
-		if (Input::get_singleton()->is_key_pressed(KEY_W)) {
+		if (Input::get_singleton()->is_key_pressed(Key::W)) {
 			o_position -= direction * speed;
 		}
-		if (Input::get_singleton()->is_key_pressed(KEY_S)) {
+		if (Input::get_singleton()->is_key_pressed(Key::S)) {
 			o_position += direction * speed;
 		}
-		if (Input::get_singleton()->is_key_pressed(KEY_A)) {
+		if (Input::get_singleton()->is_key_pressed(Key::A)) {
 			o_position += direction.cross(Vector3::up()).normalized() * speed;
 		}
-		if (Input::get_singleton()->is_key_pressed(KEY_D)) {
+		if (Input::get_singleton()->is_key_pressed(Key::D)) {
 			o_position -= direction.cross(Vector3::up()).normalized() * speed;
 		}
-		if (Input::get_singleton()->is_key_pressed(KEY_SHIFT)) {
+		if (Input::get_singleton()->is_key_pressed(Key::SHIFT)) {
 			o_position.y -= speed;
 		}
-		if (Input::get_singleton()->is_key_pressed(KEY_SPACEBAR)) {
+		if (Input::get_singleton()->is_key_pressed(Key::SPACEBAR)) {
 			o_position.y += speed;
 		}
 
