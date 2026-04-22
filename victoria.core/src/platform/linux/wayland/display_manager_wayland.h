@@ -64,6 +64,10 @@ private:
 		uint32_t relative_motion_time;
 
 		bool button_pressed[MOUSE_MAX];
+
+		uint32_t axis_source;
+		Vector2i scroll_vector;
+		Vector2i scroll_vector_120;
 	};
 
 	struct SeatData {

@@ -198,7 +198,7 @@ class InputEventMouseScroll : public InputEventMouse {
 	VREGISTER_CLASS(InputEventMouseScroll, InputEventMouse);
 
 public:
-	uint8_t scroll;
+	int8_t scroll;
 
 	InputEventMouseScroll() {}
 };
@@ -239,7 +239,7 @@ public:
 	/**
 	 * @brief Gets the scroll direction of the mouse wheel. -1 is downwards, 0 is netural, and 1 is upwards.
 	 */
-	uint8_t get_mouse_scroll() const {
+	int8_t get_mouse_scroll() const {
 		return current_mouse.scroll;
 	}
 

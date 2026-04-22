@@ -297,6 +297,7 @@ void DisplayManagerX11::process_events() {
 					}
 
 					Input::get_singleton()->parse_input_event(ms_event);
+					break;
 				}
 
 				MouseButton button = MOUSE_MAX;

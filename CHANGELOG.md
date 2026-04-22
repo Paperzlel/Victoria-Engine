@@ -6,6 +6,9 @@ Changes exist in chronological order (i.e. new changes are to be appended to the
 	- String:
 		- Fix incorrect format sizing in `vformat`.
 	- Add a check to `core_initialize` that properly returns an error if the display manager could be allocated but not properly initialized (possibly due to an invalid combination, i.e. trying to run Wayland on an X11 client).
+	- Linux/Wayland:
+		- Implement mouse scrolling for Wayland clients.
+			- It's a little weird at the moment, since we don't have a clear dispatch function and Wayland doesn't send "stop" events for regular mouse scrolling. Future Wayland work will resolve this problem (hopefully).
 - Runtime:
 	- Importers:
 		- Fixed a segmentation fault that would occur when trying to load file from an invalid path. Previously, there was no check for if `FileSystem::open` would return a valid resource, which it now does. 

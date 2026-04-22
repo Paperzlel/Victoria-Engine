@@ -304,7 +304,25 @@ void DisplayManagerWayland::_on_pointer_axis(void *p_data,
 											 struct wl_pointer *p_pointer,
 											 uint32_t p_time,
 											 uint32_t p_axis,
-											 wl_fixed_t p_fixed) {}
+											 wl_fixed_t p_fixed) {
+	SeatData *sd = (SeatData *)p_data;
+	ERR_COND_NULL(sd);
+
+	PointerData &pd = sd->pointer_data_write;
+
+	switch (p_axis) {
+		case WL_POINTER_AXIS_HORIZONTAL_SCROLL: {
+			pd.scroll_vector.x = wl_fixed_to_int(p_fixed);
+		} break;
+		case WL_POINTER_AXIS_VERTICAL_SCROLL: {
+			pd.scroll_vector.y = wl_fixed_to_int(p_fixed);
+		} break;
+	}
+
+	if (wl_pointer_get_version(sd->pointer) < WL_POINTER_FRAME_SINCE_VERSION) {
+		_on_pointer_frame(p_data, sd->pointer);
+	}
+}
 
 void DisplayManagerWayland::_on_pointer_frame(void *p_data, struct wl_pointer *p_pointer) {
 	// Pushes a pointer frame, or in other words tells our client that it
@@ -319,7 +337,12 @@ void DisplayManagerWayland::_on_pointer_frame(void *p_data, struct wl_pointer *p
 
 void DisplayManagerWayland::_on_pointer_axis_source(void *p_data,
 													struct wl_pointer *p_pointer,
-													uint32_t p_axis_source) {}
+													uint32_t p_axis_source) {
+	SeatData *sd = (SeatData *)p_data;
+	ERR_COND_NULL(sd);
+
+	sd->pointer_data_write.axis_source = p_axis_source;
+}
 
 void DisplayManagerWayland::_on_pointer_axis_stop(void *p_data,
 												  struct wl_pointer *p_pointer,
@@ -329,12 +352,40 @@ void DisplayManagerWayland::_on_pointer_axis_stop(void *p_data,
 void DisplayManagerWayland::_on_pointer_axis_discrete(void *p_data,
 													  struct wl_pointer *p_pointer,
 													  uint32_t p_axis,
-													  int p_discrete) {}
+													  int p_discrete) {
+	SeatData *sd = (SeatData *)p_data;
+	ERR_COND_NULL(sd);
+
+	PointerData &pd = sd->pointer_data_write;
+
+	switch (p_axis) {
+		case WL_POINTER_AXIS_HORIZONTAL_SCROLL: {
+			pd.scroll_vector_120.x += p_discrete * 120;
+		} break;
+		case WL_POINTER_AXIS_VERTICAL_SCROLL: {
+			pd.scroll_vector_120.y += p_discrete * 120;
+		} break;
+	}
+}
 
 void DisplayManagerWayland::_on_pointer_axis_value120(void *p_data,
 													  struct wl_pointer *p_pointer,
 													  uint32_t p_axis,
-													  int p_value120) {}
+													  int p_value120) {
+	SeatData *sd = (SeatData *)p_data;
+	ERR_COND_NULL(sd);
+
+	PointerData &pd = sd->pointer_data_write;
+
+	switch (p_axis) {
+		case WL_POINTER_AXIS_HORIZONTAL_SCROLL: {
+			pd.scroll_vector_120.x += p_value120;
+		} break;
+		case WL_POINTER_AXIS_VERTICAL_SCROLL: {
+			pd.scroll_vector_120.y += p_value120;
+		} break;
+	}
+}
 
 void DisplayManagerWayland::_on_pointer_axis_relative_direction(void *p_data,
 																struct wl_pointer *p_pointer,
@@ -638,6 +689,19 @@ void DisplayManagerWayland::process_events() {
 		}
 	}
 
+	// HACK: We need to send an input event resetting the scroll. This should be done in _input_frame
+	// after handling the scroll event, since there is no event for stopping a scroll event.
+	// _input_frame should really be the place that messages are pushed to a min queue that is dispatched here,
+	// and we should also handle
+	static bool _handle_scroll_reset = false;
+	if (_handle_scroll_reset) {
+		Ref<InputEventMouseScroll> ms;
+		ms.instantiate();
+		ms->scroll = 0;
+		Input::get_singleton()->parse_input_event(ms);
+		_handle_scroll_reset = false;
+	}
+
 	if (sd->frame_recieved) {
 		PointerData &old_pd = sd->pointer_data_read;
 		PointerData &pd = sd->pointer_data_write;
@@ -662,6 +726,21 @@ void DisplayManagerWayland::process_events() {
 			mb->pressed = pd.button_pressed[i];
 
 			Input::get_singleton()->parse_input_event(mb);
+		}
+
+		// Send scroll event. One of _axis or _axis_120 will be sent.
+		if (pd.scroll_vector_120 - old_pd.scroll_vector_120 != Vector2i()) {
+			Ref<InputEventMouseScroll> ms;
+			ms.instantiate();
+			ms->scroll = (pd.scroll_vector_120.y / 120) > 0 ? -1 : 1;
+			Input::get_singleton()->parse_input_event(ms);
+			_handle_scroll_reset = true;
+		} else if (pd.scroll_vector - old_pd.scroll_vector != Vector2i()) {
+			Ref<InputEventMouseScroll> ms;
+			ms.instantiate();
+			ms->scroll = pd.scroll_vector.y > 0 ? -1 : 1;
+			Input::get_singleton()->parse_input_event(ms);
+			_handle_scroll_reset = true;
 		}
 
 		old_pd = pd;
