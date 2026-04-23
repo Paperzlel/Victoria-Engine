@@ -16,8 +16,7 @@ Input *Input::get_singleton() {
  * @brief Checks if the given key is currently being held down by the user.
  */
 bool Input::is_key_pressed(Key p_key) {
-	ERR_FAIL_COND_MSG_R(p_key >= Key::MAX_KEYS, "Keycode given was too large.", false);
-	return current_keyboard.keys[(int)p_key] == true;
+	return pressed_keys.has(p_key);
 }
 
 /**
@@ -25,16 +24,14 @@ bool Input::is_key_pressed(Key p_key) {
  * the user begins to hold down the key.
  */
 bool Input::is_key_just_pressed(Key p_key) {
-	ERR_FAIL_COND_MSG_R(p_key >= Key::MAX_KEYS, "Keycode given was too large.", false);
-	return current_keyboard.keys[(int)p_key] == true && previous_keyboard.keys[(int)p_key] == false;
+	return pressed_keys.has(p_key);
 }
 
 /**
  * @brief Checks if the given key is not being held down by the user.
  */
 bool Input::is_key_released(Key p_key) {
-	ERR_FAIL_COND_MSG_R(p_key >= Key::MAX_KEYS, "Keycode given was too large.", false);
-	return current_keyboard.keys[(int)p_key] == false;
+	return !pressed_keys.has(p_key);
 }
 
 /**
@@ -42,8 +39,7 @@ bool Input::is_key_released(Key p_key) {
  * the user begins to hold down the key.
  */
 bool Input::is_key_just_released(Key p_key) {
-	ERR_FAIL_COND_MSG_R(p_key >= Key::MAX_KEYS, "Keycode given was too large.", false);
-	return current_keyboard.keys[(int)p_key] == false && previous_keyboard.keys[(int)p_key] == true;
+	return !pressed_keys.has(p_key);
 }
 
 /**
@@ -109,18 +105,17 @@ void Input::parse_input_event(const Ref<InputEvent> &p_event) {
 			ERR_FAIL_MSG(vformat("Key code %i was too large", int(key)));
 		}
 
-		current_keyboard.keys[(int)key] = key_event->pressed;
-		// Send off additional calls for if the left/right control keys are pressed, since their modifiers will also
-		// affect the default keys.
-		if (key == Key::LCTRL || key == Key::RCTRL) {
-			current_keyboard.keys[(int)Key::CTRL] = key_event->pressed;
+		if (key_event->pressed) {
+			if (!pressed_keys.has(key)) {
+				pressed_keys.append(key);
+			}
+		} else {
+			if (pressed_keys.has(key)) {
+				int idx = pressed_keys.find(key);
+				pressed_keys.remove_at(idx);
+			}
 		}
-		if (key == Key::LSHIFT || key == Key::RSHIFT) {
-			current_keyboard.keys[(int)Key::SHIFT] = key_event->pressed;
-		}
-		if (key == Key::LALT || key == Key::RALT) {
-			current_keyboard.keys[(int)Key::ALT] = key_event->pressed;
-		}
+		// TODO: Re-add left/right command key options. Could be encoded in the uppermost bit of a key event.
 	}
 
 	Ref<InputEventMouseButton> mouse_button_event = p_event;
@@ -149,7 +144,7 @@ void Input::parse_input_event(const Ref<InputEvent> &p_event) {
 }
 
 void Input::clear() {
-	Memory::vzero(&current_keyboard, sizeof(Keyboard));
+	pressed_keys.clear();
 	Memory::vzero(&current_mouse, sizeof(Mouse));
 }
 
@@ -158,7 +153,7 @@ void Input::clear() {
  * when the key processing has occured any events that rely on a difference in keypresses can be detected.
  */
 void Input::update() {
-	Memory::vcopy_memory(&previous_keyboard, &current_keyboard, sizeof(Keyboard));
+	pressed_keys.clear();
 	Memory::vcopy_memory(&previous_mouse, &current_mouse, sizeof(Mouse));
 	relative_mouse_pos = Vector2i::zero();
 }
@@ -169,8 +164,6 @@ void Input::update() {
 Input::Input() {
 	singleton = this;
 	// Zero out the two keyboards and the mouse
-	Memory::vzero(&current_keyboard, sizeof(Keyboard));
-	Memory::vzero(&previous_keyboard, sizeof(Keyboard));
 	Memory::vzero(&current_mouse, sizeof(Mouse));
 	Memory::vzero(&previous_mouse, sizeof(Mouse));
 }

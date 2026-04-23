@@ -210,7 +210,7 @@ Vector<RenderingManagerGL::Viewport *> RenderingManagerGL::_get_sorted_viewports
 }
 
 void RenderingManagerGL::_render_internal(RenderData *r_data) {
-	if (Input::get_singleton()->is_key_just_released(Key::F3)) {
+	if (Input::get_singleton()->is_key_just_pressed(Key::F3)) {
 		utils->report_buffer_allocations();
 	}
 

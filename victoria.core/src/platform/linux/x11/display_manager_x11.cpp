@@ -428,17 +428,17 @@ Key DisplayManagerX11::translate_keycodes(int p_code) {
 			return Key::ENTER;
 		// TODO: Send an extra event for ANY shift key being pressed
 		case XK_Shift_L:
-			return Key::LSHIFT;
+			return Key::SHIFT;
 		case XK_Shift_R:
-			return Key::RSHIFT;
+			return Key::SHIFT;
 		case XK_Control_L:
-			return Key::LCTRL;
+			return Key::CTRL;
 		case XK_Control_R:
-			return Key::RCTRL;
+			return Key::CTRL;
 		case XK_Alt_L:
-			return Key::LALT;
+			return Key::ALT;
 		case XK_Alt_R:
-			return Key::RALT;
+			return Key::ALT;
 		case XK_Caps_Lock:
 			return Key::CAPSLOCK;
 		case XK_Escape:
@@ -464,7 +464,7 @@ Key DisplayManagerX11::translate_keycodes(int p_code) {
 		case XK_Insert:
 			return Key::INSERT;
 		case XK_Delete:
-			return Key::DELETE;
+			return Key::KEY_DELETE;
 		case XK_0:
 			return Key::KEY_0;
 		case XK_1:
@@ -564,35 +564,35 @@ Key DisplayManagerX11::translate_keycodes(int p_code) {
 		case XK_z:
 			return Key::Z;
 		case XK_KP_0:
-			return Key::NUMPAD0;
+			return Key::KP_0;
 		case XK_KP_1:
-			return Key::NUMPAD1;
+			return Key::KP_1;
 		case XK_KP_2:
-			return Key::NUMPAD2;
+			return Key::KP_2;
 		case XK_KP_3:
-			return Key::NUMPAD3;
+			return Key::KP_3;
 		case XK_KP_4:
-			return Key::NUMPAD4;
+			return Key::KP_4;
 		case XK_KP_5:
-			return Key::NUMPAD5;
+			return Key::KP_5;
 		case XK_KP_6:
-			return Key::NUMPAD6;
+			return Key::KP_6;
 		case XK_KP_7:
-			return Key::NUMPAD7;
+			return Key::KP_7;
 		case XK_KP_8:
-			return Key::NUMPAD8;
+			return Key::KP_8;
 		case XK_KP_9:
-			return Key::NUMPAD9;
+			return Key::KP_9;
 		case XK_KP_Multiply:
-			return Key::NUMPADMULTIPLY;
+			return Key::KP_MULTIPLY;
 		case XK_KP_Add:
-			return Key::NUMPADADD;
+			return Key::KP_ADD;
 		case XK_KP_Subtract:
-			return Key::NUMPADSUBTRACT;
+			return Key::KP_SUBTRACT;
 		case XK_KP_Decimal:
-			return Key::NUMPADDECIMAL;
+			return Key::KP_DECIMAL;
 		case XK_KP_Divide:
-			return Key::NUMPADDIVIDE;
+			return Key::KP_DIVIDE;
 		case XK_F1:
 			return Key::F1;
 		case XK_F2:

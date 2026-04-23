@@ -32,10 +32,10 @@ void KeyboardRemapping::initialize() {
 	scancode_map[0x1f] = Key::I;
 	scancode_map[0x20] = Key::O;
 	scancode_map[0x21] = Key::P;
-	scancode_map[0x22] = Key::OPEN_BRACKET;
-	scancode_map[0x23] = Key::CLOSED_BRACKET;
+	scancode_map[0x22] = Key::OPENBRACKET;
+	scancode_map[0x23] = Key::CLOSEDBRACKET;
 	scancode_map[0x24] = Key::ENTER;
-	scancode_map[0x25] = Key::LCTRL;
+	scancode_map[0x25] = Key::CTRL;
 	scancode_map[0x26] = Key::A;
 	scancode_map[0x27] = Key::S;
 	scancode_map[0x28] = Key::D;
@@ -48,7 +48,7 @@ void KeyboardRemapping::initialize() {
 	scancode_map[0x2f] = Key::SEMICOLON;
 	scancode_map[0x30] = Key::APOSTROPHE;
 	scancode_map[0x31] = Key::BACKTICK;
-	scancode_map[0x32] = Key::LSHIFT;
+	scancode_map[0x32] = Key::SHIFT;
 	scancode_map[0x33] = Key::BACKSLASH;
 	scancode_map[0x34] = Key::Z;
 	scancode_map[0x35] = Key::X;
@@ -60,9 +60,9 @@ void KeyboardRemapping::initialize() {
 	scancode_map[0x3b] = Key::COMMA;
 	scancode_map[0x3c] = Key::PERIOD;
 	scancode_map[0x3d] = Key::SLASH;
-	scancode_map[0x3e] = Key::RSHIFT;
-	scancode_map[0x3f] = Key::NUMPADMULTIPLY;
-	scancode_map[0x40] = Key::LALT;
+	scancode_map[0x3e] = Key::SHIFT;
+	scancode_map[0x3f] = Key::KP_MULTIPLY;
+	scancode_map[0x40] = Key::ALT;
 	scancode_map[0x41] = Key::SPACEBAR;
 	scancode_map[0x42] = Key::CAPSLOCK;
 	scancode_map[0x43] = Key::F1;
@@ -77,22 +77,22 @@ void KeyboardRemapping::initialize() {
 	scancode_map[0x4c] = Key::F10;
 	scancode_map[0x4d] = Key::NUMLOCK;
 	scancode_map[0x4e] = Key::SCREENLOCK;
-	scancode_map[0x4f] = Key::NUMPAD7;
-	scancode_map[0x50] = Key::NUMPAD8;
-	scancode_map[0x51] = Key::NUMPAD9;
-	scancode_map[0x52] = Key::NUMPADSUBTRACT;
-	scancode_map[0x53] = Key::NUMPAD4;
-	scancode_map[0x54] = Key::NUMPAD5;
-	scancode_map[0x55] = Key::NUMPAD6;
-	scancode_map[0x56] = Key::NUMPADADD;
-	scancode_map[0x57] = Key::NUMPAD1;
-	scancode_map[0x58] = Key::NUMPAD2;
-	scancode_map[0x59] = Key::NUMPAD3;
-	scancode_map[0x5a] = Key::NUMPAD0;
-	scancode_map[0x5b] = Key::NUMPADDECIMAL;
+	scancode_map[0x4f] = Key::KP_7;
+	scancode_map[0x50] = Key::KP_8;
+	scancode_map[0x51] = Key::KP_9;
+	scancode_map[0x52] = Key::KP_SUBTRACT;
+	scancode_map[0x53] = Key::KP_4;
+	scancode_map[0x54] = Key::KP_5;
+	scancode_map[0x55] = Key::KP_6;
+	scancode_map[0x56] = Key::KP_ADD;
+	scancode_map[0x57] = Key::KP_1;
+	scancode_map[0x58] = Key::KP_2;
+	scancode_map[0x59] = Key::KP_3;
+	scancode_map[0x5a] = Key::KP_0;
+	scancode_map[0x5b] = Key::KP_DECIMAL;
 	// scancode_map[0x5c]
 	// scancode_map[0x5d]
-	scancode_map[0x5e] = Key::EUQUOTELEFT;
+	scancode_map[0x5e] = Key::BACKTICK;
 	scancode_map[0x5f] = Key::F11;
 	scancode_map[0x60] = Key::F12;
 	scancode_map[0x61] = Key::BACKSLASH;
@@ -102,11 +102,11 @@ void KeyboardRemapping::initialize() {
 	// scancode_map[0x65] = Key::NONE; // Hiragana/Katakana toggle
 	// scancode_map[0x66] = Key::NONE; // Muhenkan
 	// scancode_map[0x67] = Key::NONE; // Keypad JP Comma
-	scancode_map[0x68] = Key::NUMPADENTER;
-	scancode_map[0x69] = Key::RCTRL;
-	scancode_map[0x6a] = Key::NUMPADDIVIDE;
+	scancode_map[0x68] = Key::KP_ENTER;
+	scancode_map[0x69] = Key::CTRL;
+	scancode_map[0x6a] = Key::KP_DIVIDE;
 	scancode_map[0x6b] = Key::PRINTSCREEN;
-	scancode_map[0x6c] = Key::RALT;
+	scancode_map[0x6c] = Key::ALT;
 	// scancode_map[0x6d]
 	scancode_map[0x6e] = Key::HOME;
 	scancode_map[0x6f] = Key::UP;
@@ -117,17 +117,17 @@ void KeyboardRemapping::initialize() {
 	scancode_map[0x74] = Key::DOWN;
 	scancode_map[0x75] = Key::PAGEDOWN;
 	scancode_map[0x76] = Key::INSERT;
-	scancode_map[0x77] = Key::DELETE;
+	scancode_map[0x77] = Key::KEY_DELETE;
 	// scancode_map[0x78]
 	scancode_map[0x79] = Key::VOLUMEMUTE;
 	scancode_map[0x7a] = Key::VOLUMEDOWN;
 	scancode_map[0x7b] = Key::VOLUMEUP;
 	// scancode_map[0x7c] = Key::POWER;
-	scancode_map[0x7d] = Key::NUMPADEQUAL;
+	scancode_map[0x7d] = Key::KP_EQUAL;
 	// scancode_map[0x7e] // KP_PlusMinus
 	scancode_map[0x7f] = Key::PAUSE;
 	// scancode_map[0x80]
-	scancode_map[0x81] = Key::NUMPADCOMMA;
+	scancode_map[0x81] = Key::KP_COMMA;
 	// scancode_map[0x82] = Key::NONE; // Hangul latin toggle
 	// scancode_map[0x83] = Key::NONE; // Hangul to Hanja conversion
 	// scancode_map[0x84] = Key::NONE; // Yen
