@@ -531,13 +531,13 @@ public:
 
 	V &operator[](const K &p_key) {
 		Element *e = _find(p_key);
-		ERR_COND_FATAL(e == _nil);
+		CRASH_COND_MSG(e == _nil, "RBMap key did not exist.");
 		return e->_data.value;
 	}
 
 	const V &operator[](const K &p_key) const {
 		Element *e = _find(p_key);
-		ERR_COND_FATAL(e == _nil);
+		CRASH_COND_MSG(e == _nil, "RBMap key did not exist.");
 		return e->_data.value;
 	}
 

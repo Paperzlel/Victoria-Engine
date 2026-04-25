@@ -126,7 +126,7 @@ class HashTable : private Allocator {
 			probe++;
 		}
 
-		ERR_COND_FATAL(true);
+		CRASH_NOW();
 	}
 
 	/**
@@ -413,7 +413,7 @@ public:
 		uint32_t h = _hash(p_key);
 		uint32_t idx = 0;
 		bool exists = _find_hashed_index(p_key, h, idx);
-		ERR_COND_FATAL(!exists);
+		CRASH_COND_MSG(!exists, "HashTable key could not be found.");
 		return hashed_data[idx]->data.value;
 	}
 
@@ -429,7 +429,7 @@ public:
 		uint32_t h = _hash(p_key);
 		uint32_t idx = 0;
 		bool exists = _find_hashed_index(p_key, h, idx);
-		ERR_COND_FATAL(!exists);
+		CRASH_COND_MSG(!exists, "HashTable key could not be found.");
 		return hashed_data[idx]->data.value;
 	}
 
@@ -496,7 +496,7 @@ public:
 		uint32_t h = _hash(p_key);
 		uint32_t idx = 0;
 		bool exists = _find_hashed_index(p_key, h, idx);
-		ERR_COND_FATAL(!exists);
+		CRASH_COND_MSG(!exists, "HashTable key could not be found.");
 		return hashed_data[idx]->data.value;
 	}
 

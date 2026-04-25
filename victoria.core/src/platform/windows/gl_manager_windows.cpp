@@ -252,21 +252,21 @@ Error GLManagerWindows::_create_context(GLWindow &win) {
 	if (victoria_wglCreateContextAttribsARB == nullptr) {
 		wglDeleteContext(win.gl_context);
 		win.gl_context = nullptr;
-		return ERR_CANT_CREATE;
+		return ERR_CANT_LOAD;
 	}
 
 	HGLRC new_gl_context = victoria_wglCreateContextAttribsARB(win.hDC, win.gl_context, attribs);
 	if (!new_gl_context) {
 		wglDeleteContext(win.gl_context);
 		win.gl_context = nullptr;
-		return ERR_CANT_CREATE;
+		return ERR_CANT_LOAD;
 	}
 
 	victoria_wglGetExtensionsStringARB = (PFNWGLGETEXTENSIONSSTRINGARB)wglGetProcAddress("wglGetExtensionsStringARB");
 	if (victoria_wglGetExtensionsStringARB == nullptr) {
 		wglDeleteContext(win.gl_context);
 		win.gl_context = nullptr;
-		return ERR_CANT_CREATE;
+		return ERR_CANT_LOAD;
 	}
 
 	victoria_wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXT)wglGetProcAddress("wglSwapIntervalEXT");

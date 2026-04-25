@@ -290,7 +290,7 @@ public:
 	}
 
 	T &get(int p_index) {
-		ERR_COND_FATAL(p_index >= size());
+		CRASH_COND_MSG(p_index >= size(), "Given index was out of bounds.");
 		Element *I = front();
 		int c = 0;
 		while (c < p_index) {
@@ -302,7 +302,7 @@ public:
 	}
 
 	const T &get(int p_index) const {
-		ERR_COND_FATAL(p_index >= size());
+		CRASH_COND_MSG(p_index >= size(), "Given index was out of bounds.");
 		const Element *I = front();
 		int c = 0;
 		while (c < p_index) {

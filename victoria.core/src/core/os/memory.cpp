@@ -92,6 +92,6 @@ void *operator new(size_t p_size, const char *p_description) {
 
 #ifdef _MSC_VER
 void operator delete(void *p_mem, const char *p_description) {
-	ERR_COND_FATAL(true); // TODO: Give a reason
+	CRASH_NOW_MSG("Calling to our delete override is forbidden, these are here to silence MSVC warnings.");
 }
 #endif

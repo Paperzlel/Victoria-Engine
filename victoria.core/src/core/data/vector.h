@@ -98,7 +98,7 @@ public:
 	 * @return A reference to the item at the given index.
 	 */
 	T &operator[](int64_t p_index) {
-		ERR_OUT_OF_BOUNDS_FATAL(p_index, size());
+		CRASH_OUT_OF_BOUNDS(p_index, size());
 		return _cowdata.ptrw()[p_index];
 	}
 

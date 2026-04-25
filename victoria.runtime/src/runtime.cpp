@@ -26,7 +26,7 @@ Error runtime_initialize() {
 		RenderingManagerGL::make_default(OS::get_singleton()->is_gles_over_gl());
 	}
 	rendering_server = RenderingManager::create();
-	ERR_COND_FATAL(rendering_server == nullptr);
+	CRASH_COND_NULL(rendering_server);
 
 	// Init scene classes
 	register_scene_classes();

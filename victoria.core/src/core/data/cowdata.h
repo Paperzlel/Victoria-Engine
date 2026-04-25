@@ -92,8 +92,8 @@ public:
 	 * @returns A reference to the item at the given index.
 	 */
 	FORCE_INLINE T &get(int64_t p_index) {
-		ERR_OUT_OF_BOUNDS_FATAL(p_index, size());
-		ERR_COND_FATAL(_copy_on_write() != OK);
+		CRASH_OUT_OF_BOUNDS(p_index, size());
+		CRASH_COND(_copy_on_write() != OK);
 		return _ptr[p_index];
 	}
 
@@ -103,7 +103,7 @@ public:
 	 * @returns A constant reference to the item a the given index.
 	 */
 	FORCE_INLINE const T &get(int64_t p_index) const {
-		ERR_OUT_OF_BOUNDS_FATAL(p_index, size());
+		CRASH_OUT_OF_BOUNDS(p_index, size());
 		return _ptr[p_index];
 	}
 
@@ -114,9 +114,9 @@ public:
 	 * @param item The given item to set
 	 */
 	FORCE_INLINE void set(const T &p_item, int64_t p_index) {
-		ERR_OUT_OF_BOUNDS_FATAL(p_index, size());
+		CRASH_OUT_OF_BOUNDS(p_index, size());
 		// Writing to the pointer modifies contents, create new buffer.
-		ERR_COND_FATAL(_copy_on_write() != OK);
+		CRASH_COND(_copy_on_write() != OK);
 		_ptr[p_index] = p_item;
 	}
 
@@ -173,7 +173,7 @@ public:
 	 * @returns The current pointer used to hold all of the items in the vector, with read/write permissions
 	 */
 	FORCE_INLINE T *ptrw() {
-		ERR_COND_FATAL(_copy_on_write() != OK);
+		CRASH_COND(_copy_on_write() != OK);
 		return _ptr;
 	}
 	/**
@@ -431,7 +431,7 @@ void CoWData<T>::remove_at(int64_t p_index) {
 		Memory::vmemmove(_ptr + p_index, _ptr + p_index + 1, (new_size - p_index) * sizeof(T));
 		// Delete content at the end of the buffer
 		Error err = _realloc_buffer(new_size);
-		ERR_COND_FATAL(err != OK);
+		CRASH_COND(err != OK);
 	} else {
 		// Copy data to a new buffer
 		T *other = _ptr;

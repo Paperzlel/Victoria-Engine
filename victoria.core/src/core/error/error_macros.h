@@ -111,6 +111,23 @@ VAPI const char *get_error_message(Error p_id);
 	return m_retval;
 
 /**
+ * @brief Does no waiting around and crashes immediately on being reached. Only use this in cases where there's no
+ * details about why and that the engine must be quit this instant.
+ */
+#define CRASH_NOW()                                                                                                   \
+	_err_print_err(__FILE__, FUNCTION_STR, __LINE__, "Method/function failed, a fatal error has occured.");           \
+	DEBUG_BREAK()
+
+/**
+ * @brief Immediately crashes the engine upon being reached. Has a message field to understand why the crash occurred,
+ * but should be avoided as we want to keep the engine running in most instances.
+ *
+ */
+#define CRASH_NOW_MSG(m_msg)                                                                                          \
+	_err_print_err(__FILE__, FUNCTION_STR, __LINE__, "Method/function failed, a fatal error has occured.", m_msg);    \
+	DEBUG_BREAK()
+
+/**
  * WARNINGS
  */
 
@@ -218,9 +235,25 @@ VAPI const char *get_error_message(Error p_id);
  * @param m_index The given indexs into the array
  * @param m_size The total element count of the array
  */
-#define ERR_OUT_OF_BOUNDS_FATAL(m_index, m_size)                                                                      \
+#define CRASH_OUT_OF_BOUNDS(m_index, m_size)                                                                          \
 	if ((m_index) < 0 || (m_index) >= (m_size)) {                                                                     \
 		_err_print_index_err(__FILE__, FUNCTION_STR, __LINE__, m_index, m_size, "Index given was out of bounds.");    \
+		DEBUG_BREAK();                                                                                                \
+	}
+
+/**
+ * @brief Crashes the engine if the given index was out of bounds. Prints a contextual message about the crash so that
+ * users can avoid it in future.
+ */
+#define CRASH_OUT_OF_BOUNDS_MSG(m_index, m_size, m_msg)                                                               \
+	if ((m_index) < 0 || (m_index) >= (m_size)) {                                                                     \
+		_err_print_index_err(__FILE__,                                                                                \
+							 FUNCTION_STR,                                                                            \
+							 __LINE__,                                                                                \
+							 m_index,                                                                                 \
+							 m_size,                                                                                  \
+							 "Index given was out of bounds, a fatal error has occured.",                             \
+							 m_msg);                                                                                  \
 		DEBUG_BREAK();                                                                                                \
 	}
 
@@ -294,12 +327,27 @@ VAPI const char *get_error_message(Error p_id);
  * the program currently faces cannot allow for the application to continue, and needs to be inspected carefully.
  * @param m_cond The given condition to assess
  */
-#define ERR_COND_FATAL(m_cond)                                                                                        \
+#define CRASH_COND(m_cond)                                                                                            \
 	if (unlikely(m_cond)) {                                                                                           \
 		_err_print_err(__FILE__,                                                                                      \
 					   FUNCTION_STR,                                                                                  \
 					   __LINE__,                                                                                      \
 					   "Condition \"" _STR(m_cond) "\" is true, a fatal error has occured.");                         \
+		DEBUG_BREAK();                                                                                                \
+	}
+
+/**
+ * @brief Crashes the engine whenever the given statement is true. Does not return early, and instead logs a fatal
+ * error and raises interrupt 3, which will crash the engine and move any debuggers to the given line. Should rarely be
+ * used, but if needed this method is preferred over an unexplainable crash.
+ */
+#define CRASH_COND_MSG(m_cond, m_msg)                                                                                 \
+	if (unlikely(m_cond)) {                                                                                           \
+		_err_print_err(__FILE__,                                                                                      \
+					   FUNCTION_STR,                                                                                  \
+					   __LINE__,                                                                                      \
+					   "Condition \"" _STR(m_cond) "\" is true, a fatal error has occured.",                          \
+					   m_msg);                                                                                        \
 		DEBUG_BREAK();                                                                                                \
 	}
 
@@ -374,12 +422,26 @@ VAPI const char *get_error_message(Error p_id);
  * the program currently faces cannot allow for the application to continue, and needs to be inspected carefully.
  * @param m_item The given item to assess as null
  */
-#define ERR_COND_NULL_FATAL(m_item)                                                                                   \
+#define CRASH_COND_NULL(m_item)                                                                                       \
 	if (unlikely(m_item == nullptr)) {                                                                                \
 		_err_print_err(__FILE__,                                                                                      \
 					   FUNCTION_STR,                                                                                  \
 					   __LINE__,                                                                                      \
 					   "Item\"" _STR(m_item) "\" is null, a fatal error has occured.");                               \
+		DEBUG_BREAK();                                                                                                \
+	}
+
+/**
+ * @brief Crashes the engine if the given item is null. Prints an additional contextual message about the crash so tht
+ * the user can find out why it has done so.
+ */
+#define CRASH_COND_NULL_MSG(m_item, m_msg)                                                                            \
+	if (unlikely(m_item == nullptr)) {                                                                                \
+		_err_print_err(__FILE__,                                                                                      \
+					   FUNCTION_STR,                                                                                  \
+					   __LINE__,                                                                                      \
+					   "Item\"" _STR(m_item) "\" is null, a fatal error has occured.",                                \
+					   m_msg);                                                                                        \
 		DEBUG_BREAK();                                                                                                \
 	}
 

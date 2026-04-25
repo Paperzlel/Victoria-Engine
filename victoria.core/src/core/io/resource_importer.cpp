@@ -24,10 +24,11 @@ Ref<Resource> ResourceImporter::import(const String &p_path, int p_argc, Variant
 
 		while (e) {
 			if (p_path.get_file_extension() == e->get()) {
+				// TODO: Make importers have error codes. Would be nice for "invalid filepath" sorts of errors.
 				Ref<Resource> ret = i->_import(p_path, p_argc, p_args);
 				if (ret == Ref<Resource>()) {
 					if (r_error) {
-						*r_error = ERR_CANT_CREATE;
+						*r_error = ERR_INVALID_DATA;
 					}
 					ERR_FAIL_MSG_R("Could not properly import the resource.", Ref<Resource>());
 				}

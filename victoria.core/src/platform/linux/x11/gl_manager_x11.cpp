@@ -234,7 +234,7 @@ Error GLManagerX11::initialize() {
 	screen_id = ds->get_screen_id();
 
 	if (!gladLoaderLoadGLX(display, screen_id)) {
-		return ERR_UNAVAILABLE;
+		return ERR_CANT_LOAD;
 	}
 
 	return OK;

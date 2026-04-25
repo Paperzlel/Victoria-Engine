@@ -23,7 +23,7 @@ Error EGLManager::_create_context(EGL_Display &p_display) {
 	eglChooseConfig(p_display.egl_display, attribs, &p_display.config, 1, &config_count);
 
 	ERR_FAIL_COND_R(eglGetError() != EGL_SUCCESS, ERR_BUG);
-	ERR_FAIL_COND_R(config_count == 0, ERR_CANT_CREATE);
+	ERR_FAIL_COND_R(config_count == 0, ERR_INVALID_PARAMETER);
 
 	p_display.context = eglCreateContext(p_display.egl_display,
 										 p_display.config,
@@ -31,7 +31,7 @@ Error EGLManager::_create_context(EGL_Display &p_display) {
 										 (ctx_attribs.size() > 0) ? ctx_attribs.ptr() : nullptr);
 	ERR_FAIL_COND_MSG_R(p_display.context == EGL_NO_CONTEXT,
 						vformat("Can't create an EGL context, error %d.", eglGetError()),
-						ERR_CANT_CREATE);
+						ERR_CANT_CONNECT);
 
 	return OK;
 }
@@ -157,10 +157,7 @@ void EGLManager::destroy_window(uint8_t p_id) {
 }
 
 Error EGLManager::initialize(void *p_platform_display) {
-	if (!gladLoaderLoadEGL(EGL_NO_DISPLAY)) {
-		OS::get_singleton()->printerr("EGL: Failed to load EGL.");
-		return ERR_CANT_CREATE;
-	}
+	ERR_FAIL_COND_MSG_R(!gladLoaderLoadEGL(EGL_NO_DISPLAY), "GLAD failed to load EGL.", ERR_CANT_LOAD);
 
 	NativeDisplayType *native_display = (NativeDisplayType *)p_platform_display;
 
@@ -183,8 +180,7 @@ Error EGLManager::initialize(void *p_platform_display) {
 
 	if (disp == EGL_NO_DISPLAY) {
 		eglTerminate(disp);
-		OS::get_singleton()->print("Hmm, default display shenanigans :P");
-		return ERR_CANT_CREATE;
+		ERR_FAIL_MSG_R("Failed to create the platform display.", ERR_CANT_CREATE);
 	}
 
 	eglInitialize(disp, nullptr, nullptr);
@@ -193,7 +189,7 @@ Error EGLManager::initialize(void *p_platform_display) {
 
 	if (!ver) {
 		eglTerminate(disp);
-		return ERR_CANT_CREATE;
+		return ERR_CANT_LOAD;
 	}
 
 	int egl_ver_major = GLAD_VERSION_MAJOR(ver);

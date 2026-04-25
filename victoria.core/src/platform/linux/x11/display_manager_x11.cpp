@@ -677,7 +677,7 @@ DisplayManager *DisplayManagerX11::create_func(const String &p_renderer, const V
 DisplayManagerX11::DisplayManagerX11(const String &p_renderer, const Vector2i &p_size, Error *r_error) {
 	display = XOpenDisplay(nullptr);
 	if (!display) {
-		*r_error = ERR_CANT_CREATE;
+		*r_error = ERR_CANT_CONNECT;
 		ERR_FAIL_MSG("Could not open a connection to the X11 display server.");
 	}
 
@@ -685,7 +685,7 @@ DisplayManagerX11::DisplayManagerX11(const String &p_renderer, const Vector2i &p
 	screen_id = DefaultScreen(display);
 
 	if (!screen) {
-		*r_error = ERR_CANT_CREATE;
+		*r_error = ERR_CANT_LOAD;
 		ERR_FAIL_MSG("Could not find a suitable X11 screen.");
 	}
 

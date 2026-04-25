@@ -906,7 +906,7 @@ DisplayManagerWayland::DisplayManagerWayland(const String &p_renderer, const Vec
 
 	display = wl_display_connect(nullptr);
 	if (!display) {
-		*r_error = ERR_CANT_CREATE;
+		*r_error = ERR_CANT_CONNECT;
 		ERR_FAIL_MSG("Failed to connect the display to the Wayland compositor.");
 	}
 
@@ -915,7 +915,7 @@ DisplayManagerWayland::DisplayManagerWayland(const String &p_renderer, const Vec
 
 	registry = wl_display_get_registry(display);
 	if (!registry) {
-		*r_error = ERR_CANT_CREATE;
+		*r_error = ERR_UNAVAILABLE;
 		ERR_FAIL_MSG("Failed to obtain the Wayland registry.");
 	}
 

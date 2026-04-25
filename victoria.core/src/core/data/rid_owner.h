@@ -77,7 +77,7 @@ class RIDAllocator : public RIDAllocatorBase {
 		uint64_t item_idx = first_free % items_per_chunk;
 
 		uint32_t validator = uint32_t(_gen_id() & 0x7fffffff); // Check for RID overflow
-		ERR_COND_FATAL(validator == 0x7fffffff);
+		CRASH_COND_MSG(validator == 0x7fffffff, "we outta UIDs.");
 		uint64_t id = validator;
 		id <<= 32;
 		id |= first_free;
