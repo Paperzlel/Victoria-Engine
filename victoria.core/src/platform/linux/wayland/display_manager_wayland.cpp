@@ -555,17 +555,29 @@ void DisplayManagerWayland::_on_xdg_toplevel_configure(void *p_data,
 		}
 	}
 
-	// Size is passed through, update size.
-	if (width != 0 || height != 0) {
-		wd->size.x = width;
-		wd->size.y = height;
+	// Create a new size vector.
+	Vector2i new_size(width, height);
+
+	bool can_cache = true;
+	bool restore_window = false;
+	// Disable size caching on maximise events.
+	if (wd->maximised) {
+		can_cache = false;
+		wd->is_size_dirty = true;
+	// Update the size if they're not equal
+	} else if (wd->cached_size != wd->size) {
+		restore_window = true;
 	}
 
-	// Send an update to resize the window on focus enter events. We don't
-	// yet handle those properly elsewhere.
-	if (!wd->maximised && !wd->resizing) {
-		wd->cached_size = Vector2i(width, height);
+	if (restore_window) {
+		wd->size = wd->cached_size;
+		// Force resize event.
 		wd->is_size_dirty = true;
+	} else {
+		wd->size = new_size;
+		if (can_cache) {
+			wd->cached_size = new_size;
+		}
 	}
 
 	// TODO: Update window size if not equal to zero (means the compositor wants to configure window size)
@@ -785,15 +797,7 @@ void DisplayManagerWayland::process_events() {
 		// error on dispatch!
 	}
 
-	// Force resize events if certain parameters are called.
-	bool force_resize_event = false;
-	if (wd->is_size_dirty) {
-		wd->size = wd->cached_size;
-		wd->is_size_dirty = false;
-		force_resize_event = true;
-	}
-
-	if (wd->resizing || wd->maximised || force_resize_event) {
+	if (wd->resizing || wd->is_size_dirty) {
 		if (wd->wl_surface) {
 			xdg_surface_set_window_geometry(wd->xdg_surface, 0, 0, wd->size.x, wd->size.y);
 		}
@@ -805,6 +809,13 @@ void DisplayManagerWayland::process_events() {
 		if (wd->resize_callback.is_valid()) {
 			wd->resize_callback.call(wd->id);
 		}
+
+		// Handle forced resize after the fact.
+		if (wd->is_size_dirty) {
+			wd->is_size_dirty = false;
+		}
+
+		print_line("Resized!");
 	}
 
 	// HACK: We need to send an input event resetting the scroll. This should be done in _input_frame

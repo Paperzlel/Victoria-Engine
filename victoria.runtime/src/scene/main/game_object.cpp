@@ -196,9 +196,12 @@ GameObject *GameObject::get_object(const String &p_path) const {
 void GameObject::propagate_notification(int p_what) {
 	notification(p_what);
 
-	List<GameObject *> children = get_children();
-	if (children.size() > 0) {
-		for (GameObject *c : children) {
+	if (data.children.size() == 0) {
+		return;
+	}
+
+	for (GameObject *c : data.children) {
+		if (c) {
 			c->propagate_notification(p_what);
 		}
 	}

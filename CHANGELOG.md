@@ -1,6 +1,15 @@
 # Changelog
 Changes exist in chronological order (i.e. new changes are to be appended to the end of the file). Dates are done in DD/MM/YYYY format with the version number applied to each date if needed.
 
+## 26/4/2026
+- Core:
+	- Linux/Wayland:
+		- Reduced the number of calls made to the resize event handler when the window is maximised, and changed the logic around window resizes to (mostly) fit in its own function.
+			- Hopefully reduces some of the overhead when using Wayland, which I now do on both of my devices.
+	- Input:
+		- Move around the input classes and add a `SPECIAL` flag into the mix.
+			- This has broken the input class and needs a new system to make it work again.
+
 ## 22/4/2026
 - Core:
 	- Linux/Wayland:
