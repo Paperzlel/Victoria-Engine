@@ -38,6 +38,10 @@ Fedora-based
 ```
 sudo dnf install libX11-devel wayland-devel libxkbcommon-devel
 ```
+Arch-based
+```
+<no packages currently required>
+```
 
 ## Debugging
 By default, we use `clangd` and `clang-format` for debugging and formatting options. To support `clangd` in particular within our buildsystem, we have specific makefile targets that allow one to build a `compile_commands.json` file from the source tree without installing additional dependencies. Run `make generate_compile_commands` or `make generate_compile_commands DEBUG=yes` to build a compilation database for debugging. Code debuggers may whine about missing symbols without this.

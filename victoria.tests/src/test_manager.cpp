@@ -2,7 +2,6 @@
 
 #include "test_macros.h"
 
-#include "core/data/test_event.h"
 #include "core/data/test_hashtable.h"
 #include "core/data/test_list.h"
 #include "core/data/test_vector.h"
@@ -39,7 +38,6 @@ void register_test(PFN_test p_test, const char *p_desc) {
 void register_all_tests() {
 	vector_register_tests();
 	list_register_tests();
-	event_register_tests();
 	hashtable_register_tests();
 
 	mat4_register_tests();

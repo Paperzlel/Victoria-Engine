@@ -100,9 +100,7 @@ uint8_t DisplayManagerWindows::create_window(const String &p_name,
 
 	win_data->position = Vector2i(x, y);
 	win_data->size = Vector2i(width, height);
-
-	CallableMethod cm = static_callable_mp(_notification_callback);
-	win_data->notification_callback.connect(cm, false);
+	win_data->notification_callback = stastatic_callable_mp(_notification_callback);
 
 	if (gl_manager_windows) {
 		uint8_t id = gl_manager_windows->create_window(win_data->hWnd, hInstance);
@@ -227,7 +225,7 @@ LRESULT DisplayManagerWindows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 
 	switch (uMsg) {
 		case WM_CLOSE: {
-			window->notification_callback.fire(NOTIFICATION_WM_WINDOW_CLOSE, window_id);
+			window->notification_callback.call(NOTIFICATION_WM_WINDOW_CLOSE, window_id);
 			OS::get_singleton()->set_exit_code(0);
 			OS::get_singleton()->set_should_quit(true);
 			return 0;

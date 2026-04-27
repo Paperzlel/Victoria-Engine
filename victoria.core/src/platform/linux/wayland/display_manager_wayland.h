@@ -12,7 +12,6 @@
 #	include "protocols/pointer_warp.gen.h"
 #	include "protocols/relative_pointer.gen.h"
 
-#	include "core/data/event.h"
 #	include "core/os/display_manager.h"
 #	include "core/io/input.h"
 
@@ -110,7 +109,7 @@ private:
 		Vector2i size;
 		Vector2i cached_size;
 		Vector2i position;
-		Event<WindowNotification, uint8_t> notification_callback;
+		CallableMethod notification_callback;
 		CallableMethod resize_callback;
 
 		bool maximised = false;

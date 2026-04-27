@@ -6,7 +6,6 @@
 #	include "gl_manager_windows.h"
 #	include "gl_manager_windows_angle.h"
 
-#	include "core/data/event.h"
 #	include "core/os/display_manager.h"
 
 #	define WIN32_LEAN_AND_MEAN
@@ -22,7 +21,7 @@ private:
 	struct WindowData {
 		uint8_t id;
 		HWND hWnd;
-		Event<WindowNotification, uint8_t> notification_callback;
+		CallableMethod notification_callback;
 		CallableMethod window_resize_callback;
 		Vector2i position;
 		Vector2i size;

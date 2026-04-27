@@ -11,9 +11,9 @@ A list of all things that are on the current plan for the engine, whether short-
 - [ ] Update documentation
 
 ## Core
-- [ ] Add more `ERR_COND_FATAL_*` conditions so that context for crashes can be given
+- [x] Add more `ERR_COND_FATAL_*` conditions so that context for crashes can be given
 - [ ] Implement `HashTable` collision detection in `HashTable::_find_hashed_index`
-- [ ] Remove `Event` as a class in favour of `CommandQueues` and other datatypes
+- [x] Remove `Event` as a class in favour of `CommandQueues` and other datatypes
 - [x] Remove unnecessary `main_loop.h` include from `os.h`
 - [ ] Game loading (i.e. loading items from a binary to be used by the engine)
 - [ ] .NET scripting

@@ -685,7 +685,7 @@ uint8_t DisplayManagerWayland::create_window(const String &p_name,
 	// Store cached size prior to updates.
 	wd->cached_size = wd->size;
 	wd->position = Vector2i(x, y);
-	wd->notification_callback.connect(static_callable_mp(_notification_callback), false);
+	wd->notification_callback = static_callable_mp(_notification_callback);
 
 	if (egl_manager_wl) {
 		wd->egl_window = wl_egl_window_create(wd->wl_surface, width, height);
@@ -814,8 +814,6 @@ void DisplayManagerWayland::process_events() {
 		if (wd->is_size_dirty) {
 			wd->is_size_dirty = false;
 		}
-
-		print_line("Resized!");
 	}
 
 	// HACK: We need to send an input event resetting the scroll. This should be done in _input_frame

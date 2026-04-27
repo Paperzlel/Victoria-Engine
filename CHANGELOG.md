@@ -1,6 +1,11 @@
 # Changelog
 Changes exist in chronological order (i.e. new changes are to be appended to the end of the file). Dates are done in DD/MM/YYYY format with the version number applied to each date if needed.
 
+## 27/4/2026
+- Core:
+	- Remove the `Event` class and its related functionality.
+		- This class was not really solving the problem it wanted to solve, as we will likely just use `Vector<CallableMethod>` if required or simply have one callback function. `CommandQueues` are needed anyways, which we'll add anyways.
+
 ## 26/4/2026
 - Core:
 	- Linux/Wayland:
