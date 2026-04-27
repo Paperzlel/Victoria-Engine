@@ -56,6 +56,14 @@ def add_file_to_commands(data: dict, directory: str, index: int) -> None:
 def get_commands_for_target(target: str) -> None:
 	directory: str = cwd + "/" + target
 	path: str = directory + "/temp.json"
+	if not os.path.exists(path):
+		# Call recursively to find subfiles
+		for subfolder in os.listdir(directory):
+			npath: str = os.path.join(target, subfolder)
+			if not os.path.isdir(npath):
+				continue
+			get_commands_for_target(npath)
+		return
 	tmpfh = open(path, 'r', encoding='utf-8')
 	data_dict: dict = json.loads(tmpfh.read())
 	tmpfh.close()

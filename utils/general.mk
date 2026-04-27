@@ -9,8 +9,6 @@ export RUN_TESTS := no
 
 # Build options
 export COMPILER :=
-# Build binary files in the "lib" directory
-export BUILD_DIR := ../bin
 # If false, uses MSVC. If not, will throw an error.
 export USE_MINGW := no
 export USE_MSVC := no
@@ -192,8 +190,10 @@ ifeq ($(PLATFORM), win32)
 	DEFINES += -D_CRT_SECURE_NO_WARNINGS
 endif
 
-# Globalize build directory
-BUILD_DIR := $(abspath $(BUILD_DIR))
+# Globalize build directory. Assume that the build directory is 
+ifeq ("$(BUILD_DIR)","")
+	BUILD_DIR := $(abspath ../bin)
+endif
 
 ifneq ($(USE_MSVC), yes)
 	LDFLAGS += -L$(BUILD_DIR) -Wl,-rpath='$$ORIGIN'

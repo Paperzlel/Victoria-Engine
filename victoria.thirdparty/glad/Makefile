@@ -1,5 +1,5 @@
-include ../utils/core.mk
-include ../utils/general.mk
+include ../../utils/core.mk
+include ../../utils/general.mk
 
 TARGET := glad
 INCLUDES += -Iinclude
@@ -89,8 +89,8 @@ endif
 
 generate_compile_commands:
 	@echo Getting compile commands from $(TARGET)...
-	@$(PYTHON) ../utils/gen_tmp_commands.py --extension .c --arg_path src --args $(CC) $(CFLAGS) -c $(DEFINES) $(INCLUDES)
-	@$(PYTHON) ../utils/gen_tmp_commands.py --sources $(C_FILES) --objects $(OBJ_FILES)
+	@$(PYTHON) ../../utils/gen_tmp_commands.py --extension .c --arg_path src --args $(CC) $(CFLAGS) -c $(DEFINES) $(INCLUDES)
+	@$(PYTHON) ../../utils/gen_tmp_commands.py --sources $(C_FILES) --objects $(OBJ_FILES)
 
 clean:
 ifeq ($(PLATFORM), win32)
@@ -113,7 +113,7 @@ $(BUILD_DIR)/$(TARGET)/%.o: src/%.c
 	@echo   $<...
 ifeq ($(COMPILER), msvc)
 	@$(CC) $< $(CFLAGS) /c /Fo:$@ /Fd$(subst .o,.pdb,$@) /sourceDependencies $(dir $@) $(DEFINES) $(INCLUDES)
-	@$(PYTHON) ../utils/windows/gen_dependency_files.py $< -o $@
+	@$(PYTHON) ../../utils/windows/gen_dependency_files.py $< -o $@
 else
 	@$(CC) $< $(CFLAGS) -c -o $@ $(DEFINES) $(INCLUDES)
 endif

@@ -3,7 +3,7 @@ include ../utils/general.mk
 
 TARGET := victoria_runtime
 
-INCLUDES += -Isrc -Isrc/thirdparty -I../glad/include -I../victoria.core/src
+INCLUDES += -Isrc -Isrc/thirdparty -I../victoria.thirdparty/glad/include -I../victoria.core/src
 LDFLAGS += -lGLAD -lvictoria.core
 DEFINES += -DVEXPORT -DGLAD_GLX_NO_X11
 
@@ -17,7 +17,7 @@ export USE_FREETYPE := yes
 ifeq ($(USE_FREETYPE), yes)
 	DEFINES += -DFREETYPE_ENABLED -DDLL_IMPORT
 	LDFLAGS += -lfreetype
-	INCLUDES += -I../freetype/include
+	INCLUDES += -I../victoria.thirdparty/freetype/include
 endif
 
 ifeq ($(USE_MSVC), yes)
