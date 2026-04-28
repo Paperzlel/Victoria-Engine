@@ -317,9 +317,13 @@ public:
 		return element_count;
 	}
 
+	FORCE_INLINE bool is_empty() const {
+		return element_count == 0;
+	}
+
 	List() {}
 
-	List(const List &p_other) {
+	explicit List(const List &p_other) {
 		const Element *ptr = p_other.front();
 		while (ptr) {
 			push_back(ptr->get());

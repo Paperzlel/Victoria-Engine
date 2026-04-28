@@ -78,7 +78,8 @@ int GameObject::get_child_count() const {
 }
 
 List<GameObject *> GameObject::get_children() const {
-	return data.children;
+	// construct new list from old
+	return List<GameObject *>(data.children);
 }
 
 void GameObject::add_child(GameObject *p_child) {

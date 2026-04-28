@@ -19,7 +19,7 @@ void ResourceImporter::add_importer(Ref<ResourceFormatImporter> p_importer) {
  */
 Ref<Resource> ResourceImporter::import(const String &p_path, int p_argc, Variant *p_args, Error *r_error) {
 	for (const Ref<ResourceFormatImporter> &i : importers) {
-		List<String> supported_formats = i->get_extension_list();
+		List<String> supported_formats = List<String>(i->get_extension_list());
 		List<String>::Element *e = supported_formats.front();
 
 		while (e) {
