@@ -96,7 +96,7 @@ void UIObject::_update_anchors(Anchor p_anchor, bool p_keep_position) {
 
 	// Transform probably changed, force redraw
 	if (is_inside_tree()) {
-		force_redraw();
+		queue_redraw();
 	}
 
 	_size_changed();
@@ -154,7 +154,7 @@ void UIObject::_notification(int p_what) {
 			_update_anchors(anchor_location, true);
 		} break;
 		case NOTIFICATION_DRAW: {
-			// Can't update anchors, because force_redraw is called to do that anyway.
+			// Can't update anchors, because queue_redraw is called to do that anyway.
 			_update_canvas_item_transform();
 		} break;
 	}

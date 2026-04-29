@@ -17,5 +17,5 @@ Ref<Texture> TextureRect::get_texture() const {
 void TextureRect::set_texture(const Ref<Texture> &p_tex) {
 	texture = p_tex;
 
-	force_redraw();
+	queue_redraw();
 }

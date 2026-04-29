@@ -16,5 +16,5 @@ Vector4 Panel::get_colour() const {
 void Panel::set_colour(const Vector4 &p_colour) {
 	colour = p_colour;
 
-	force_redraw();
+	queue_redraw();
 }

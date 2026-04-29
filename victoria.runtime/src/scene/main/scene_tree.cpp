@@ -3,6 +3,8 @@
 #include "scene/3d/camera_3d.h"
 #include "scene/main/window.h"
 
+#include <core/object/command_queue.h>
+
 SceneTree *SceneTree::singleton = nullptr;
 
 SceneTree *SceneTree::get_singleton() {
@@ -53,7 +55,11 @@ void SceneTree::update(double p_delta) {
 	if (active_camera) {
 		active_camera->_update_camera();
 	}
+
 	propagate_tree_notification(NOTIFICATION_UPDATE);
+
+	// Flush command queue once updated
+	GlobalCommandQueue::get_singleton()->flush();
 
 	flush_delete_queue();
 }

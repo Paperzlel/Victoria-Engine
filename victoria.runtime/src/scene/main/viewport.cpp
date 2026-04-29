@@ -58,7 +58,7 @@ void Viewport::_propagate_size_changed(GameObject *p_object) {
 		CanvasItem *ci = Object::cast_to<CanvasItem>(p_object);
 
 		if (ci) {
-			ci->force_redraw();
+			ci->queue_redraw();
 		}
 	}
 

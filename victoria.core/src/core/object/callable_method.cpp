@@ -1,8 +1,15 @@
 #include "core/object/callable_method.h"
 
+#include "core/object/command_queue.h"
+
 void CallableMethod::callp(const Variant **p_args, Error &r_error) const {
 	r_error = OK;
 	base->call(p_args == nullptr ? nullptr : p_args);
+}
+
+void CallableMethod::call_deferredp(const Variant **p_args, int p_argc, Error &r_error) const {
+	r_error = OK;
+	r_error = GlobalCommandQueue::get_singleton()->push_commandp(*this, p_args, p_argc);
 }
 
 String CallableMethod::get_name() const {

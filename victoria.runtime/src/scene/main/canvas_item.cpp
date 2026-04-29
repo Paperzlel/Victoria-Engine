@@ -3,6 +3,10 @@
 #include "rendering/rendering_manager.h"
 #include "scene/main/viewport.h"
 
+void CanvasItem::_redraw_callback() {
+	notification(NOTIFICATION_DRAW);
+}
+
 void CanvasItem::_set_transforms_dirty() {
 	transforms_dirty = true;
 }
@@ -37,7 +41,7 @@ void CanvasItem::_notification(int p_what) {
 				RM::get_singleton()->item_set_parent(get_canvas_item(), cv);
 			}
 
-			force_redraw();
+			queue_redraw();
 		} break;
 
 		case NOTIFICATION_TRANSFORM_CHANGED: {
@@ -65,14 +69,17 @@ Transform2D CanvasItem::get_global_transform() const {
 	return global_transform;
 }
 
-void CanvasItem::force_redraw() {
+void CanvasItem::queue_redraw() {
 	if (!is_inside_tree()) {
 		return;
 	}
 
-	if (!skip_draw) {
-		notification(NOTIFICATION_DRAW);
+	if (has_queued_redraw) {
+		return;
 	}
+
+	has_queued_redraw = true;
+	callable_mp(this, &CanvasItem::_redraw_callback).call_deferred();
 }
 
 void CanvasItem::canvas_set_colour(const Vector4 &p_colour) {

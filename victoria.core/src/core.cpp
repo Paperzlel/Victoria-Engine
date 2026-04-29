@@ -2,6 +2,7 @@
 
 #include "core/io/input.h"
 #include "core/io/resource_importer.h"
+#include "core/object/command_queue.h"
 #include "core/os/display_manager.h"
 #include "core/os/os.h"
 #include "core/register_core_types.h"
@@ -12,6 +13,7 @@
 static Input *inputs = nullptr;
 static ResourceImporter *resource_importer = nullptr;
 static DisplayManager *display_manager = nullptr;
+static GlobalCommandQueue *command_queue = nullptr;
 
 static String version_str;
 static String rendering_backend = "";
@@ -143,6 +145,12 @@ Error core_initialize(int argc, char *argv[]) {
 	inputs = vnew(Input);
 	resource_importer = vnew(ResourceImporter);
 
+	if (GlobalCommandQueue::get_singleton()) {
+		ERR_WARN_ONCE("External user module has already created a command queue.");
+	} else {
+		command_queue = vnew(GlobalCommandQueue);
+	}
+
 	// Set backend to OpenGL native if none is found
 	if (rendering_backend.is_empty()) {
 		rendering_backend = "opengl";
@@ -174,6 +182,12 @@ Error core_initialize(int argc, char *argv[]) {
  */
 void core_finalize() {
 	DisplayManager::get_singleton()->finalize();
+
+	// Clear command queue if we own it.
+	if (command_queue) {
+		command_queue->flush();
+		vdelete(command_queue);
+	}
 
 	vdelete(inputs);
 	vdelete(resource_importer);

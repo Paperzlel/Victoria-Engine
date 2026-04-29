@@ -12,9 +12,11 @@ class VAPI CanvasItem : public GameObject {
 
 	mutable Transform2D global_transform;
 	bool transforms_dirty = true;
-
 	bool skip_draw = false;
+	bool has_queued_redraw = false;
 	int ysort = 0;
+
+	void _redraw_callback();
 
 protected:
 	void _set_transforms_dirty();
@@ -29,7 +31,7 @@ public:
 
 	virtual Transform2D get_transform() const = 0;
 
-	void force_redraw();
+	void queue_redraw();
 
 	void canvas_set_colour(const Vector4 &p_colour);
 	void canvas_set_rect(const Vector2 &p_position, const Vector2 &p_size);

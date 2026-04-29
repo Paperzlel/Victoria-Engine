@@ -1,6 +1,14 @@
 # Changelog
 Changes exist in chronological order (i.e. new changes are to be appended to the end of the file). Dates are done in DD/MM/YYYY format with the version number applied to each date if needed.
 
+## 29/4/2026
+- Core:
+	- Added `CommandQueue` and `GlobalCommandQueue` objects as new API classes from core.
+		- `CommandQueue`s are designed to have method pointers pushed to them, and then flushed after so many update cycles.
+		- Tests should be added in the future to ensure consistent behaviour - at the moment it has no yet been tested properly.
+	- Added `call_deferred` method to `CallableMethod`.
+		- Pushes data to the `GlobalCommandQueue` when called, to call the function itself at a later date. The `CallableMethod` can go out of scope as the refcount is maintained by the one in the queue.
+
 ## 27/4/2026
 - Core:
 	- Remove the `Event` class and its related functionality.
