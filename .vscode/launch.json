@@ -33,6 +33,16 @@
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/bin/",
             "environment": [],
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for GDB.",
+                    "text": "-enable-pretty-printing"
+                },
+                {
+                    "description": "Load pretty-printer values for GDB.",
+                    "text": "source ${workspaceFolder}/utils/gdb_print_pretty.py"
+                },
+            ]
         }
     ]
 }
