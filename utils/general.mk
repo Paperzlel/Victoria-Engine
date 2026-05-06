@@ -143,7 +143,7 @@ ifeq ($(COMPILER), clang)
 	CXX := clang++
 	LD := clang++
 endif
-	CCFLAGS += -Wall -Werror
+	CCFLAGS += -Wall -Werror -ffile-prefix-map=$(PWD)=.
 	CFLAGS += -std=c17
 	CPPFLAGS += -std=c++17
 endif 

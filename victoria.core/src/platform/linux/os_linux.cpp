@@ -194,6 +194,8 @@ void OSLinux::initialize() {
 	timer_frequency = t.tv_nsec * 1000000000; // NOTE: Should always be ~1ns anyway :/
 	timer_offset = get_current_time_usec();
 
+	crash_handler.initialize();
+
 #	ifdef X11_ENABLED
 	DisplayManagerX11::register_x11_driver();
 #	endif // X11_ENABLED

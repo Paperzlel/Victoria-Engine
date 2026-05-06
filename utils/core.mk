@@ -13,15 +13,18 @@ endif
 
 export PYTHON :=
 export FIND :=
+export DIR :=
 
 # Linux platform detection
 ifeq ($(PLATFORM), linux)
 	PYTHON := python3
 	FIND := whereis
+	DIR := $(PWD)
 endif
 
 # Windows platform detection
 ifeq ($(PLATFORM), win32)
 	PYTHON := python
 	FIND := where
+	DIR := $(shell %cd%)
 endif

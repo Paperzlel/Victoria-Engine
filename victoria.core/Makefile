@@ -1,7 +1,7 @@
+TARGET := victoria_core
 include ../utils/core.mk
 include ../utils/general.mk
 
-TARGET := victoria_core
 # We keep third-party, platform and driver specific code hidden from the user.
 INCLUDES += -Isrc -I../victoria.thirdparty/glad/include -Isrc/thirdparty
 LDFLAGS += -lGLAD

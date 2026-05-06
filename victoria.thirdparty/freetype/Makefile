@@ -1,7 +1,7 @@
+TARGET := freetype
 include ../../utils/core.mk
 include ../../utils/general.mk
 
-TARGET := freetype
 GLX_USED := no
 
 INCLUDES += -Iinclude

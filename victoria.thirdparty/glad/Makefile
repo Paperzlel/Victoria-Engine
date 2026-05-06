@@ -1,7 +1,7 @@
+TARGET := glad
 include ../../utils/core.mk
 include ../../utils/general.mk
 
-TARGET := glad
 INCLUDES += -Iinclude
 DEFINES += -DGLAD_API_CALL_EXPORT -DGLAD_API_CALL_EXPORT_BUILD
 

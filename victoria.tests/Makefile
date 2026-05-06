@@ -1,7 +1,7 @@
+TARGET := victoria_tests
 include ../utils/core.mk
 include ../utils/general.mk
 
-TARGET := victoria_tests
 INCLUDES += -Isrc -I../victoria.core/src
 
 ifeq ($(PLATFORM), win32)

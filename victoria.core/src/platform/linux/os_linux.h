@@ -5,6 +5,7 @@
 
 #	include "core/data/hashtable.h"
 #	include "core/os/os.h"
+#	include "crash_handler_linux.h"
 
 #	include <sys/utsname.h>
 
@@ -17,6 +18,8 @@ private:
 
 	HashTable<String, bool> features;
 	utsname system_info;
+
+	CrashHandlerLinux crash_handler;
 
 public:
 	virtual void print(const char *message, ...) override;

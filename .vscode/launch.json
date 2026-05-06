@@ -35,12 +35,16 @@
             "environment": [],
             "setupCommands": [
                 {
-                    "description": "Enable pretty-printing for GDB.",
+                    "description": "Enable pretty-printing",
                     "text": "-enable-pretty-printing"
                 },
                 {
-                    "description": "Load pretty-printer values for GDB.",
+                    "description": "Load Victoria's pretty-printer values",
                     "text": "source ${workspaceFolder}/utils/gdb_print_pretty.py"
+                },
+                {
+                    "description": "Set the debugging directory to its correct value",
+                    "text": "directory ${workspaceFolder}"
                 },
             ]
         }

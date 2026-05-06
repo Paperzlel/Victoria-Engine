@@ -426,6 +426,15 @@ void String::replace(char p_value, char p_replacement) {
 	}
 }
 
+String String::get_file() const {
+	if (!contains("/")) {
+		return *this;
+	}
+
+	Vector<String> vs = split("/");
+	return vs[vs.size() - 1];
+}
+
 String String::get_file_extension() const {
 	// Isn't a filepath, do nothing
 	if (!contains(".")) {

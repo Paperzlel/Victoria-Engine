@@ -1,8 +1,8 @@
+TARGET := victoria_testbed
 include ../utils/core.mk
 include ../utils/general.mk
 
 # Marginally more generic version of the Makefile we'll let end-users use to compile their own projects.
-TARGET := victoria_testbed
 INCLUDES += -Isrc -I../victoria.core/src -I../victoria.runtime/src
 LDFLAGS += -L$(BUILD_DIR)
 DIR := 

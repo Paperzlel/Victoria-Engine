@@ -1,7 +1,7 @@
+TARGET := victoria_runtime
 include ../utils/core.mk
 include ../utils/general.mk
 
-TARGET := victoria_runtime
 
 INCLUDES += -Isrc -Isrc/thirdparty -I../victoria.thirdparty/glad/include -I../victoria.core/src
 LDFLAGS += -lGLAD -lvictoria.core

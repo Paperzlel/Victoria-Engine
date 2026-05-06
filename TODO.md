@@ -31,7 +31,8 @@ A list of all things that are on the current plan for the engine, whether short-
 - [x] Define more math functions like `floor()` and `log()`
 - [x] Optimise `Vector<T>` and other classes to have a singular pointer to save class size
 - [x] Use move semantics in `Vector<T>` where applicable
-- [ ] Add a `CommandQueue` structure to be used for processing end-of-frame logic and other places a queue would be appropriate
+- [ ] Create a `LocalVector<T>` class that acts like our old `Vector<T>` where it avoids CoW semantics and reference counting
+- [x] Add a `CommandQueue` structure to be used for processing end-of-frame logic and other places a queue would be appropriate
 - [ ] Add multithreading support in the form of `Mutex`es, `Semaphore`s, `Thread`s and a `WorkerThreadPool`
 
 ## Drivers
@@ -81,6 +82,7 @@ A list of all things that are on the current plan for the engine, whether short-
 - [x] Rework DisplayManagers so that they fall back to the other if they are unable to be created
 - [x] Implement a way to get the preferred DisplayManager option from the OS
 - [ ] Add some kind of message queue to Wayland so that messages can be processed properly
+- [ ] Add working directory and other file access functions that are platform-specific
 
 ## Rendering
 - [x] Fix bug with running any EGL code
@@ -94,6 +96,8 @@ A list of all things that are on the current plan for the engine, whether short-
 - [x] Implement `GL_KHR_debug` for better OpenGL debugging
 - [x] Improve `CanvasShader` so that both vertex position and rect offset can be used at once (requires re-config of how rect data is managed i.e. use rect or transform but not both)
 - [ ] Rework the renderer so that Items and their base types act like a queue rather than as unique items to reduce RID allocations
+- [ ] Add shadows to the 3D renderer
+- [ ] Add Vulkan support
 
 ## Scene
 - [x] Add a `TextureRect` and `ColourRect` as children of `CanvasItem`
@@ -105,7 +109,7 @@ A list of all things that are on the current plan for the engine, whether short-
 - [ ] Add tests for all `VectorN` and `VectorNi` classes.
 - [ ] Add tests for `Transform2D` and `Transform3D`.
 - [x] Improve tests for `HashTable`.
-- [ ] Improve tests for `List`.
+- [x] Improve tests for `List`.
 - [ ] Improve tests for `Vector`.
 - [x] Improve tests for `Array`.
 - [x] Add tests for `Variant`.

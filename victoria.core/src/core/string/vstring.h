@@ -92,6 +92,7 @@ public:
 
 	void replace(char p_value, char p_replacement);
 
+	String get_file() const;
 	String get_file_extension() const;
 
 	int64_t to_int() const;
