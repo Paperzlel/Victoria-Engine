@@ -119,6 +119,15 @@ FORCE_INLINE uint32_t find_log2(uint32_t p_input) {
 	return res;
 }
 
+/**
+ * @brief Checks to see if a number is a valid power of 2. Works only for integer powers of 2
+ * @param p_input The number to check.
+ * @return Whether the number is a valid power of 2.
+ */
+FORCE_INLINE bool is_po2(uint64_t p_input) {
+	return (p_input != 0) && ((p_input & (p_input - 1)) == 0);
+}
+
 // http://loungecpp.wikidot.com/tips-and-tricks:indices
 // Expands a variadic macro into its constituent parts
 

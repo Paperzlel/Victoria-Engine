@@ -6,6 +6,7 @@
 #	include "logger_linux.h"
 #	include "core/string/print_string.h"
 #	include "core/object/main_loop.h"
+#	include "file_handle_linux.h"
 
 #	ifdef X11_ENABLED
 #		include "x11/display_manager_x11.h"
@@ -208,6 +209,8 @@ void OSLinux::initialize() {
  */
 OSLinux::OSLinux() {
 	_logger = vnew(LinuxLogger);
+	fs = vnew(FileSystemLinux);
+	FileSystem::set_default<FileHandleLinux>();
 }
 
 /**
@@ -215,6 +218,7 @@ OSLinux::OSLinux() {
  */
 OSLinux::~OSLinux() {
 	vdelete(_logger);
+	vdelete(fs);
 }
 
 #endif
