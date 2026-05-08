@@ -1614,7 +1614,7 @@ RenderingManagerGL::RenderingManagerGL() {
 									  nullptr,
 									  GL_TRUE);
 			} else {
-				print_line("OpenGL debugging is not supported.");
+				print_error("OpenGL debugging is not supported.");
 			}
 		}
 	}

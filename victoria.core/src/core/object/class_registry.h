@@ -4,7 +4,6 @@
 
 #include "core/data/hashtable.h"
 #include "core/object/object.h"
-#include "core/string/print_string.h"
 #include "core/typedefs.h"
 
 class VAPI ClassRegistry {
@@ -33,7 +32,6 @@ public:
 		ci.inherits = T::get_inherited_class_name_static();
 		ci.creation_func = &creator<T>;
 		ci.is_registered = true;
-		print_verbose(vformat("Registering class %s", cname.get_data()));
 		classes.insert(cname, ci);
 		T::initialize_class();
 	}
@@ -45,7 +43,6 @@ public:
 		ci.name = cname;
 		ci.inherits = T::get_inherited_class_name_static();
 		ci.is_registered = true;
-		print_verbose(vformat("Registering abstract class %s", cname.get_data()));
 		classes.insert(cname, ci);
 		T::initialize_class();
 	}

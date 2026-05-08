@@ -14,3 +14,7 @@ bool is_printing_verbose() {
 void _print_line(const String &s) {
 	OS::get_singleton()->print(s.get_data());
 }
+
+void _print_error(const String &s) {
+	OS::get_singleton()->printerr(s);
+}

@@ -103,7 +103,7 @@ static void __run_addr2line(void **p_symbols, char **p_symbolstrings, int p_back
 		String output;
 		__execute("addr2line", args, &output);
 		if (output.is_empty()) {
-			print_line(vformat("[%d] <could not find symbols>", i));
+			print_error(vformat("[%d] <could not find symbols>", i));
 			continue;
 		}
 
@@ -129,11 +129,11 @@ static void __run_addr2line(void **p_symbols, char **p_symbolstrings, int p_back
 			}
 		}
 
-		print_line(vformat("[%d] %s+%x - %s",
-						   (uint64_t)i,
-						   final_module_name.get_data(),
-						   (uint64_t)p_symbols[i] - load_offset,
-						   final_output.get_data()));
+		print_error(vformat("[%d] %s+%x - %s",
+							(uint64_t)i,
+							final_module_name.get_data(),
+							(uint64_t)p_symbols[i] - load_offset,
+							final_output.get_data()));
 	}
 }
 
@@ -146,15 +146,16 @@ static void _crash_handler(int p_signal) {
 	void *symbols[BACKTRACE_COUNT] = {};
 	int actual_bt_count = backtrace(symbols, BACKTRACE_COUNT);
 	if (actual_bt_count > BACKTRACE_COUNT) {
-		print_line("Recieved %d backtraces when a maximum of %d is allowed. Total backtrace will not be shown.\n",
-				   actual_bt_count,
-				   BACKTRACE_COUNT);
+		print_error(
+			vformat("Recieved %d backtraces when a maximum of %d is allowed. Total backtrace will not be shown.\n",
+					actual_bt_count,
+					BACKTRACE_COUNT));
 	}
 
-	print_line("================================ CRASH OCCURRED ================================");
-	print_line("Program crashed with signal:", p_signal);
-	print_line("Engine version:", String(VICTORIA_FULL_VERSION_STRING));
-	print_line("========================== BEGINNING OF C++ BACKTRACE ==========================");
+	print_error("================================ CRASH OCCURRED ================================");
+	print_error(vformat("Program crashed with signal: %d", p_signal));
+	print_error(vformat("Engine version: %s", VICTORIA_FULL_VERSION_STRING));
+	print_error("========================== BEGINNING OF C++ BACKTRACE ==========================");
 
 	char **strings = backtrace_symbols(symbols, actual_bt_count);
 
@@ -197,16 +198,16 @@ static void _crash_handler(int p_signal) {
 					module_name = "<unknown>";
 				}
 				// Found address, print
-				print_line(vformat("[%d] %s+%x - %s",
-								   (uint64_t)i,
-								   module_name.get_data(),
-								   (uint64_t)symbols[i] - module_offset,
-								   output_name.get_data()));
+				print_error(vformat("[%d] %s+%x - %s",
+									(uint64_t)i,
+									module_name.get_data(),
+									(uint64_t)symbols[i] - module_offset,
+									output_name.get_data()));
 			}
 		}
 	}
 
-	print_line("============================= END OF C++ BACKTRACE =============================");
+	print_error("============================= END OF C++ BACKTRACE =============================");
 
 	abort();
 }

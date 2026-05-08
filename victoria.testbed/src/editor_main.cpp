@@ -3,6 +3,7 @@
 #include <core/io/input.h>
 #include <core/io/resource_importer.h>
 #include <core/os/os.h>
+#include <core/string/print_string.h>
 
 #include <scene/gui/colour_rect.h>
 #include <scene/gui/text.h>

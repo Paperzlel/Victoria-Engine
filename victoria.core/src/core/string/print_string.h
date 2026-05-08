@@ -12,6 +12,7 @@ String stringify_variant(const Variant &p_var, Args... p_args) {
 
 VAPI extern bool is_printing_verbose();
 VAPI extern void _print_line(const String &s);
+VAPI extern void _print_error(const String &s);
 
 #define print_verbose(m_text)                                                                                         \
 	if (is_printing_verbose()) {                                                                                      \
@@ -25,4 +26,8 @@ inline void print_line(const Variant &v) {
 template <typename... Args>
 inline void print_line(const Variant &v, Args... p_args) {
 	_print_line(stringify_variant(v, p_args...));
+}
+
+inline void print_error(const String &p_string) {
+	_print_error(p_string);
 }
