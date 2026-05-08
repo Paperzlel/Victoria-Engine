@@ -6,7 +6,7 @@ FileSystem *FileSystem::get_singleton() {
 	return singleton;
 }
 
-Ref<FileHandle> FileSystem::open_file(const String &p_path, FileAccessType p_flags, Error &r_error) {
+Ref<FileHandle> FileSystem::open_file(const String &p_path, FileAccessType p_flags, Error *r_error) {
 	// Create a new handle
 	Ref<FileHandle> s = _create();
 
@@ -16,9 +16,11 @@ Ref<FileHandle> FileSystem::open_file(const String &p_path, FileAccessType p_fla
 
 	s->set_flags(p_flags);
 	Error err = s->_open_internal(p_path, p_flags);
-	if (err != OK) {
-		r_error = err;
-		return Ref<FileHandle>();
+	if (r_error) {
+		*r_error = err;
+		if (err) {
+			return Ref<FileHandle>();
+		}
 	}
 
 	return s;

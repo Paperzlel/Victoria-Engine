@@ -47,7 +47,7 @@ public:
 	 * @return A file handle if successful, and an empty, invalid one if the process failed. Does not print an error
 	 * and as such users should throw errors where appropriate.
 	 */
-	Ref<FileHandle> open_file(const String &p_path, FileAccessType p_flags, Error &r_error);
+	Ref<FileHandle> open_file(const String &p_path, FileAccessType p_flags, Error *r_error);
 
 	FileSystem();
 	virtual ~FileSystem();

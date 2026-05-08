@@ -25,7 +25,7 @@ Error FileHandleLinux::_open_internal(const String &p_path, int p_flags) {
 	path = p_path;
 	const char *permissions = nullptr;
 
-	int write_flags = p_flags & ~FLAG_WRITE_READ;
+	int write_flags = p_flags & FLAG_WRITE_READ;
 	if (write_flags == FLAG_READ) {
 		permissions = "rb";
 	} else if (write_flags == FLAG_WRITE) {

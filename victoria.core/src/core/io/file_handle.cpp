@@ -57,7 +57,7 @@ String FileHandle::get_line() {
 }
 
 String FileHandle::get_as_string() {
-	uint64_t size = get_length();
+	int size = get_length();
 	String ret;
 	ret.resize(size + 1);
 
