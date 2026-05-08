@@ -47,15 +47,15 @@ Ref<Resource> ResourceFormatImporterOBJ::_import(const String &p_path, int p_arg
 	// Clear out data when no longer needed
 	vertex_array.clear();
 	index_array.clear();
-	Ref<FileSystem> fs = FileSystem::open(p_path, FileSystem::FILE_ACCESS_READ);
-	ERR_FAIL_COND_R(!fs.is_valid(), Ref<Resource>());
+	Ref<FileHandle> h = FileSystem::get_singleton()->open_file(p_path, FileSystem::FLAG_READ, nullptr);
+	ERR_FAIL_COND_R(!h.is_valid(), Ref<Resource>());
 
 	Vector<Vector3> vertices;
 	Vector<Vector3> normals;
 	Vector<Vector2> uvs;
 
-	while (fs->get_position() < fs->get_length()) {
-		String line = fs->get_line();
+	while (h->get_position() < h->get_length()) {
+		String line = h->get_line();
 
 		// Ignore comments in code
 		if (line.begins_with("#")) {

@@ -10,14 +10,14 @@
 #include <stb/stb_image.h>
 
 Ref<Resource> ResourceFormatImporterImage::_import(const String &p_file, int p_argc, Variant *p_args) {
-	Ref<FileSystem> fs = FileSystem::open(p_file, FileSystem::FILE_ACCESS_READ);
-	ERR_FAIL_COND_R(!fs.is_valid(), Ref<Resource>());
+	Ref<FileHandle> h = FileSystem::get_singleton()->open_file(p_file, FileSystem::FLAG_READ, nullptr);
+	ERR_FAIL_COND_R(!h.is_valid(), Ref<Resource>());
 
-	int len = fs->get_length();
+	int len = h->get_length();
 
 	Vector<uint8_t> buf;
 	buf.resize(len);
-	fs->get_buffer(buf.ptrw(), len);
+	h->get_buffer(buf.ptrw(), len);
 
 	Ref<Texture> t;
 	t.instantiate();

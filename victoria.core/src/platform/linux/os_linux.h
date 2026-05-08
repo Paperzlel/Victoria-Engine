@@ -3,6 +3,8 @@
 #include "core/typedefs.h"
 #if PLATFORM_LINUX
 
+#	include "filesystem_linux.h"
+
 #	include "core/data/hashtable.h"
 #	include "core/os/os.h"
 #	include "crash_handler_linux.h"
@@ -15,6 +17,7 @@
 class OSLinux : public OS {
 private:
 	MainLoop *main_loop = nullptr;
+	FileSystemLinux *fs = nullptr;
 
 	HashTable<String, bool> features;
 	utsname system_info;
