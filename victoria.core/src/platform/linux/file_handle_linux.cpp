@@ -49,6 +49,8 @@ Error FileHandleLinux::_open_internal(const String &p_path, int p_flags) {
 			default:
 				return ERR_FILE_CANT_ACCESS;
 		}
+
+		return ERR_FILE_NOT_FOUND;
 	}
 
 	// Set file length if not found by stat()
@@ -70,10 +72,12 @@ void FileHandleLinux::close() {
 }
 
 void FileHandleLinux::seek(int p_position) {
+	ERR_COND_NULL_MSG(f, "Invalid file handle.");
 	fseek(f, p_position, SEEK_SET);
 }
 
 uint64_t FileHandleLinux::get_position() const {
+	ERR_COND_NULL_MSG_R(f, "Invalid file handle.", 0);
 	return ftell(f);
 }
 
@@ -95,6 +99,7 @@ Vector<uint8_t> FileHandleLinux::get_buffer(int p_length) {
 }
 
 int FileHandleLinux::get_buffer(uint8_t *p_buffer, int p_length) {
+	ERR_COND_NULL_MSG_R(f, "Invalid file handle.", 0);
 	return fread(p_buffer, 1, p_length, f);
 }
 

@@ -18,9 +18,10 @@ Ref<FileHandle> FileSystem::open_file(const String &p_path, FileAccessType p_fla
 	Error err = s->_open_internal(p_path, p_flags);
 	if (r_error) {
 		*r_error = err;
-		if (err) {
-			return Ref<FileHandle>();
-		}
+	}
+
+	if (err) {
+		return Ref<FileHandle>();
 	}
 
 	return s;

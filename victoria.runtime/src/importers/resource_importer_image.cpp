@@ -11,7 +11,7 @@
 
 Ref<Resource> ResourceFormatImporterImage::_import(const String &p_file, int p_argc, Variant *p_args) {
 	Ref<FileHandle> h = FileSystem::get_singleton()->open_file(p_file, FileSystem::FLAG_READ, nullptr);
-	ERR_FAIL_COND_R(!h.is_valid(), Ref<Resource>());
+	ERR_FAIL_COND_R(h.is_null(), Ref<Resource>());
 
 	int len = h->get_length();
 

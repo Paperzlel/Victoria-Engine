@@ -1,6 +1,13 @@
 # Changelog
 Changes exist in chronological order (i.e. new changes are to be appended to the end of the file). Dates are done in DD/MM/YYYY format with the version number applied to each date if needed.
 
+## 8/5/2026
+- Core:
+	- Reworked the filesystem API to a new format.
+		- There are now 2 classes that are related to the API: `FileSystem` and `FileHandle`. More will be added in the future.
+		- `FileSystem` is a singleton that controls the global system state. Loading files and dynamic libraries, changing directory and adding file watchers will be done through this class.
+		- `FileHandle` is a `RefCounted`-derived class that manages the file pointer itself. Reads and writes data depending on its initial flags.
+
 ## 29/4/2026
 - Core:
 	- Added `CommandQueue` and `GlobalCommandQueue` objects as new API classes from core.
