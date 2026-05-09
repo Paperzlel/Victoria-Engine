@@ -1,6 +1,12 @@
 # Changelog
 Changes exist in chronological order (i.e. new changes are to be appended to the end of the file). Dates are done in DD/MM/YYYY format with the version number applied to each date if needed.
 
+## 9/5/2026
+- Core:
+	- Added a new class `VName`.
+		- `VName` acts much like `StringName` in Godot. It caches data that can be compared much faster than a traditional `String` would be. Its name is as such because of how fast it can be used for looking up information in code, such as a system path or a (laugh) name for something.
+		- This class will now slowly replace a bunch of other classes due to its usefulness.
+
 ## 8/5/2026
 - Core:
 	- Reworked the filesystem API to a new format.

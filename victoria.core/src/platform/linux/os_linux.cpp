@@ -195,7 +195,8 @@ void OSLinux::initialize() {
 	timer_frequency = t.tv_nsec * 1000000000; // NOTE: Should always be ~1ns anyway :/
 	timer_offset = get_current_time_usec();
 
-	crash_handler.initialize();
+	fs = vnew(FileSystemLinux);
+	FileSystem::set_default<FileHandleLinux>();
 
 #	ifdef X11_ENABLED
 	DisplayManagerX11::register_x11_driver();
@@ -211,8 +212,7 @@ void OSLinux::initialize() {
  */
 OSLinux::OSLinux() {
 	_logger = vnew(LinuxLogger);
-	fs = vnew(FileSystemLinux);
-	FileSystem::set_default<FileHandleLinux>();
+	crash_handler.initialize();
 }
 
 /**

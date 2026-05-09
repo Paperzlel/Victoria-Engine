@@ -34,6 +34,7 @@ A list of all things that are on the current plan for the engine, whether short-
 - [ ] Create a `LocalVector<T>` class that acts like our old `Vector<T>` where it avoids CoW semantics and reference counting
 - [x] Add a `CommandQueue` structure to be used for processing end-of-frame logic and other places a queue would be appropriate
 - [ ] Add multithreading support in the form of `Mutex`es, `Semaphore`s, `Thread`s and a `WorkerThreadPool`
+- [x] Add a `VName` type akin to `StringName` in Godot that can be used in static applications
 
 ## Drivers
 - [x] Add `resize_viewport` command to EGL
@@ -70,6 +71,7 @@ A list of all things that are on the current plan for the engine, whether short-
 - [ ] Rework input so that windows can send input events through the scene tree
 - [ ] Reclassify all keyboard input options
 - [ ] Add the ability to query the string relating to the given keycode
+- [ ] Add an `InputAction` class to track specific input events
 
 ## Platform
 - [x] Fix X11 displays not resizing when using EGL

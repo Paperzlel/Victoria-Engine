@@ -31,7 +31,7 @@ static bool hashtable_test_init_capacity() {
 static bool hashtable_test_init_initializer() {
 	HashTable<int, int> h{{1, 1}, {2, 2}, {3, 3}};
 	TEST_EQ(h.size(), 3);
-	h = {{4, 4}, {5, 5}};
+	h = {{4, 4}, {5, 5}}; // need to make sure that initializer lists can assign here.
 	TEST_EQ(h.size(), 2);
 	return true;
 }

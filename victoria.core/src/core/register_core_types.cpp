@@ -6,8 +6,11 @@
 #include "core/object/class_registry.h"
 #include "core/object/object.h"
 #include "core/object/ref_counted.h"
+#include "core/string/vname.h"
 
 void register_core_types() {
+	VName::setup();
+
 	REGISTER_CLASS(Object);
 	REGISTER_CLASS(RefCounted);
 	REGISTER_CLASS(Resource);
@@ -15,4 +18,6 @@ void register_core_types() {
 	REGISTER_ABSTRACT_CLASS(FileHandle);
 }
 
-void unregister_core_types() {}
+void unregister_core_types() {
+	VName::finalize();
+}

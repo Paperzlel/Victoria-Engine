@@ -1,5 +1,10 @@
 #pragma once
 
-void register_core_types();
+#include "core/typedefs.h"
 
-void unregister_core_types();
+// NOTE: These probably shouldn't be exposed, but they're needed for basic applications that use VName. Headless
+// mode for core should be a feature we prioritise to fix this.
+
+VAPI void register_core_types();
+
+VAPI void unregister_core_types();

@@ -8,8 +8,11 @@
 #include "core/data/vector.h"
 #include "core/math/test_mat4.h"
 #include "core/math/test_quaternion.h"
+#include "core/string/test_vname.h"
 #include "core/variant/test_array.h"
 #include "core/variant/test_variant.h"
+
+#include <core/register_core_types.h>
 
 struct Test {
 	PFN_test func = nullptr;
@@ -43,6 +46,8 @@ void register_all_tests() {
 	mat4_register_tests();
 	quaternion_register_tests();
 
+	vname_register_tests();
+
 	variant_register_tests();
 	array_register_tests();
 }
@@ -72,9 +77,14 @@ void run_all_tests() {
 int main(void) {
 	// Needs stdout for pretty-printing.
 	(void)OS::create();
+	// Need strings and core classes
+	register_core_types();
 
 	register_all_tests();
 	run_all_tests();
+
+	// Free strings
+	unregister_core_types();
 	OS::destroy();
 	return 0;
 }
