@@ -8,13 +8,21 @@ String stringify_variant(const Variant &p_var) {
 }
 
 bool is_printing_verbose() {
-	return OS::get_singleton()->is_stdout_verbose();
+	if (OS::get_singleton()) {
+		return OS::get_singleton()->is_stdout_verbose();
+	}
+
+	return false;
 }
 
 void _print_line(const String &s) {
-	OS::get_singleton()->print(s.get_data());
+	if (OS::get_singleton()) {
+		OS::get_singleton()->print(s.get_data());
+	}
 }
 
 void _print_error(const String &s) {
-	OS::get_singleton()->printerr(s);
+	if (OS::get_singleton()) {
+		OS::get_singleton()->printerr(s);
+	}
 }

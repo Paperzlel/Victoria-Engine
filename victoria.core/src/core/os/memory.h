@@ -18,8 +18,8 @@ public:
 	static void *vreallocate(void *p_block, uint64_t p_new_size);
 	static void vfree(void *p_block);
 	static void vzero(void *p_block, uint64_t p_size);
-	static void vset_memory(void *p_block, int p_value, uint64_t p_size);
-	static void *vcopy_memory(void *p_dest, const void *p_source, uint64_t p_size);
+	static void vmemset(void *p_block, int p_value, uint64_t p_size);
+	static void *vmemcpy(void *p_dest, const void *p_source, uint64_t p_size);
 	static void *vmemmove(void *p_dest, const void *p_source, size_t p_count);
 };
 
@@ -61,7 +61,7 @@ void vdelete(T *p_class) {
 template <typename T>
 void memcpy_arr_placement(T *p_dest, const T *p_src, size_t p_elements) {
 	if constexpr (std::is_trivially_copyable_v<T>) {
-		Memory::vcopy_memory(p_dest, p_src, p_elements * sizeof(T));
+		Memory::vmemcpy(p_dest, p_src, p_elements * sizeof(T));
 	} else {
 		for (size_t i = 0; i < p_elements; i++) {
 			vnew_placement(p_dest + i, T(p_src[i]));

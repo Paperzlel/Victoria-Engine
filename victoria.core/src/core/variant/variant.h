@@ -7,6 +7,7 @@
 #include "core/math/vector3i.h"
 #include "core/math/vector4.h"
 #include "core/math/vector4i.h"
+#include "core/string/vname.h"
 #include "core/string/vstring.h"
 #include "core/variant/array.h"
 
@@ -28,6 +29,7 @@ public:
 		INT,
 		FLOAT,
 		STRING,
+		STRING_NAME,
 
 		// Vector types
 		VECTOR2,
@@ -130,6 +132,7 @@ private:
 			false, // INT
 			false, // FLOAT
 			true,  // STRING
+			true,  // STRING_NAME
 
 			false, // VECTOR2
 			false, // VECTOR2I
@@ -196,6 +199,7 @@ public:
 	operator float() const;
 	operator double() const;
 	operator String() const;
+	operator VName() const;
 	operator Vector2() const;
 	operator Vector2i() const;
 	operator Vector3() const;
@@ -224,6 +228,7 @@ public:
 	Variant(float p_float);
 	Variant(double p_double);
 	Variant(const String &p_string);
+	Variant(const VName &p_name);
 	Variant(const char *const p_cstring);
 	Variant(const Vector2 &p_vec);
 	Variant(const Vector2i &p_vec);

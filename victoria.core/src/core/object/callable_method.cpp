@@ -12,7 +12,7 @@ void CallableMethod::call_deferredp(const Variant **p_args, int p_argc, Error &r
 	r_error = GlobalCommandQueue::get_singleton()->push_commandp(*this, p_args, p_argc);
 }
 
-String CallableMethod::get_name() const {
+VName CallableMethod::get_name() const {
 	if (base) {
 		return base->get_name();
 	}
@@ -70,10 +70,10 @@ CallableMethodBase::CallableMethodBase() {
 	refcount.init();
 }
 
-String CallableMethodBase::get_name() const {
-	return name;
+VName CallableMethodBase::get_name() const {
+	return VName(name);
 }
 
-void CallableMethodBase::set_name(const String &p_name) {
+void CallableMethodBase::set_name(const VName &p_name) {
 	name = p_name;
 }

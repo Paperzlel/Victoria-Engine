@@ -145,7 +145,7 @@ String OSLinux::get_version() const {
 
 String OSLinux::get_executable_path() const {
 	char buf[256];
-	Memory::vcopy_memory(buf, 0, 256);
+	Memory::vmemcpy(buf, 0, 256);
 	ERR_FAIL_COND_R(readlink("/proc/self/exe", buf, 256) == -1, String());
 	return buf;
 }

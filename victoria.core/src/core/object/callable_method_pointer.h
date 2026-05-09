@@ -21,7 +21,7 @@ class VAPI CallableMethodPointer : public CallableMethodBase {
 	void (C::*method_ptr)(Args...) = nullptr;
 
 public:
-	virtual String get_name() const override {
+	virtual VName get_name() const override {
 		return CallableMethodBase::get_name();
 	}
 
@@ -50,7 +50,7 @@ class VAPI CallableMethodPointerStatic : public CallableMethodBase {
 	void (*method_ptr)(Args...) = nullptr;
 
 public:
-	virtual String get_name() const override {
+	virtual VName get_name() const override {
 		return CallableMethodBase::get_name();
 	}
 

@@ -28,7 +28,7 @@ static void __execute(const char *p_file, const Vector<String> &p_args, String *
 			int count = fread(ret, 1, 65536, fptr);
 			if (count) {
 				r_output->resize(count + 1);
-				Memory::vcopy_memory(r_output->ptrw(), ret, count);
+				Memory::vmemcpy(r_output->ptrw(), ret, count);
 				(*r_output)[count] = 0;
 			}
 
@@ -68,7 +68,7 @@ static void __execute(const char *p_file, const Vector<String> &p_args, String *
 		char buf[65536];
 		int count = read(pipes[0], buf, sizeof(buf));
 		r_output->resize(count + 1);
-		Memory::vcopy_memory(r_output->ptrw(), buf, count);
+		Memory::vmemcpy(r_output->ptrw(), buf, count);
 		r_output[count] = 0;
 	}
 

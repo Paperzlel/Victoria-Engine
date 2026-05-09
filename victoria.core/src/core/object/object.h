@@ -3,7 +3,7 @@
 #include "core/data/hashtable.h"
 #include "core/data/list.h"
 #include "core/object/callable_method_pointer.h" // IWYU pragma: keep
-#include "core/string/vstring.h"
+#include "core/string/vname.h"
 #include "core/typedefs.h"
 
 /**
@@ -16,25 +16,25 @@ private:                                                                        
 	friend class ClassRegistry;                                                                                       \
                                                                                                                       \
 public:                                                                                                               \
-	virtual String get_class_name() const override {                                                                  \
-		return String(#m_class);                                                                                      \
+	virtual VName get_class_name() const override {                                                                   \
+		return VName(#m_class);                                                                                       \
 	}                                                                                                                 \
                                                                                                                       \
-	virtual String get_inherited_class_name() const override {                                                        \
-		return String(#m_inherits);                                                                                   \
+	virtual VName get_inherited_class_name() const override {                                                         \
+		return VName(#m_inherits);                                                                                    \
 	}                                                                                                                 \
                                                                                                                       \
-	static FORCE_INLINE String get_class_name_static() {                                                              \
-		return String(#m_class);                                                                                      \
+	static FORCE_INLINE VName get_class_name_static() {                                                               \
+		return VName(#m_class);                                                                                       \
 	}                                                                                                                 \
                                                                                                                       \
-	static FORCE_INLINE String get_inherited_class_name_static() {                                                    \
-		return String(#m_inherits);                                                                                   \
+	static FORCE_INLINE VName get_inherited_class_name_static() {                                                     \
+		return VName(#m_inherits);                                                                                    \
 	}                                                                                                                 \
                                                                                                                       \
 protected:                                                                                                            \
 	FORCE_INLINE void (Object::*_get_notification() const)(int) {                                                     \
-		return (void(Object::*)(int)) & m_class::_notification;                                                       \
+		return (void (Object::*)(int)) & m_class::_notification;                                                      \
 	}                                                                                                                 \
                                                                                                                       \
 	FORCE_INLINE static void (*_get_bind_methods())() {                                                               \
@@ -102,7 +102,7 @@ enum Notification {
 class VAPI Object {
 	friend class ClassRegistry;
 
-	HashTable<String, List<CallableMethod>> callables;
+	HashTable<VName, List<CallableMethod>> callables;
 
 public:
 	virtual void _notification_forwardv(int p_what) {}
@@ -139,11 +139,11 @@ public:
 	 */
 	void notification(int p_what, bool p_reversed = false);
 
-	Error connect_method(const String &p_name, const CallableMethod &p_method);
-	Error emit_methodp(const String &p_name, const Variant **p_args = nullptr, int p_argc = 0);
+	Error connect_method(const VName &p_name, const CallableMethod &p_method);
+	Error emit_methodp(const VName &p_name, const Variant **p_args = nullptr, int p_argc = 0);
 
 	template <typename... Args>
-	FORCE_INLINE Error emit_method(const String &p_name, Args... p_args) {
+	FORCE_INLINE Error emit_method(const VName &p_name, Args... p_args) {
 		Variant args[sizeof...(p_args) + 1] = {p_args..., Variant()};
 		const Variant *argptrs[sizeof...(p_args) + 1];
 
@@ -160,7 +160,7 @@ public:
 	 * display their highest class.
 	 * @returns A String of the class name.
 	 */
-	virtual String get_class_name() const {
+	virtual VName get_class_name() const {
 		return "Object";
 	}
 
@@ -169,14 +169,14 @@ public:
 	 * down will still display their highest classes' parent.
 	 * @returns A String of the inherited classes' name.
 	 */
-	virtual String get_inherited_class_name() const {
-		return String();
+	virtual VName get_inherited_class_name() const {
+		return VName();
 	}
 
 	/**
 	 * @brief Obtains the given classes' name. Static method for when the class name alone is needed.
 	 */
-	static String get_class_name_static() {
+	static VName get_class_name_static() {
 		return "Object";
 	}
 
@@ -184,7 +184,7 @@ public:
 	 * @brief Obtains the given classes' inherited class name. Static method for when the inherited class name alone is
 	 * needed.
 	 */
-	static String get_inherited_class_name_static() {
+	static VName get_inherited_class_name_static() {
 		return String();
 	}
 

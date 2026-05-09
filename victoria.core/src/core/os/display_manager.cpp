@@ -19,7 +19,7 @@ int DisplayManager::get_creation_func_count() {
 	return create_func_count;
 }
 
-const String &DisplayManager::get_creation_func_name(int p_id) {
+const char *DisplayManager::get_creation_func_name(int p_id) {
 	return _create_funcs[p_id].name;
 }
 

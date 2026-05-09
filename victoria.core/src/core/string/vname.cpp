@@ -16,21 +16,28 @@ void VName::setup() {
 void VName::finalize() {
 	uint32_t leaked_vnames = 0;
 	for (int i = 0; i < Tree::TREE_SIZE; i++) {
-		Data *_d = Tree::tree_data[i];
-		if (_d) {
-			if (_d->refcount.unref()) {
-				vdelete(_d);
-			} else {
+		while (Tree::tree_data[i]) {
+			Data *_d = Tree::tree_data[i];
+			if (!_d->refcount.unref()) {
 				leaked_vnames++;
+#ifdef DEBUG_ENABLED
+				ERR_WARN(vformat("Leaked VName \"%s\"", _d->string.get_data()));
+#endif
 			}
-		}
 
-		Tree::tree_data[i] = nullptr;
+			Tree::tree_data[i] = _d->next;
+			vdelete(_d);
+		}
 	}
 
 	if (leaked_vnames > 0) {
 		ERR_WARN(vformat("%d VNames leaked at exit.", leaked_vnames));
 	}
+}
+
+uint32_t VName::get_empty_hash() {
+	static uint32_t ehash = HasherDefault::hash("");
+	return ehash;
 }
 
 void VName::unref() {
@@ -80,7 +87,7 @@ char VName::operator[](int p_index) const {
 }
 
 VName::VName(const String &p_other) {
-	uint32_t h = HasherDefault::hash(p_other.get_data());
+	uint32_t h = p_other.hash();
 	if (h == 0) {
 		return;
 	}
@@ -118,7 +125,7 @@ VName::VName(const String &p_other) {
 }
 
 VName::VName(const char *p_string) {
-	uint32_t h = HasherDefault::hash(p_string);
+	uint32_t h = String::hash(p_string);
 	if (h == 0) {
 		return;
 	}

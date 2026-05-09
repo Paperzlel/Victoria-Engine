@@ -154,7 +154,7 @@ void Input::clear() {
  */
 void Input::update() {
 	pressed_keys.clear();
-	Memory::vcopy_memory(&previous_mouse, &current_mouse, sizeof(Mouse));
+	Memory::vmemcpy(&previous_mouse, &current_mouse, sizeof(Mouse));
 	relative_mouse_pos = Vector2i::zero();
 }
 

@@ -104,7 +104,8 @@ void GameObject::add_child(GameObject *p_child) {
 				c = c->next();
 			}
 
-			p_child->set_name(p_child->get_class_name() + (count > 0 ? itos(count) : ""));
+			String new_name = p_child->get_class_name().get_string() + (count > 0 ? itos(count) : "");
+			p_child->set_name(new_name);
 		}
 	}
 
@@ -126,13 +127,17 @@ void GameObject::remove_child(GameObject *p_child) {
 	notification(NOTIFICATION_CHILD_EXITED_TREE);
 }
 
-String GameObject::get_name() const {
+VName GameObject::get_name() const {
 	return data.name;
 }
 
-void GameObject::set_name(const String &p_name) {
-	data.name = p_name;
-	data.name.replace(' ', '_');
+void GameObject::set_name(const VName &p_name) {
+	String validate_name = p_name.get_string();
+	validate_name.replace(' ', '_');
+
+	if (!validate_name.is_empty()) {
+		data.name = validate_name;
+	}
 }
 
 SceneTree *GameObject::get_tree() const {

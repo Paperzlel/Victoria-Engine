@@ -1,8 +1,8 @@
 #include "core/object/class_registry.h"
 
-HashTable<String, ClassRegistry::ClassInfo> ClassRegistry::classes;
+HashTable<VName, ClassRegistry::ClassInfo> ClassRegistry::classes;
 
-Object *ClassRegistry::instantiate(const String &p_class) {
+Object *ClassRegistry::instantiate(const VName &p_class) {
 	ClassInfo *ci;
 
 	ci = classes.get_ptr(p_class);
@@ -16,7 +16,7 @@ Object *ClassRegistry::instantiate(const String &p_class) {
 	return ci->creation_func();
 }
 
-void ClassRegistry::add_signal(const String &p_class, const String &p_signal) {
+void ClassRegistry::add_signal(const VName &p_class, const VName &p_signal) {
 	ClassInfo *c = classes.get_ptr(p_class);
 	ERR_COND_NULL_MSG(c, vformat("Class \'%s\' is null.", p_class.get_data()));
 
@@ -27,7 +27,7 @@ void ClassRegistry::add_signal(const String &p_class, const String &p_signal) {
 	c->signals.push_back(p_signal);
 }
 
-bool ClassRegistry::has_signal(const String &p_class, const String &p_signal) {
+bool ClassRegistry::has_signal(const VName &p_class, const VName &p_signal) {
 	ClassInfo *c = classes.get_ptr(p_class);
 	while (c) {
 		if (c->signals.has(p_signal)) {
@@ -38,4 +38,8 @@ bool ClassRegistry::has_signal(const String &p_class, const String &p_signal) {
 	}
 
 	return false;
+}
+
+void ClassRegistry::cleanup() {
+	classes.clear();
 }

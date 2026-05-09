@@ -4,7 +4,7 @@
 
 #include <core/data/list.h>
 #include <core/object/object.h>
-#include <core/string/vstring.h>
+#include <core/string/vname.h>
 
 class Viewport;
 class Window;
@@ -21,7 +21,7 @@ class VAPI GameObject : public Object {
 		Viewport *viewport = nullptr;
 
 		bool is_inside_tree = false;
-		String name = "";
+		VName name;
 
 		SceneTree *tree = nullptr;
 	} data;
@@ -52,8 +52,8 @@ public:
 	void add_child(GameObject *p_child);
 	void remove_child(GameObject *p_child);
 
-	String get_name() const;
-	void set_name(const String &p_name);
+	VName get_name() const;
+	void set_name(const VName &p_name);
 
 	SceneTree *get_tree() const;
 	FORCE_INLINE bool is_inside_tree() const {

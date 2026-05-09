@@ -28,6 +28,7 @@ class VAPI VName {
 	friend void unregister_core_types();
 	static void setup();
 	static void finalize();
+	static uint32_t get_empty_hash();
 
 	/**
 	 * @brief Unreferences the data held by the `VName`. If the reference count goes to 0 or below, the data is freed.
@@ -49,6 +50,14 @@ public:
 	 */
 	const char *get_data() const;
 
+	/**
+	 * @brief Checks to see if the given name has no data inside of it.
+	 * @return `true` if yes, `false` if no.
+	 */
+	inline bool is_empty() const {
+		return _data == nullptr || _data->string.is_empty();
+	}
+
 	char operator[](int p_index) const;
 
 	/**
@@ -62,6 +71,14 @@ public:
 		}
 
 		return String();
+	}
+
+	FORCE_INLINE uint32_t hash() const {
+		if (_data) {
+			return _data->hash;
+		}
+
+		return get_empty_hash();
 	}
 
 	FORCE_INLINE bool operator==(const VName &p_string) const {
@@ -122,7 +139,7 @@ public:
 		p_other._data = nullptr;
 	}
 
-	explicit VName(const VName &p_other) {
+	VName(const VName &p_other) {
 		if (!p_other._data) {
 			return;
 		}

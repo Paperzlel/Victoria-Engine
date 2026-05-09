@@ -1,7 +1,7 @@
 #pragma once
 
 #include "core/data/atomic_counter.h"
-#include "core/string/vstring.h"
+#include "core/string/vname.h"
 #include "core/typedefs.h"
 #include "core/variant/variant.h"
 
@@ -62,7 +62,7 @@ public:
 	 * @brief Obtains the name of the function.
 	 * @return The name of the function.
 	 */
-	String get_name() const;
+	VName get_name() const;
 
 	/**
 	 * @brief Checks to see if the given callable is valid to be used. If not, calling the function will produce a
@@ -97,7 +97,7 @@ public:
  */
 class VAPI CallableMethodBase {
 	friend class CallableMethod;
-	String name;	   // The name of the function. Will be in the form `<class_name>::<function_name>`.
+	VName name;		   // The name of the function. Will be in the form `<class_name>::<function_name>`.
 	Refcount refcount; // The reference count to the current method base. Bases are transferred between callables to
 					   // save on memory allocations and consistency
 
@@ -107,13 +107,13 @@ public:
 	 * reasons needs to be public.
 	 * @param p_name The name of the function, usually derived from the function pointer passed during creation.
 	 */
-	void set_name(const String &p_name);
+	void set_name(const VName &p_name);
 
 	/**
 	 * @brief Virtual name-getting function. Can be overridden in later implementations.
 	 * @return The name of the method.
 	 */
-	virtual String get_name() const;
+	virtual VName get_name() const;
 
 	/**
 	 * @brief Calls the bound method. Abstract on the base as this needs to be overridden for each implementation, as

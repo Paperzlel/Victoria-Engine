@@ -437,8 +437,8 @@ void CoWData<T>::remove_at(int64_t p_index) {
 		T *other = _ptr;
 		_ptr = (T *)Memory::vallocate(new_size);
 		if (std::is_trivially_copyable_v<T>) {
-			Memory::vcopy_memory(_ptr, other, p_index * sizeof(T));
-			Memory::vcopy_memory(_ptr + p_index, other + p_index, (new_size - p_index) * sizeof(T));
+			Memory::vmemcpy(_ptr, other, p_index * sizeof(T));
+			Memory::vmemcpy(_ptr + p_index, other + p_index, (new_size - p_index) * sizeof(T));
 		} else {
 			for (int i = 0; i < p_index; i++) {
 				vnew_placement(_ptr + i, T(other[i]));

@@ -26,7 +26,7 @@ void print_help_option(const char *command, const char *description, bool is_hea
 		OS::get_singleton()->print(command);
 	} else {
 		char buf[25];
-		Memory::vcopy_memory(buf, command, 25);
+		Memory::vmemcpy(buf, command, 25);
 		int i = 0;
 		while (command[i]) {
 			buf[i] = command[i];
@@ -192,6 +192,8 @@ void core_finalize() {
 	vdelete(inputs);
 	vdelete(resource_importer);
 	vdelete(display_manager);
+
+	unregister_core_types();
 
 	OS::destroy();
 }

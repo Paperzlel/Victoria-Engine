@@ -5,6 +5,9 @@ void Variant::_clear_internals() {
 		case STRING: {
 			reinterpret_cast<String *>(_data._mem)->~String();
 		} break;
+		case STRING_NAME: {
+			reinterpret_cast<VName *>(_data._mem)->~VName();
+		} break;
 		case ARRAY: {
 			reinterpret_cast<Array *>(_data._mem)->~Array();
 		} break;
@@ -69,6 +72,8 @@ String Variant::stringify(int recursion_count) const {
 			return ftos(_data._float);
 		case STRING:
 			return *reinterpret_cast<const String *>(_data._mem);
+		case STRING_NAME:
+			return reinterpret_cast<const VName *>(_data._mem)->get_string();
 		case VECTOR2:
 			return operator Vector2();
 		case VECTOR2I:
@@ -127,6 +132,9 @@ void Variant::_ref(const Variant &p_other) {
 		} break;
 		case STRING: {
 			vnew_placement(_data._mem, String(*reinterpret_cast<const String *>(p_other._data._mem)));
+		} break;
+		case STRING_NAME: {
+			vnew_placement(_data._mem, VName(reinterpret_cast<const VName *>(p_other._data._mem)->get_string()));
 		} break;
 		case VECTOR2: {
 			vnew_placement(_data._mem, Vector2(*reinterpret_cast<const Vector2 *>(p_other._data._mem)));
@@ -225,6 +233,9 @@ void Variant::operator=(const Variant &p_var) {
 		} break;
 		case STRING: {
 			*reinterpret_cast<String *>(_data._mem) = *reinterpret_cast<const String *>(p_var._data._mem);
+		} break;
+		case STRING_NAME: {
+			*reinterpret_cast<VName *>(_data._mem) = *reinterpret_cast<const VName *>(p_var._data._mem);
 		} break;
 		case VECTOR2: {
 			*reinterpret_cast<Vector2 *>(_data._mem) = *reinterpret_cast<const Vector2 *>(p_var._data._mem);
@@ -475,6 +486,10 @@ Variant::operator double() const {
 
 Variant::operator String() const {
 	return stringify();
+}
+
+Variant::operator VName() const {
+	return VName(stringify());
 }
 
 Variant::operator Vector2() const {
@@ -839,6 +854,11 @@ Variant::Variant(double p_double) {
 Variant::Variant(const String &p_string) {
 	vnew_placement(_data._mem, String(p_string));
 	type = STRING;
+}
+
+Variant::Variant(const VName &p_name) {
+	vnew_placement(_data._mem, VName(p_name));
+	type = STRING_NAME;
 }
 
 Variant::Variant(const char *const p_cstring) {

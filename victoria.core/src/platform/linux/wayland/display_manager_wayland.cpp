@@ -564,7 +564,7 @@ void DisplayManagerWayland::_on_xdg_toplevel_configure(void *p_data,
 	if (wd->maximised) {
 		can_cache = false;
 		wd->is_size_dirty = true;
-	// Update the size if they're not equal
+		// Update the size if they're not equal
 	} else if (wd->cached_size != wd->size) {
 		restore_window = true;
 	}
@@ -649,7 +649,7 @@ DisplayManager *DisplayManagerWayland::create_func(const String &p_renderer, con
 
 void DisplayManagerWayland::register_wayland_driver() {
 	_create_funcs[create_func_count].func = create_func;
-	_create_funcs[create_func_count].name = String("wayland");
+	_create_funcs[create_func_count].name = "wayland";
 	create_func_count++;
 }
 

@@ -729,7 +729,7 @@ DisplayManagerX11::DisplayManagerX11(const String &p_renderer, const Vector2i &p
 
 void DisplayManagerX11::register_x11_driver() {
 	_create_funcs[create_func_count].func = create_func;
-	_create_funcs[create_func_count].name = String("x11");
+	_create_funcs[create_func_count].name = "x11";
 	create_func_count++;
 }
 

@@ -100,6 +100,9 @@ public:
 
 	void append(const String &p_string);
 
+	static uint32_t hash(const char *p_cstr);
+	uint32_t hash() const;
+
 	operator const char *() const {
 		return get_data();
 	}

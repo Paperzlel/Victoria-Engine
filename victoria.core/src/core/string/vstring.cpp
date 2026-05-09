@@ -1,5 +1,6 @@
 #include "core/string/vstring.h"
 
+#include "core/data/hashfuncs.h"
 #include "core/math/math_funcs.h"
 
 #include <stdarg.h>
@@ -506,6 +507,14 @@ void String::append(const String &p_string) {
 	for (int i = len; i < len + p_string.length(); i++) {
 		_data._ptr[i] = p_string[i - len];
 	}
+}
+
+uint32_t String::hash(const char *p_cstr) {
+	return hash_djb2((uint8_t *)p_cstr);
+}
+
+uint32_t String::hash() const {
+	return hash_djb2((uint8_t *)get_data());
 }
 
 /**

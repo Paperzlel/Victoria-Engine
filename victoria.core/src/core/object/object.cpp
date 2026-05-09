@@ -15,7 +15,7 @@ void Object::notification(int p_what, bool p_reversed) {
 	}
 }
 
-Error Object::connect_method(const String &p_name, const CallableMethod &p_method) {
+Error Object::connect_method(const VName &p_name, const CallableMethod &p_method) {
 	// Avoid crashes by inserting the method beforehand
 	if (callables.size() == 0 && ClassRegistry::has_signal(get_class_name(), p_name)) {
 		callables.insert(p_name, List<CallableMethod>());
@@ -31,7 +31,7 @@ Error Object::connect_method(const String &p_name, const CallableMethod &p_metho
 	return OK;
 }
 
-Error Object::emit_methodp(const String &p_name, const Variant **p_args, int p_argc) {
+Error Object::emit_methodp(const VName &p_name, const Variant **p_args, int p_argc) {
 	List<CallableMethod> *list = callables.get_ptr(p_name);
 	if (!list) {
 		return ERR_UNAVAILABLE;

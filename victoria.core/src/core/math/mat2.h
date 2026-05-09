@@ -18,7 +18,7 @@ public:
 	}
 
 	FORCE_INLINE void operator=(const Mat2 &p_other) {
-		Memory::vcopy_memory(data, (void *)p_other.data, sizeof(double) * 4);
+		Memory::vmemcpy(data, (void *)p_other.data, sizeof(double) * 4);
 	}
 
 	FORCE_INLINE Mat2 operator*(const Mat2 &p_other);

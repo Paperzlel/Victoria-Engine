@@ -20,7 +20,7 @@ protected:
 
 	struct DisplayManagerCreationStruct {
 		DisplayMangerCreationFunc func;
-		String name;
+		const char *name;
 	};
 
 	static const int MAX_CREATE_FUNCS = 4;
@@ -45,7 +45,7 @@ public:
 
 	static DisplayManager *create(int p_func_idx, const String &p_renderer, const Vector2i &p_size, Error *r_error);
 	static int get_creation_func_count();
-	static const String &get_creation_func_name(int p_id);
+	static const char *get_creation_func_name(int p_id);
 
 	static void _notification_callback(WindowNotification notification, uint8_t window_id);
 
