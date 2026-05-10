@@ -69,6 +69,19 @@ void memcpy_arr_placement(T *p_dest, const T *p_src, size_t p_elements) {
 	}
 }
 
+struct DefaultNil {
+	int color = 1;
+	DefaultNil *left = nullptr;
+	DefaultNil *right = nullptr;
+	DefaultNil *parent = nullptr;
+
+	DefaultNil();
+};
+
+struct DefaultNilClass {
+	VAPI static DefaultNil _nil;
+};
+
 template <typename T>
 class DefaultTypedAllocator {
 public:

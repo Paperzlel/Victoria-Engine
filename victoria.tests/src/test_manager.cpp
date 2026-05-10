@@ -4,14 +4,16 @@
 
 #include "core/data/test_hashtable.h"
 #include "core/data/test_list.h"
+#include "core/data/test_rb_map.h"
+#include "core/data/test_rb_set.h"
 #include "core/data/test_vector.h"
-#include "core/data/vector.h"
 #include "core/math/test_mat4.h"
 #include "core/math/test_quaternion.h"
 #include "core/string/test_vname.h"
 #include "core/variant/test_array.h"
 #include "core/variant/test_variant.h"
 
+#include <core/data/vector.h>
 #include <core/register_core_types.h>
 
 struct Test {
@@ -42,6 +44,8 @@ void register_all_tests() {
 	vector_register_tests();
 	list_register_tests();
 	hashtable_register_tests();
+	rb_map_register_tests();
+	rb_set_register_tests();
 
 	mat4_register_tests();
 	quaternion_register_tests();

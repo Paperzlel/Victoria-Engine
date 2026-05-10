@@ -95,3 +95,11 @@ void operator delete(void *p_mem, const char *p_description) {
 	CRASH_NOW_MSG("Calling to our delete override is forbidden, these are here to silence MSVC warnings.");
 }
 #endif
+
+DefaultNil::DefaultNil() {
+	left = this;
+	right = this;
+	parent = this;
+}
+
+DefaultNil DefaultNilClass::_nil;

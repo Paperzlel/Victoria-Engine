@@ -7,8 +7,7 @@
 
 /**
  * @brief Class for every key type on a keyboard. This includes an entire ASCII character set, which some keys may be
- * bound to. Non-Latin keyboards
- *
+ * bound to.
  */
 enum class Key {
 	NONE = 0x00,

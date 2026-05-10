@@ -1,7 +1,5 @@
 #pragma once
 
-#include "key_value.h"
-
 #include "core/error/error_macros.h"
 #include "core/os/memory.h"
 #include "core/typedefs.h"
@@ -10,8 +8,8 @@
  * Implementation of a RB Map (see https://en.wikipedia.org/wiki/Red%E2%80%93black_tree)
  */
 
-template <typename K, typename V>
-class RBMap {
+template <typename T>
+class RBSet {
 	enum Colour {
 		RED,
 		BLACK
@@ -20,21 +18,21 @@ class RBMap {
 public:
 	class Element {
 	private:
-		friend class RBMap<K, V>;
+		friend class RBSet<T>;
 		int colour = RED;
 		Element *left = nullptr;
 		Element *right = nullptr;
 		Element *parent = nullptr;
 		Element *_next = nullptr;
 		Element *_prev = nullptr;
-		KeyValue<K, V> _data;
+		T _data;
 
 	public:
-		KeyValue<K, V> &key_value() {
+		T &get() {
 			return _data;
 		}
 
-		const KeyValue<K, V> &key_value() const {
+		const T &get() const {
 			return _data;
 		}
 
@@ -54,30 +52,18 @@ public:
 			return _prev;
 		}
 
-		const K &key() const {
-			return _data.key;
-		}
-
-		V &value() {
-			return _data.value;
-		}
-
-		const V &value() const {
-			return _data.value;
-		}
-
-		FORCE_INLINE Element(const KeyValue<K, V> &p_kv) :
-			_data(p_kv) {}
+		FORCE_INLINE Element(const T &p_value) :
+			_data(p_value) {}
 	};
 
 	struct Iterator {
-		friend class RBMap<K, V>;
+		friend class RBSet<T>;
 
-		FORCE_INLINE KeyValue<K, V> &operator*() const {
-			return e->key_value();
+		FORCE_INLINE T &operator*() const {
+			return e->get();
 		}
-		FORCE_INLINE KeyValue<K, V> *operator->() const {
-			return &e->key_value();
+		FORCE_INLINE T *operator->() const {
+			return &e->get();
 		}
 
 		FORCE_INLINE Iterator &operator++() {
@@ -127,13 +113,14 @@ public:
 	}
 
 	struct ConstIterator {
-		friend class RBMap<K, V>;
+		friend class RBSet<T>;
 
-		FORCE_INLINE const KeyValue<K, V> &operator*() const {
-			return e->key_value();
+		FORCE_INLINE const T &operator*() const {
+			e->get();
 		}
-		FORCE_INLINE const KeyValue<K, V> *operator->() const {
-			return &e->key_value();
+
+		FORCE_INLINE const T *operator->() const {
+			&e->get();
 		}
 
 		FORCE_INLINE ConstIterator &operator++() {
@@ -149,25 +136,18 @@ public:
 		FORCE_INLINE bool operator==(const ConstIterator &p_other) const {
 			return e == p_other.e;
 		}
+
 		FORCE_INLINE bool operator!=(const ConstIterator &p_other) const {
 			return e != p_other.e;
 		}
 
-		explicit operator bool() const {
-			return e != nullptr;
-		}
-
-		Iterator &operator=(const ConstIterator &p_iter) {
-			e = p_iter.e;
-			return *this;
-		}
-
-		ConstIterator(Element *p_e) {
+		ConstIterator(const Element *p_e) {
 			e = p_e;
 		}
+
 		ConstIterator() {}
-		ConstIterator(const ConstIterator &p_iter) {
-			e = p_iter.e;
+		ConstIterator(const ConstIterator &p_other) {
+			e = p_other.e;
 		}
 
 	private:
@@ -190,7 +170,7 @@ private:
 	uint32_t element_count = 0;
 
 	void _create_root() {
-		_root = vnew(Element(KeyValue<K, V>(K(), V())));
+		_root = vnew(Element(T()));
 		_root->parent = _root->left = _root->right = _nil;
 		_root->colour = BLACK;
 	}
@@ -200,6 +180,14 @@ private:
 			vdelete(_root);
 			_root = nullptr;
 		}
+	}
+
+	void _create_nil() {
+		_nil = (Element *)&DefaultNilClass::_nil;
+	}
+
+	void _delete_nil() {
+		// vdelete(_nil);
 	}
 
 	inline Element *_successor(Element *p_node) {
@@ -350,28 +338,28 @@ private:
 		_root->left->colour = BLACK;
 	}
 
-	void _insert(const K &p_key, const V &p_value) {
+	void _insert(const T &p_value) {
 		Element *parent = _root;
 		Element *node = _root->left;
 
 		while (node != _nil) {
 			parent = node;
-			if (p_key > node->key()) {
+			if (p_value > node->get()) {
 				node = node->right;
-			} else if (p_key < parent->key()) {
+			} else if (p_value < parent->get()) {
 				node = node->left;
 			} else {
-				node->_data.value = p_value; // Override the currently held value
+				node->_data = p_value; // Override the currently held value
 				return;
 			}
 		}
 
-		Element *new_node = vnew(Element(KeyValue<K, V>(p_key, p_value)));
+		Element *new_node = vnew(Element(T(p_value)));
 		new_node->parent = parent;
 		new_node->left = _nil;
 		new_node->right = _nil;
 
-		if (parent == _root || p_key < parent->_data.key) {
+		if (parent == _root || p_value < parent->_data) {
 			parent->left = new_node;
 		} else {
 			parent->right = new_node;
@@ -512,13 +500,13 @@ private:
 		ERR_FAIL_COND(_nil->colour != BLACK);
 	}
 
-	Element *_find(const K &p_key) const {
+	Element *_find(const T &p_value) const {
 		Element *node = _root->left;
 
 		while (node != _nil) {
-			if (p_key > node->key()) {
+			if (p_value > node->get()) {
 				node = node->right;
-			} else if (p_key < node->key()) {
+			} else if (p_value < node->get()) {
 				node = node->left;
 			} else {
 				return node;
@@ -546,28 +534,28 @@ public:
 		return element_count == 0;
 	}
 
-	FORCE_INLINE Element *find(const K &p_key) const {
+	FORCE_INLINE Element *find(const T &p_value) const {
 		if (!_root) {
 			return nullptr;
 		}
 
-		return _find(p_key);
+		return _find(p_value);
 	}
 
-	FORCE_INLINE void insert(const K &p_key, const V &p_value) {
+	FORCE_INLINE void insert(const T &p_value) {
 		if (!_root) {
 			_create_root();
 		}
 
-		_insert(p_key, p_value);
+		_insert(p_value);
 	}
 
-	FORCE_INLINE bool erase(const K &p_key) {
+	FORCE_INLINE bool erase(const T &p_value) {
 		if (!_root) {
 			return false;
 		}
 
-		Element *e = _find(p_key);
+		Element *e = _find(p_value);
 		if (e == nullptr) {
 			return false; // Invalid key
 		}
@@ -584,18 +572,6 @@ public:
 		_cleanup_node(_root);
 		_root = nullptr;
 		element_count = 0;
-	}
-
-	V &operator[](const K &p_key) {
-		Element *e = _find(p_key);
-		CRASH_COND_MSG(e == _nil, "RBMap key did not exist.");
-		return e->_data.value;
-	}
-
-	const V &operator[](const K &p_key) const {
-		Element *e = _find(p_key);
-		CRASH_COND_MSG(e == _nil, "RBMap key did not exist.");
-		return e->_data.value;
 	}
 
 	Element *front() const {
@@ -632,18 +608,18 @@ public:
 		return e;
 	}
 
-	void operator=(const RBMap &p_other) {
+	void operator=(const RBSet &p_other) {
 		if (this == &p_other) {
 			return;
 		}
 
 		clear();
-		for (const KeyValue<K, V> &kv : p_other) {
-			insert(kv.key, kv.value);
+		for (Element *e = p_other.front(); e; e = e->next()) {
+			insert(e->get());
 		}
 	}
 
-	void operator=(RBMap &&p_other) {
+	void operator=(RBSet &&p_other) {
 		if (this == &p_other) {
 			return;
 		}
@@ -652,17 +628,17 @@ public:
 		SWAP(element_count, p_other.element_count);
 	}
 
-	explicit RBMap(const RBMap &p_other) {
-		_nil = (Element *)&DefaultNilClass::_nil;
+	explicit RBSet(const RBSet &p_other) {
+		_create_nil();
+		clear();
 
-		for (const KeyValue<K, V> &kv : p_other) {
-			insert(kv.key, kv.value);
+		for (Element *e = p_other.front(); e; e = e->next()) {
+			insert(e->get());
 		}
 	}
 
-	RBMap(RBMap &&p_other) {
-		_nil = (Element *)&DefaultNilClass::_nil;
-
+	RBSet(RBSet &&p_other) {
+		_create_nil();
 		_root = p_other._root;
 		element_count = p_other.element_count;
 
@@ -670,19 +646,19 @@ public:
 		p_other.element_count = 0;
 	}
 
-	RBMap(std::initializer_list<KeyValue<K, V>> p_list) {
-		_nil = (Element *)&DefaultNilClass::_nil;
-
-		for (const KeyValue<K, V> &kv : p_list) {
-			insert(kv.key, kv.value);
+	RBSet(std::initializer_list<T> p_list) {
+		_create_nil();
+		for (const T &e : p_list) {
+			insert(e);
 		}
 	}
 
-	FORCE_INLINE RBMap() {
-		_nil = (Element *)&DefaultNilClass::_nil;
+	RBSet() {
+		_create_nil();
 	}
 
-	FORCE_INLINE ~RBMap() {
+	FORCE_INLINE ~RBSet() {
 		clear();
+		_delete_nil();
 	}
 };
