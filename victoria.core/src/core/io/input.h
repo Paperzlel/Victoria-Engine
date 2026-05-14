@@ -1,5 +1,6 @@
 #pragma once
 
+#include "core/data/rb_set.h"
 #include "core/math/vector2i.h"
 #include "core/object/ref_counted.h"
 #include "core/typedefs.h"
@@ -249,12 +250,19 @@ public:
  * @brief Input singleton class.
  */
 class VAPI Input {
-	Vector<Key> pressed_keys;
+	RBSet<Key> pressed_keys;
 
 	Mouse current_mouse;
 	Mouse previous_mouse;
 
 	Vector2i relative_mouse_pos;
+
+	struct ActionCache {
+		uint64_t engine_frame = 0;
+		bool pressed = false;
+	};
+
+	HashTable<VName, ActionCache> action_cache;
 
 	static Input *singleton;
 

@@ -16,7 +16,7 @@ Input *Input::get_singleton() {
  * @brief Checks if the given key is currently being held down by the user.
  */
 bool Input::is_key_pressed(Key p_key) {
-	return pressed_keys.has(p_key);
+	return pressed_keys.find(p_key) != nullptr;
 }
 
 /**
@@ -24,14 +24,14 @@ bool Input::is_key_pressed(Key p_key) {
  * the user begins to hold down the key.
  */
 bool Input::is_key_just_pressed(Key p_key) {
-	return pressed_keys.has(p_key);
+	return pressed_keys.find(p_key) != nullptr;
 }
 
 /**
  * @brief Checks if the given key is not being held down by the user.
  */
 bool Input::is_key_released(Key p_key) {
-	return !pressed_keys.has(p_key);
+	return pressed_keys.find(p_key) == nullptr;
 }
 
 /**
@@ -39,7 +39,7 @@ bool Input::is_key_released(Key p_key) {
  * the user begins to hold down the key.
  */
 bool Input::is_key_just_released(Key p_key) {
-	return !pressed_keys.has(p_key);
+	return pressed_keys.find(p_key) == nullptr;
 }
 
 /**
@@ -101,19 +101,10 @@ void Input::parse_input_event(const Ref<InputEvent> &p_event) {
 	if (key_event.is_valid()) {
 		Key key = key_event->key;
 
-		if ((int)key >= 256) {
-			ERR_FAIL_MSG(vformat("Key code %i was too large", int(key)));
-		}
-
 		if (key_event->pressed) {
-			if (!pressed_keys.has(key)) {
-				pressed_keys.append(key);
-			}
+			pressed_keys.insert(key);
 		} else {
-			if (pressed_keys.has(key)) {
-				int idx = pressed_keys.find(key);
-				pressed_keys.remove_at(idx);
-			}
+			pressed_keys.erase(key);
 		}
 		// TODO: Re-add left/right command key options. Could be encoded in the uppermost bit of a key event.
 	}

@@ -1,6 +1,7 @@
 #include "core.h"
 
 #include "core/io/input.h"
+#include "core/io/input_map.h"
 #include "core/io/resource_importer.h"
 #include "core/object/command_queue.h"
 #include "core/os/display_manager.h"
@@ -11,6 +12,7 @@
 #include "core/version.h"
 
 static Input *inputs = nullptr;
+static InputMap *input_map = nullptr;
 static ResourceImporter *resource_importer = nullptr;
 static DisplayManager *display_manager = nullptr;
 static GlobalCommandQueue *command_queue = nullptr;
@@ -142,6 +144,7 @@ Error core_initialize(int argc, char *argv[]) {
 	OS::get_singleton()->print(version_str.get_data());
 
 	// Initialize basic singletons
+	input_map = vnew(InputMap);
 	inputs = vnew(Input);
 	resource_importer = vnew(ResourceImporter);
 
@@ -150,6 +153,9 @@ Error core_initialize(int argc, char *argv[]) {
 	} else {
 		command_queue = vnew(GlobalCommandQueue);
 	}
+
+	// Call initialization for input
+	input_map->load_default_actions();
 
 	// Set backend to OpenGL native if none is found
 	if (rendering_backend.is_empty()) {
@@ -189,6 +195,7 @@ void core_finalize() {
 		vdelete(command_queue);
 	}
 
+	vdelete(input_map);
 	vdelete(inputs);
 	vdelete(resource_importer);
 	vdelete(display_manager);
