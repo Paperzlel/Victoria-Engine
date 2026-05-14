@@ -5,7 +5,7 @@
 #	include "wgl_detect_version.h"
 
 #	include "core/object/callable_method_pointer.h"
-#	include "core/io/input.h"
+#	include "core/input/input.h"
 
 void DisplayManagerWindows::finalize() {
 	if (gl_manager_windows) {

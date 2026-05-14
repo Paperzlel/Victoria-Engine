@@ -8,7 +8,7 @@
 #include "scene/main/scene_tree.h"
 #include "scene/register_scene_classes.h"
 
-#include <core/io/input.h>
+#include <core/input/input.h>
 #include <core/io/resource_importer.h>
 #include <core/os/display_manager.h>
 #include <core/os/os.h>

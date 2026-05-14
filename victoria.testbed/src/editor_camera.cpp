@@ -1,6 +1,6 @@
 #include "editor_camera.h"
 
-#include <core/io/input.h>
+#include <core/input/input.h>
 #include <core/os/display_manager.h>
 #include <core/os/os.h>
 

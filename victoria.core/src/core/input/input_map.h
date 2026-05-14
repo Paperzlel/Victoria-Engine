@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/io/input.h"
+#include "core/input/input_event.h"
 #include "core/string/vname.h"
 #include "core/typedefs.h"
 

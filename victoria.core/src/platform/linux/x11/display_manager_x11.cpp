@@ -1,6 +1,7 @@
 #include "display_manager_x11.h"
 #if defined(PLATFORM_LINUX) && defined(X11_ENABLED)
 
+#	include "core/input/input.h"
 #	include "core/os/os.h"
 
 #	include <stdlib.h>

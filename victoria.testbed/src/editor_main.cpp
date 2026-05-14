@@ -1,6 +1,6 @@
 #include "editor_main.h"
 
-#include <core/io/input.h>
+#include <core/input/input.h>
 #include <core/io/resource_importer.h>
 #include <core/os/os.h>
 #include <core/string/print_string.h>

@@ -12,8 +12,9 @@
 #	include "protocols/pointer_warp.gen.h"
 #	include "protocols/relative_pointer.gen.h"
 
+#	include "core/data/hashtable.h"
+#	include "core/input/keyboard.h"
 #	include "core/os/display_manager.h"
-#	include "core/io/input.h"
 
 #	include <wayland-client-core.h>
 #	include <wayland-egl-core.h>
@@ -63,7 +64,7 @@ private:
 		Vector2i relative_position;
 		uint32_t relative_motion_time;
 
-		bool button_pressed[MOUSE_MAX];
+		bool button_pressed[3];
 
 		uint32_t axis_source;
 		Vector2i scroll_vector;

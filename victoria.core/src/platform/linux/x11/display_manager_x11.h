@@ -6,7 +6,7 @@
 #	include "gl_manager_egl_x11.h"
 #	include "gl_manager_x11.h"
 
-#	include "core/io/input.h"
+#	include "core/input/keyboard.h"
 #	include "core/os/display_manager.h"
 
 #	include <X11/Xlib.h>

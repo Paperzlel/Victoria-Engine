@@ -1,6 +1,6 @@
 #include "rendering/opengl/rendering_manager_gl.h"
 
-#include <core/io/input.h>
+#include <core/input/input.h>
 #include <core/math/mat4.h>
 #include <core/math/math_funcs.h>
 #include <core/math/transform_3d.h>

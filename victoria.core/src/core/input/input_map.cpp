@@ -1,4 +1,4 @@
-#include "core/io/input_map.h"
+#include "core/input/input_map.h"
 
 InputMap *InputMap::singleton = nullptr;
 

@@ -1,7 +1,6 @@
-#include "core/io/input.h"
+#include "core/input/input.h"
 
 #include "core/error/error_macros.h"
-#include "core/os/memory.h"
 
 Input *Input::singleton = nullptr;
 
@@ -10,6 +9,19 @@ Input *Input::singleton = nullptr;
  */
 Input *Input::get_singleton() {
 	return singleton;
+}
+
+uint8_t Input::_get_mask_from_button(MouseButton p_button) {
+	switch (p_button) {
+		case MOUSE_LBUTTON:
+			return MBM_LEFT;
+		case MOUSE_RBUTTON:
+			return MBM_RIGHT;
+		case MOUSE_MBUTTON:
+			return MBM_MIDDLE;
+		default:
+			return 0;
+	}
 }
 
 /**
@@ -47,7 +59,7 @@ bool Input::is_key_just_released(Key p_key) {
  */
 bool Input::is_mouse_button_pressed(MouseButton p_button) {
 	ERR_FAIL_COND_MSG_R((int)p_button >= 4, "Mouse button given was too large.", false);
-	return current_mouse.buttons[p_button] == true;
+	return mouse_info.button_mask & _get_mask_from_button(p_button);
 }
 
 /**
@@ -56,7 +68,7 @@ bool Input::is_mouse_button_pressed(MouseButton p_button) {
  */
 bool Input::is_mouse_button_just_pressed(MouseButton p_button) {
 	ERR_FAIL_COND_MSG_R((int)p_button >= 4, "Mouse button given was too large.", false);
-	return current_mouse.buttons[p_button] == true && previous_mouse.buttons[p_button] == false;
+	return mouse_info.button_mask & _get_mask_from_button(p_button);
 }
 
 /**
@@ -64,7 +76,7 @@ bool Input::is_mouse_button_just_pressed(MouseButton p_button) {
  */
 bool Input::is_mouse_button_released(MouseButton p_button) {
 	ERR_FAIL_COND_MSG_R((int)p_button >= 4, "Mouse button given was too large.", false);
-	return current_mouse.buttons[p_button] == false;
+	return (mouse_info.button_mask & _get_mask_from_button(p_button)) == 0;
 }
 
 /**
@@ -73,7 +85,7 @@ bool Input::is_mouse_button_released(MouseButton p_button) {
  */
 bool Input::is_mouse_button_just_released(MouseButton p_button) {
 	ERR_FAIL_COND_MSG_R((int)p_button >= 4, "Mouse button given was too large.", false);
-	return current_mouse.buttons[p_button] == false && previous_mouse.buttons[p_button] == true;
+	return (mouse_info.button_mask & _get_mask_from_button(p_button)) == 0;
 }
 
 /**
@@ -82,7 +94,7 @@ bool Input::is_mouse_button_just_released(MouseButton p_button) {
  * cursor is captured or not.
  */
 Vector2i Input::get_mouse_motion() {
-	return relative_mouse_pos;
+	return mouse_info.relative_position;
 }
 
 Vector2 Input::get_vector(Key p_left, Key p_right, Key p_up, Key p_down) {
@@ -117,26 +129,30 @@ void Input::parse_input_event(const Ref<InputEvent> &p_event) {
 			ERR_FAIL_MSG(vformat("Mouse button %i was too large", int(mb)));
 		}
 
-		current_mouse.buttons[mb] = mouse_button_event->pressed;
+		uint8_t mask = _get_mask_from_button(mouse_button_event->mb);
+		if (mouse_button_event->pressed) {
+			mouse_info.button_mask |= mask;
+		} else {
+			mouse_info.button_mask &= ~mask;
+		}
 	}
 
 	Ref<InputEventMouseMotion> mouse_motion_event = p_event;
 
 	if (mouse_motion_event.is_valid()) {
-		current_mouse.position = mouse_motion_event->absolute;
-		relative_mouse_pos = mouse_motion_event->relative;
+		mouse_info.position = mouse_motion_event->absolute;
+		mouse_info.relative_position = mouse_motion_event->relative;
 	}
 
 	Ref<InputEventMouseScroll> mouse_scroll_event = p_event;
 
 	if (mouse_scroll_event.is_valid()) {
-		current_mouse.scroll = mouse_scroll_event->scroll;
+		mouse_info.scroll = mouse_scroll_event->scroll;
 	}
 }
 
 void Input::clear() {
 	pressed_keys.clear();
-	Memory::vzero(&current_mouse, sizeof(Mouse));
 }
 
 /**
@@ -144,9 +160,7 @@ void Input::clear() {
  * when the key processing has occured any events that rely on a difference in keypresses can be detected.
  */
 void Input::update() {
-	pressed_keys.clear();
-	Memory::vmemcpy(&previous_mouse, &current_mouse, sizeof(Mouse));
-	relative_mouse_pos = Vector2i::zero();
+	mouse_info.relative_position = Vector2i::zero();
 }
 
 /**
@@ -154,7 +168,4 @@ void Input::update() {
  */
 Input::Input() {
 	singleton = this;
-	// Zero out the two keyboards and the mouse
-	Memory::vzero(&current_mouse, sizeof(Mouse));
-	Memory::vzero(&previous_mouse, sizeof(Mouse));
 }

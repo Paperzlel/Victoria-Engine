@@ -4,7 +4,7 @@
 #	include "keyboard_remapping.h"
 
 #	include "core/error/error_macros.h"
-#	include "core/io/input.h"
+#	include "core/input/input.h"
 #	include "core/os/memory.h"
 #	include "core/os/os.h"
 #	include "core/string/print_string.h"

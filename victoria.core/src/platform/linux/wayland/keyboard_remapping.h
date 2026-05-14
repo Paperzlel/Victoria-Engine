@@ -1,7 +1,7 @@
 #pragma once
 
 #include "core/data/hashtable.h"
-#include "core/io/input.h"
+#include "core/input/keyboard.h"
 #include "core/typedefs.h"
 
 #include <xkbcommon/xkbcommon.h>

@@ -1,7 +1,7 @@
 #include "core.h"
 
-#include "core/io/input.h"
-#include "core/io/input_map.h"
+#include "core/input/input.h"
+#include "core/input/input_map.h"
 #include "core/io/resource_importer.h"
 #include "core/object/command_queue.h"
 #include "core/os/display_manager.h"
