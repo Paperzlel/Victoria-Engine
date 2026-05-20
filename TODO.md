@@ -107,7 +107,8 @@ A list of all things that are on the current plan for the engine, whether short-
 - [ ] Add resizing options to text
 
 ## Tests
-- [ ] Add tests for `RBMaps`, `RIDs` and `RIDOwners`.
+- [x] Add tests for `RBMaps`.
+- [ ] Add tests for `RIDs` and `RIDOwners`.
 - [ ] Add tests for all `VectorN` and `VectorNi` classes.
 - [ ] Add tests for `Transform2D` and `Transform3D`.
 - [x] Improve tests for `HashTable`.

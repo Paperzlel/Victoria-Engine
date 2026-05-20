@@ -10,49 +10,59 @@ class VAPI InputEvent : public RefCounted {
 public:
 	bool pressed = false;
 
+	virtual bool action_is_equal(const Ref<InputEvent> &p_other) const;
+
 	InputEvent() {}
 };
 
-class InputEventKey : public InputEvent {
+class VAPI InputEventKey : public InputEvent {
 	VREGISTER_CLASS(InputEventKey, InputEvent);
 
 public:
 	Key key;
 
+	virtual bool action_is_equal(const Ref<InputEvent> &p_other) const override;
+
 	InputEventKey() {}
 };
 
-class InputEventMouse : public InputEvent {
+class VAPI InputEventMouse : public InputEvent {
 	VREGISTER_CLASS(InputEventMouse, InputEvent);
 
 public:
 	InputEventMouse() {}
 };
 
-class InputEventMouseButton : public InputEventMouse {
+class VAPI InputEventMouseButton : public InputEventMouse {
 	VREGISTER_CLASS(InputEventMouseButton, InputEventMouse);
 
 public:
-	MouseButton mb;
+	InputEnums::MouseButton button;
+
+	virtual bool action_is_equal(const Ref<InputEvent> &p_other) const override;
 
 	InputEventMouseButton() {}
 };
 
-class InputEventMouseMotion : public InputEventMouse {
+class VAPI InputEventMouseMotion : public InputEventMouse {
 	VREGISTER_CLASS(InputEventMouseMotion, InputEventMouse);
 
 public:
 	Vector2i absolute;
 	Vector2i relative;
 
+	virtual bool action_is_equal(const Ref<InputEvent> &p_other) const override;
+
 	InputEventMouseMotion() {}
 };
 
-class InputEventMouseScroll : public InputEventMouse {
+class VAPI InputEventMouseScroll : public InputEventMouse {
 	VREGISTER_CLASS(InputEventMouseScroll, InputEventMouse);
 
 public:
 	int8_t scroll;
+
+	virtual bool action_is_equal(const Ref<InputEvent> &p_other) const override;
 
 	InputEventMouseScroll() {}
 };

@@ -292,19 +292,19 @@ LRESULT DisplayManagerWindows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 
 			// TODO: double-clicks
 
-			MouseButton button = MOUSE_MAX;
+			InputEnums::MouseButton button = InputEnums::MOUSE_MAX;
 			switch (uMsg) {
 				case WM_LBUTTONDOWN:
 				case WM_LBUTTONUP:
-					button = MOUSE_LBUTTON;
+					button = InputEnums::MOUSE_LBUTTON;
 					break;
 				case WM_RBUTTONDOWN:
 				case WM_RBUTTONUP:
-					button = MOUSE_RBUTTON;
+					button = InputEnums::MOUSE_RBUTTON;
 					break;
 				case WM_MBUTTONDOWN:
 				case WM_MBUTTONUP:
-					button = MOUSE_MBUTTON;
+					button = InputEnums::MOUSE_MBUTTON;
 					break;
 				default:
 					break;
@@ -314,7 +314,7 @@ LRESULT DisplayManagerWindows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			mb.instantiate();
 
 			mb->pressed = is_pressed;
-			mb->mb = button;
+			mb->button = button;
 
 			Input::get_singleton()->parse_input_event(mb);
 			return 0;

@@ -324,11 +324,19 @@ public:
 			return e != p_other.e;
 		}
 
+		FORCE_INLINE explicit operator bool() const {
+			return e != nullptr;
+		}
+
 		ConstIterator(const HashTableElement<TKey, TValue> *p_E) {
 			e = p_E;
 		}
 		ConstIterator() {}
 		ConstIterator(const ConstIterator &p_iter) {
+			e = p_iter.e;
+		}
+
+		void operator=(const ConstIterator &p_iter) {
 			e = p_iter.e;
 		}
 
@@ -351,6 +359,7 @@ public:
 		FORCE_INLINE KeyValue<TKey, TValue> &operator*() const {
 			return e->data;
 		}
+
 		FORCE_INLINE KeyValue<TKey, TValue> *operator->() const {
 			return &e->data;
 		}
@@ -369,6 +378,10 @@ public:
 			return *this;
 		}
 
+		FORCE_INLINE explicit operator bool() const {
+			return e != nullptr;
+		}
+
 		FORCE_INLINE bool operator==(const Iterator &p_other) const {
 			return e == p_other.e;
 		}
@@ -382,6 +395,14 @@ public:
 		Iterator() {}
 		Iterator(const Iterator &p_iter) {
 			e = p_iter.e;
+		}
+
+		FORCE_INLINE void operator=(const Iterator &p_iter) {
+			e = p_iter.e;
+		}
+
+		operator ConstIterator() const {
+			return ConstIterator(e);
 		}
 
 	private:
@@ -511,6 +532,40 @@ public:
 		uint32_t h = _hash(p_key);
 		uint32_t tmp;
 		return _find_hashed_index(p_key, h, tmp);
+	}
+
+	/**
+	 * @brief Looks for if the given item exists in the `HashTable`. Ideal for cases where a value needs to be obtained
+	 * in a way that `get()` would otherwise crash in.
+	 * @param p_key The key to look for data for.
+	 * @return An `Iterator` structure with the given information inside.
+	 */
+	FORCE_INLINE Iterator find(const TKey &p_key) {
+		uint32_t h = _hash(p_key);
+		uint32_t idx = 0;
+		bool exists = _find_hashed_index(p_key, h, idx);
+		if (exists) {
+			return Iterator(hashed_data[idx]);
+		}
+
+		return Iterator();
+	}
+
+	/**
+	 * @brief Looks for if the given item exists in the `HashTable`. Ideal for cases where a value needs to be obtained
+	 * in a way that `get()` would otherwise crash in.
+	 * @param p_key The key to look for corresponding data in.
+	 * @return An `ConstIterator` structure with the given information inside.
+	 */
+	FORCE_INLINE ConstIterator find(const TKey &p_key) const {
+		uint32_t h = _hash(p_key);
+		uint32_t idx = 0;
+		bool exists = _find_hashed_index(p_key, h, idx);
+		if (exists) {
+			return ConstIterator(hashed_data[idx]);
+		}
+
+		return ConstIterator();
 	}
 
 	/**

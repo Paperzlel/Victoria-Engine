@@ -16,6 +16,8 @@ class VAPI InputMap {
 	int total_ids = 0;
 
 public:
+	static InputMap *get_singleton();
+
 	bool add_action(const VName &p_action_name);
 	void erase_action(const VName &p_action_name);
 	bool has_action(const VName &p_action_name) const;
@@ -24,6 +26,7 @@ public:
 	void clear_action_events(const VName &p_action_name);
 
 	List<Ref<InputEvent>> *get_action_events(const VName &p_action_name);
+	List<VName> get_actions_for_event(const Ref<InputEvent> &p_event);
 
 	void load_default_actions();
 

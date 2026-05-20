@@ -2,6 +2,10 @@
 
 InputMap *InputMap::singleton = nullptr;
 
+InputMap *InputMap::get_singleton() {
+	return singleton;
+}
+
 bool InputMap::add_action(const VName &p_action_name) {
 	ERR_FAIL_COND_MSG_R(action_map.has(p_action_name), "Input action already exists.", false);
 
@@ -44,19 +48,33 @@ List<Ref<InputEvent>> *InputMap::get_action_events(const VName &p_action_name) {
 	return &action_map[p_action_name].events;
 }
 
+List<VName> InputMap::get_actions_for_event(const Ref<InputEvent> &p_event) {
+	List<VName> ret;
+
+	for (const KeyValue<VName, Action> &e : action_map) {
+		for (Ref<InputEvent> event : e.value.events) {
+			if (p_event->action_is_equal(event)) {
+				ret.push_back(e.key);
+			}
+		}
+	}
+
+	return ret;
+}
+
 void InputMap::load_default_actions() {
 	// Loads the default input values that are used by core. Other input systems should register their own alongside
 	// these.
-	add_action("ENGINE_debug_0");
-	add_action("ENGINE_debug_1");
-	add_action("ENGINE_debug_2");
-	add_action("ENGINE_debug_3");
-	add_action("ENGINE_debug_4");
-	add_action("ENGINE_debug_5");
-	add_action("ENGINE_debug_6");
-	add_action("ENGINE_debug_7");
-	add_action("ENGINE_debug_8");
-	add_action("ENGINE_debug_9");
+	add_action("DEBUG_0");
+	add_action("DEBUG_1");
+	add_action("DEBUG_2");
+	add_action("DEBUG_3");
+	add_action("DEBUG_4");
+	add_action("DEBUG_5");
+	add_action("DEBUG_6");
+	add_action("DEBUG_7");
+	add_action("DEBUG_8");
+	add_action("DEBUG_9");
 }
 
 InputMap::InputMap() {

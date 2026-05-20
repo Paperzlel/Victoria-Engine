@@ -51,9 +51,6 @@ public:
 		Element *prev() {
 			return _prev;
 		}
-
-		FORCE_INLINE Element(const T &p_value) :
-			_data(p_value) {}
 	};
 
 	struct Iterator {
@@ -170,7 +167,7 @@ private:
 	uint32_t element_count = 0;
 
 	void _create_root() {
-		_root = vnew(Element(T()));
+		_root = vnew(Element());
 		_root->parent = _root->left = _root->right = _nil;
 		_root->colour = BLACK;
 	}
@@ -188,6 +185,11 @@ private:
 
 	void _delete_nil() {
 		// vdelete(_nil);
+	}
+
+	void _set_colour(Element *p_node, int p_colour) {
+		ERR_FAIL_COND(p_node == _nil && p_colour == RED);
+		p_node->colour = p_colour;
 	}
 
 	inline Element *_successor(Element *p_node) {
@@ -276,29 +278,20 @@ private:
 	}
 
 	void _insert_fix(Element *p_node) {
-		ERR_COND_NULL(p_node);
 		Element *node = p_node;
 		Element *parent = node->parent;
+		Element *grandparent = nullptr;
 
 		// Assume node A is red at this point
-
-		while (parent != _nil) {
-			if (parent->colour == BLACK) {
-				return;
-			}
-
-			Element *grandparent = parent->parent;
-			if (!grandparent) {
-				parent->colour = BLACK;
-				return;
-			}
+		while (parent->colour == RED) {
+			grandparent = parent->parent;
 
 			if (parent == grandparent->left) {
 				Element *uncle = grandparent->right;
 				if (uncle->colour == RED) {
-					parent->colour = BLACK;
-					uncle->colour = BLACK;
-					grandparent->colour = RED;
+					_set_colour(parent, BLACK);
+					_set_colour(uncle, BLACK);
+					_set_colour(grandparent, RED);
 
 					node = grandparent;
 					parent = node->parent;
@@ -309,16 +302,16 @@ private:
 						parent = node->parent;
 					}
 
-					parent->colour = BLACK;
-					grandparent->colour = RED;
-					_rotate_right(parent);
+					_set_colour(parent, BLACK);
+					_set_colour(grandparent, RED);
+					_rotate_right(grandparent);
 				}
 			} else {
 				Element *uncle = grandparent->left;
 				if (uncle->colour == RED) {
-					parent->colour = BLACK;
-					uncle->colour = BLACK;
-					grandparent->colour = RED;
+					_set_colour(parent, BLACK);
+					_set_colour(uncle, BLACK);
+					_set_colour(grandparent, RED);
 					node = grandparent;
 					parent = node->parent;
 				} else {
@@ -328,14 +321,14 @@ private:
 						parent = node->parent;
 					}
 
-					parent->colour = BLACK;
-					grandparent->colour = RED;
-					_rotate_left(parent);
+					_set_colour(parent, BLACK);
+					_set_colour(grandparent, RED);
+					_rotate_left(grandparent);
 				}
 			}
 		}
 
-		_root->left->colour = BLACK;
+		_set_colour(_root->left, BLACK);
 	}
 
 	void _insert(const T &p_value) {
@@ -349,15 +342,15 @@ private:
 			} else if (p_value < parent->get()) {
 				node = node->left;
 			} else {
-				node->_data = p_value; // Override the currently held value
 				return;
 			}
 		}
 
-		Element *new_node = vnew(Element(T(p_value)));
+		Element *new_node = vnew(Element);
 		new_node->parent = parent;
 		new_node->left = _nil;
 		new_node->right = _nil;
+		new_node->_data = p_value;
 
 		if (parent == _root || p_value < parent->_data) {
 			parent->left = new_node;
@@ -373,24 +366,23 @@ private:
 		if (new_node->_prev) {
 			new_node->_prev->_next = new_node;
 		}
-		_insert_fix(new_node);
 
 		element_count++;
+		_insert_fix(new_node);
 		ERR_FAIL_COND(_nil->colour != BLACK);
 	}
 
 	void _erase_fix(Element *p_node) {
 		// Once again stolen from Godot
-
-		ERR_COND_NULL(p_node);
+		Element *root = _root->left;
 		Element *node = _nil;
 		Element *parent = node->parent;
 		Element *sibling = p_node;
 
-		while (node != _root) {
+		while (node != root) {
 			if (sibling->colour == RED) {
-				sibling->colour = BLACK;
-				parent->colour = RED;
+				_set_colour(sibling, BLACK);
+				_set_colour(parent, RED);
 				if (sibling == parent->right) {
 					sibling = sibling->left;
 					_rotate_left(parent);
@@ -401,10 +393,10 @@ private:
 			}
 
 			if ((sibling->left->colour == BLACK) && (sibling->right->colour == BLACK)) {
-				sibling->colour = RED;
+				_set_colour(sibling, RED);
 
 				if (parent->colour == RED) {
-					parent->colour = BLACK;
+					_set_colour(parent, BLACK);
 					break;
 				} else {
 					node = parent;
@@ -414,28 +406,28 @@ private:
 			} else {
 				if (sibling == parent->right) {
 					if (sibling->right->colour == BLACK) {
-						sibling->left->colour = BLACK;
-						sibling->colour = RED;
+						_set_colour(sibling->left, BLACK);
+						_set_colour(sibling, RED);
 						_rotate_right(sibling);
 						sibling = sibling->parent;
 					}
 
-					sibling->colour = parent->colour;
-					parent->colour = BLACK;
-					sibling->right->colour = BLACK;
+					_set_colour(sibling, parent->colour);
+					_set_colour(parent, BLACK);
+					_set_colour(sibling->right, BLACK);
 					_rotate_left(parent);
 					break;
 				} else {
 					if (sibling->left->colour == BLACK) {
-						sibling->right->colour = BLACK;
-						sibling->colour = RED;
+						_set_colour(sibling->right, BLACK);
+						_set_colour(sibling, RED);
 						_rotate_left(sibling);
 						sibling = sibling->parent;
 					}
 
-					sibling->colour = parent->colour;
-					parent->colour = BLACK;
-					sibling->left->colour = BLACK;
+					_set_colour(sibling, parent->colour);
+					_set_colour(parent, BLACK);
+					_set_colour(sibling->left, BLACK);
 					_rotate_right(parent);
 					break;
 				}
@@ -460,7 +452,7 @@ private:
 
 		if (child->colour == RED) {
 			child->parent = replacement->parent;
-			child->colour = BLACK;
+			_set_colour(child, BLACK);
 		} else if (replacement->colour == BLACK && replacement != _root) {
 			_erase_fix(sibling);
 		}
@@ -471,7 +463,7 @@ private:
 			replacement->left = p_node->left;
 			replacement->right = p_node->right;
 			replacement->parent = p_node->parent;
-			replacement->colour = p_node->colour;
+			_set_colour(replacement, p_node->colour);
 
 			if (p_node->left != _nil) {
 				p_node->left->parent = replacement;
@@ -561,6 +553,10 @@ public:
 		}
 
 		_erase(e);
+		if (element_count == 0 && _root) {
+			_free_root();
+		}
+
 		return true;
 	}
 

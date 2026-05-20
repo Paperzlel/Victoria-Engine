@@ -97,7 +97,7 @@ static bool rb_set_test_list_get() {
 
 static bool rb_set_test_erase() {
 	RBSet<int> r{1, 2, 3, 4, 5};
-	TEST_EQ(r.erase(3), true);
+	TEST_EQ(r.erase(4), true);
 	TEST_EQ(r.size(), 4);
 	TEST_EQ(r.erase(10), false);
 	TEST_EQ(r.size(), 4);

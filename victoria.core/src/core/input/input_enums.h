@@ -2,11 +2,15 @@
 
 #include "core/typedefs.h"
 
-// Enum for each mouse button that the current API allows for calls to be made to
-enum MouseButton {
-	MOUSE_LBUTTON,
-	MOUSE_RBUTTON,
-	MOUSE_MBUTTON,
+namespace InputEnums {
 
-	MOUSE_MAX
-};
+	// Enum for each mouse button that the current API allows for calls to be made to
+	enum MouseButton {
+		MOUSE_LBUTTON,
+		MOUSE_RBUTTON,
+		MOUSE_MBUTTON,
+
+		MOUSE_MAX
+	};
+
+} // namespace InputEnums

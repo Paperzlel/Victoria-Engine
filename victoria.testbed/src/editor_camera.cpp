@@ -8,7 +8,7 @@ void EditorCamera::_update(double p_delta) {
 	if (Input::get_singleton()->is_key_pressed(Key::ESCAPE)) {
 		DisplayManager::get_singleton()->toggle_mouse_mode(false);
 	}
-	if (Input::get_singleton()->is_mouse_button_pressed(MOUSE_LBUTTON)) {
+	if (Input::get_singleton()->is_mouse_button_pressed(InputEnums::MOUSE_LBUTTON)) {
 		DisplayManager::get_singleton()->toggle_mouse_mode(true);
 	}
 

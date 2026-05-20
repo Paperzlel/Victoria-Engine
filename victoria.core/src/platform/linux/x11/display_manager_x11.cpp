@@ -301,22 +301,22 @@ void DisplayManagerX11::process_events() {
 					break;
 				}
 
-				MouseButton button = MOUSE_MAX;
+				InputEnums::MouseButton button = InputEnums::MOUSE_MAX;
 				switch (event.xbutton.button) {
 					case Button1:
-						button = MOUSE_LBUTTON;
+						button = InputEnums::MOUSE_LBUTTON;
 						break;
 					case Button2:
-						button = MOUSE_MBUTTON;
+						button = InputEnums::MOUSE_MBUTTON;
 						break;
 					case Button3:
-						button = MOUSE_RBUTTON;
+						button = InputEnums::MOUSE_RBUTTON;
 						break;
 				}
 
 				Ref<InputEventMouseButton> mb_event;
 				mb_event.instantiate();
-				mb_event->mb = button;
+				mb_event->button = button;
 				mb_event->pressed = is_pressed;
 
 				Input::get_singleton()->parse_input_event(mb_event);

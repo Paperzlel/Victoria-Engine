@@ -1,6 +1,23 @@
 # Changelog
 Changes exist in chronological order (i.e. new changes are to be appended to the end of the file). Dates are done in DD/MM/YYYY format with the version number applied to each date if needed.
 
+## 19/5/2026
+- Core:
+	- Data/Memory:
+		- Added new datatype `RBSet<T>`.
+			- Similar to `RBMap<K, V>` but with the difference being that the key is the value. Useful where a binary search tree would be otherwise applied.
+			- This is also the part whereby every new system _must_ have a test written for it if applicable, at least for templates and data structures. All other information will need unit tests later on.
+		- Added new global class `GlobalNil`. 
+			- For use in the `RB*` classes. Acts like a null node but actually has a proper pointer structure to prevent possible NULL dereferences. Will always point to itself.
+	- Input:
+		- Created a new class `InputMap`.
+			- `InputMap`s contain all of the information with regards to what input actions exist and what inputs in question they use. This allows engine debug events to be fired in applications, as well as the creation of inputs for end-user projects.
+		- Migrated all of the old `Input` code from its singular folder in `io/` into multiple files in `input/`.
+			- Code cleanliness. Makes editing classes much cleaner and (in theory) may reduce some compile units on update.
+		- Added the virtual function `action_is_equal` to `InputEvent`.
+			- Allows being overridden. Is used for comparing two `InputEvent` classes together in cases where comparing `Ref<InputEvent>`s is not possible.
+		- Added documentation to the `Input` class.
+
 ## 9/5/2026
 - Core:
 	- Added a new class `VName`.

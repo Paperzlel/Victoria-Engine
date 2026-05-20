@@ -298,13 +298,13 @@ void DisplayManagerWayland::_on_pointer_button(void *p_data,
 	bool pressed = p_state == WL_POINTER_BUTTON_STATE_PRESSED;
 	switch (p_button) {
 		case BTN_LEFT:
-			pd.button_pressed[MOUSE_LBUTTON] = pressed;
+			pd.button_pressed[InputEnums::MOUSE_LBUTTON] = pressed;
 			break;
 		case BTN_RIGHT:
-			pd.button_pressed[MOUSE_RBUTTON] = pressed;
+			pd.button_pressed[InputEnums::MOUSE_RBUTTON] = pressed;
 			break;
 		case BTN_MIDDLE:
-			pd.button_pressed[MOUSE_MBUTTON] = pressed;
+			pd.button_pressed[InputEnums::MOUSE_MBUTTON] = pressed;
 			break;
 		default:
 			print_verbose(vformat("Unknown button ID %u pressed.", p_button).get_data());
@@ -846,10 +846,10 @@ void DisplayManagerWayland::process_events() {
 		}
 		Input::get_singleton()->parse_input_event(mm);
 
-		for (int i = 0; i < MOUSE_MAX; i++) {
+		for (int i = 0; i < InputEnums::MOUSE_MAX; i++) {
 			Ref<InputEventMouseButton> mb;
 			mb.instantiate();
-			mb->mb = (MouseButton)i;
+			mb->button = (InputEnums::MouseButton)i;
 			mb->pressed = pd.button_pressed[i];
 
 			Input::get_singleton()->parse_input_event(mb);

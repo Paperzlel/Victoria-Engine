@@ -291,19 +291,11 @@ private:
 		ERR_COND_NULL(p_node);
 		Element *node = p_node;
 		Element *parent = node->parent;
+		Element *grandparent = nullptr;
 
 		// Assume node A is red at this point
-
-		while (parent != _nil) {
-			if (parent->colour == BLACK) {
-				return;
-			}
-
-			Element *grandparent = parent->parent;
-			if (!grandparent) {
-				parent->colour = BLACK;
-				return;
-			}
+		while (parent->colour == RED) {
+			grandparent = parent->parent;
 
 			if (parent == grandparent->left) {
 				Element *uncle = grandparent->right;
@@ -323,7 +315,7 @@ private:
 
 					parent->colour = BLACK;
 					grandparent->colour = RED;
-					_rotate_right(parent);
+					_rotate_right(grandparent);
 				}
 			} else {
 				Element *uncle = grandparent->left;
@@ -342,7 +334,7 @@ private:
 
 					parent->colour = BLACK;
 					grandparent->colour = RED;
-					_rotate_left(parent);
+					_rotate_left(grandparent);
 				}
 			}
 		}
@@ -361,7 +353,6 @@ private:
 			} else if (p_key < parent->key()) {
 				node = node->left;
 			} else {
-				node->_data.value = p_value; // Override the currently held value
 				return;
 			}
 		}
@@ -385,21 +376,20 @@ private:
 		if (new_node->_prev) {
 			new_node->_prev->_next = new_node;
 		}
-		_insert_fix(new_node);
 
 		element_count++;
+		_insert_fix(new_node);
 		ERR_FAIL_COND(_nil->colour != BLACK);
 	}
 
 	void _erase_fix(Element *p_node) {
 		// Once again stolen from Godot
-
-		ERR_COND_NULL(p_node);
+		Element *root = _root->left;
 		Element *node = _nil;
 		Element *parent = node->parent;
 		Element *sibling = p_node;
 
-		while (node != _root) {
+		while (node != root) {
 			if (sibling->colour == RED) {
 				sibling->colour = BLACK;
 				parent->colour = RED;
@@ -573,6 +563,9 @@ public:
 		}
 
 		_erase(e);
+		if (element_count == 0 && _root) {
+			_free_root();
+		}
 		return true;
 	}
 
