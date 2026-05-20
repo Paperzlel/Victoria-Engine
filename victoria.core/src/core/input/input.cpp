@@ -1,8 +1,8 @@
 #include "core/input/input.h"
 
+#include "core/engine.h"
 #include "core/error/error_macros.h"
 #include "core/input/input_map.h"
-#include "core/string/print_string.h"
 
 Input *Input::singleton = nullptr;
 
@@ -59,8 +59,7 @@ bool Input::is_action_just_pressed(const VName &p_action_name) {
 		return false;
 	}
 
-	// TODO: Add engine frame updates
-	return E->value.pressed && E->value.engine_frame == 1;
+	return E->value.pressed && E->value.engine_frame == Engine::get_singleton()->get_engine_frame_count();
 }
 
 bool Input::is_action_just_released(const VName &p_action_name) {
@@ -73,8 +72,7 @@ bool Input::is_action_just_released(const VName &p_action_name) {
 		return true;
 	}
 
-	// TODO: Add engine frame updates
-	return E->value.pressed && E->value.engine_frame == 1;
+	return E->value.pressed && E->value.engine_frame == Engine::get_singleton()->get_engine_frame_count();
 }
 
 bool Input::is_key_pressed(Key p_key) {
@@ -119,7 +117,6 @@ void Input::parse_input_event(const Ref<InputEvent> &p_event) {
 		if (key_event->pressed && e == nullptr) {
 			pressed_keys.insert(key);
 		} else if (e != nullptr) {
-			print_line("Erased key", (int)key);
 			pressed_keys.erase(key);
 		}
 		// TODO: Re-add left/right command key options. Could be encoded in the uppermost bit of a key event.
@@ -157,7 +154,7 @@ void Input::parse_input_event(const Ref<InputEvent> &p_event) {
 	for (const VName &item : InputMap::get_singleton()->get_actions_for_event(p_event)) {
 		ActionCache &cache_item = action_cache[item];
 		cache_item.pressed = p_event->pressed;
-		cache_item.engine_frame = 1; // TODO: Engine frames
+		cache_item.engine_frame = Engine::get_singleton()->get_engine_frame_count();
 	}
 }
 

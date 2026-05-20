@@ -8,6 +8,7 @@
 #include "scene/main/scene_tree.h"
 #include "scene/register_scene_classes.h"
 
+#include <core/engine.h>
 #include <core/input/input.h>
 #include <core/io/resource_importer.h>
 #include <core/os/display_manager.h>
@@ -85,6 +86,8 @@ bool runtime_iteration() {
 
 	// Move around inputs at the end of the frame
 	Input::get_singleton()->update();
+	// Engine frames are incremented after all other possible update events.
+	Engine::get_singleton()->increment_engine_frames();
 
 	double frame_time_end = OS::get_singleton()->get_os_running_time();
 	delta_time = frame_time_end - frame_time_start;

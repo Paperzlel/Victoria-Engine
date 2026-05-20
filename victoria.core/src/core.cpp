@@ -1,5 +1,6 @@
 #include "core.h"
 
+#include "core/engine.h"
 #include "core/input/input.h"
 #include "core/input/input_map.h"
 #include "core/io/resource_importer.h"
@@ -11,10 +12,11 @@
 #include "core/variant/variant.h"
 #include "core/version.h"
 
+static Engine *engine = nullptr;
+static DisplayManager *display_manager = nullptr;
 static Input *inputs = nullptr;
 static InputMap *input_map = nullptr;
 static ResourceImporter *resource_importer = nullptr;
-static DisplayManager *display_manager = nullptr;
 static GlobalCommandQueue *command_queue = nullptr;
 
 static String version_str;
@@ -144,6 +146,7 @@ Error core_initialize(int argc, char *argv[]) {
 	OS::get_singleton()->print(version_str.get_data());
 
 	// Initialize basic singletons
+	engine = vnew(Engine);
 	input_map = vnew(InputMap);
 	inputs = vnew(Input);
 	resource_importer = vnew(ResourceImporter);
@@ -197,6 +200,7 @@ void core_finalize() {
 
 	vdelete(input_map);
 	vdelete(inputs);
+	vdelete(engine);
 	vdelete(resource_importer);
 	vdelete(display_manager);
 

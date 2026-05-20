@@ -17,6 +17,8 @@ Changes exist in chronological order (i.e. new changes are to be appended to the
 		- Added the virtual function `action_is_equal` to `InputEvent`.
 			- Allows being overridden. Is used for comparing two `InputEvent` classes together in cases where comparing `Ref<InputEvent>`s is not possible.
 		- Added documentation to the `Input` class.
+	- Created a new class `Engine`.
+		- For all engine-related code that needs to be implemented by a runtime, or code relating to the general state of the application. Acts as a bridge between the core and the runtime, with the ability to manually change events if desired.
 
 ## 9/5/2026
 - Core:

@@ -4,11 +4,11 @@
 
 namespace InputEnums {
 
-	// Enum for each mouse button that the current API allows for calls to be made to
+	// The mouse buttons available for pressing.
 	enum MouseButton {
-		MOUSE_LBUTTON,
-		MOUSE_RBUTTON,
-		MOUSE_MBUTTON,
+		MOUSE_LBUTTON, // Left mouse button
+		MOUSE_RBUTTON, // Right mouse button
+		MOUSE_MBUTTON, // Middle mouse button
 
 		MOUSE_MAX
 	};

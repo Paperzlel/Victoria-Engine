@@ -31,7 +31,7 @@ Error InputMap::add_action_event(const VName &p_action_name, const Ref<InputEven
 	}
 
 	if (!action_map.has(p_action_name)) {
-		return ERR_UNAVAILABLE;
+		return ERR_DOESNT_EXIST;
 	}
 
 	action_map[p_action_name].events.push_back(p_event);
@@ -43,14 +43,17 @@ void InputMap::clear_action_events(const VName &p_action_name) {
 	action_map[p_action_name].events.clear();
 }
 
-List<Ref<InputEvent>> *InputMap::get_action_events(const VName &p_action_name) {
+const List<Ref<InputEvent>> *InputMap::get_action_events(const VName &p_action_name) const {
 	ERR_FAIL_COND_MSG_R(!action_map.has(p_action_name), "Input action does not exist.", nullptr);
 	return &action_map[p_action_name].events;
 }
 
 List<VName> InputMap::get_actions_for_event(const Ref<InputEvent> &p_event) {
-	List<VName> ret;
+	if (p_event.is_null()) {
+		return List<VName>();
+	}
 
+	List<VName> ret;
 	for (const KeyValue<VName, Action> &e : action_map) {
 		for (Ref<InputEvent> event : e.value.events) {
 			if (p_event->action_is_equal(event)) {
