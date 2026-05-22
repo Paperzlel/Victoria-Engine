@@ -1,6 +1,15 @@
 # Changelog
 Changes exist in chronological order (i.e. new changes are to be appended to the end of the file). Dates are done in DD/MM/YYYY format with the version number applied to each date if needed.
 
+## 22/5/2026
+- Platform:
+	- Linux/X11:
+		- Move the keysym work out to a separate file `keyboard_remapping_x11`.
+			- Makes working with X11 code far simpler and matches Wayland behaviour.
+	- Linux/Wayland:
+		- Rename `keyboard_remapping` to `keyboard_remapping_xkb` and re-define symbols.
+			- Would cause an error when building for both X11 and Wayland.
+
 ## 19/5/2026
 - Core:
 	- Data/Memory:

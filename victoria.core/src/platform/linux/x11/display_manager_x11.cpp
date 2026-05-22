@@ -1,6 +1,8 @@
 #include "display_manager_x11.h"
 #if defined(PLATFORM_LINUX) && defined(X11_ENABLED)
 
+#	include "keyboard_remapping_x11.h"
+
 #	include "core/input/input.h"
 #	include "core/os/os.h"
 
@@ -272,7 +274,8 @@ void DisplayManagerX11::process_events() {
 				bool is_pressed = (event.type == KeyPress ? true : false);
 				KeySym keysym = 0;
 				XLookupString(&event.xkey, nullptr, 0, &keysym, nullptr);
-				Key k = translate_keycodes(keysym);
+				KeyCode kc = XKeysymToKeycode(display, keysym);
+				Key k = KeyboardRemappingX11::get_key_from_keycode(kc);
 
 				Ref<InputEventKey> key_event;
 				key_event.instantiate();
@@ -417,235 +420,6 @@ bool DisplayManagerX11::get_mouse_mode() const {
 	return mouse_mode;
 }
 
-Key DisplayManagerX11::translate_keycodes(int p_code) {
-	switch (p_code) {
-		case XK_BackSpace:
-			return Key::BACKSPACE;
-		case XK_Tab:
-			return Key::TAB;
-		case XK_Clear:
-			return Key::CLEAR;
-		case XK_KP_Enter:
-			return Key::ENTER;
-		// TODO: Send an extra event for ANY shift key being pressed
-		case XK_Shift_L:
-			return Key::SHIFT;
-		case XK_Shift_R:
-			return Key::SHIFT;
-		case XK_Control_L:
-			return Key::CTRL;
-		case XK_Control_R:
-			return Key::CTRL;
-		case XK_Alt_L:
-			return Key::ALT;
-		case XK_Alt_R:
-			return Key::ALT;
-		case XK_Caps_Lock:
-			return Key::CAPSLOCK;
-		case XK_Escape:
-			return Key::ESCAPE;
-		case XK_space:
-			return Key::SPACEBAR;
-		case XK_Page_Up:
-			return Key::PAGEUP;
-		case XK_Page_Down:
-			return Key::PAGEDOWN;
-		case XK_End:
-			return Key::END;
-		case XK_Home:
-			return Key::HOME;
-		case XK_Left:
-			return Key::LEFT;
-		case XK_Up:
-			return Key::UP;
-		case XK_Right:
-			return Key::RIGHT;
-		case XK_Down:
-			return Key::DOWN;
-		case XK_Insert:
-			return Key::INSERT;
-		case XK_Delete:
-			return Key::KEY_DELETE;
-		case XK_0:
-			return Key::KEY_0;
-		case XK_1:
-			return Key::KEY_1;
-		case XK_2:
-			return Key::KEY_2;
-		case XK_3:
-			return Key::KEY_3;
-		case XK_4:
-			return Key::KEY_4;
-		case XK_5:
-			return Key::KEY_5;
-		case XK_6:
-			return Key::KEY_6;
-		case XK_7:
-			return Key::KEY_7;
-		case XK_8:
-			return Key::KEY_8;
-		case XK_9:
-			return Key::KEY_9;
-		case XK_A:
-		case XK_a:
-			return Key::A;
-		case XK_B:
-		case XK_b:
-			return Key::B;
-		case XK_C:
-		case XK_c:
-			return Key::C;
-		case XK_D:
-		case XK_d:
-			return Key::D;
-		case XK_E:
-		case XK_e:
-			return Key::E;
-		case XK_F:
-		case XK_f:
-			return Key::F;
-		case XK_G:
-		case XK_g:
-			return Key::G;
-		case XK_H:
-		case XK_h:
-			return Key::H;
-		case XK_I:
-		case XK_i:
-			return Key::I;
-		case XK_J:
-		case XK_j:
-			return Key::J;
-		case XK_K:
-		case XK_k:
-			return Key::K;
-		case XK_L:
-		case XK_l:
-			return Key::L;
-		case XK_M:
-		case XK_m:
-			return Key::M;
-		case XK_N:
-		case XK_n:
-			return Key::N;
-		case XK_O:
-		case XK_o:
-			return Key::O;
-		case XK_P:
-		case XK_p:
-			return Key::P;
-		case XK_Q:
-		case XK_q:
-			return Key::Q;
-		case XK_R:
-		case XK_r:
-			return Key::R;
-		case XK_S:
-		case XK_s:
-			return Key::S;
-		case XK_T:
-		case XK_t:
-			return Key::T;
-		case XK_U:
-		case XK_u:
-			return Key::U;
-		case XK_V:
-		case XK_v:
-			return Key::V;
-		case XK_W:
-		case XK_w:
-			return Key::W;
-		case XK_X:
-		case XK_x:
-			return Key::X;
-		case XK_Y:
-		case XK_y:
-			return Key::Y;
-		case XK_Z:
-		case XK_z:
-			return Key::Z;
-		case XK_KP_0:
-			return Key::KP_0;
-		case XK_KP_1:
-			return Key::KP_1;
-		case XK_KP_2:
-			return Key::KP_2;
-		case XK_KP_3:
-			return Key::KP_3;
-		case XK_KP_4:
-			return Key::KP_4;
-		case XK_KP_5:
-			return Key::KP_5;
-		case XK_KP_6:
-			return Key::KP_6;
-		case XK_KP_7:
-			return Key::KP_7;
-		case XK_KP_8:
-			return Key::KP_8;
-		case XK_KP_9:
-			return Key::KP_9;
-		case XK_KP_Multiply:
-			return Key::KP_MULTIPLY;
-		case XK_KP_Add:
-			return Key::KP_ADD;
-		case XK_KP_Subtract:
-			return Key::KP_SUBTRACT;
-		case XK_KP_Decimal:
-			return Key::KP_DECIMAL;
-		case XK_KP_Divide:
-			return Key::KP_DIVIDE;
-		case XK_F1:
-			return Key::F1;
-		case XK_F2:
-			return Key::F2;
-		case XK_F3:
-			return Key::F3;
-		case XK_F4:
-			return Key::F4;
-		case XK_F5:
-			return Key::F5;
-		case XK_F6:
-			return Key::F6;
-		case XK_F7:
-			return Key::F7;
-		case XK_F8:
-			return Key::F8;
-		case XK_F9:
-			return Key::F9;
-		case XK_F10:
-			return Key::F10;
-		case XK_F11:
-			return Key::F11;
-		case XK_F12:
-			return Key::F12;
-		case XK_F13:
-			return Key::F13;
-		case XK_F14:
-			return Key::F14;
-		case XK_F15:
-			return Key::F15;
-		case XK_F16:
-			return Key::F16;
-		case XK_F17:
-			return Key::F17;
-		case XK_F18:
-			return Key::F18;
-		case XK_F19:
-			return Key::F19;
-		case XK_F20:
-			return Key::F20;
-		case XK_F21:
-			return Key::F21;
-		case XK_F22:
-			return Key::F22;
-		case XK_F23:
-			return Key::F23;
-		case XK_F24:
-			return Key::F24;
-	}
-	return Key::NONE; // Invalid keycode
-}
-
 /**
  * @brief The "shutdown" routine of the application. Stops all processing, clears out any windows that may still exist,
  * and closes the X11 display.
@@ -676,6 +450,8 @@ DisplayManager *DisplayManagerX11::create_func(const String &p_renderer, const V
  * calling the OpenGL manager to begin initialization.
  */
 DisplayManagerX11::DisplayManagerX11(const String &p_renderer, const Vector2i &p_size, Error *r_error) {
+	KeyboardRemappingX11::initialize();
+
 	display = XOpenDisplay(nullptr);
 	if (!display) {
 		*r_error = ERR_CANT_CONNECT;

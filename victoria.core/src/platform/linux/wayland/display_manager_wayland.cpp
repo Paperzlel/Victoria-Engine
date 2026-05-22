@@ -1,7 +1,7 @@
 #include "display_manager_wayland.h"
 #if defined(PLATFORM_LINUX) && defined(WAYLAND_ENABLED)
 
-#	include "keyboard_remapping.h"
+#	include "keyboard_remapping_xkb.h"
 
 #	include "core/error/error_macros.h"
 #	include "core/input/input.h"
@@ -482,7 +482,7 @@ void DisplayManagerWayland::_on_keyboard_key(void *p_data,
 
 	// Convert evdev input to XKB input
 	xkb_keycode_t xkb_keycode = p_key + 8;
-	Key input_key = KeyboardRemapping::get_key_from_xkb_keycode(xkb_keycode);
+	Key input_key = KeyboardRemappingXKB::get_key_from_xkb_keycode(xkb_keycode);
 
 	// Pressed key
 	bool pressed = p_key_state & WL_KEYBOARD_KEY_STATE_PRESSED;
@@ -499,7 +499,7 @@ void DisplayManagerWayland::_on_keyboard_key(void *p_data,
 		Ref<InputEventKey> ke;
 		ke.instantiate();
 		ke->pressed = pressed;
-		ke->key = KeyboardRemapping::get_key_from_xkb_keycode(xkb_keycode);
+		ke->key = KeyboardRemappingXKB::get_key_from_xkb_keycode(xkb_keycode);
 		Input::get_singleton()->parse_input_event(ke);
 	}
 
@@ -911,7 +911,7 @@ void DisplayManagerWayland::finalize() {
 }
 
 DisplayManagerWayland::DisplayManagerWayland(const String &p_renderer, const Vector2i &p_size, Error *r_error) {
-	KeyboardRemapping::initialize();
+	KeyboardRemappingXKB::initialize();
 
 	display = wl_display_connect(nullptr);
 	if (!display) {

@@ -1,12 +1,11 @@
-#include "platform/linux/wayland/keyboard_remapping.h"
+#include "keyboard_remapping_x11.h"
 
-HashTable<xkb_keycode_t, Key, KeyboardRemapping::HashTableKeyHasher> KeyboardRemapping::scancode_map;
-HashTable<Key, xkb_keycode_t, KeyboardRemapping::HashTableKeyHasher> KeyboardRemapping::inv_scancode_map;
+#include <X11/keysym.h>
 
-void KeyboardRemapping::initialize() {
-	// Directly translate scancode to our key enum. XKB doesn't actually send the proper keycode over for some reason,
-	// so we have to map it manually.
-	// Keycodes are gotten from /usr/share/X11/xkb/keycodes/evdev
+HashTable<int, Key, KeyboardRemappingX11::HashTableKeyHasher> KeyboardRemappingX11::scancode_map;
+HashTable<Key, int, KeyboardRemappingX11::HashTableKeyHasher> KeyboardRemappingX11::inv_scancode_map;
+
+void KeyboardRemappingX11::initialize() {
 	scancode_map[0x09] = Key::ESCAPE;
 	scancode_map[0x0a] = Key::KEY_1;
 	scancode_map[0x0b] = Key::KEY_2;
@@ -150,27 +149,25 @@ void KeyboardRemapping::initialize() {
 	scancode_map[0xc9] = Key::F23;
 	scancode_map[0xca] = Key::F24;
 
-	// Add inverse key/value pairs
-	for (const KeyValue<xkb_keycode_t, Key> &kv : scancode_map) {
-		inv_scancode_map.insert(kv.value, kv.key);
+	for (const KeyValue<int, Key> &E : scancode_map) {
+		inv_scancode_map[E.value] = E.key;
 	}
 }
 
-xkb_keycode_t KeyboardRemapping::get_xkb_keycode_from_key(Key p_key) {
-	xkb_keycode_t *key = inv_scancode_map.get_ptr(p_key);
-
-	if (key == nullptr) {
-		return 0x00;
-	}
-
-	return *key;
-}
-
-Key KeyboardRemapping::get_key_from_xkb_keycode(xkb_keycode_t p_xkb_key) {
-	Key *key = scancode_map.get_ptr(p_xkb_key);
-	if (key == nullptr) {
+Key KeyboardRemappingX11::get_key_from_keycode(int p_key) {
+	Key *k = scancode_map.get_ptr(p_key);
+	if (k == nullptr) {
 		return Key::NONE;
 	}
 
-	return *key;
+	return *k;
+}
+
+int KeyboardRemappingX11::get_keycode_from_key(Key p_key) {
+	int *ks = inv_scancode_map.get_ptr(p_key);
+	if (ks == nullptr) {
+		return 0;
+	}
+
+	return *ks;
 }

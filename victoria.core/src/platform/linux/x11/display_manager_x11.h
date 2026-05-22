@@ -6,7 +6,6 @@
 #	include "gl_manager_egl_x11.h"
 #	include "gl_manager_x11.h"
 
-#	include "core/input/keyboard.h"
 #	include "core/os/display_manager.h"
 
 #	include <X11/Xlib.h>
@@ -117,8 +116,6 @@ public:
 	virtual void swap_buffers() override;
 
 	virtual void finalize() override;
-
-	Key translate_keycodes(int p_code);
 
 	DisplayManagerX11(const String &p_renderer, const Vector2i &p_size, Error *r_error);
 	~DisplayManagerX11();

@@ -6,7 +6,7 @@
 
 #include <xkbcommon/xkbcommon.h>
 
-class KeyboardRemapping {
+class KeyboardRemappingXKB {
 	struct HashTableKeyHasher {
 		static FORCE_INLINE uint32_t hash(Key p_key) {
 			return hash_lowbias32(static_cast<uint32_t>(p_key));
@@ -26,5 +26,5 @@ public:
 	static xkb_keycode_t get_xkb_keycode_from_key(Key p_key);
 	static Key get_key_from_xkb_keycode(xkb_keycode_t p_xkb_key);
 
-	KeyboardRemapping() {}
+	KeyboardRemappingXKB() {}
 };
