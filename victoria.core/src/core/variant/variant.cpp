@@ -706,7 +706,7 @@ Variant::operator Array() const {
 
 Variant::operator ByteArray() const {
 	if (type == BYTE_ARRAY) {
-		return static_cast<ArrayRef<uint8_t> *>(_data._array)->array;
+		return ByteArray(static_cast<ArrayRef<uint8_t> *>(_data._array)->array);
 	} else {
 		return Vector<uint8_t>();
 	}
@@ -714,7 +714,7 @@ Variant::operator ByteArray() const {
 
 Variant::operator Int32Array() const {
 	if (type == INT32_ARRAY) {
-		return static_cast<ArrayRef<int32_t> *>(_data._array)->array;
+		return Int32Array(static_cast<ArrayRef<int32_t> *>(_data._array)->array);
 	} else {
 		return Vector<int32_t>();
 	}
@@ -722,7 +722,7 @@ Variant::operator Int32Array() const {
 
 Variant::operator Int64Array() const {
 	if (type == INT64_ARRAY) {
-		return static_cast<ArrayRef<int64_t> *>(_data._array)->array;
+		return Int64Array(static_cast<ArrayRef<int64_t> *>(_data._array)->array);
 	} else {
 		return Vector<int64_t>();
 	}
@@ -730,7 +730,7 @@ Variant::operator Int64Array() const {
 
 Variant::operator Float32Array() const {
 	if (type == FLOAT32_ARRAY) {
-		return static_cast<ArrayRef<float> *>(_data._array)->array;
+		return Float32Array(static_cast<ArrayRef<float> *>(_data._array)->array);
 	} else {
 		return Vector<float>();
 	}
@@ -738,7 +738,7 @@ Variant::operator Float32Array() const {
 
 Variant::operator Float64Array() const {
 	if (type == FLOAT64_ARRAY) {
-		return static_cast<ArrayRef<double> *>(_data._array)->array;
+		return Float64Array(static_cast<ArrayRef<double> *>(_data._array)->array);
 	} else {
 		return Vector<double>();
 	}
@@ -746,7 +746,7 @@ Variant::operator Float64Array() const {
 
 Variant::operator Vector2Array() const {
 	if (type == VECTOR2_ARRAY) {
-		return static_cast<ArrayRef<Vector2> *>(_data._array)->array;
+		return Vector2Array(static_cast<ArrayRef<Vector2> *>(_data._array)->array);
 	} else {
 		return Vector<Vector2>();
 	}
@@ -754,7 +754,7 @@ Variant::operator Vector2Array() const {
 
 Variant::operator Vector3Array() const {
 	if (type == VECTOR3_ARRAY) {
-		return static_cast<ArrayRef<Vector3> *>(_data._array)->array;
+		return Vector3Array(static_cast<ArrayRef<Vector3> *>(_data._array)->array);
 	} else {
 		return Vector<Vector3>();
 	}
@@ -762,7 +762,7 @@ Variant::operator Vector3Array() const {
 
 Variant::operator Vector4Array() const {
 	if (type == VECTOR4_ARRAY) {
-		return static_cast<ArrayRef<Vector4> *>(_data._array)->array;
+		return Vector4Array(static_cast<ArrayRef<Vector4> *>(_data._array)->array);
 	} else {
 		return Vector<Vector4>();
 	}

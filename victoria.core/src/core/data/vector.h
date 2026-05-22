@@ -199,10 +199,10 @@ public:
 	}
 
 	/**
-	 * @brief Appends another array holding type T to the end of the current array.
+	 * @brief Appends another array holding type T to the end of the current array by copying data from the original.
 	 * @param p_other The other array to append
 	 */
-	void append_array(Vector<T> p_other);
+	void append_array(const Vector<T> &p_other);
 
 	/**
 	 * @brief Clears all items out of the vector and set its size to zero. Functionally works like `_unref()` aside
@@ -329,7 +329,7 @@ public:
 	 * @returns An instance of the `Vector` class.
 	 */
 	FORCE_INLINE Vector() {}
-	FORCE_INLINE Vector(const Vector &p_from) = default;
+	FORCE_INLINE explicit Vector(const Vector &p_from) = default;
 	FORCE_INLINE Vector(Vector &&p_from) = default;
 
 	/**
@@ -342,8 +342,8 @@ public:
 };
 
 template <typename T>
-void Vector<T>::append_array(Vector<T> p_other) {
-	if (p_other._cowdata.ptr()) {
+void Vector<T>::append_array(const Vector<T> &p_other) {
+	if (_cowdata.ptr() == p_other._cowdata.ptr()) {
 		return;
 	}
 

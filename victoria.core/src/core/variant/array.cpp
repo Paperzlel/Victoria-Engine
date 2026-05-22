@@ -163,8 +163,8 @@ bool Array::is_equal(const Array &p_other) const {
 		return true;
 	}
 
-	const Vector<Variant> &a1 = _data->_array;
-	const Vector<Variant> &a2 = p_other._data->_array;
+	const Vector<Variant> &a1(_data->_array);
+	const Vector<Variant> &a2(p_other._data->_array);
 
 	const int size = a1.size();
 

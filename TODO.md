@@ -71,7 +71,7 @@ A list of all things that are on the current plan for the engine, whether short-
 - [ ] Rework input so that windows can send input events through the scene tree
 - [ ] Reclassify all keyboard input options
 - [ ] Add the ability to query the string relating to the given keycode
-- [ ] Add an `InputAction` class to track specific input events
+- [x] Add an `InputAction` class to track specific input events
 
 ## Platform
 - [x] Fix X11 displays not resizing when using EGL
@@ -113,7 +113,7 @@ A list of all things that are on the current plan for the engine, whether short-
 - [ ] Add tests for `Transform2D` and `Transform3D`.
 - [x] Improve tests for `HashTable`.
 - [x] Improve tests for `List`.
-- [ ] Improve tests for `Vector`.
+- [x] Improve tests for `Vector`.
 - [x] Improve tests for `Array`.
 - [x] Add tests for `Variant`.
 - [ ] Add tests for `String`.

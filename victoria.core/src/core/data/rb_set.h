@@ -376,8 +376,8 @@ private:
 		// Once again stolen from Godot
 		Element *root = _root->left;
 		Element *node = _nil;
-		Element *parent = node->parent;
 		Element *sibling = p_node;
+		Element *parent = sibling->parent;
 
 		while (node != root) {
 			if (sibling->colour == RED) {

@@ -268,7 +268,7 @@ void RenderingManagerGL::_render_scene(RenderData *r_data, Viewport *p_viewport,
 		uint32_t point_light_count = 0;
 		uint32_t directional_light_count = 0;
 		uint32_t spot_light_count = 0;
-		Vector<GLShader::Uniform> scene_uniforms = shaders.scene_shader.uniforms;
+		Vector<GLShader::Uniform> scene_uniforms(shaders.scene_shader.uniforms);
 
 		Vector<RID> instance_list;
 		instance_owner.get_owned_list(&instance_list);
@@ -1666,7 +1666,7 @@ RenderingManagerGL::RenderingManagerGL() {
 	// Create default texture (a 1x1 white pixel)
 	default_texture = texture_allocate();
 	Texture *t = texture_owner.get_or_null(default_texture);
-	Vector<uint8_t> data = {255, 255, 255};
+	Vector<uint8_t> data{255, 255, 255};
 
 	glGenTextures(1, &t->texture_buffer);
 	glActiveTexture(GL_TEXTURE0);

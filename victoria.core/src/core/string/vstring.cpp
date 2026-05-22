@@ -432,7 +432,7 @@ String String::get_file() const {
 		return *this;
 	}
 
-	Vector<String> vs = split("/");
+	Vector<String> vs(split("/"));
 	return vs[vs.size() - 1];
 }
 
@@ -441,7 +441,7 @@ String String::get_file_extension() const {
 	if (!contains(".")) {
 		return "";
 	}
-	Vector<String> vs = split(".");
+	Vector<String> vs(split("."));
 	return vs[vs.size() - 1];
 }
 
@@ -480,7 +480,7 @@ double String::to_float() const {
 	double ret = 0.0;
 
 	// Maybe not the best way to do this, but we'll stick at it for now.
-	Vector<String> v = split(".");
+	Vector<String> v(split("."));
 	ret += (double)(v[0].to_int());
 
 	for (int i = 0; i < v[1].length(); i++) {

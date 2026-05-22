@@ -1,12 +1,11 @@
 #include "drivers/egl/egl_manager.h"
 
-#include "core/os/os.h"
 #include "core/string/print_string.h"
 
 #include <glad/gl.h>
 
 Error EGLManager::_create_context(EGL_Display &p_display) {
-	Vector<EGLint> ctx_attribs = _egl_get_context_attribs();
+	Vector<EGLint> ctx_attribs(_egl_get_context_attribs());
 	/* clang-format off */
     EGLint attribs[] = {
         EGL_RED_SIZE, 8,
@@ -48,7 +47,7 @@ int EGLManager::_get_display_id(void *p_native) {
 	EGL_Display display;
 	display.native_display = p_native;
 	EGLenum platform = _egl_get_platform_enum();
-	Vector<EGLAttrib> attrib_list = _egl_get_platform_attribs();
+	Vector<EGLAttrib> attrib_list(_egl_get_platform_attribs());
 
 	if (GLAD_EGL_VERSION_1_5) {
 		display.egl_display = eglGetPlatformDisplay(platform,
@@ -162,7 +161,7 @@ Error EGLManager::initialize(void *p_platform_display) {
 	NativeDisplayType *native_display = (NativeDisplayType *)p_platform_display;
 
 	EGLenum platform = _egl_get_platform_enum();
-	Vector<EGLAttrib> attrib_list = _egl_get_platform_attribs();
+	Vector<EGLAttrib> attrib_list(_egl_get_platform_attribs());
 	EGLDisplay disp = EGL_NO_DISPLAY;
 
 	if (GLAD_EGL_EXT_platform_base) {

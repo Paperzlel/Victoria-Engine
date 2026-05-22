@@ -63,7 +63,7 @@ Ref<Resource> ResourceFormatImporterOBJ::_import(const String &p_path, int p_arg
 		}
 
 		// Split the string
-		Vector<String> sline = line.split(" ");
+		Vector<String> sline(line.split(" "));
 
 		int comment = sline[sline.size() - 1].find("#");
 		if (comment != -1) {
@@ -90,7 +90,7 @@ Ref<Resource> ResourceFormatImporterOBJ::_import(const String &p_path, int p_arg
 		// elements. TODO: Note this in the docs.
 		if (sline[0] == "f") {
 			for (int i = 0; i < 3; i++) {
-				Vector<String> substr = sline[i + 1].split("/");
+				Vector<String> substr(sline[i + 1].split("/"));
 				if (substr.is_empty()) {
 					continue;
 				}
