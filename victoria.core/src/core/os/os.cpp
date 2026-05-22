@@ -39,6 +39,11 @@ void OS::set_rendering_driver(const String &p_driver) {
 	rendering_driver = p_driver;
 }
 
+void OS::set_command_line(const char *p_exec_path, const List<String> &p_args) {
+	_cmdline_args = p_args;
+	_execpath = p_exec_path;
+}
+
 bool OS::is_stdout_verbose() const {
 	return stdout_verbose;
 }

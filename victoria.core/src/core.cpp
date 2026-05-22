@@ -94,10 +94,13 @@ Error core_initialize(int argc, char *argv[]) {
 
 	// Parse command-line arguments
 
+	const char *ep = argv[0];
 	List<String> args;
-	for (int i = 0; i < argc; i++) {
+	for (int i = 1; i < argc; i++) {
 		args.push_back(argv[i]);
 	}
+
+	OS::get_singleton()->set_command_line(ep, args);
 
 	List<String>::Element *e = args.front();
 

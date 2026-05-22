@@ -32,8 +32,6 @@ void Editor::_notification(int p_what) {
 				// We can 1) apply the position as an offset of the anchor, or 2) apply the position as an absolute.
 				ci->set_position(pos);
 				ci->set_rotation(OS::get_singleton()->get_os_running_time());
-				// print_verbose(pos);
-				print_verbose(ci->get_position());
 				place_toggle = false;
 			}
 

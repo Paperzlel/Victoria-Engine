@@ -143,13 +143,6 @@ String OSLinux::get_version() const {
 	return system_info.release;
 }
 
-String OSLinux::get_executable_path() const {
-	char buf[256];
-	Memory::vmemcpy(buf, 0, 256);
-	ERR_FAIL_COND_R(readlink("/proc/self/exe", buf, 256) == -1, String());
-	return buf;
-}
-
 int OSLinux::get_preferred_display_manager() {
 	for (int i = 0; i < DisplayManager::get_creation_func_count(); i++) {
 		String name = DisplayManager::get_creation_func_name(i);

@@ -131,13 +131,6 @@ String OSWindows::get_version() const {
 	return "";
 }
 
-String OSWindows::get_executable_path() const {
-	char exe_path[MAX_PATH];
-	GetModuleFileNameA(nullptr, exe_path, MAX_PATH);
-	exe_path[MAX_PATH - 1] = 0;
-	return exe_path;
-}
-
 int OSWindows::get_preferred_display_manager() {
 	return 0;
 }

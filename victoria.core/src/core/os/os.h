@@ -1,5 +1,6 @@
 #pragma once
 
+#include "core/data/list.h"
 #include "core/error/error_macros.h"
 #include "core/io/logger.h"
 #include "core/string/vstring.h"
@@ -9,6 +10,8 @@ class MainLoop;
 class VAPI OS {
 protected:
 	static OS *singleton;
+
+	friend Error core_initialize(int argc, char **argv);
 
 	Logger *_logger = nullptr;
 
@@ -21,10 +24,21 @@ protected:
 	bool suspended = false;
 	bool should_quit = false;
 
+	String _execpath;
+	List<String> _cmdline_args;
+
 	String device_vendor;
 	String device_name;
 	String rendering_driver;
 	bool gles_over_gl;
+
+private:
+	/**
+	 * @brief Sets the command line variables that are handed to the program on launch.
+	 * @param p_exec_path The path to the executable used.
+	 * @param p_args A list of arguments supplied by the binary.
+	 */
+	void set_command_line(const char *p_exec_path, const List<String> &p_args);
 
 public:
 	static OS *get_singleton();
@@ -63,6 +77,39 @@ public:
 	bool is_stdout_verbose() const;
 	void set_stdout_verbose(bool p_value);
 
+	virtual String get_device_name() const {
+		return device_name;
+	}
+	virtual String get_device_vendor() const {
+		return device_vendor;
+	}
+
+	virtual void set_device_name(const String &p_name) {
+		device_name = p_name;
+	}
+	virtual void set_device_vendor(const String &p_vendor) {
+		device_vendor = p_vendor;
+	}
+
+	/**
+	 * @brief Gets the command-line arguments that the executable was called with, in order of appearance. Since
+	 * command-line arguments can be needed at any point in multiple libraries, it is advisable to not error if an
+	 * unknown value was detected. This value is not set up until after `core_initialize()` has been called.
+	 * @return A copy of the command-line arguments.
+	 */
+	virtual List<String> get_command_line_args() const {
+		return List<String>(_cmdline_args);
+	}
+
+	/**
+	 * @brief Gets the path to the executable that lauched this engine instance. This value is not set up until after
+	 * `core_initialize()` has been called.
+	 * @return A copy of the executable path.
+	 */
+	virtual String get_executable_path() const {
+		return String(_execpath);
+	}
+
 	virtual void alert(const char *message, const char *title) const = 0;
 
 	virtual void print(const char *message, ...) = 0;
@@ -85,22 +132,6 @@ public:
 
 	virtual String get_name() const = 0;
 	virtual String get_version() const = 0;
-
-	virtual String get_executable_path() const = 0;
-
-	virtual String get_device_name() const {
-		return device_name;
-	}
-	virtual String get_device_vendor() const {
-		return device_vendor;
-	}
-
-	virtual void set_device_name(const String &p_name) {
-		device_name = p_name;
-	}
-	virtual void set_device_vendor(const String &p_vendor) {
-		device_vendor = p_vendor;
-	}
 
 	virtual int get_preferred_display_manager() = 0;
 

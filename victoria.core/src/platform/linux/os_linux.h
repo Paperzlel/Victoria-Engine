@@ -47,7 +47,6 @@ public:
 
 	virtual String get_name() const override;
 	virtual String get_version() const override;
-	virtual String get_executable_path() const override;
 	virtual int get_preferred_display_manager() override;
 
 	virtual MainLoop *get_main_loop() const override;
