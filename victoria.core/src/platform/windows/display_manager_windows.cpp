@@ -100,7 +100,6 @@ uint8_t DisplayManagerWindows::create_window(const String &p_name,
 
 	win_data->position = Vector2i(x, y);
 	win_data->size = Vector2i(width, height);
-	win_data->notification_callback = stastatic_callable_mp(_notification_callback);
 
 	if (gl_manager_windows) {
 		uint8_t id = gl_manager_windows->create_window(win_data->hWnd, hInstance);
@@ -152,8 +151,9 @@ void DisplayManagerWindows::set_use_vsync(bool p_value) {
 	}
 }
 
-Vector2i DisplayManagerWindows::get_window_rect() const {
+Vector2i DisplayManagerWindows::get_window_size(uint8_t p_id) const {
 	ERR_COND_NULL_R(window, Vector2i());
+	ERR_FAIL_COND_R(p_id != 0, Vector2i());
 	return window->size;
 }
 
@@ -225,7 +225,7 @@ LRESULT DisplayManagerWindows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 
 	switch (uMsg) {
 		case WM_CLOSE: {
-			window->notification_callback.call(NOTIFICATION_WM_WINDOW_CLOSE, window_id);
+			destroy_window(window_id);
 			OS::get_singleton()->set_exit_code(0);
 			OS::get_singleton()->set_should_quit(true);
 			return 0;

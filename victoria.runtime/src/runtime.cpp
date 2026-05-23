@@ -3,6 +3,7 @@
 #include "importers/resource_importer_font.h"
 #include "importers/resource_importer_image.h"
 #include "importers/resource_importer_obj.h"
+#include "rendering/headless/rendering_manager_headless.h"
 #include "rendering/opengl/rendering_manager_gl.h"
 #include "rendering/rendering_manager.h"
 #include "scene/main/scene_tree.h"
@@ -25,7 +26,10 @@ Error runtime_initialize() {
 	String backend = OS::get_singleton()->get_rendering_driver();
 	if (backend == "opengl") {
 		RenderingManagerGL::make_default(OS::get_singleton()->is_gles_over_gl());
+	} else if (backend == "headless") {
+		RenderingManagerHeadless::make_default();
 	}
+
 	rendering_server = RenderingManager::create();
 	CRASH_COND_NULL(rendering_server);
 

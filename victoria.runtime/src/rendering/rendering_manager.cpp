@@ -20,7 +20,7 @@ RenderingManager *RenderingManager::create() {
 }
 
 void RenderingManager::draw() {
-	Vector2i screen_rect = DisplayManager::get_singleton()->get_window_rect();
+	Vector2i screen_rect = DisplayManager::get_singleton()->get_window_size(0);
 	Mat4 screen_mat = Mat4::orthographic(0, screen_rect.y, 0, screen_rect.x, 100, -100);
 	frame_data->screen_matrix = screen_mat;
 	frame_data->primitive_count = 0;

@@ -71,16 +71,6 @@ void DisplayManagerX11::_update_wm_properties() {
 	OS::get_singleton()->set_is_suspended(window->minimized);
 }
 
-/**
- * @brief Creates a window and assigns it as the active window. The width and height of a given window is calculated
- * from the top-left, with the x axis moving right on the screen and the y axis moving downwards.
- * @param p_name The title of the window, what appears across the top of the display
- * @param x The x position of the window
- * @param y The y position of the window
- * @param width The number of pixels wide the window will be
- * @param height The number of pixels tall the window will be
- * @returns The ID of the created window (NOTE: For now, this will remain to be 0 until multiple windows are supported)
- */
 uint8_t DisplayManagerX11::create_window(const String &p_name,
 										 uint16_t x,
 										 uint16_t y,
@@ -134,7 +124,6 @@ uint8_t DisplayManagerX11::create_window(const String &p_name,
 	win_data->position = Vector2i(x, y);
 	win_data->size = Vector2i(width, height);
 	win_data->window_attribs = window_attribs;
-	win_data->notification_callback = static_callable_mp(_notification_callback);
 
 	Atom wm_close_atom = XInternAtom(display, "WM_DELETE_WINDOW", true);
 	XSetWMProtocols(display, win, &wm_close_atom, 1);
@@ -177,10 +166,6 @@ uint8_t DisplayManagerX11::create_window(const String &p_name,
 	return window->id;
 }
 
-/**
- * @brief Deletes the currently active window.
- * @param p_id The current ID of the active window
- */
 void DisplayManagerX11::destroy_window(uint8_t p_id) {
 	if (!window) {
 		return;
@@ -212,10 +197,6 @@ void DisplayManagerX11::set_use_vsync(bool p_value) {
 	}
 }
 
-/**
- * @brief The core processing point of the current window. Any events that occur within the window will refer to this
- * point of the application.
- */
 void DisplayManagerX11::process_events() {
 	if (!display) {
 		return; // No events to handle when the display is null
@@ -245,14 +226,14 @@ void DisplayManagerX11::process_events() {
 			} break;
 			case ClientMessage: {
 				if (event.xclient.data.l[0] == (int64_t)window->wm_close_atom) {
-					window->notification_callback.call(NOTIFICATION_WM_WINDOW_CLOSE, window->id);
+					destroy_window(window->id);
 					OS::get_singleton()->set_exit_code(0);
 					OS::get_singleton()->set_should_quit(true);
 					return;
 				}
 			} break;
 			case DestroyNotify: {
-				window->notification_callback.call(NOTIFICATION_WM_WINDOW_CLOSE, window->id);
+				destroy_window(window->id);
 				OS::get_singleton()->set_exit_code(0);
 				OS::get_singleton()->set_should_quit(true);
 			} break;
@@ -367,9 +348,6 @@ void DisplayManagerX11::process_events() {
 	}
 }
 
-/**
- * @brief Calls the OpenGL manager to change which framebuffer any draw calls are being sent to.
- */
 void DisplayManagerX11::swap_buffers() {
 	if (gl_manager_x11) {
 		gl_manager_x11->swap_buffers();
@@ -380,8 +358,9 @@ void DisplayManagerX11::swap_buffers() {
 	}
 }
 
-Vector2i DisplayManagerX11::get_window_rect() const {
+Vector2i DisplayManagerX11::get_window_size(uint8_t p_id) const {
 	ERR_COND_NULL_R(window, Vector2i());
+	ERR_FAIL_COND_R(p_id != 0, Vector2i());
 	return window->size;
 }
 
@@ -404,7 +383,7 @@ void DisplayManagerX11::toggle_mouse_mode(bool p_mode) {
 		XFreeCursor(display, c);
 		XFreePixmap(display, p);
 
-		Vector2i centre = get_window_rect();
+		Vector2i centre = get_window_size(window->id);
 		XWarpPointer(display, None, window->win, 0, 0, 0, 0, (int)centre.x / 2, (int)centre.y / 2);
 	} else {
 		Cursor c;
@@ -420,10 +399,6 @@ bool DisplayManagerX11::get_mouse_mode() const {
 	return mouse_mode;
 }
 
-/**
- * @brief The "shutdown" routine of the application. Stops all processing, clears out any windows that may still exist,
- * and closes the X11 display.
- */
 void DisplayManagerX11::finalize() {
 	if (window) {
 		destroy_window(window->id);
@@ -445,10 +420,6 @@ DisplayManager *DisplayManagerX11::create_func(const String &p_renderer, const V
 	return vnew(DisplayManagerX11(p_renderer, p_size, r_error));
 }
 
-/**
- * @brief Class constructor for the X11 display server. Opens an X11 conntect, gets the screen and its ID, as well as
- * calling the OpenGL manager to begin initialization.
- */
 DisplayManagerX11::DisplayManagerX11(const String &p_renderer, const Vector2i &p_size, Error *r_error) {
 	KeyboardRemappingX11::initialize();
 

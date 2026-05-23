@@ -21,7 +21,6 @@ private:
 	struct WindowData {
 		uint8_t id;
 		HWND hWnd;
-		CallableMethod notification_callback;
 		CallableMethod window_resize_callback;
 		Vector2i position;
 		Vector2i size;
@@ -50,7 +49,7 @@ public:
 
 	virtual void set_use_vsync(bool p_value) override;
 
-	virtual Vector2i get_window_rect() const override;
+	virtual Vector2i get_window_size(uint8_t p_id) const override;
 	virtual void set_window_resize_callback(const CallableMethod &p_method, uint8_t p_id) override;
 
 	virtual void toggle_mouse_mode(bool p_mode) override;

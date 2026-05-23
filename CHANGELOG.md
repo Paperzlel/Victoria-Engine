@@ -1,6 +1,17 @@
 # Changelog
 Changes exist in chronological order (i.e. new changes are to be appended to the end of the file). Dates are done in DD/MM/YYYY format with the version number applied to each date if needed.
 
+## 23/5/2026
+- Core:
+	- Added a new headless mode.
+		- Headless mode is activated by calling `core_initialize()` with `--headless` as a command-line option. This allows for full access to core features without creating a window in the process, something useful for tests or other command-line tools.
+	- Added the ability to override the display manager used on their system. Currently, this feature is only intended for Linux users who wish to run X11 through XWayland.
+- Runtime:
+	- Added a `RenderingManagerHeadless` option.
+		- Created for the headless mode added in core, since running OpenGL without a context (which isn't possible as the display manager initializes it) would lead to crashes and we should support both co-existing properly.
+	- Fixed a bug with window resizes not updating the anchors of objects.
+		- I remember fixing this, but it came up again (likely due to the massive refactoring and other features I was testing out). Unusual.
+
 ## 22/5/2026
 - Platform:
 	- Linux/X11:

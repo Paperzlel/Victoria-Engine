@@ -1,9 +1,13 @@
 #include "core/os/display_manager.h"
 
+#include "platform/headless/display_manager_headless.h"
+
 DisplayManager *DisplayManager::singleton = nullptr;
 
-DisplayManager::DisplayManagerCreationStruct DisplayManager::_create_funcs[MAX_CREATE_FUNCS];
-int DisplayManager::create_func_count = 0;
+DisplayManager::DisplayManagerCreationStruct DisplayManager::_create_funcs[MAX_CREATE_FUNCS] = {
+	{&DisplayManagerHeadless::create_func, "headless"}};
+
+int DisplayManager::create_func_count = 1;
 
 DisplayManager *DisplayManager::get_singleton() {
 	return singleton;
@@ -23,19 +27,14 @@ const char *DisplayManager::get_creation_func_name(int p_id) {
 	return _create_funcs[p_id].name;
 }
 
-/**
- * @brief Our main notification callback centre for certain events that can be triggered in a window.
- * @param notification The type of event we need to process
- * @param window_id The current window's ID
- */
-void DisplayManager::_notification_callback(WindowNotification notification, uint8_t window_id) {
-	switch (notification) {
-		case NOTIFICATION_WM_WINDOW_CLOSE: {
-			singleton->destroy_window(window_id);
-		} break;
-		default: {
-		} break;
+int DisplayManager::get_display_creation_func_id(const String &p_name) {
+	for (int i = 0; i < create_func_count; i++) {
+		if (p_name == _create_funcs[i].name) {
+			return i;
+		}
 	}
+
+	return 0;
 }
 
 DisplayManager::DisplayManager() {

@@ -67,7 +67,7 @@ A list of all things that are on the current plan for the engine, whether short-
 - [ ] Remove font atlas options from the font importers
 
 ## Input
-- [ ] Move the massive X11 input remap out to a new file (like Wayland) and convert it to a hash table
+- [x] Move the massive X11 input remap out to a new file (like Wayland) and convert it to a hash table
 - [ ] Rework input so that windows can send input events through the scene tree
 - [ ] Reclassify all keyboard input options
 - [ ] Add the ability to query the string relating to the given keycode
@@ -123,5 +123,5 @@ A list of all things that are on the current plan for the engine, whether short-
 - [ ] Add tests for `Object2D` and derived classes.
 - [ ] Add tests for `Object3D` and derived classes.
 - [ ] Add a test for running the main loop.
-- [ ] Add dummy servers and managers for testing the above which require them.
+- [x] Add dummy servers and managers for testing the above which require them.
 - [ ] Add a `SceneTree` mockup test.

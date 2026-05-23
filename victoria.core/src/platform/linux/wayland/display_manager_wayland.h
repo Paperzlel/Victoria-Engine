@@ -110,7 +110,6 @@ private:
 		Vector2i size;
 		Vector2i cached_size;
 		Vector2i position;
-		CallableMethod notification_callback;
 		CallableMethod resize_callback;
 
 		bool maximised = false;
@@ -308,7 +307,7 @@ public:
 
 	virtual void set_use_vsync(bool p_value) override;
 
-	virtual Vector2i get_window_rect() const override;
+	virtual Vector2i get_window_size(uint8_t p_id) const override;
 	virtual void set_window_resize_callback(const CallableMethod &p_method, uint8_t p_id) override;
 
 	virtual void toggle_mouse_mode(bool p_mode) override;

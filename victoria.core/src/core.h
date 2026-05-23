@@ -5,3 +5,5 @@
 VAPI Error core_initialize(int argc, char *argv[]);
 
 VAPI void core_finalize();
+
+VAPI void core_list_arguments();

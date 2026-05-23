@@ -237,7 +237,12 @@ VAPI const char *get_error_message(Error p_id);
  */
 #define CRASH_OUT_OF_BOUNDS(m_index, m_size)                                                                          \
 	if ((m_index) < 0 || (m_index) >= (m_size)) {                                                                     \
-		_err_print_index_err(__FILE__, FUNCTION_STR, __LINE__, m_index, m_size, "Index given was out of bounds.");    \
+		_err_print_index_err(__FILE__,                                                                                \
+							 FUNCTION_STR,                                                                            \
+							 __LINE__,                                                                                \
+							 m_index,                                                                                 \
+							 m_size,                                                                                  \
+							 "Index given was out of bounds, a fatal error has occured.");                            \
 		DEBUG_BREAK();                                                                                                \
 	}
 
@@ -427,7 +432,7 @@ VAPI const char *get_error_message(Error p_id);
 		_err_print_err(__FILE__,                                                                                      \
 					   FUNCTION_STR,                                                                                  \
 					   __LINE__,                                                                                      \
-					   "Item\"" _STR(m_item) "\" is null, a fatal error has occured.");                               \
+					   "Item \"" _STR(m_item) "\" is null, a fatal error has occured.");                              \
 		DEBUG_BREAK();                                                                                                \
 	}
 
@@ -440,7 +445,7 @@ VAPI const char *get_error_message(Error p_id);
 		_err_print_err(__FILE__,                                                                                      \
 					   FUNCTION_STR,                                                                                  \
 					   __LINE__,                                                                                      \
-					   "Item\"" _STR(m_item) "\" is null, a fatal error has occured.",                                \
+					   "Item \"" _STR(m_item) "\" is null, a fatal error has occured.",                               \
 					   m_msg);                                                                                        \
 		DEBUG_BREAK();                                                                                                \
 	}

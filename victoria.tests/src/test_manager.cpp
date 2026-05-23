@@ -16,6 +16,8 @@
 #include <core/data/vector.h>
 #include <core/register_core_types.h>
 
+#include <core.h>
+
 struct Test {
 	PFN_test func = nullptr;
 	const char *desc;
@@ -79,16 +81,13 @@ void run_all_tests() {
 }
 
 int main(void) {
-	// Needs stdout for pretty-printing.
-	(void)OS::create();
-	// Need strings and core classes
-	register_core_types();
+	static const char *args[1] = {"--headless"};
+	core_initialize(1, (char **)args);
 
 	register_all_tests();
 	run_all_tests();
 
 	// Free strings
-	unregister_core_types();
-	OS::destroy();
+	core_finalize();
 	return 0;
 }

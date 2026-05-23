@@ -42,8 +42,6 @@ private:
 		// The atom that refers to the closing of the window
 		Atom wm_close_atom;
 
-		// An event callback to occur whenever the window is requested to close
-		CallableMethod notification_callback;
 		CallableMethod window_resize_callback;
 
 		// Position of the window
@@ -106,7 +104,7 @@ public:
 
 	virtual void set_use_vsync(bool p_value) override;
 
-	virtual Vector2i get_window_rect() const override;
+	virtual Vector2i get_window_size(uint8_t p_id) const override;
 	virtual void set_window_resize_callback(const CallableMethod &p_method, uint8_t p_id) override;
 
 	virtual void toggle_mouse_mode(bool p_mode) override;

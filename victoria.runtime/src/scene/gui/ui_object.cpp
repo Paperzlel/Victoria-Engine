@@ -35,6 +35,17 @@ void UIObject::_size_changed() {
 	if (size_changed) {
 		data.size_cache = new_size;
 	}
+
+	if (is_inside_tree()) {
+		if (pos_changed || size_changed) {
+			_propagate_transform_changed(this);
+			queue_redraw();
+
+			if (pos_changed && !size_changed) {
+				_update_canvas_item_transform();
+			}
+		}
+	}
 }
 
 void UIObject::_update_minimum_size() {

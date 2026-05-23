@@ -20,7 +20,6 @@ static ResourceImporter *resource_importer = nullptr;
 static GlobalCommandQueue *command_queue = nullptr;
 
 static String version_str;
-static String rendering_backend = "";
 
 /**
  * @brief Helper method that formats the help options properly, for the sake of neatness in the console.
@@ -59,8 +58,10 @@ void core_print_help() {
 	print_help_option("-v --verbose",
 					  "Loads the engine in verbose printing mode, putting far more information into the console.");
 	print_help_option("--version", "Prints the current version of the application");
+	print_help_option("--headless", "Runs the engine without enabling any display or rendering managers.");
 
 	print_help_option("Windowing options:", "", true);
+	print_help_option("--display-manager", "Overrides the display manager to use a specific backend.");
 	print_help_option("--width", "Set the width of the window to a given amount");
 	print_help_option("--height", "Set the height of the window to a given amount");
 
@@ -89,6 +90,9 @@ Error core_initialize(int argc, char *argv[]) {
 						  VICTORIA_BUILD_OS);
 
 	Vector2i window_size = {1280, 720};
+	String rendering_backend;
+	String override_display_manager;
+	bool run_in_headless_mode = false;
 
 	register_core_types();
 
@@ -125,6 +129,15 @@ Error core_initialize(int argc, char *argv[]) {
 		if (arg == "--version") {
 			OS::get_singleton()->print("%s", version_str.get_data());
 			return ERR_HELP;
+		}
+
+		if (arg == "--headless") {
+			run_in_headless_mode = true;
+		}
+
+		if (arg == "--display-manager") {
+			e = e->next();
+			override_display_manager = e->get();
 		}
 
 		if (arg == "--width") {
@@ -168,10 +181,25 @@ Error core_initialize(int argc, char *argv[]) {
 		rendering_backend = "opengl";
 	}
 
+	if (run_in_headless_mode) {
+		rendering_backend = "headless";
+		OS::get_singleton()->set_rendering_driver(rendering_backend);
+	}
+
 	print_verbose(vformat("Setting rendering backend to %s", rendering_backend.get_data()));
 
 	// Get the preferred display manager based on the runtime settings
-	int use_display = OS::get_singleton()->get_preferred_display_manager();
+	int use_display = 0;
+	if (run_in_headless_mode) {
+		use_display = 0;
+	} else {
+		if (!override_display_manager.is_empty()) {
+			use_display = DisplayManager::get_display_creation_func_id(override_display_manager);
+		} else {
+			use_display = OS::get_singleton()->get_preferred_display_manager();
+		}
+	}
+
 	Error err = OK;
 	display_manager = DisplayManager::create(use_display, rendering_backend, window_size, &err);
 	if (!display_manager || err != OK) {
