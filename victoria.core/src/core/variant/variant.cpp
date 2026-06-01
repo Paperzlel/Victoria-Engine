@@ -1,5 +1,54 @@
 #include "core/variant/variant.h"
 
+#include "core/object/object.h"
+#include "core/object/ref_counted.h"
+
+void Variant::ObjectData::ref(const Variant::ObjectData &p_other) {
+	if (ptr == p_other.ptr) {
+		return;
+	}
+
+	ObjectData cleanup = *this;
+
+	*this = p_other;
+
+	RefCounted *rc = static_cast<RefCounted *>(ptr);
+	if (rc && !rc->reference()) {
+		*this = ObjectData();
+	}
+
+	cleanup.unref();
+}
+
+void Variant::ObjectData::ref_pointer(Object *p_from) {
+	if (ptr == p_from) {
+		return;
+	}
+
+	ObjectData cleanup = *this;
+
+	if (p_from) {
+		*this = ObjectData{p_from};
+		RefCounted *rc = static_cast<RefCounted *>(ptr);
+		if (rc && !rc->reference()) {
+			*this = ObjectData();
+		}
+	} else {
+		*this = ObjectData();
+	}
+
+	cleanup.unref();
+}
+
+void Variant::ObjectData::unref() {
+	RefCounted *rc = static_cast<RefCounted *>(ptr);
+	if (rc && !rc->unreference()) {
+		vdelete(rc);
+	}
+
+	*this = ObjectData();
+}
+
 void Variant::_clear_internals() {
 	switch (type) {
 		case STRING: {
@@ -34,6 +83,9 @@ void Variant::_clear_internals() {
 		} break;
 		case VECTOR4_ARRAY: {
 			ArrayRefBase::destroy(_data._array);
+		} break;
+		case OBJECT: {
+			_get_obj().unref();
 		} break;
 		default: {
 		} break;
@@ -108,12 +160,23 @@ String Variant::stringify(int recursion_count) const {
 			return stringify_vector(operator Vector3Array(), recursion_count);
 		case VECTOR4_ARRAY:
 			return stringify_vector(operator Vector4Array(), recursion_count);
+		case OBJECT: {
+			if (_get_obj().ptr == nullptr) {
+				return "<Null Object>";
+			}
+
+			return _get_obj().ptr->get_class_name().get_string();
+		} break;
 		default:
 			return "";
 	}
 }
 
 void Variant::_ref(const Variant &p_other) {
+	if (type == OBJECT && p_other.type == OBJECT) {
+		_get_obj().ref(p_other._get_obj());
+		return;
+	}
 	clear();
 
 	type = p_other.type;
@@ -206,6 +269,10 @@ void Variant::_ref(const Variant &p_other) {
 				_data._array = ArrayRef<Vector4>::create();
 			}
 		} break;
+		case OBJECT: {
+			vnew_placement(_data._mem, ObjectData);
+			_get_obj().ref(p_other._get_obj());
+		} break;
 		default: {
 		}
 	}
@@ -261,6 +328,9 @@ void Variant::operator=(const Variant &p_var) {
 		case ARRAY: {
 			*reinterpret_cast<Array *>(_data._mem) = *reinterpret_cast<const Array *>(p_var._data._mem);
 		} break;
+		case OBJECT: {
+			_get_obj().ref(p_var._get_obj());
+		} break;
 		default:
 			break;
 	}
@@ -303,9 +373,28 @@ bool Variant::hash_compare(const Variant &p_other, int recursion_count) const {
 
 			return true;
 		} break;
+		case OBJECT: {
+			const uint32_t l = hash_lowbias32((uint32_t)reinterpret_cast<const uint64_t>(_get_obj().ptr));
+			const uint32_t r = hash_lowbias32((uint32_t)reinterpret_cast<const uint64_t>(_get_obj().ptr));
+
+			if (l != r) {
+				return false;
+			}
+
+			return true;
+		} break;
 		default:
 			return false;
 	}
+}
+
+Object *Variant::get_object_or_null() const {
+	const ObjectData &o = _get_obj();
+	if (o.ptr) {
+		return o.ptr;
+	}
+
+	return nullptr;
 }
 
 Variant::operator bool() const {
@@ -768,6 +857,14 @@ Variant::operator Vector4Array() const {
 	}
 }
 
+Variant::operator Object *() const {
+	if (type == OBJECT) {
+		return _get_obj().ptr;
+	}
+
+	return nullptr;
+}
+
 Variant::Variant(int8_t p_int) {
 	_data._int = p_int;
 	type = INT;
@@ -938,6 +1035,11 @@ Variant::Variant(const Vector3Array &p_vector3_array) {
 
 Variant::Variant(const Vector4Array &p_vector4_array) {
 	_data._array = ArrayRef<Vector4>::create(p_vector4_array);
+}
+
+Variant::Variant(Object *p_object) {
+	vnew_placement(_data._mem, ObjectData);
+	_get_obj().ref_pointer(p_object);
 }
 
 Variant::Variant(const Variant &p_other) {

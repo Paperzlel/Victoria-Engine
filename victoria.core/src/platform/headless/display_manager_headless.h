@@ -21,6 +21,7 @@ public:
 
 	virtual Vector2i get_window_size(uint8_t p_id) const override;
 	virtual void set_window_resize_callback(const CallableMethod &p_method, uint8_t p_id) override;
+	virtual void set_input_event_dispatch_callback(const CallableMethod &p_method, uint8_t p_id) override;
 
 	virtual void toggle_mouse_mode(bool p_mode) override;
 	virtual bool get_mouse_mode() const override;

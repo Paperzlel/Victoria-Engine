@@ -156,6 +156,14 @@ void Input::parse_input_event(const Ref<InputEvent> &p_event) {
 		cache_item.pressed = p_event->pressed;
 		cache_item.engine_frame = Engine::get_singleton()->get_engine_frame_count();
 	}
+
+	if (input_event_callback) {
+		input_event_callback(p_event);
+	}
+}
+
+void Input::set_input_event_callback(PFN_InputEventDispatchFunc p_input_callback) {
+	input_event_callback = p_input_callback;
 }
 
 void Input::clear() {

@@ -124,6 +124,8 @@ public:
 	 */
 	virtual void set_window_resize_callback(const CallableMethod &p_method, uint8_t p_id) = 0;
 
+	virtual void set_input_event_dispatch_callback(const CallableMethod &p_method, uint8_t p_id) = 0;
+
 	/**
 	 * @brief Toggles the mouse mode, or in other words changes whether the mouse is drawn over the screen or captured
 	 * by the engine. If captured, mouse position is locked to the centre of the screen, but relative movements are

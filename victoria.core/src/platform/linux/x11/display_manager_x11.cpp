@@ -71,6 +71,17 @@ void DisplayManagerX11::_update_wm_properties() {
 	OS::get_singleton()->set_is_suspended(window->minimized);
 }
 
+void DisplayManagerX11::_dispatch_input_event_s(const Ref<InputEvent> &p_event) {
+	static_cast<DisplayManagerX11 *>(DisplayManager::get_singleton())->_dispatch_input_event(p_event);
+}
+
+void DisplayManagerX11::_dispatch_input_event(const Ref<InputEvent> &p_event) {
+	WindowData *wd = window;
+	if (wd && wd->input_event_callback.is_valid()) {
+		wd->input_event_callback.call(p_event);
+	}
+}
+
 uint8_t DisplayManagerX11::create_window(const String &p_name,
 										 uint16_t x,
 										 uint16_t y,
@@ -370,6 +381,12 @@ void DisplayManagerX11::set_window_resize_callback(const CallableMethod &p_metho
 	}
 }
 
+void DisplayManagerX11::set_input_event_dispatch_callback(const CallableMethod &p_method, uint8_t p_id) {
+	if (p_id == window->id) {
+		window->input_event_callback = p_method;
+	}
+}
+
 void DisplayManagerX11::toggle_mouse_mode(bool p_mode) {
 	if (p_mode) {
 		Cursor c;
@@ -422,6 +439,8 @@ DisplayManager *DisplayManagerX11::create_func(const String &p_renderer, const V
 
 DisplayManagerX11::DisplayManagerX11(const String &p_renderer, const Vector2i &p_size, Error *r_error) {
 	KeyboardRemappingX11::initialize();
+
+	Input::get_singleton()->set_input_event_callback(&DisplayManagerX11::_dispatch_input_event_s);
 
 	display = XOpenDisplay(nullptr);
 	if (!display) {

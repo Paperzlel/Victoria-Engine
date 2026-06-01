@@ -3,6 +3,8 @@
 #include "rendering/rendering_manager.h"
 #include "scene/main/viewport.h"
 
+#include <core/object/callable_method_pointer.h>
+
 void CanvasItem::_redraw_callback() {
 	notification(NOTIFICATION_DRAW);
 }

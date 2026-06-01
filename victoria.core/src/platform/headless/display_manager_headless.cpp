@@ -23,6 +23,8 @@ Vector2i DisplayManagerHeadless::get_window_size(uint8_t p_id) const {
 
 void DisplayManagerHeadless::set_window_resize_callback(const CallableMethod &p_method, uint8_t p_id) {}
 
+void DisplayManagerHeadless::set_input_event_dispatch_callback(const CallableMethod &p_method, uint8_t p_id) {}
+
 void DisplayManagerHeadless::toggle_mouse_mode(bool p_mode) {}
 
 bool DisplayManagerHeadless::get_mouse_mode() const {

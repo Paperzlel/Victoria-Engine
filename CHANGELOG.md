@@ -1,6 +1,30 @@
 # Changelog
 Changes exist in chronological order (i.e. new changes are to be appended to the end of the file). Dates are done in DD/MM/YYYY format with the version number applied to each date if needed.
 
+## 1/6/2026
+- Core:
+	- Data:
+		- Fixed a potential segfault in `HashTable::erase`.
+	- Input:
+		- Added the method `set_input_event_callback`.
+			- This is the method that will be called whenever an `InputEvent` is generated and needs to be dispatched to the windows present on the user's computer.
+	- Object:
+		- Removed `callable_method_pointer.h` from `object.h`.
+			- Changes to `variant_caster.h` mean that this becomes a circular include, which will break all compilation units from here on out.
+		- Added ability to convert `Ref<T>` to and from `Variant`.
+			- See changes to `Variant` for further details.
+	- Variant:
+		- Added the ability to convert `Object` to and from `Variant`s. 
+			- Needed for some of the new code relating to propagating input through the scene tree. Also will be handy when it comes to validations that may be required.
+		- Added a new method `get_object_or_null`.
+			- Part of the above implementation. Keeps conventions with other parts of code and will not error if the object is null.
+	- Platform/Linux:
+		- Added implementations for the above into Wayland and X11.
+- Runtime:
+	- Scene:
+		- Added input event callbacks to `Window`.
+			- Part of the above implementing for the testbed. Still needs some more code for how we propagate the events.
+
 ## 23/5/2026
 - Core:
 	- Added a new headless mode.

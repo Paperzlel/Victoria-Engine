@@ -127,6 +127,10 @@ public:
 		return reference;
 	}
 
+	operator Variant() const {
+		return Variant(reference);
+	}
+
 	FORCE_INLINE void operator=(const Ref &p_other) {
 		ref(p_other);
 	}
@@ -147,6 +151,15 @@ public:
 
 	FORCE_INLINE void operator=(T *p_ref) {
 		ref_ptr<true>(p_ref);
+	}
+
+	FORCE_INLINE void operator=(const Variant &p_from) {
+		Object *o = p_from.get_object_or_null();
+		if (o == reference) {
+			return;
+		}
+
+		ref_ptr<false>(Object::cast_to<T>(o));
 	}
 
 	/**
@@ -205,6 +218,10 @@ public:
 
 	Ref(T *p_from) {
 		this->operator=(p_from);
+	}
+
+	Ref(const Variant &p_variant) {
+		this->operator=(p_variant);
 	}
 
 	Ref() = default;

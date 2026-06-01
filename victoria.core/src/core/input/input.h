@@ -43,6 +43,13 @@ class VAPI Input {
 	// A table of each input action and their corresponding information.
 	HashTable<VName, ActionCache> action_cache;
 
+public:
+	typedef void (*PFN_InputEventDispatchFunc)(const Ref<InputEvent> &);
+
+private:
+	// The input event callback to use.
+	PFN_InputEventDispatchFunc input_event_callback = nullptr;
+
 	/**
 	 * @brief Converts the mouse button to a button mask.
 	 * @param p_button The button to convert.
@@ -157,6 +164,13 @@ public:
 	 * @param p_event The event in question to send.
 	 */
 	void parse_input_event(const Ref<InputEvent> &p_event);
+
+	/**
+	 * @brief Sets the input event dispatch function to the given argument. The function must have 1 parameter of type
+	 * `const Ref<InputEvent>`.
+	 * @param p_input_callback The input dispatch function to set it to.
+	 */
+	void set_input_event_callback(PFN_InputEventDispatchFunc p_input_callback);
 
 	/**
 	 * @brief Unpresses any inputs currently held manually. Allows the input system to properly clear itself if focus

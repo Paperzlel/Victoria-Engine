@@ -1,13 +1,38 @@
 #pragma once
 
-#include "variant.h"
-
+#include "core/object/object.h"
 #include "core/typedefs.h"
 
 template <typename T>
 struct VariantCaster {
 	static FORCE_INLINE T cast(const Variant &p_variant) {
-		return p_variant;
+		if constexpr (std::is_base_of_v<Object, std::remove_pointer_t<T>>) {
+			return Object::cast_to<std::remove_pointer_t<T>>(p_variant);
+		} else {
+			return p_variant;
+		}
+	}
+};
+
+template <typename T>
+struct VariantCaster<T &> {
+	static FORCE_INLINE T cast(const Variant &p_variant) {
+		if constexpr (std::is_base_of_v<Object, std::remove_pointer_t<T>>) {
+			return Object::cast_to<std::remove_pointer_t<T>>(p_variant);
+		} else {
+			return p_variant;
+		}
+	}
+};
+
+template <typename T>
+struct VariantCaster<const T &> {
+	static FORCE_INLINE T cast(const Variant &p_variant) {
+		if constexpr (std::is_base_of_v<Object, std::remove_pointer_t<T>>) {
+			return Object::cast_to<std::remove_pointer_t<T>>(p_variant);
+		} else {
+			return p_variant;
+		}
 	}
 };
 

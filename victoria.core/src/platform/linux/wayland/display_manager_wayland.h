@@ -15,10 +15,13 @@
 #	include "core/data/hashtable.h"
 #	include "core/input/keyboard.h"
 #	include "core/os/display_manager.h"
+#	include "core/object/ref_counted.h"
 
 #	include <wayland-client-core.h>
 #	include <wayland-egl-core.h>
 #	include <xkbcommon/xkbcommon.h>
+
+class InputEvent;
 
 class DisplayManagerWayland : public DisplayManager {
 private:
@@ -111,6 +114,7 @@ private:
 		Vector2i cached_size;
 		Vector2i position;
 		CallableMethod resize_callback;
+		CallableMethod input_callback;
 
 		bool maximised = false;
 		bool fullscreen = false;
@@ -293,6 +297,9 @@ private:
 	WindowData *_get_window_data_from_id(uint8_t p_window);
 	void _window_push_event(uint8_t p_window, WindowNotification p_notification);
 
+	static void _dispatch_input_event_s(const Ref<InputEvent> &p_event);
+	void _dispatch_input_event(const Ref<InputEvent> &p_event);
+
 public:
 	static DisplayManager *create_func(const String &p_renderer, const Vector2i &p_size, Error *r_error);
 	static void register_wayland_driver();
@@ -309,6 +316,7 @@ public:
 
 	virtual Vector2i get_window_size(uint8_t p_id) const override;
 	virtual void set_window_resize_callback(const CallableMethod &p_method, uint8_t p_id) override;
+	virtual void set_input_event_dispatch_callback(const CallableMethod &p_method, uint8_t p_id) override;
 
 	virtual void toggle_mouse_mode(bool p_mode) override;
 	virtual bool get_mouse_mode() const override;

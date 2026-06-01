@@ -7,8 +7,11 @@
 #	include "gl_manager_x11.h"
 
 #	include "core/os/display_manager.h"
+#	include "core/object/ref_counted.h"
 
 #	include <X11/Xlib.h>
+
+class InputEvent;
 
 /**
  * @brief Extension of the `DisplayManager` class for the X11 API.
@@ -44,6 +47,9 @@ private:
 
 		CallableMethod window_resize_callback;
 
+		// Callable result for an input event
+		CallableMethod input_event_callback;
+
 		// Position of the window
 		Vector2i position;
 
@@ -65,6 +71,9 @@ private:
 	void _update_window(XEvent *p_event);
 
 	void _update_wm_properties();
+
+	static void _dispatch_input_event_s(const Ref<InputEvent> &p_event);
+	void _dispatch_input_event(const Ref<InputEvent> &p_event);
 
 public:
 	static DisplayManager *create_func(const String &p_renderer, const Vector2i &p_size, Error *r_error);
@@ -106,6 +115,7 @@ public:
 
 	virtual Vector2i get_window_size(uint8_t p_id) const override;
 	virtual void set_window_resize_callback(const CallableMethod &p_method, uint8_t p_id) override;
+	virtual void set_input_event_dispatch_callback(const CallableMethod &p_method, uint8_t p_id) override;
 
 	virtual void toggle_mouse_mode(bool p_mode) override;
 	virtual bool get_mouse_mode() const override;

@@ -2,9 +2,10 @@
 
 #include "core/data/hashtable.h"
 #include "core/data/list.h"
-#include "core/object/callable_method_pointer.h" // IWYU pragma: keep
+#include "core/object/callable_method.h"
 #include "core/string/vname.h"
 #include "core/typedefs.h"
+#include "core/variant/variant.h"
 
 /**
  * @brief Core definitions for API-level classes.

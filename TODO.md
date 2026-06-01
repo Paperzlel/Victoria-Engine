@@ -68,8 +68,8 @@ A list of all things that are on the current plan for the engine, whether short-
 
 ## Input
 - [x] Move the massive X11 input remap out to a new file (like Wayland) and convert it to a hash table
-- [ ] Rework input so that windows can send input events through the scene tree
-- [ ] Reclassify all keyboard input options
+- [x] Rework input so that windows can send input events through the scene tree
+- [x] Reclassify all keyboard input options
 - [ ] Add the ability to query the string relating to the given keycode
 - [x] Add an `InputAction` class to track specific input events
 
@@ -85,6 +85,7 @@ A list of all things that are on the current plan for the engine, whether short-
 - [x] Implement a way to get the preferred DisplayManager option from the OS
 - [ ] Add some kind of message queue to Wayland so that messages can be processed properly
 - [ ] Add working directory and other file access functions that are platform-specific
+- [ ] Add event dispatching to Windows
 
 ## Rendering
 - [x] Fix bug with running any EGL code

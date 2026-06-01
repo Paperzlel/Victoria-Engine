@@ -597,17 +597,13 @@ public:
 		// Check hash idx + 1
 		// If hash is valid, move down. Invalidate hash idx + 1
 		// Repeat at idx + 2
-		uint32_t next_idx = idx + 1;
 		uint32_t size = PRIMES[_prime_idx];
-		while (hashes[next_idx] != 0) {
+		uint32_t next_idx = (idx + 1) % size;
+		while (hashes[next_idx] != 0 && _get_probe_distance(next_idx, hashes[next_idx]) != 0) {
 			// Get closed hash (should point to next index)
-			uint32_t h2 = hashes[next_idx] % size;
-			if (h2 == idx) {
-				SWAP(hashed_data[next_idx - 1], hashed_data[next_idx]);
-			} else {
-				break;
-			}
-
+			SWAP(hashes[next_idx], hashes[idx]);
+			SWAP(hashed_data[next_idx], hashed_data[idx]);
+			idx = next_idx;
 			_inc_mod(next_idx, size);
 		}
 

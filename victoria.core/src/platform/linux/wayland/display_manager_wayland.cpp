@@ -643,6 +643,16 @@ void DisplayManagerWayland::_window_push_event(uint8_t p_window, WindowNotificat
 	// Do nothing for now.
 }
 
+void DisplayManagerWayland::_dispatch_input_event_s(const Ref<InputEvent> &p_event) {
+	static_cast<DisplayManagerWayland *>(DisplayManager::get_singleton())->_dispatch_input_event(p_event);
+}
+
+void DisplayManagerWayland::_dispatch_input_event(const Ref<InputEvent> &p_event) {
+	if (wd && wd->input_callback.is_valid()) {
+		wd->input_callback.call(p_event);
+	}
+}
+
 DisplayManager *DisplayManagerWayland::create_func(const String &p_renderer, const Vector2i &p_size, Error *r_error) {
 	return vnew(DisplayManagerWayland(p_renderer, p_size, r_error));
 }
@@ -742,6 +752,12 @@ Vector2i DisplayManagerWayland::get_window_size(uint8_t p_id) const {
 void DisplayManagerWayland::set_window_resize_callback(const CallableMethod &p_method, uint8_t p_id) {
 	if (p_id == wd->id) {
 		wd->resize_callback = p_method;
+	}
+}
+
+void DisplayManagerWayland::set_input_event_dispatch_callback(const CallableMethod &p_method, uint8_t p_id) {
+	if (p_id == wd->id) {
+		wd->input_callback = p_method;
 	}
 }
 
@@ -912,6 +928,8 @@ void DisplayManagerWayland::finalize() {
 
 DisplayManagerWayland::DisplayManagerWayland(const String &p_renderer, const Vector2i &p_size, Error *r_error) {
 	KeyboardRemappingXKB::initialize();
+
+	Input::get_singleton()->set_input_event_callback(&DisplayManagerWayland::_dispatch_input_event_s);
 
 	display = wl_display_connect(nullptr);
 	if (!display) {

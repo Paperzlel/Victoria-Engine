@@ -20,6 +20,8 @@ typedef Vector<Vector2> Vector2Array;
 typedef Vector<Vector3> Vector3Array;
 typedef Vector<Vector4> Vector4Array;
 
+class Object;
+
 class VAPI Variant {
 public:
 	enum Type {
@@ -51,6 +53,9 @@ public:
 		VECTOR2_ARRAY,
 		VECTOR3_ARRAY,
 		VECTOR4_ARRAY,
+
+		// Object type
+		OBJECT,
 
 		VARIANT_MAX
 	};
@@ -116,6 +121,14 @@ private:
 		}
 	};
 
+	struct ObjectData {
+		Object *ptr;
+
+		void ref(const ObjectData &p_from);
+		void ref_pointer(Object *p_from);
+		void unref();
+	};
+
 	union {
 		bool _bool;
 		int64_t _int;
@@ -151,6 +164,8 @@ private:
 			true, // VECTOR2_ARRAY
 			true, // VECTOR3_ARRAY
 			true, // VECTOR4_ARRAY
+
+			true // OBJECT
 		};
 
 		if (needs_freeing[type]) {
@@ -160,6 +175,9 @@ private:
 	}
 
 	void _clear_internals();
+
+	ALWAYS_INLINE ObjectData &_get_obj();
+	ALWAYS_INLINE const ObjectData &_get_obj() const;
 
 public:
 	String stringify(int recursion_count = 0) const;
@@ -186,6 +204,12 @@ public:
 	}
 
 	bool hash_compare(const Variant &p_other, int recursion_count) const;
+
+	/**
+	 * @brief Gets the `Object` pointer relating to this `Variant`, or null if no such object exists.
+	 * @return A pointer to the related object, or null if not present.
+	 */
+	Object *get_object_or_null() const;
 
 	operator bool() const;
 	operator int8_t() const;
@@ -215,6 +239,7 @@ public:
 	operator Vector2Array() const;
 	operator Vector3Array() const;
 	operator Vector4Array() const;
+	operator Object *() const;
 
 	Variant(int8_t p_int);
 	Variant(int16_t p_int);
@@ -245,6 +270,7 @@ public:
 	Variant(const Vector2Array &p_vector2_array);
 	Variant(const Vector3Array &p_vector3_array);
 	Variant(const Vector4Array &p_vector4_array);
+	Variant(Object *p_object);
 
 	Variant() {
 		type = NIL;
@@ -262,6 +288,14 @@ public:
 		clear();
 	}
 };
+
+Variant::ObjectData &Variant::_get_obj() {
+	return *reinterpret_cast<ObjectData *>(&_data._mem[0]);
+}
+
+const Variant::ObjectData &Variant::_get_obj() const {
+	return *reinterpret_cast<const ObjectData *>(&_data._mem[0]);
+}
 
 Variant &Array::Iterator::operator*() const {
 	return *_p;
