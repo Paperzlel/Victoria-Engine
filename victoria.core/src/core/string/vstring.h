@@ -78,6 +78,13 @@ public:
 	bool contains(const String &p_string) const;
 	int count(const String &p_what) const;
 
+	/**
+	 * @brief Finds the last instance of the given phrase in the string. If the phrase doesn't exist, returns `-1`.
+	 * @param p_what The phrase to look for.
+	 * @return `-1` on failure, and the starting index of the first index on success.
+	 */
+	int rfind(const String &p_what) const;
+
 	String left(int p_count) const;
 	String right(int p_count) const;
 
@@ -94,6 +101,13 @@ public:
 
 	String get_file() const;
 	String get_file_extension() const;
+
+	/**
+	 * @brief Gets the directory containing the given file from the given path. If the path is empty or not a valid
+	 * filepath, returns a blank string.
+	 * @return The directory correlating to the given path.
+	 */
+	String get_directory() const;
 
 	int64_t to_int() const;
 	double to_float() const;

@@ -1,6 +1,7 @@
 #include "core/string/vstring.h"
 
 #include "core/data/hashfuncs.h"
+#include "core/io/filesystem.h"
 #include "core/math/math_funcs.h"
 
 #include <stdarg.h>
@@ -191,6 +192,27 @@ int String::count(const String &p_what) const {
 	}
 
 	return count;
+}
+
+int String::rfind(const String &p_what) const {
+	if (is_empty() || p_what.is_empty()) {
+		return -1;
+	}
+
+	int pos = -1;
+	int similarity = 0;
+
+	for (int i = length(); i >= 0; i--) {
+		if (get(i) == p_what[p_what.length() - similarity - 1]) {
+			similarity++;
+			if (similarity == p_what.length()) {
+				pos = i - similarity + 1;
+				break;
+			}
+		}
+	}
+
+	return pos;
 }
 
 /**
@@ -443,6 +465,22 @@ String String::get_file_extension() const {
 	}
 	Vector<String> vs(split("."));
 	return vs[vs.size() - 1];
+}
+
+String String::get_directory() const {
+	String ret = *this;
+
+	if (!FileSystem::get_singleton()->is_dir(ret)) {
+		int x = rfind("/");
+		if (x == -1) {
+			return "";
+		}
+
+		ret.resize(x + 1);
+		ret[x] = 0;
+	}
+
+	return ret;
 }
 
 /**

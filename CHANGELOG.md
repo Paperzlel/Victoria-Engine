@@ -1,6 +1,17 @@
 # Changelog
 Changes exist in chronological order (i.e. new changes are to be appended to the end of the file). Dates are done in DD/MM/YYYY format with the version number applied to each date if needed.
 
+## 2/6/2026
+- Core:
+	- String:
+		- Added new methods `rfind` and `get_directory`.
+			- `rfind` finds the last instance of a string inside another string, and `get_directory` find the directory of a file path.
+	- I/O:
+		- Added `get_` and `set_` methods for the CWD.
+			- Useful pretty much everywhere we look.
+- Testbed:
+	- Set CWD to the current binary, so we can load all resources properly.
+
 ## 1/6/2026
 - Core:
 	- Data:

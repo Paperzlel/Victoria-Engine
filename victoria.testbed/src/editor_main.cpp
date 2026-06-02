@@ -3,6 +3,7 @@
 #include <core/input/input.h>
 #include <core/input/input_event.h>
 #include <core/input/input_map.h>
+#include <core/io/filesystem.h>
 #include <core/io/resource_importer.h>
 #include <core/os/os.h>
 #include <core/string/print_string.h>
@@ -51,6 +52,10 @@ Ref<Font> Editor::get_editor_font() {
 }
 
 Editor::Editor() {
+	// Set CWD to that of the executable.
+	String dir = OS::get_singleton()->get_executable_path().get_directory();
+	FileSystem::get_singleton()->set_cwd(dir);
+
 	Vector<Variant> args;
 	args.push_back(true);
 	args.push_back(32);

@@ -21,6 +21,7 @@ const char *error_messages[] = {
     "Item cannot be deleted",
     "File not found",
     "File can't be accessed",
+	"Path is not valid",
     "Item already exists",
     "Item does not exist",
     "Something failed",

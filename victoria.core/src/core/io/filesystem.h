@@ -49,6 +49,29 @@ public:
 	 */
 	Ref<FileHandle> open_file(const String &p_path, FileAccessType p_flags, Error *r_error);
 
+	/**
+	 * @brief Gets the current working directory for the engine, or in other terms it gets the relative path that all
+	 * subsequent relative paths are calculated from.
+	 * @return The current working directory for the engine.
+	 */
+	virtual String get_cwd() const = 0;
+
+	/**
+	 * @brief Sets the current working directory to a given path. This path may be either relative or absolute, however
+	 * the latter is discouraged as it varies between operating systems - paths for engine resources and user data will
+	 * be added and available in the future.
+	 * @param p_path The path to set the new current working directory to. Must be a directory and not a file.
+	 * @return `OK` on success, and `ERR_INVALID_PATH` or `ERR_INVALID_PARAMETER` on failure.
+	 */
+	virtual Error set_cwd(const String &p_path) = 0;
+
+	/**
+	 * @brief Checks to see if the given filepath is a valid directory.
+	 * @param p_path The path to check.
+	 * @return `true` if valid, `false` if not.
+	 */
+	virtual bool is_dir(const String &p_path) const = 0;
+
 	FileSystem();
 	virtual ~FileSystem();
 };
