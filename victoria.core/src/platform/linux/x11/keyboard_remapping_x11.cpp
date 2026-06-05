@@ -1,6 +1,7 @@
 #include "keyboard_remapping_x11.h"
+#if defined(PLATFORM_LINUX) && defined(X11_ENABLED)
 
-#include <X11/keysym.h>
+#	include <X11/keysym.h>
 
 HashTable<int, Key, KeyboardRemappingX11::HashTableKeyHasher> KeyboardRemappingX11::scancode_map;
 HashTable<Key, int, KeyboardRemappingX11::HashTableKeyHasher> KeyboardRemappingX11::inv_scancode_map;
@@ -171,3 +172,5 @@ int KeyboardRemappingX11::get_keycode_from_key(Key p_key) {
 
 	return *ks;
 }
+
+#endif // defined(PLATFORM_LINUX) && defined(X11_ENABLED)

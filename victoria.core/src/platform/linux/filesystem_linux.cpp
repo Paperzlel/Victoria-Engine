@@ -1,8 +1,9 @@
 #include "platform/linux/filesystem_linux.h"
+#if PLATFORM_LINUX
 
-#include <stdlib.h>
-#include <sys/stat.h>
-#include <unistd.h>
+#	include <stdlib.h>
+#	include <sys/stat.h>
+#	include <unistd.h>
 
 String FileSystemLinux::get_cwd() const {
 	// malloc'd data
@@ -33,3 +34,5 @@ bool FileSystemLinux::is_dir(const String &p_path) const {
 	stat(p_path.get_data(), &pstat);
 	return S_ISDIR(pstat.st_mode);
 }
+
+#endif

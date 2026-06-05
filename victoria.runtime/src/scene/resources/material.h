@@ -5,7 +5,7 @@
 #include <core/io/resource.h>
 #include <core/math/vector3.h>
 
-class VAPI Material : public Resource {
+class VRUNTIME_API Material : public Resource {
 	VREGISTER_CLASS(Material, Resource);
 
 	RID material;

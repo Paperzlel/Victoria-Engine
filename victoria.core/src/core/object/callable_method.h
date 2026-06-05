@@ -7,7 +7,7 @@
 
 class CallableMethodBase;
 
-class VAPI CallableMethod {
+class VCORE_API CallableMethod {
 	CallableMethodBase *base = nullptr;
 
 public:
@@ -95,7 +95,7 @@ public:
  * @brief Implementation of `CallableMethod` data so that functionality referring to different types of methods can be
  * implemented and access the same.
  */
-class VAPI CallableMethodBase {
+class VCORE_API CallableMethodBase {
 	friend class CallableMethod;
 	VName name;		   // The name of the function. Will be in the form `<class_name>::<function_name>`.
 	Refcount refcount; // The reference count to the current method base. Bases are transferred between callables to

@@ -4,7 +4,7 @@
 
 #include <core/data/rid.h>
 
-class VAPI VisualInstance3D : public GameObject3D {
+class VRUNTIME_API VisualInstance3D : public GameObject3D {
 	VREGISTER_CLASS(VisualInstance3D, GameObject3D);
 
 	RID instance;

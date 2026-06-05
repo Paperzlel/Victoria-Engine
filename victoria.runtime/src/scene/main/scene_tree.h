@@ -11,7 +11,7 @@ class GameObject;
 class Window;
 class Camera3D;
 
-class VAPI SceneTree : public MainLoop {
+class VRUNTIME_API SceneTree : public MainLoop {
 	VREGISTER_CLASS(SceneTree, MainLoop);
 
 private:

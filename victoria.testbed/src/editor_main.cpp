@@ -52,6 +52,9 @@ Ref<Font> Editor::get_editor_font() {
 }
 
 Editor::Editor() {
+	int *p = nullptr;
+	*p = 3;
+
 	// Set CWD to that of the executable.
 	String dir = OS::get_singleton()->get_executable_path().get_directory();
 	FileSystem::get_singleton()->set_cwd(dir);

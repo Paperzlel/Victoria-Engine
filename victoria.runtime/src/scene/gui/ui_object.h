@@ -4,7 +4,7 @@
 
 #include <core/variant/variant_caster.h>
 
-class VAPI UIObject : public CanvasItem {
+class VRUNTIME_API UIObject : public CanvasItem {
 	VREGISTER_CLASS(UIObject, CanvasItem);
 
 public:

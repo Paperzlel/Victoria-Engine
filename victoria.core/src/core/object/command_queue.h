@@ -6,7 +6,7 @@
 /**
  * @brief A class that can have methods pushed to it and called later on. All events are called when `flush()` occurs.
  */
-class VAPI CommandQueue {
+class VCORE_API CommandQueue {
 	// A given message pushed to the queue.
 	struct Message {
 		CallableMethod callable; // The actual function to call
@@ -78,7 +78,7 @@ public:
  * @brief Global command queue that can be called from anywhere in the engine. Is initialized in `core_initialize` but
  * can be initialized elsewhere in the engine as well.
  */
-class VAPI GlobalCommandQueue : public CommandQueue {
+class VCORE_API GlobalCommandQueue : public CommandQueue {
 	static GlobalCommandQueue *singleton; // Singleton object.
 
 public:

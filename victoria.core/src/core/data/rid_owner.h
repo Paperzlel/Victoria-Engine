@@ -8,7 +8,7 @@
 #include "core/typedefs.h"
 
 class RIDAllocatorBase {
-	static AtomicCounter<uint64_t> global_counter;
+	VCORE_API static AtomicCounter<uint64_t> global_counter;
 
 public:
 	static RID _gen_rid() {

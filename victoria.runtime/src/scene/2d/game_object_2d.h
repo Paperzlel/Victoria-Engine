@@ -4,7 +4,7 @@
 
 #include <core/math/transform_2d.h>
 
-class VAPI GameObject2D : public CanvasItem {
+class VRUNTIME_API GameObject2D : public CanvasItem {
 	VREGISTER_CLASS(GameObject2D, CanvasItem);
 
 	Transform2D transform;

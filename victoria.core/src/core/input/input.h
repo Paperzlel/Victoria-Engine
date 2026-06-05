@@ -13,7 +13,7 @@
  * found. For the events themselves, see `InputEvent`. For the mapping of inputs and their events, see `InputMap`. For
  * the enumerations that are used by the class, see `InputEnums`.
  */
-class VAPI Input {
+class VCORE_API Input {
 	static Input *singleton;
 
 	// Set of pressed and released keys.

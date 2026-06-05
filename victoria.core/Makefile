@@ -1,26 +1,24 @@
 TARGET := victoria_core
 include ../utils/core.mk
 include ../utils/general.mk
+BUILD_DIR := $(shell $(PYTHON) ../utils/get_relpath.py $(BUILD_DIR))
 
 # We keep third-party, platform and driver specific code hidden from the user.
 INCLUDES += -Isrc -I../victoria.thirdparty/glad/include -Isrc/thirdparty
 LDFLAGS += -lGLAD
-DEFINES += -DVEXPORT
+DEFINES += -DVCORE_API_EXPORT -DGLAD_API_CALL_EXPORT
 
 # Define flags that are applied only to third-party libraries. Essentially a boiled-down version of before.
 ifeq ($(USE_MSVC), yes)
 ifeq ($(DEBUG), yes)
 	CCFLAGS += /MDd
-	LDFLAGS += /NATVIS:src/platform/windows/libvictoria.natvis
+	LDFLAGS += /NATVIS:src/platform/windows/libvictoria.natvis dbghelp.lib
 else
 	CCFLAGS += /MD
 endif
 endif
 
 # Utilities
-
-# Make does not offer a recursive wildcard function, so here's one:
-rwildcard=$(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2))
 
 # Platform-specific options
 export USE_WAYLAND :=
@@ -52,16 +50,17 @@ endif
 endif
 
 # Compiler-specific options
+ifeq ($(USE_MSVC), yes)
+	LDFLAGS += /DLL
+else
 ifeq ($(COMPILER), gcc)
 	LDFLAGS += -shared -rdynamic
 endif
 ifeq ($(COMPILER), clang)
 	LDFLAGS += --shared
 endif
-
-ifeq ($(USE_MSVC), yes)
-	LDFLAGS += /DLL
 endif
+
 
 # OS-specific options
 ifeq ($(PLATFORM), linux)
@@ -87,6 +86,7 @@ ifeq ($(PLATFORM), win32)
 # Force MSVC variables to their proper form.
 ifeq ($(USE_MSVC), yes)
 	INCLUDES := $(patsubst -I%,/I%,$(INCLUDES))
+	LDFLAGS := $(patsubst -L%,/LIBPATH:%,$(LDFLAGS))
 	LDFLAGS := $(patsubst -l%,%.lib,$(LDFLAGS))
 	DEFINES := $(patsubst -D%,/D%,$(DEFINES))
 endif
@@ -117,14 +117,14 @@ endif
 OBJ_FILES := $(patsubst src/%.cpp, $(BUILD_DIR)/$(TARGET)/%.o, $(CPP_FILES)) $(patsubst src/%.c, $(BUILD_DIR)/$(TARGET)/%.o, $(C_FILES))
 
 # Setup final binary
-OUTPUT_NAME := libvictoria.core
+OUTPUT_NAME := victoria.core
 OUTPUT_FILE := $(OUTPUT_NAME)
 BINARY_COMMAND :=
 ifeq ($(PLATFORM), win32)
 	OUTPUT_FILE := $(OUTPUT_FILE).dll
 else
 ifeq ($(PLATFORM), linux)
-	OUTPUT_FILE := $(OUTPUT_FILE).so
+	OUTPUT_FILE := lib$(OUTPUT_FILE).so
 endif
 endif
 
@@ -141,6 +141,7 @@ all: test scaffold $(OBJ_FILES) $(BUILD_DIR)/$(OUTPUT_FILE)
 
 # Look for if certain files are downloaded prior to building
 test:
+	@echo $(BINARY_COMMAND)
 ifeq ($(PLATFORM), linux)
 ifeq ("$(and $(USE_X11), $(USE_WAYLAND))","")
 	@echo Cannot compile as neither X11 nor Wayland is available on the system.

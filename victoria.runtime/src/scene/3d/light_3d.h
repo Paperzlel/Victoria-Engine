@@ -2,7 +2,7 @@
 
 #include "scene/3d/visual_instance_3d.h"
 
-class VAPI Light3D : public VisualInstance3D {
+class VRUNTIME_API Light3D : public VisualInstance3D {
 	VREGISTER_CLASS(Light3D, VisualInstance3D);
 
 protected:
@@ -24,7 +24,7 @@ public:
 	~Light3D();
 };
 
-class VAPI PointLight3D : public Light3D {
+class VRUNTIME_API PointLight3D : public Light3D {
 	VREGISTER_CLASS(PointLight3D, Light3D);
 
 	float range = 0;
@@ -37,7 +37,7 @@ public:
 	~PointLight3D();
 };
 
-class VAPI DirectionalLight3D : public Light3D {
+class VRUNTIME_API DirectionalLight3D : public Light3D {
 	VREGISTER_CLASS(DirectionalLight3D, Light3D);
 
 public:
@@ -45,7 +45,7 @@ public:
 	~DirectionalLight3D();
 };
 
-class VAPI SpotLight3D : public Light3D {
+class VRUNTIME_API SpotLight3D : public Light3D {
 	VREGISTER_CLASS(SpotLight3D, Light3D);
 
 	float inner_cone;

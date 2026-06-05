@@ -9,7 +9,7 @@
 class Window;
 class Camera3D;
 
-class VAPI ViewportTexture : public Texture {
+class VRUNTIME_API ViewportTexture : public Texture {
 	VREGISTER_CLASS(ViewportTexture, Texture);
 
 	friend class Viewport;
@@ -19,7 +19,7 @@ public:
 	ViewportTexture() {}
 };
 
-class VAPI Viewport : public GameObject {
+class VRUNTIME_API Viewport : public GameObject {
 	VREGISTER_CLASS(Viewport, GameObject);
 
 	RID viewport;

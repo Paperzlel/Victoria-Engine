@@ -5,7 +5,7 @@
 
 #include "core/typedefs.h"
 
-struct VAPI Transform2D {
+struct VCORE_API Transform2D {
 	Mat2 basis;
 	Vector2 position;
 

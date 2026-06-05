@@ -10,7 +10,7 @@
  * @brief Base display manager. This class works with everything to do with the desktop environment, including
  * keyboards + mice, tablets, clipboards, TTS, and windows.
  */
-class VAPI DisplayManager {
+class VCORE_API DisplayManager {
 protected:
 	static DisplayManager *singleton;
 

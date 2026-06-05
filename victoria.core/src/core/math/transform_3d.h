@@ -10,7 +10,7 @@
  * @brief Struct that represents a series of translations, rotations and scaling in order to represent the total
  * transform of a vertex. Used extensively within any 3D rendering we do, in order to achieve the above operations.
  */
-struct VAPI Transform3D {
+struct VCORE_API Transform3D {
 	Mat4 basis;
 	Vector3 position;
 

@@ -7,7 +7,7 @@
 /**
  * @brief Class that represents a handle to a file in the user's filesystem.
  */
-class VAPI FileSystem {
+class VCORE_API FileSystem {
 	static FileSystem *singleton;
 
 	typedef Ref<FileHandle> (*FileHandleCreateFunc)();

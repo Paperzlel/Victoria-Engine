@@ -1,10 +1,12 @@
 #pragma once
 
-#include "core/data/hashtable.h"
-#include "core/input/keyboard.h"
 #include "core/typedefs.h"
+#if defined(PLATFORM_LINUX) && defined(WAYLAND_ENABLED)
 
-#include <xkbcommon/xkbcommon.h>
+#	include "core/data/hashtable.h"
+#	include "core/input/keyboard.h"
+
+#	include <xkbcommon/xkbcommon.h>
 
 class KeyboardRemappingXKB {
 	struct HashTableKeyHasher {
@@ -28,3 +30,5 @@ public:
 
 	KeyboardRemappingXKB() {}
 };
+
+#endif // defined(PLATFORM_LINUX) && defined(WAYLAND_ENABLED)

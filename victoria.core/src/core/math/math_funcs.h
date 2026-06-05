@@ -9,7 +9,7 @@
 /**
  * @brief Core math class. Contains all the usual mathematical functions needed across the application.
  */
-class VAPI Math {
+class VCORE_API Math {
 public:
 	// Constant for the value of pi to 15 d.p.
 	constexpr static const double PI = 3.141592653589793;

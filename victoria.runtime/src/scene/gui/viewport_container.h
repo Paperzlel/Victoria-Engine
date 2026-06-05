@@ -3,7 +3,7 @@
 #include "scene/gui/container.h"
 #include "scene/main/viewport.h"
 
-class VAPI ViewportContainer : public Container {
+class VRUNTIME_API ViewportContainer : public Container {
 	VREGISTER_CLASS(ViewportContainer, Container);
 
 	Ref<ViewportTexture> viewport_texture;

@@ -4,7 +4,7 @@
 #include "core/object/ref_counted.h"
 #include "core/typedefs.h"
 
-class VAPI Resource : public RefCounted {
+class VCORE_API Resource : public RefCounted {
 	VREGISTER_CLASS(Resource, RefCounted);
 
 	String name = "";

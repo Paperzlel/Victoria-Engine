@@ -13,7 +13,7 @@
 #include <core/math/vector2.h>
 #include <core/variant/variant_caster.h>
 
-class VAPI RenderingManager {
+class VRUNTIME_API RenderingManager {
 protected:
 	static RenderingManager *singleton;
 	static RenderingManager *(*_create_func)();

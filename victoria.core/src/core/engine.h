@@ -3,7 +3,7 @@
 #include "core/object/object.h"
 #include "core/typedefs.h"
 
-class VAPI Engine : public Object {
+class VCORE_API Engine : public Object {
 	VREGISTER_CLASS(Engine, Object);
 
 	uint64_t engine_frames = 0;

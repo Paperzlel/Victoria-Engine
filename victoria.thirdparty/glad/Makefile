@@ -1,6 +1,7 @@
 TARGET := glad
-include ../../utils/core.mk
-include ../../utils/general.mk
+include ../utils/core.mk
+include ../utils/general.mk
+BUILD_DIR := $(shell $(PYTHON) ../utils/get_relpath.py $(BUILD_DIR))
 
 INCLUDES += -Iinclude
 DEFINES += -DGLAD_API_CALL_EXPORT -DGLAD_API_CALL_EXPORT_BUILD
@@ -14,14 +15,14 @@ else
 	CCFLAGS += /MD
 endif
 	LDFLAGS += /DLL
-endif 
-
+else
 ifeq ($(COMPILER), gcc)
 	LDFLAGS += -shared -rdynamic
 endif
 ifeq ($(COMPILER), clang)
 	LDFLAGS += --shared
 endif
+endif 
 
 ifeq ($(PLATFORM), linux)
 	CCFLAGS += -fPIC -fvisibility=hidden
@@ -36,6 +37,7 @@ ifeq ($(PLATFORM), win32)
 # Force MSVC variables to their proper form.
 ifeq ($(USE_MSVC), yes)
 	INCLUDES := $(patsubst -I%,/I%,$(INCLUDES))
+	LDFLAGS := $(patsubst -L%,/LIBPATH:%,$(LDFLAGS))
 	LDFLAGS := $(patsubst -l%,%.lib,$(LDFLAGS))
 	DEFINES := $(patsubst -D%,/D%,$(DEFINES))
 endif
@@ -55,14 +57,14 @@ endif
 OBJ_FILES := $(patsubst src/%.c, $(BUILD_DIR)/$(TARGET)/%.o, $(C_FILES))
 
 # Setup final binary
-OUTPUT_NAME := libGLAD
+OUTPUT_NAME := GLAD
 OUTPUT_FILE := $(OUTPUT_NAME)
 BINARY_COMMAND :=
 ifeq ($(PLATFORM), win32)
 	OUTPUT_FILE := $(OUTPUT_FILE).dll
 else
 ifeq ($(PLATFORM), linux)
-	OUTPUT_FILE := $(OUTPUT_FILE).so
+	OUTPUT_FILE := lib$(OUTPUT_FILE).so
 endif
 endif
 

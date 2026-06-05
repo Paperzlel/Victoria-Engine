@@ -6,7 +6,7 @@
 // Clip children to the size it is
 // Have an "order" mode (starts from left, right, middle)
 
-class VAPI Container : public UIObject {
+class VRUNTIME_API Container : public UIObject {
 	VREGISTER_CLASS(Container, UIObject);
 
 public:

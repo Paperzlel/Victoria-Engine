@@ -6,7 +6,7 @@
 #include "core/object/object.h"
 #include "core/typedefs.h"
 
-class VAPI ClassRegistry {
+class VCORE_API ClassRegistry {
 private:
 	struct ClassInfo {
 		Object *(*creation_func)() = nullptr;

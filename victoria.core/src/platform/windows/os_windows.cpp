@@ -3,6 +3,7 @@
 
 #	include "display_manager_windows.h"
 #	include "logger_windows.h"
+#	include "file_handle_windows.h"
 
 #	include "core/object/main_loop.h"
 
@@ -132,7 +133,7 @@ String OSWindows::get_version() const {
 }
 
 int OSWindows::get_preferred_display_manager() {
-	return 0;
+	return 1; // default non-headless display
 }
 
 MainLoop *OSWindows::get_main_loop() const {
@@ -163,6 +164,9 @@ void OSWindows::initialize() {
 	QueryPerformanceFrequency((LARGE_INTEGER *)&timer_frequency);
 	timer_offset = get_current_time_usec();
 
+	fs = vnew(FileSystemWindows);
+	FileSystem::set_default<FileHandleWindows>();
+
 	DisplayManagerWindows::register_windows_driver();
 }
 
@@ -187,6 +191,7 @@ OSWindows::OSWindows(HINSTANCE hInstance) {
 	// By default, we want somewhere for printing to go to, and we implement that here.
 	// This does mean that to some extent Logger is also abstract, but it functions as a fallback for some methods.
 	_logger = vnew(WindowsLogger(use_vt));
+	crash_handler.initialize();
 }
 
 OSWindows::~OSWindows() {

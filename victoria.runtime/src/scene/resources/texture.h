@@ -3,7 +3,7 @@
 #include <core/io/resource.h>
 #include <core/variant/variant_caster.h>
 
-class VAPI Texture : public Resource {
+class VRUNTIME_API Texture : public Resource {
 	VREGISTER_CLASS(Texture, Resource);
 
 public:

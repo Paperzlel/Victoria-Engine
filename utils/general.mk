@@ -1,7 +1,7 @@
 # Utilities
 
 # Make does not offer a recursive wildcard function, so here's one:
-rwildcard=$(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2))
+export rwildcard=$(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2))
 
 # General options
 export DEBUG := no
@@ -25,7 +25,7 @@ export CCFLAGS :=
 export CFLAGS :=
 export CPPFLAGS :=
 export INCLUDES :=
-export LDFLAGS :=
+export LDFLAGS := -L$(BUILD_DIR)
 export DEFINES :=
 
 # Check compiler availability. If none is selected, the "COMPILER" variable will be empty and an error should
@@ -196,5 +196,5 @@ ifeq ("$(BUILD_DIR)","")
 endif
 
 ifneq ($(USE_MSVC), yes)
-	LDFLAGS += -L$(BUILD_DIR) -Wl,-rpath='$$ORIGIN'
+	LDFLAGS += -Wl,-rpath='$$ORIGIN'
 endif

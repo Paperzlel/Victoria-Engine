@@ -1,14 +1,8 @@
 #include "platform/linux/file_handle_linux.h"
+#if PLATFORM_LINUX
 
-#include <errno.h>
-#include <sys/stat.h>
-
-void FileHandleLinux::_write_generic(const uint8_t *p_buffer, int p_length) {
-	ERR_FAIL_COND_MSG(!(get_flags() & FLAG_READ), "File does not have writing permissions.");
-
-	int len = fwrite(p_buffer, 1, p_length, f);
-	ERR_FAIL_COND_MSG(len < p_length, "Unable to write the full string into the file.");
-}
+#	include <errno.h>
+#	include <sys/stat.h>
 
 uint64_t FileHandleLinux::_get_of_size(int p_size) {
 	// Fail silently, this method isn't exposed and shouldn't need to fail
@@ -85,30 +79,16 @@ uint64_t FileHandleLinux::get_length() const {
 	return length;
 }
 
-Vector<uint8_t> FileHandleLinux::get_buffer(int p_length) {
-	Vector<uint8_t> ret;
-	ret.resize(p_length);
-
-	uint8_t *ptr = ret.ptrw();
-	int len = get_buffer(ptr, p_length);
-	if (len < p_length) {
-		ret.resize(len);
-	}
-
-	return ret;
-}
-
 int FileHandleLinux::get_buffer(uint8_t *p_buffer, int p_length) {
 	ERR_COND_NULL_MSG_R(f, "Invalid file handle.", 0);
 	return fread(p_buffer, 1, p_length, f);
 }
 
-void FileHandleLinux::store_string(const String &p_string) {
-	_write_generic((const uint8_t *)p_string.ptr(), p_string.length());
-}
+void FileHandleLinux::store_buffer(const uint8_t *p_buffer, int p_length) {
+	ERR_FAIL_COND_MSG(!(get_flags() & FLAG_READ), "File does not have writing permissions.");
 
-void FileHandleLinux::store_buffer(const Vector<uint8_t> &p_buffer) {
-	_write_generic(p_buffer.ptr(), p_buffer.size());
+	int len = fwrite(p_buffer, 1, p_length, f);
+	ERR_FAIL_COND_MSG(len < p_length, "Unable to write the full string into the file.");
 }
 
 FileHandleLinux::FileHandleLinux() {}
@@ -116,3 +96,5 @@ FileHandleLinux::FileHandleLinux() {}
 FileHandleLinux::~FileHandleLinux() {
 	close();
 }
+
+#endif // PLATFORM_LINUX

@@ -1,6 +1,9 @@
 #pragma once
 
-#include "core/io/filesystem.h"
+#include "core/typedefs.h"
+#if PLATFORM_LINUX
+
+#	include "core/io/filesystem.h"
 
 class FileSystemLinux : public FileSystem {
 public:
@@ -12,3 +15,5 @@ public:
 	FileSystemLinux() {}
 	~FileSystemLinux() {}
 };
+
+#endif // PLATFORM_LINUX

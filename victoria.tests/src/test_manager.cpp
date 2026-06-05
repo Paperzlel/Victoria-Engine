@@ -14,7 +14,6 @@
 #include "core/variant/test_variant.h"
 
 #include <core/data/vector.h>
-#include <core/register_core_types.h>
 
 #include <core.h>
 

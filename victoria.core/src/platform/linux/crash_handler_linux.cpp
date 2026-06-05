@@ -1,14 +1,16 @@
 #include "crash_handler_linux.h"
 
-#include "core/string/print_string.h"
-#include "core/version.h"
+#if PLATFORM_LINUX
 
-#include <cxxabi.h>
-#include <dlfcn.h>
-#include <execinfo.h>
-#include <signal.h>
-#include <stdio.h>
-#include <stdlib.h>
+#	include "core/string/print_string.h"
+#	include "core/version.h"
+
+#	include <cxxabi.h>
+#	include <dlfcn.h>
+#	include <execinfo.h>
+#	include <signal.h>
+#	include <stdio.h>
+#	include <stdlib.h>
 
 static constexpr int BACKTRACE_COUNT = 128;
 
@@ -217,3 +219,5 @@ void CrashHandlerLinux::initialize() {
 	signal(SIGILL, _crash_handler);
 	signal(SIGABRT, _crash_handler);
 }
+
+#endif // PLATFORM_LINUX

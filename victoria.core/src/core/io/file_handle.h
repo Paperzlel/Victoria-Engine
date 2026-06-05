@@ -3,7 +3,7 @@
 #include "core/object/ref_counted.h"
 #include "core/typedefs.h"
 
-class VAPI FileHandle : public RefCounted {
+class VCORE_API FileHandle : public RefCounted {
 	VREGISTER_CLASS(FileHandle, RefCounted);
 
 	int flags = 0; // What flags are set for the file.
@@ -128,7 +128,7 @@ public:
 	 * @param p_length The number of bytes to read from the file.
 	 * @return A Vector containing the bytes read from the file.
 	 */
-	virtual Vector<uint8_t> get_buffer(int p_length) = 0;
+	virtual Vector<uint8_t> get_buffer(int p_length);
 
 	/**
 	 * @brief Reads the data from the file pointer into a given buffer. The data is read from the file pointer position
@@ -147,7 +147,7 @@ public:
 	 * @param p_string The string to insert into the buffer. Must be a valid string of at least 1 byte and be
 	 * null-terminated.
 	 */
-	virtual void store_string(const String &p_string) = 0;
+	virtual void store_string(const String &p_string);
 
 	/**
 	 * @brief Stores a buffer in the given file pointer, starting from the current file pointer position. Acts as a
@@ -156,7 +156,19 @@ public:
 	 * that in instead.
 	 * @param p_buffer The buffer in question to store in the file. Must be a valid vector of at least 1 byte.
 	 */
-	virtual void store_buffer(const Vector<uint8_t> &p_buffer) = 0;
+	virtual void store_buffer(const Vector<uint8_t> &p_buffer);
+
+	/**
+	 * @brief Stores a buffer in the corresponding file pointer, starting from the current file position. Acts as a
+	 * continuous span of memory and does not respect null-termination. To store null-terminated strings, use
+	 * `store_string()`. If one wishes to append non-byte data, they must first convert their vector to a byte
+	 * array and pass that in instead.
+	 * @param p_buffer A pointer to the buffer to write into memory. Must be valid for the duration of the writing
+	 * process.
+	 * @param p_length The length of the given buffer, in bytes. This can be less than the full buffer's memory if
+	 * needed.
+	 */
+	virtual void store_buffer(const uint8_t *p_buffer, int p_length) = 0;
 
 	FileHandle();
 	~FileHandle();

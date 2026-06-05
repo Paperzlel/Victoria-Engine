@@ -3,7 +3,7 @@
 #include "scene/gui/ui_object.h"
 #include "scene/resources/font.h"
 
-class VAPI Text : public UIObject {
+class VRUNTIME_API Text : public UIObject {
 	VREGISTER_CLASS(Text, UIObject);
 
 	struct Character {

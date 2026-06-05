@@ -2,6 +2,6 @@
 
 #include <core/typedefs.h>
 
-VAPI Error runtime_initialize();
-VAPI bool runtime_iteration();
-VAPI void runtime_finalize();
+VRUNTIME_API Error runtime_initialize();
+VRUNTIME_API bool runtime_iteration();
+VRUNTIME_API void runtime_finalize();

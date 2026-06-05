@@ -1,11 +1,12 @@
 TARGET := victoria_runtime
 include ../utils/core.mk
 include ../utils/general.mk
+BUILD_DIR := $(shell $(PYTHON) ../utils/get_relpath.py $(BUILD_DIR))
 
 
 INCLUDES += -Isrc -Isrc/thirdparty -I../victoria.thirdparty/glad/include -I../victoria.core/src
 LDFLAGS += -lGLAD -lvictoria.core
-DEFINES += -DVEXPORT -DGLAD_GLX_NO_X11
+DEFINES += -DVRUNTIME -DVRUNTIME_API_EXPORT -DGLAD_GLX_NO_X11 -DGLAD_API_CALL_EXPORT
 
 # Set shader directory
 GLSL_SHADER_DIR := src/rendering/opengl/shaders
@@ -27,14 +28,14 @@ else
 	CCFLAGS += /MD
 endif
 	LDFLAGS += /DLL
-endif 
-
+else
 ifeq ($(COMPILER), gcc)
 	LDFLAGS += -shared -rdynamic
 endif
 ifeq ($(COMPILER), clang)
 	LDFLAGS += --shared
 endif
+endif 
 
 ifeq ($(PLATFORM), linux)
 	CCFLAGS += -fPIC -fvisibility=hidden
@@ -42,6 +43,7 @@ endif
 # Force MSVC variables to their proper form.
 ifeq ($(USE_MSVC), yes)
 	INCLUDES := $(patsubst -I%,/I%,$(INCLUDES))
+	LDFLAGS := $(patsubst -L%,/LIBPATH:%,$(LDFLAGS))
 	LDFLAGS := $(patsubst -l%,%.lib,$(LDFLAGS))
 	DEFINES := $(patsubst -D%,/D%,$(DEFINES))
 endif
@@ -71,14 +73,14 @@ OBJ_FILES := $(patsubst src/%.cpp, $(BUILD_DIR)/$(TARGET)/%.o, $(CPP_FILES)) $(p
 GEN_FILES := $(patsubst src/%.glsl, src/%.gen.h, $(SHADERS))
 
 # Setup final binary
-OUTPUT_NAME := libvictoria.runtime
+OUTPUT_NAME := victoria.runtime
 OUTPUT_FILE := $(OUTPUT_NAME)
 BINARY_COMMAND :=
 ifeq ($(PLATFORM), win32)
 	OUTPUT_FILE := $(OUTPUT_FILE).dll
 else
 ifeq ($(PLATFORM), linux)
-	OUTPUT_FILE := $(OUTPUT_FILE).so
+	OUTPUT_FILE := lib$(OUTPUT_FILE).so
 endif
 endif
 

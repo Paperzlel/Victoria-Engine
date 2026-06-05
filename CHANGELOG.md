@@ -1,6 +1,19 @@
 # Changelog
 Changes exist in chronological order (i.e. new changes are to be appended to the end of the file). Dates are done in DD/MM/YYYY format with the version number applied to each date if needed.
 
+## 5/6/2026
+- Platform:
+	- Windows:
+		- Add crash handling, filesystems, and file handlers using the native Win32 API over the standard library to the engine.
+			- Crash handlers need a "hack" to work that should be documented. It's not really a hack, but it's frustrating to code in, and without it our crash handling code doesn't work so it's needed nonetheless.
+- Buildsystem:
+	- Add some fixes to Windows/MSVC buildsystems.
+		- It should hopefully work in general. Some stuff was broken from before, or not properly optimised.
+		- Windows with `clang-cl` still needs a proper way to get the include tree. This tool should be added soon.
+- Core:
+	- Change macro definitions for core and runtime to clarify how they are different.
+		- Runtime needs to import core functions but export its own at the same time, which doesn't work with `VAPI` as it was. Now we have `VCORE_API` and `VRUNTIME_API` as our definitions which should be upheld for later APIs.
+
 ## 2/6/2026
 - Core:
 	- String:

@@ -8,7 +8,7 @@
  * @brief Input map class. Handles the various inputs names that are created by the user (and the engine) which
  * correspond to specific `InputEvents`.
  */
-class VAPI InputMap {
+class VCORE_API InputMap {
 	static InputMap *singleton; // Singleton instance of the class.
 
 	// An "action" is a series of inputs that a given name looks up. IDs are stored to ensure that no two actions are

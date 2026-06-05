@@ -468,10 +468,10 @@ String String::get_file_extension() const {
 }
 
 String String::get_directory() const {
-	String ret = *this;
+	String ret = fix_path();
 
 	if (!FileSystem::get_singleton()->is_dir(ret)) {
-		int x = rfind("/");
+		int x = ret.rfind("/");
 		if (x == -1) {
 			return "";
 		}
@@ -480,6 +480,16 @@ String String::get_directory() const {
 		ret[x] = 0;
 	}
 
+	return ret;
+}
+
+String String::fix_path() const {
+	String ret = *this;
+	if (!ret.contains("\\")) {
+		return ret;
+	}
+
+	ret.replace('\\', '/');
 	return ret;
 }
 
@@ -545,6 +555,7 @@ void String::append(const String &p_string) {
 	for (int i = len; i < len + p_string.length(); i++) {
 		_data._ptr[i] = p_string[i - len];
 	}
+	_data._ptr[len + p_string.length()] = 0;
 }
 
 uint32_t String::hash(const char *p_cstr) {

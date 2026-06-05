@@ -12,7 +12,7 @@ class Window;
 /**
  * This class represents a single "node" on the scene tree.
  */
-class VAPI GameObject : public Object {
+class VRUNTIME_API GameObject : public Object {
 	VREGISTER_CLASS(GameObject, Object);
 
 	struct Data {

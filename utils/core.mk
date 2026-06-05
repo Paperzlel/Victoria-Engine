@@ -26,5 +26,5 @@ endif
 ifeq ($(PLATFORM), win32)
 	PYTHON := python
 	FIND := where
-	DIR := $(shell %cd%)
+	DIR := $(shell echo %cd%)
 endif

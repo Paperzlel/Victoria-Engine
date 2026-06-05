@@ -3,9 +3,20 @@
 
 #	include "os_windows.h"
 #	include "wgl_detect_version.h"
+#	include "keyboard_remapping_windows.h"
 
-#	include "core/object/callable_method_pointer.h"
 #	include "core/input/input.h"
+
+void DisplayManagerWindows::_dispatch_input_event_s(const Ref<InputEvent> &p_event) {
+	static_cast<DisplayManagerWindows *>(DisplayManager::get_singleton())->_dispatch_input_event(p_event);
+}
+
+void DisplayManagerWindows::_dispatch_input_event(const Ref<InputEvent> &p_event) {
+	WindowData *win = window;
+	if (win && win->input_dispatch_callback.is_valid()) {
+		win->input_dispatch_callback.call(p_event);
+	}
+}
 
 void DisplayManagerWindows::finalize() {
 	if (gl_manager_windows) {
@@ -32,15 +43,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	}
 }
 
-/**
- * @brief Method to create an empty window at a given position and size.
- * @param p_name The name/title of the window
- * @param x The x position on the screen of the given window
- * @param y The y position on the screen of the given window
- * @param width The width of the window
- * @param height The height of the window
- * @return The ID of the current window
- */
 uint8_t DisplayManagerWindows::create_window(const String &p_name,
 											 uint16_t x,
 											 uint16_t y,
@@ -163,6 +165,12 @@ void DisplayManagerWindows::set_window_resize_callback(const CallableMethod &p_m
 	}
 }
 
+void DisplayManagerWindows::set_input_event_dispatch_callback(const CallableMethod &p_method, uint8_t p_id) {
+	if (window->id == p_id) {
+		window->input_dispatch_callback = p_method;
+	}
+}
+
 void DisplayManagerWindows::toggle_mouse_mode(bool p_mode) {
 	// Set mouse as being captured
 	if (p_mode) {
@@ -276,7 +284,7 @@ LRESULT DisplayManagerWindows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			Ref<InputEventKey> key_event;
 			key_event.instantiate();
 
-			key_event->key = (Key)wParam;
+			key_event->key = KeyboardRemappingWindows::get_key_from_keycode(wParam);
 			key_event->pressed = is_pressed;
 
 			Input::get_singleton()->parse_input_event(key_event);
@@ -394,10 +402,14 @@ DisplayManager *DisplayManagerWindows::create_func(const String &p_renderer, con
 }
 
 DisplayManagerWindows::DisplayManagerWindows(const String &p_renderer, const Vector2i &p_size, Error *r_error) {
+	KeyboardRemappingWindows::initialize();
+
 	hInstance = static_cast<OSWindows *>(OS::get_singleton())->get_hinstance();
 	if (!hInstance) {
 		hInstance = GetModuleHandleA(NULL);
 	}
+
+	Input::get_singleton()->set_input_event_callback(&DisplayManagerWindows::_dispatch_input_event_s);
 
 	String driver = p_renderer;
 
@@ -449,7 +461,10 @@ DisplayManagerWindows::DisplayManagerWindows(const String &p_renderer, const Vec
 		OS::get_singleton()->set_rendering_driver("opengl");
 	}
 
-	create_window("Victoria Engine Window", 100, 100, p_size.x, p_size.y);
+	if (create_window("Victoria Engine Window", 100, 100, p_size.x, p_size.y) != 0) {
+		*r_error = ERR_CANT_CREATE;
+		ERR_FAIL_MSG("Unable to create the root window for Windows");
+	}
 }
 
 void DisplayManagerWindows::register_windows_driver() {

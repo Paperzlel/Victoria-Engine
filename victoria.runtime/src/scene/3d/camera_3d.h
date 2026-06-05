@@ -5,7 +5,7 @@
 #include <core/data/rid.h>
 #include <core/math/mat4.h>
 
-class VAPI Camera3D : public GameObject3D {
+class VRUNTIME_API Camera3D : public GameObject3D {
 	VREGISTER_CLASS(Camera3D, GameObject3D);
 
 	float fovy = 70.0 * Math::DEG_TO_RAD_MULTIPLIER;

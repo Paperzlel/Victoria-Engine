@@ -4,7 +4,7 @@
 
 #include <core/math/transform_3d.h>
 
-class VAPI GameObject3D : public GameObject {
+class VRUNTIME_API GameObject3D : public GameObject {
 	VREGISTER_CLASS(GameObject3D, GameObject);
 
 	struct Data {

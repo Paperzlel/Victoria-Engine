@@ -22,7 +22,7 @@ typedef Vector<Vector4> Vector4Array;
 
 class Object;
 
-class VAPI Variant {
+class VCORE_API Variant {
 public:
 	enum Type {
 		// Atomic types

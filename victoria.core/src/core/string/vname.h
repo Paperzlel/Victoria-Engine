@@ -9,7 +9,7 @@
  * pointer between objects, hence making the string "name" lookup incredibly fast compared to traditional lookup
  * speeds.
  */
-class VAPI VName {
+class VCORE_API VName {
 	struct Tree;
 
 	struct Data {
@@ -169,7 +169,7 @@ public:
 
 // Comparison operators for when they're on a different side of the equation.
 
-VAPI bool operator==(const String &p_left, const VName &p_right);
-VAPI bool operator!=(const String &p_left, const VName &p_right);
-VAPI bool operator==(const char *p_left, const VName &p_right);
-VAPI bool operator!=(const char *p_left, const VName &p_right);
+VCORE_API bool operator==(const String &p_left, const VName &p_right);
+VCORE_API bool operator!=(const String &p_left, const VName &p_right);
+VCORE_API bool operator==(const char *p_left, const VName &p_right);
+VCORE_API bool operator!=(const char *p_left, const VName &p_right);

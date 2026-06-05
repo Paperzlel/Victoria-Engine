@@ -10,7 +10,7 @@
  *      for localization to other languages (and proper Unicode support)
  */
 
-class VAPI String {
+class VCORE_API String {
 private:
 	CoWData<char> _data;
 
@@ -109,6 +109,13 @@ public:
 	 */
 	String get_directory() const;
 
+	/**
+	 * @brief Obtains a copy of the given string as a POSIX-compliant path. All paths should be in this form, as it is
+	 * the one expected by the engine.
+	 * @return A copy of the string as a POSIX-compliant path.
+	 */
+	String fix_path() const;
+
 	int64_t to_int() const;
 	double to_float() const;
 
@@ -133,10 +140,10 @@ protected:
 	void copy_from_unchecked(const char *p_str, const int p_length);
 };
 
-VAPI String operator+(const char *p_lhs, const String &p_rhs);
-VAPI String itos(int64_t p_int);
-VAPI String ftos(double p_double);
+VCORE_API String operator+(const char *p_lhs, const String &p_rhs);
+VCORE_API String itos(int64_t p_int);
+VCORE_API String ftos(double p_double);
 
-VAPI String vformat(const char *p_string, ...);
+VCORE_API String vformat(const char *p_string, ...);
 
-VAPI bool vstring_compare(const char *p_lhs, const char *p_rhs);
+VCORE_API bool vstring_compare(const char *p_lhs, const char *p_rhs);

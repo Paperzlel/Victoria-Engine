@@ -12,7 +12,7 @@ struct Mat4;
  * implementation, the w component of the quaternion represents the angle, as the x, y and z components are used for 3D
  * space, so bear that in mind when converting between the two.
  */
-struct VAPI Quaternion {
+struct VCORE_API Quaternion {
 	union {
 		double elements[4] = {0};
 		struct {

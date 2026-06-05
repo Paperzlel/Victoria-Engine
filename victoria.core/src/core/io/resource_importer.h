@@ -6,7 +6,7 @@
 #include "core/data/vector.h"
 #include "core/typedefs.h"
 
-class VAPI ResourceImporter {
+class VCORE_API ResourceImporter {
 private:
 	Vector<Ref<ResourceFormatImporter>> importers;
 

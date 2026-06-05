@@ -2,7 +2,7 @@
 
 #include "scene/gui/ui_object.h"
 
-class VAPI Panel : public UIObject {
+class VRUNTIME_API Panel : public UIObject {
 	VREGISTER_CLASS(Panel, UIObject);
 
 	Vector4 colour;

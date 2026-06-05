@@ -19,12 +19,12 @@ enum ErrorType {
  * user
  * @param type The type of error message that is being sent
  */
-VAPI void _err_print_err(const char *file,
-						 const char *function,
-						 int line,
-						 const char *err_msg,
-						 const char *msg = "",
-						 ErrorType type = ERROR_ERR);
+VCORE_API void _err_print_err(const char *file,
+							  const char *function,
+							  int line,
+							  const char *err_msg,
+							  const char *msg = "",
+							  ErrorType type = ERROR_ERR);
 
 /**
  * @brief Prints an index error (when a given item was out of bounds) to the currently active console.
@@ -39,21 +39,21 @@ VAPI void _err_print_err(const char *file,
  * user
  * @param type The type of error message that is being sent
  */
-VAPI void _err_print_index_err(const char *file,
-							   const char *function,
-							   int line,
-							   int m_index,
-							   int m_size,
-							   const char *err_msg,
-							   const char *msg = "",
-							   ErrorType type = ERROR_ERR);
+VCORE_API void _err_print_index_err(const char *file,
+									const char *function,
+									int line,
+									int m_index,
+									int m_size,
+									const char *err_msg,
+									const char *msg = "",
+									ErrorType type = ERROR_ERR);
 
 /**
  * @brief Obtains the error message pointed to by `p_id`. USE THIS OVER THE EXTERN MESSAGE LIST.
  * @param p_id The error ID to get the message of
  * @return A humanized error message relating to the error ID.
  */
-VAPI const char *get_error_message(Error p_id);
+VCORE_API const char *get_error_message(Error p_id);
 
 #ifdef _MSC_VER
 // Defines a way to add a breakpoint into the code, without a user needing to create one in their own IDE. Should only

@@ -1,28 +1,17 @@
 TARGET := victoria_testbed
 include ../utils/core.mk
 include ../utils/general.mk
+BUILD_DIR := $(shell $(PYTHON) ../utils/get_relpath.py $(BUILD_DIR))
 
 # Marginally more generic version of the Makefile we'll let end-users use to compile their own projects.
 INCLUDES += -Isrc -I../victoria.core/src -I../victoria.runtime/src
-LDFLAGS += -L$(BUILD_DIR)
-DIR := 
-
-ifeq ($(PLATFORM), linux)
-	LDFLAGS += -lvictoria.core -lvictoria.runtime -Wl,-rpath='$$ORIGIN'
-	DIR := $(PWD)
-endif
-
-ifeq ($(PLATFORM), win32)
-	LDFLAGS += -llibvictoria.core -llibvictoria.runtime
-	DIR := $(subst \,/,$(shell cd))
-endif
-
-# Make does not offer a recursive wildcard function, so here's one:
-rwildcard=$(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2))
+LDFLAGS += -lvictoria.core -lvictoria.runtime
+DEFINES += -DVRUNTIME
 
 ifeq ($(USE_MSVC), yes)
 ifeq ($(DEBUG), yes)
 	CCFLAGS += /MTd
+	LDFLAGS += /ENTRY:WinMainCRTStartup /SUBSYSTEM:CONSOLE
 else
 	CCFLAGS += /MT
 endif

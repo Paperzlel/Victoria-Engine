@@ -3,7 +3,7 @@
 #include "scene/2d/game_object_2d.h"
 #include "scene/resources/mesh.h"
 
-class VAPI Mesh2D : public GameObject2D {
+class VRUNTIME_API Mesh2D : public GameObject2D {
 	VREGISTER_CLASS(Mesh2D, GameObject2D);
 
 	Ref<Mesh> mesh;

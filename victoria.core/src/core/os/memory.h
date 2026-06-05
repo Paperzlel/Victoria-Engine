@@ -3,7 +3,7 @@
 #include "core/data/atomic_counter.h"
 #include "core/typedefs.h"
 
-class VAPI Memory {
+class VCORE_API Memory {
 public:
 	static AtomicCounter<uint64_t> current_mem_usage;
 	static AtomicCounter<uint64_t> max_mem_usage;
@@ -23,10 +23,10 @@ public:
 	static void *vmemmove(void *p_dest, const void *p_source, size_t p_count);
 };
 
-VAPI void *operator new(size_t p_size, const char *p_description);
+VCORE_API void *operator new(size_t p_size, const char *p_description);
 
 #ifdef _MSC_VER
-VAPI void operator delete(void *p_mem, const char *p_description);
+VCORE_API void operator delete(void *p_mem, const char *p_description);
 #endif
 
 template <typename T>
@@ -79,7 +79,7 @@ struct DefaultNil {
 };
 
 struct DefaultNilClass {
-	VAPI static DefaultNil _nil;
+	VCORE_API static DefaultNil _nil;
 };
 
 template <typename T>

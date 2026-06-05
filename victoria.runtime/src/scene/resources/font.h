@@ -4,7 +4,7 @@
 #include <core/io/resource.h>
 #include <core/math/vector2i.h>
 
-class VAPI Font : public Resource {
+class VRUNTIME_API Font : public Resource {
 	VREGISTER_CLASS(Font, Resource);
 
 public:

@@ -7,7 +7,7 @@
 
 class InputEvent;
 
-class VAPI Window : public Viewport {
+class VRUNTIME_API Window : public Viewport {
 	VREGISTER_CLASS(Window, Viewport);
 
 	uint8_t window_id = DisplayManager::INVALID_WINDOW_ID;

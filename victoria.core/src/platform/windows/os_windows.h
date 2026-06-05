@@ -9,10 +9,16 @@
 #	define WIN32_LEAN_AND_MEAN
 #	include <windows.h>
 
+#	include "filesystem_windows.h"
+#	include "crash_handler_windows.h"
+
 class OSWindows : public OS {
 private:
 	HINSTANCE _hInstance;
 	MainLoop *main_loop = nullptr;
+	FileSystemWindows *fs = nullptr;
+
+	CrashHandlerWindows crash_handler;
 
 	HashTable<String, bool> features;
 

@@ -81,7 +81,8 @@ def convert_glsl_to_gen_h(file: str):
 	# Write UBOS
 	dest_file.write("\tenum UBOS {\n")
 	for i in range(len(ubos_found)):
-		dest_file.write(f"\t\t{re.sub("(?<!^)(?=[A-Z])", "_", ubo_name[i]).upper()} = {ubos_found[i]},\n")
+		matched_name: str = re.sub("(?<!^)(?=[A-Z])", "_", ubo_name[i]).upper()
+		dest_file.write(f"\t\t{matched_name} = {ubos_found[i]},\n")
 	dest_file.write(f"\t\tUBO_COUNT = {len(ubos_found)}\n")
 	dest_file.write("\t};\n\n")
 

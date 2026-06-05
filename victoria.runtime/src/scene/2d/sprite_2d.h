@@ -2,7 +2,7 @@
 
 #include "scene/2d/game_object_2d.h"
 
-class VAPI Sprite2D : public GameObject2D {
+class VRUNTIME_API Sprite2D : public GameObject2D {
 	VREGISTER_CLASS(Sprite2D, GameObject2D);
 
 	Ref<Texture> texture;

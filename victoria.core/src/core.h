@@ -2,8 +2,8 @@
 
 #include "core/typedefs.h"
 
-VAPI Error core_initialize(int argc, char *argv[]);
+VCORE_API Error core_initialize(int argc, char **argv);
 
-VAPI void core_finalize();
+VCORE_API void core_finalize();
 
-VAPI void core_list_arguments();
+VCORE_API void core_list_arguments();

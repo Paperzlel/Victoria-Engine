@@ -77,7 +77,7 @@ void core_print_help() {
  * @param argv A array of strings containing each argument
  * @returns `OK` if no errors were detected, and various error messages if otherwise.
  */
-Error core_initialize(int argc, char *argv[]) {
+Error core_initialize(int argc, char **argv) {
 	OS::create();
 	OS::get_singleton()->initialize();
 

@@ -9,7 +9,7 @@
  * overriding classes. Also provides a common set of variables for users to override.
  *
  */
-class VAPI InputEvent : public RefCounted {
+class VCORE_API InputEvent : public RefCounted {
 	VREGISTER_CLASS(InputEvent, RefCounted);
 
 public:
@@ -30,7 +30,7 @@ public:
 /**
  * @brief Key-based `InputEvent`. Emitted whenever the user presses a key.
  */
-class VAPI InputEventKey : public InputEvent {
+class VCORE_API InputEventKey : public InputEvent {
 	VREGISTER_CLASS(InputEventKey, InputEvent);
 
 public:
@@ -45,7 +45,7 @@ public:
  * @brief Base class relating to all mouse events. Currently does nothing.
  *
  */
-class VAPI InputEventMouse : public InputEvent {
+class VCORE_API InputEventMouse : public InputEvent {
 	VREGISTER_CLASS(InputEventMouse, InputEvent);
 
 public:
@@ -56,7 +56,7 @@ public:
  * @brief Mouse button related events. Emitted whenever the user presses a mouse button.
  *
  */
-class VAPI InputEventMouseButton : public InputEventMouse {
+class VCORE_API InputEventMouseButton : public InputEventMouse {
 	VREGISTER_CLASS(InputEventMouseButton, InputEventMouse);
 
 public:
@@ -70,7 +70,7 @@ public:
 /**
  * @brief Mouse movement related events. Emitted whenever the user moves the mouse.
  */
-class VAPI InputEventMouseMotion : public InputEventMouse {
+class VCORE_API InputEventMouseMotion : public InputEventMouse {
 	VREGISTER_CLASS(InputEventMouseMotion, InputEventMouse);
 
 public:
@@ -85,7 +85,7 @@ public:
 /**
  * @brief Mouse scroll related events. Is capped at +-1 in either direction, or 0 for no scroll.
  */
-class VAPI InputEventMouseScroll : public InputEventMouse {
+class VCORE_API InputEventMouseScroll : public InputEventMouse {
 	VREGISTER_CLASS(InputEventMouseScroll, InputEventMouse);
 
 public:

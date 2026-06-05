@@ -2,8 +2,8 @@
 
 #include "core/typedefs.h"
 
-VAPI uint32_t hash_djb2(uint8_t *str);
-VAPI uint32_t hash_lowbias32(uint32_t x);
+VCORE_API uint32_t hash_djb2(uint8_t *str);
+VCORE_API uint32_t hash_lowbias32(uint32_t x);
 
 // Taken from Godot. Super useful generic we should probably keep using.
 
@@ -84,5 +84,5 @@ struct HasherDefaultImpl<int32_t> {
 	}
 };
 
-VAPI extern uint32_t PRIMES[];
-VAPI extern uint32_t PRIMES_SIZE;
+VCORE_API extern uint32_t PRIMES[];
+VCORE_API extern uint32_t PRIMES_SIZE;

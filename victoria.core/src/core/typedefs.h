@@ -21,21 +21,21 @@
 #endif
 
 // Export/import functions
-#if VEXPORT
+#if VCORE_API_EXPORT
 #	if defined(_MSC_VER)
-#		define VAPI __declspec(dllexport)
+#		define VCORE_API __declspec(dllexport)
 #	elif defined(__GNUC__) || defined(__clang__)
-#		define VAPI __attribute__((visibility("default")))
+#		define VCORE_API __attribute__((visibility("default")))
 #	else
-#		define VAPI
+#		define VCORE_API
 #	endif
 #else
 #	if defined(_MSC_VER)
-#		define VAPI __declspec(dllimport)
+#		define VCORE_API __declspec(dllimport)
 #	elif defined(__GNUC__) || defined(__clang__)
-#		define VAPI
+#		define VCORE_API
 #	else
-#		define VAPI
+#		define VCORE_API
 #	endif
 #endif
 
@@ -139,3 +139,8 @@ struct BuildIndicies : BuildIndicies<N - 1, N - 1, Is...> {};
 
 template <uint64_t... Is>
 struct BuildIndicies<0, Is...> : Indicies<Is...> {};
+
+// Include runtime header if compiling for the runtime. Header generation can remove this define.
+#if VRUNTIME
+#	include "runtime/typedefs.h"
+#endif

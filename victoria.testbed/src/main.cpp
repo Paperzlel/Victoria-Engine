@@ -37,3 +37,33 @@ int main(int argc, char *argv[]) {
 	core_finalize();
 	return exit_code;
 }
+
+// Override required for crash handlers on Windows, this should be put into a macro for end-users
+#if defined(PLATFORM_WINDOWS) && defined(_MSC_VER)
+
+#	define WIN32_LEAN_AND_MEAN
+#	include <windows.h>
+
+extern VCORE_API DWORD CrashHandlerException(EXCEPTION_POINTERS *ep);
+
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+	__try {
+		Vector<char *> cmdline;
+		{
+			char buf[MAX_PATH] = {};
+			DWORD len = GetModuleFileNameA(GetModuleHandleA(nullptr), buf, sizeof(buf));
+			cmdline.push_back(buf);
+
+			Vector<String> s = String(lpCmdLine).split(" ");
+			for (int i = 0; i < s.size(); i++) {
+				cmdline.push_back(s[i].ptrw());
+			}
+		}
+
+		return main(cmdline.size(), cmdline.ptrw());
+	} __except (CrashHandlerException(GetExceptionInformation())) {
+		return 1;
+	}
+}
+
+#endif // defined(PLATFORM_WINDOWS) && defined(_MSC_VER)

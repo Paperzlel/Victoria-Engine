@@ -5,6 +5,11 @@
 
 #include <stdlib.h>
 
+// Override because apparently alloca doesn't work on Windows.
+#ifdef PLATFORM_WINDOWS
+#	define alloca(m_x) _alloca(m_x)
+#endif
+
 Error CommandQueue::push_commandp(const CallableMethod &p_method, const Variant **p_args, int p_argcount) {
 	// Allocate a new page if needed
 	if (PAGE_SIZE - bytes_per_page[allocated_memory.page_count - 1] < sizeof(Message)) {

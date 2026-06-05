@@ -100,7 +100,7 @@ enum Notification {
  * @brief Base class for all API-compliant classes. This class is not ref-counted, nor does it have a tree, so any
  * systems that may be unique from derived classes should use this one instead of other derived classes.
  */
-class VAPI Object {
+class VCORE_API Object {
 	friend class ClassRegistry;
 
 	HashTable<VName, List<CallableMethod>> callables;
@@ -109,7 +109,7 @@ public:
 	virtual void _notification_forwardv(int p_what) {}
 	virtual void _notification_backwardv(int p_what) {}
 
-	VAPI friend bool predelete(Object *);
+	VCORE_API friend bool predelete(Object *);
 	bool _predelete();
 
 	/**
@@ -230,4 +230,4 @@ public:
 	virtual ~Object();
 };
 
-VAPI bool predelete(Object *p_item);
+VCORE_API bool predelete(Object *p_item);

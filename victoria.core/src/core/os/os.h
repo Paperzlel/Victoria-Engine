@@ -7,11 +7,11 @@
 
 class MainLoop;
 
-class VAPI OS {
+class VCORE_API OS {
 protected:
 	static OS *singleton;
 
-	friend Error core_initialize(int argc, char **argv);
+	VCORE_API friend Error core_initialize(int argc, char **argv);
 
 	Logger *_logger = nullptr;
 
@@ -80,6 +80,7 @@ public:
 	virtual String get_device_name() const {
 		return device_name;
 	}
+
 	virtual String get_device_vendor() const {
 		return device_vendor;
 	}
@@ -87,6 +88,7 @@ public:
 	virtual void set_device_name(const String &p_name) {
 		device_name = p_name;
 	}
+
 	virtual void set_device_vendor(const String &p_vendor) {
 		device_vendor = p_vendor;
 	}

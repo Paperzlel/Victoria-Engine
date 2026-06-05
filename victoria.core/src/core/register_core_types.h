@@ -2,9 +2,8 @@
 
 #include "core/typedefs.h"
 
-// NOTE: These probably shouldn't be exposed, but they're needed for basic applications that use VName. Headless
-// mode for core should be a feature we prioritise to fix this.
+// NOTE: Exposed via `VName`, thanks to how __declspec(dllexport) works on Windows.
 
-VAPI void register_core_types();
+void register_core_types();
 
-VAPI void unregister_core_types();
+void unregister_core_types();

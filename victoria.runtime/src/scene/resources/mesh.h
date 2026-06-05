@@ -6,7 +6,7 @@
 #include <core/io/resource.h>
 #include <core/variant/array.h>
 
-class VAPI Mesh : public Resource {
+class VRUNTIME_API Mesh : public Resource {
 	VREGISTER_CLASS(Mesh, Resource);
 
 	RID mesh;

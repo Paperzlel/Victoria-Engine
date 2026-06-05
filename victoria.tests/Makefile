@@ -1,14 +1,10 @@
 TARGET := victoria_tests
 include ../utils/core.mk
 include ../utils/general.mk
+BUILD_DIR := $(shell $(PYTHON) ../utils/get_relpath.py $(BUILD_DIR))
 
 INCLUDES += -Isrc -I../victoria.core/src
-
-ifeq ($(PLATFORM), win32)
-	LDFLAGS += -llibvictoria.core
-else
-	LDFLAGS += -lvictoria.core
-endif
+LDFLAGS += -lvictoria.core
 
 ifeq ($(USE_MSVC), yes)
 ifeq ($(DEBUG), yes)
@@ -34,7 +30,7 @@ DIRECTORIES :=
 ifeq ($(PLATFORM), win32)
 	C_FILES += $(call rwildcard,*,*.c)
 	CPP_FILES += $(call rwildcard,*,*.cpp)
-	DIRECTORIES += $(addprefix $(BUILD_DIR)\, $(subst $(BUILD_DIR),,$(subst $(shell cd)\,,$(shell dir /s /AD /B))))
+	DIRECTORIES += $(patsubst src,,$(patsubst src\\%,%,$(subst $(shell cd)\,,$(shell dir src /s /AD /B))))
 else
 ifeq ($(PLATFORM), linux)
 	CPP_FILES := $(shell find src -type f -name "*.cpp")

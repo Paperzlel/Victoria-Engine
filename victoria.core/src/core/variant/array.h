@@ -6,7 +6,7 @@
 class Variant;
 class ArrayData;
 
-class VAPI Array {
+class VCORE_API Array {
 private:
 	mutable ArrayData *_data;
 

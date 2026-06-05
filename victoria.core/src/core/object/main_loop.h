@@ -2,7 +2,7 @@
 
 #include "core/object/object.h"
 
-class VAPI MainLoop : public Object {
+class VCORE_API MainLoop : public Object {
 	VREGISTER_CLASS(MainLoop, Object);
 
 public:

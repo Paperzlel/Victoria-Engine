@@ -8,7 +8,7 @@
  * @brief Base class for all refcounted objects. Ref-counted, so that multiple bits of code can call to the same region
  * of memory.
  */
-class VAPI RefCounted : public Object {
+class VCORE_API RefCounted : public Object {
 	VREGISTER_CLASS(RefCounted, Object);
 
 	// The reference counter

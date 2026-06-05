@@ -11,7 +11,7 @@ struct Vector2i;
  * @brief Structure that represents a 2D vector, which is often used to describe motion with regards to the mouse or
  * items within a 2D canvas.
  */
-struct VAPI Vector2 {
+struct VCORE_API Vector2 {
 public:
 	union {
 		double elements[2] = {0};

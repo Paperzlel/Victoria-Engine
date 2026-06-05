@@ -1,9 +1,9 @@
 #include "os_linux.h"
 
-#include "core/error/error_macros.h"
 #if PLATFORM_LINUX
 
 #	include "logger_linux.h"
+#	include "core/error/error_macros.h"
 #	include "core/string/print_string.h"
 #	include "core/object/main_loop.h"
 #	include "file_handle_linux.h"

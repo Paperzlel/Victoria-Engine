@@ -3,7 +3,7 @@
 #include "scene/gui/ui_object.h"
 #include "scene/resources/texture.h"
 
-class VAPI TextureRect : public UIObject {
+class VRUNTIME_API TextureRect : public UIObject {
 	VREGISTER_CLASS(TextureRect, UIObject);
 
 	Ref<Texture> texture;

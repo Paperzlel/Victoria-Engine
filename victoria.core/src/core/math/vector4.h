@@ -11,7 +11,7 @@ struct Vector4i;
  * @brief Structure that represents a 4-element vector, which is used for things such as colour values, Quaternions,
  * and so on.
  */
-struct VAPI Vector4 {
+struct VCORE_API Vector4 {
 	union {
 		double elements[4] = {0};
 		struct {

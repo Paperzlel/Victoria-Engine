@@ -3,16 +3,16 @@
 #include "core/typedefs.h"
 #include "core/variant/variant.h"
 
-VAPI String stringify_variant(const Variant &p_var);
+VCORE_API String stringify_variant(const Variant &p_var);
 
 template <typename... Args>
 String stringify_variant(const Variant &p_var, Args... p_args) {
 	return p_var.operator String() + " " + stringify_variant(p_args...);
 }
 
-VAPI extern bool is_printing_verbose();
-VAPI extern void _print_line(const String &s);
-VAPI extern void _print_error(const String &s);
+VCORE_API extern bool is_printing_verbose();
+VCORE_API extern void _print_line(const String &s);
+VCORE_API extern void _print_error(const String &s);
 
 #define print_verbose(m_text)                                                                                         \
 	if (is_printing_verbose()) {                                                                                      \

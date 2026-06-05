@@ -10,7 +10,7 @@ struct Vector3i;
 /**
  * @brief Struct that represents a vector in 3D space.
  */
-struct VAPI Vector3 {
+struct VCORE_API Vector3 {
 public:
 	union {
 		double elements[3] = {0};

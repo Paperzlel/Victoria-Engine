@@ -68,6 +68,35 @@ String FileHandle::get_as_string() {
 	return ret;
 }
 
+Vector<uint8_t> FileHandle::get_buffer(int p_length) {
+	Vector<uint8_t> ret;
+	ret.resize(p_length);
+
+	uint8_t *ptr = ret.ptrw();
+	int len = get_buffer(ptr, p_length);
+	if (len < p_length) {
+		ret.resize(len);
+	}
+
+	return ret;
+}
+
+void FileHandle::store_string(const String &p_string) {
+	if (p_string.is_empty()) {
+		return;
+	}
+
+	store_buffer((const uint8_t *)&p_string[0], p_string.length());
+}
+
+void FileHandle::store_buffer(const Vector<uint8_t> &p_buffer) {
+	if (p_buffer.is_empty()) {
+		return;
+	}
+
+	store_buffer(p_buffer.ptr(), p_buffer.size());
+}
+
 FileHandle::FileHandle() {}
 
 FileHandle::~FileHandle() {}

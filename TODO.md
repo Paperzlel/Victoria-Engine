@@ -79,14 +79,15 @@ A list of all things that are on the current plan for the engine, whether short-
 - [x] Add `is_suspended` and `set_is_suspended` to Windows
 - [ ] Add OS-specific library loading
 - [x] Add `get_environment` and `set_environment` to Windows
-- [ ] Update Windows to use the new window settings and `r_error` in construction
+- [x] Update Windows to use the new window settings and `r_error` in construction
 - [x] Fully implement Wayland as a display manager option
 - [x] Rework DisplayManagers so that they fall back to the other if they are unable to be created
 - [x] Implement a way to get the preferred DisplayManager option from the OS
 - [ ] Add some kind of message queue to Wayland so that messages can be processed properly
-- [ ] Add working directory and other file access functions that are platform-specific
-- [ ] Add event dispatching to Windows
-- [ ] Add the working directory code and `FileSystem` to Windows
+- [x] Add working directory and other file access functions that are platform-specific
+- [x] Add event dispatching to Windows
+- [x] Add the working directory code and `FileSystem` to Windows
+- [ ] Properly anonymise file setups on exported PDBs for Windows
 
 ## Rendering
 - [x] Fix bug with running any EGL code
