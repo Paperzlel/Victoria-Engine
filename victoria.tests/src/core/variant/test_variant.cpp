@@ -32,7 +32,20 @@ static bool variant_test_strings() {
 	return true;
 }
 
+static bool variant_test_string_name() {
+	VName n = "other_thing";
+	Variant v = n;
+	TEST_EQ(v.operator VName(), n);
+	TEST_EQ(v.get_type(), Variant::STRING_NAME);
+	n = "new_thing";
+	TEST_NEQ(v.operator VName(), n);
+	v = VName("twins_thing");
+	TEST_EQ(v.get_type(), Variant::STRING_NAME);
+	return true;
+}
+
 void variant_register_tests() {
 	register_test(variant_test_atomic, "Variant creation and casting from atomic datatypes.");
 	register_test(variant_test_strings, "Variant creation and casting from string datatypes.");
+	register_test(variant_test_string_name, "Variant creation and casting from the VName datatype");
 }

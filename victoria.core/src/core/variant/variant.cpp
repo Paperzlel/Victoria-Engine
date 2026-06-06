@@ -92,6 +92,148 @@ void Variant::_clear_internals() {
 	}
 }
 
+bool Variant::can_convert_strict(const Variant &p_variant) {
+	if (type == NIL) {
+		return false;
+	}
+
+	if (type == p_variant.type) {
+		return true;
+	}
+
+	switch (p_variant.type) {
+		case BOOL: {
+			switch (type) {
+				case INT:
+				case FLOAT:
+					return true;
+				default:
+					return false;
+			}
+		};
+		case INT: {
+			switch (type) {
+				case BOOL:
+				case FLOAT:
+					return true;
+				default:
+					return false;
+			}
+		};
+		case FLOAT: {
+			switch (type) {
+				case BOOL:
+				case INT:
+					return true;
+				default:
+					return false;
+			}
+		};
+		case STRING: {
+			switch (type) {
+				case BOOL:
+				case INT:
+				case FLOAT:
+				case STRING_NAME:
+				case VECTOR2:
+				case VECTOR2I:
+				case VECTOR3:
+				case VECTOR3I:
+				case VECTOR4:
+				case VECTOR4I:
+				case ARRAY:
+				case BYTE_ARRAY:
+				case INT32_ARRAY:
+				case INT64_ARRAY:
+				case FLOAT32_ARRAY:
+				case FLOAT64_ARRAY:
+				case VECTOR2_ARRAY:
+				case VECTOR3_ARRAY:
+				case VECTOR4_ARRAY:
+					return true;
+				default:
+					return false;
+			}
+		};
+		case STRING_NAME: {
+			switch (type) {
+				case BOOL:
+				case INT:
+				case FLOAT:
+				case STRING:
+				case VECTOR2:
+				case VECTOR2I:
+				case VECTOR3:
+				case VECTOR3I:
+				case VECTOR4:
+				case VECTOR4I:
+				case ARRAY:
+				case BYTE_ARRAY:
+				case INT32_ARRAY:
+				case INT64_ARRAY:
+				case FLOAT32_ARRAY:
+				case FLOAT64_ARRAY:
+				case VECTOR2_ARRAY:
+				case VECTOR3_ARRAY:
+				case VECTOR4_ARRAY:
+					return true;
+				default:
+					return false;
+			}
+		};
+		case VECTOR2: {
+			switch (type) {
+				case VECTOR2I:
+					return true;
+				default:
+					return false;
+			}
+		};
+		case VECTOR2I: {
+			switch (type) {
+				case VECTOR2:
+					return true;
+				default:
+					return false;
+			}
+		};
+		case VECTOR3: {
+			switch (type) {
+				case VECTOR3I:
+					return true;
+				default:
+					return false;
+			}
+		};
+		case VECTOR3I: {
+			switch (type) {
+				case VECTOR3:
+					return true;
+				default:
+					return false;
+			}
+		};
+		case VECTOR4: {
+			switch (type) {
+				case VECTOR4I:
+					return true;
+				default:
+					return false;
+			}
+		};
+		case VECTOR4I: {
+			switch (type) {
+				case VECTOR4:
+					return true;
+				default:
+					return false;
+			}
+		}
+		default:
+			return false;
+	}
+}
+
 String stringify_clean(const Variant &p_var, int recursion_count) {
 	String s = p_var.stringify(recursion_count);
 
@@ -373,6 +515,16 @@ bool Variant::hash_compare(const Variant &p_other, int recursion_count) const {
 
 			return true;
 		} break;
+		case STRING_NAME: {
+			const VName &l = *(reinterpret_cast<const VName *>(_data._mem));
+			const VName &r = *(reinterpret_cast<const VName *>(p_other._data._mem));
+
+			if (l != r) {
+				return false;
+			}
+
+			return true;
+		};
 		case OBJECT: {
 			const uint32_t l = hash_lowbias32((uint32_t)reinterpret_cast<const uint64_t>(_get_obj().ptr));
 			const uint32_t r = hash_lowbias32((uint32_t)reinterpret_cast<const uint64_t>(_get_obj().ptr));

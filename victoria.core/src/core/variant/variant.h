@@ -179,6 +179,8 @@ private:
 	ALWAYS_INLINE ObjectData &_get_obj();
 	ALWAYS_INLINE const ObjectData &_get_obj() const;
 
+	bool can_convert_strict(const Variant &p_variant);
+
 public:
 	String stringify(int recursion_count = 0) const;
 
