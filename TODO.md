@@ -83,7 +83,7 @@ A list of all things that are on the current plan for the engine, whether short-
 - [x] Fully implement Wayland as a display manager option
 - [x] Rework DisplayManagers so that they fall back to the other if they are unable to be created
 - [x] Implement a way to get the preferred DisplayManager option from the OS
-- [ ] Add some kind of message queue to Wayland so that messages can be processed properly
+- [x] Add some kind of message queue to Wayland so that messages can be processed properly
 - [x] Add working directory and other file access functions that are platform-specific
 - [x] Add event dispatching to Windows
 - [x] Add the working directory code and `FileSystem` to Windows

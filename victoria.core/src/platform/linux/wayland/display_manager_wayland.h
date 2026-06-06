@@ -31,6 +31,36 @@ private:
 	// The EGL manager for this instance.
 	EGLManagerWayland *egl_manager_wl = nullptr;
 
+	class Message : public RefCounted {
+		VREGISTER_CLASS(Message, RefCounted);
+
+	public:
+		Message() {}
+		virtual ~Message() = default;
+	};
+
+	class WindowRectMessage : public Message {
+		VREGISTER_CLASS(WindowRectMessage, Message);
+
+	public:
+		Vector2i postion;
+		Vector2i size;
+	};
+
+	class InputEventMessage : public Message {
+		VREGISTER_CLASS(InputEventMessage, Message);
+
+	public:
+		Ref<InputEvent> p_event;
+	};
+
+	class WindowEventMessage : public Message {
+		VREGISTER_CLASS(WindowEventMessage, Message);
+
+	public:
+		WindowNotification p_notification;
+	};
+
 	// Data passed from the compositor to the Wayland client.
 	struct RegistryData {
 		Vector<uint32_t> registry_names;
@@ -64,6 +94,7 @@ private:
 
 	struct PointerData {
 		Vector2i position;
+		uint32_t motion_time;
 		Vector2i relative_position;
 		uint32_t relative_motion_time;
 
@@ -109,9 +140,9 @@ private:
 	};
 
 	struct WindowData {
+		DisplayManagerWayland *wayland;
 		uint8_t id;
 		Vector2i size;
-		Vector2i cached_size;
 		Vector2i position;
 		CallableMethod resize_callback;
 		CallableMethod input_callback;
@@ -119,7 +150,6 @@ private:
 		bool maximised = false;
 		bool fullscreen = false;
 		bool resizing = false;
-		bool is_size_dirty = false;
 
 		struct wl_surface *wl_surface;
 		struct xdg_surface *xdg_surface;
@@ -131,6 +161,8 @@ private:
 	RegistryData *rd = nullptr;
 	SeatData *sd = nullptr;
 	WindowData *wd = nullptr;
+
+	List<Ref<Message>> messages;
 
 	static void _on_registry_global(void *p_data,
 									struct wl_registry *p_registry,
@@ -303,6 +335,8 @@ private:
 public:
 	static DisplayManager *create_func(const String &p_renderer, const Vector2i &p_size, Error *r_error);
 	static void register_wayland_driver();
+
+	void push_message(const Ref<Message> &p_message);
 
 	virtual uint8_t create_window(const String &p_name,
 								  uint16_t x,

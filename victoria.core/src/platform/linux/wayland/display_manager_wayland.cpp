@@ -283,6 +283,7 @@ void DisplayManagerWayland::_on_pointer_motion(void *p_data,
 
 	pd.position.x = wl_fixed_to_int(p_surface_x);
 	pd.position.y = wl_fixed_to_int(p_surface_y);
+	pd.motion_time = p_time;
 }
 
 void DisplayManagerWayland::_on_pointer_button(void *p_data,
@@ -340,11 +341,81 @@ void DisplayManagerWayland::_on_pointer_frame(void *p_data, struct wl_pointer *p
 	// Pushes a pointer frame, or in other words tells our client that it
 	// needs to update the cursor's position.
 	SeatData *sd = (SeatData *)p_data;
+	DisplayManagerWayland *display = sd->wayland;
 	if (sd->active_window == INVALID_WINDOW_ID) {
 		return;
 	}
+	PointerData &old_pd = sd->pointer_data_read;
+	PointerData &pd = sd->pointer_data_write;
 
-	sd->frame_recieved = true;
+	if (pd.motion_time != old_pd.motion_time || pd.relative_motion_time != old_pd.relative_motion_time) {
+		Ref<InputEventMouseMotion> mm;
+		mm.instantiate();
+
+		mm->absolute = pd.position;
+
+		if (pd.relative_motion_time != old_pd.relative_motion_time) {
+			mm->relative = pd.relative_position;
+		} else {
+			mm->relative = pd.position - old_pd.position;
+		}
+
+		Ref<InputEventMessage> motion_msg;
+		motion_msg.instantiate();
+		motion_msg->p_event = mm;
+
+		display->push_message(motion_msg);
+	}
+
+	for (int i = 0; i < InputEnums::MouseButton::MOUSE_MAX; i++) {
+		if (pd.button_pressed[i] != old_pd.button_pressed[i]) {
+			Ref<InputEventMouseButton> mb;
+			mb.instantiate();
+			mb->button = (InputEnums::MouseButton)i;
+			mb->pressed = pd.button_pressed[i];
+
+			Ref<InputEventMessage> msg;
+			msg.instantiate();
+			msg->p_event = mb;
+
+			display->push_message(msg);
+		}
+	}
+
+	// Send scroll event. One of _axis or _axis_120 will be sent.
+	bool has_scroll_event = false;
+	Ref<InputEventMouseScroll> ms;
+	if (pd.scroll_vector_120 - old_pd.scroll_vector_120 != Vector2i()) {
+		has_scroll_event = true;
+
+		ms.instantiate();
+		ms->scroll = (pd.scroll_vector_120.y / 120) > 0 ? -1 : 1;
+	} else if (pd.scroll_vector - old_pd.scroll_vector != Vector2i()) {
+		has_scroll_event = true;
+
+		ms.instantiate();
+		ms->scroll = pd.scroll_vector.y > 0 ? -1 : 1;
+	}
+
+	if (has_scroll_event) {
+		Ref<InputEventMessage> iem;
+		iem.instantiate();
+		iem->p_event = ms;
+		display->push_message(iem);
+
+		// create empty scroll event
+		Ref<InputEventMouseScroll> scroll2;
+		scroll2.instantiate();
+		scroll2->scroll = 0;
+
+		Ref<InputEventMessage> m2;
+		m2.instantiate();
+		m2->p_event = scroll2;
+		display->push_message(m2);
+	}
+
+	old_pd = pd;
+	sd->frame_recieved = false;
 }
 
 void DisplayManagerWayland::_on_pointer_axis_source(void *p_data,
@@ -500,7 +571,12 @@ void DisplayManagerWayland::_on_keyboard_key(void *p_data,
 		ke.instantiate();
 		ke->pressed = pressed;
 		ke->key = KeyboardRemappingXKB::get_key_from_xkb_keycode(xkb_keycode);
-		Input::get_singleton()->parse_input_event(ke);
+
+		Ref<InputEventMessage> im;
+		im.instantiate();
+		im->p_event = ke;
+
+		sd->wayland->push_message(im);
 	}
 
 	print_verbose(vformat("TEST: keycode %x passed.", xkb_keycode));
@@ -539,6 +615,14 @@ void DisplayManagerWayland::_on_xdg_toplevel_configure(void *p_data,
 													   struct wl_array *p_states) {
 	WindowData *wd = (WindowData *)p_data;
 
+	if (width == 0) {
+		width = wd->size.x;
+	}
+
+	if (height == 0) {
+		height = wd->size.y;
+	}
+
 	// Reset window flags on configure to false, they wil be updated once done.
 	wd->resizing = false;
 	wd->maximised = false;
@@ -558,34 +642,39 @@ void DisplayManagerWayland::_on_xdg_toplevel_configure(void *p_data,
 	// Create a new size vector.
 	Vector2i new_size(width, height);
 
-	bool can_cache = true;
-	bool restore_window = false;
-	// Disable size caching on maximise events.
-	if (wd->maximised) {
-		can_cache = false;
-		wd->is_size_dirty = true;
-		// Update the size if they're not equal
-	} else if (wd->cached_size != wd->size) {
-		restore_window = true;
+	bool size_changed = false;
+
+	if (new_size.x != wd->size.x || new_size.y != wd->size.y) {
+		wd->size = new_size;
+
+		size_changed = true;
 	}
 
-	if (restore_window) {
-		wd->size = wd->cached_size;
-		// Force resize event.
-		wd->is_size_dirty = true;
-	} else {
-		wd->size = new_size;
-		if (can_cache) {
-			wd->cached_size = new_size;
+	if (wd->wl_surface) {
+		if (wd->xdg_surface) {
+			xdg_surface_set_window_geometry(wd->xdg_surface, 0, 0, wd->size.x, wd->size.y);
 		}
 	}
 
+	if (size_changed) {
+		Ref<WindowRectMessage> msg;
+		msg.instantiate();
+		msg->postion = wd->position;
+		msg->size = wd->size;
+
+		wd->wayland->push_message(msg);
+	}
 	// TODO: Update window size if not equal to zero (means the compositor wants to configure window size)
 }
 
 void DisplayManagerWayland::_on_xdg_toplevel_close(void *p_data, struct xdg_toplevel *p_toplevel) {
-	OS::get_singleton()->set_exit_code(0);
-	OS::get_singleton()->set_should_quit(true);
+	WindowData *wd = (WindowData *)p_data;
+	ERR_COND_NULL(wd);
+
+	Ref<WindowEventMessage> msg;
+	msg.instantiate();
+	msg->p_notification = WindowNotification::NOTIFICATION_WM_WINDOW_CLOSE;
+	wd->wayland->push_message(msg);
 }
 
 void DisplayManagerWayland::_on_xdg_wm_base_ping(void *p_data, struct xdg_wm_base *p_base, uint32_t p_serial) {
@@ -663,6 +752,14 @@ void DisplayManagerWayland::register_wayland_driver() {
 	create_func_count++;
 }
 
+void DisplayManagerWayland::push_message(const Ref<Message> &p_message) {
+	if (p_message.is_null()) {
+		return;
+	}
+
+	messages.push_back(p_message);
+}
+
 uint8_t DisplayManagerWayland::create_window(const String &p_name,
 											 uint16_t x,
 											 uint16_t y,
@@ -670,6 +767,7 @@ uint8_t DisplayManagerWayland::create_window(const String &p_name,
 											 uint16_t height,
 											 WindowFlags p_flags) {
 	wd = vnew(WindowData);
+	wd->wayland = this;
 	wd->wl_surface = wl_compositor_create_surface(rd->compositor);
 
 	wd->xdg_surface = xdg_wm_base_get_xdg_surface(rd->wm_base, wd->wl_surface);
@@ -689,12 +787,10 @@ uint8_t DisplayManagerWayland::create_window(const String &p_name,
 	xdg_surface_set_window_geometry(wd->xdg_surface, 0, 0, width, height);
 	wl_surface_commit(wd->wl_surface);
 
-	wl_display_roundtrip(display);
-
 	wd->size = Vector2i(width, height);
-	// Store cached size prior to updates.
-	wd->cached_size = wd->size;
 	wd->position = Vector2i(x, y);
+
+	wl_display_roundtrip(display);
 
 	if (egl_manager_wl) {
 		wd->egl_window = wl_egl_window_create(wd->wl_surface, width, height);
@@ -813,81 +909,41 @@ void DisplayManagerWayland::process_events() {
 		// error on dispatch!
 	}
 
-	if (wd->resizing || wd->is_size_dirty) {
-		if (wd->wl_surface) {
-			xdg_surface_set_window_geometry(wd->xdg_surface, 0, 0, wd->size.x, wd->size.y);
+	while (messages.front()) {
+		Ref<Message> msg = messages.front()->get();
+		messages.pop_front();
+
+		if (!msg.is_valid()) {
+			continue;
 		}
 
-		if (egl_manager_wl) {
-			wl_egl_window_resize(wd->egl_window, wd->size.x, wd->size.y, 0, 0);
+		Ref<WindowRectMessage> rect_msg = msg;
+		if (rect_msg.is_valid()) {
+			if (egl_manager_wl) {
+				wl_egl_window_resize(wd->egl_window, wd->size.x, wd->size.y, 0, 0);
+			}
+
+			if (wd->resize_callback.is_valid()) {
+				wd->resize_callback.call(wd->id);
+			}
 		}
 
-		if (wd->resize_callback.is_valid()) {
-			wd->resize_callback.call(wd->id);
+		Ref<WindowEventMessage> event_msg = msg;
+		if (event_msg.is_valid()) {
+			switch (event_msg->p_notification) {
+				case DisplayManager::NOTIFICATION_WM_WINDOW_CLOSE: {
+					OS::get_singleton()->set_exit_code(0);
+					OS::get_singleton()->set_should_quit(true);
+				} break;
+				default:
+					break;
+			}
 		}
 
-		// Handle forced resize after the fact.
-		if (wd->is_size_dirty) {
-			wd->is_size_dirty = false;
+		Ref<InputEventMessage> input_msg = msg;
+		if (input_msg.is_valid()) {
+			Input::get_singleton()->parse_input_event(input_msg->p_event);
 		}
-	}
-
-	// HACK: We need to send an input event resetting the scroll. This should be done in _input_frame
-	// after handling the scroll event, since there is no event for stopping a scroll event.
-	// _input_frame should really be the place that messages are pushed to a min queue that is dispatched here,
-	// and we should also handle
-	static bool _handle_scroll_reset = false;
-	if (_handle_scroll_reset) {
-		Ref<InputEventMouseScroll> ms;
-		ms.instantiate();
-		ms->scroll = 0;
-		Input::get_singleton()->parse_input_event(ms);
-		_handle_scroll_reset = false;
-	}
-
-	if (sd->frame_recieved) {
-		PointerData &old_pd = sd->pointer_data_read;
-		PointerData &pd = sd->pointer_data_write;
-
-		Ref<InputEventMouseMotion> mm;
-		mm.instantiate();
-
-		mm->absolute = pd.position;
-		if (pd.relative_motion_time != old_pd.relative_motion_time) {
-			mm->relative = pd.relative_position;
-		} else {
-			// Relative pointer motion is SOMETIMES not sent to the user, so do a quick calculation for it
-			// beforehand.
-			mm->relative = pd.position - old_pd.position;
-		}
-		Input::get_singleton()->parse_input_event(mm);
-
-		for (int i = 0; i < InputEnums::MOUSE_MAX; i++) {
-			Ref<InputEventMouseButton> mb;
-			mb.instantiate();
-			mb->button = (InputEnums::MouseButton)i;
-			mb->pressed = pd.button_pressed[i];
-
-			Input::get_singleton()->parse_input_event(mb);
-		}
-
-		// Send scroll event. One of _axis or _axis_120 will be sent.
-		if (pd.scroll_vector_120 - old_pd.scroll_vector_120 != Vector2i()) {
-			Ref<InputEventMouseScroll> ms;
-			ms.instantiate();
-			ms->scroll = (pd.scroll_vector_120.y / 120) > 0 ? -1 : 1;
-			Input::get_singleton()->parse_input_event(ms);
-			_handle_scroll_reset = true;
-		} else if (pd.scroll_vector - old_pd.scroll_vector != Vector2i()) {
-			Ref<InputEventMouseScroll> ms;
-			ms.instantiate();
-			ms->scroll = pd.scroll_vector.y > 0 ? -1 : 1;
-			Input::get_singleton()->parse_input_event(ms);
-			_handle_scroll_reset = true;
-		}
-
-		old_pd = pd;
-		sd->frame_recieved = false;
 	}
 }
 

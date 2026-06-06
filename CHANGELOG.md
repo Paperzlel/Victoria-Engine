@@ -1,6 +1,12 @@
 # Changelog
 Changes exist in chronological order (i.e. new changes are to be appended to the end of the file). Dates are done in DD/MM/YYYY format with the version number applied to each date if needed.
 
+## 6/6/2026
+- Platform:
+	- Linux/Wayland:
+		- Replace the current messaging system with a single message list that we read and flush at the end of each frame.
+			- Fixes a bug where moving the mouse and holding down left-click constantly generated events at multiple locations, as well as making the reading more consistent with how X11 and Windows handle their events.
+
 ## 5/6/2026
 - Platform:
 	- Windows:
