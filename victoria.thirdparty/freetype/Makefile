@@ -1,7 +1,7 @@
 TARGET := freetype
-include ../utils/core.mk
-include ../utils/general.mk
-BUILD_DIR := $(shell $(PYTHON) ../utils/get_relpath.py $(BUILD_DIR))
+include ../../utils/core.mk
+include ../../utils/general.mk
+BUILD_DIR := $(shell $(PYTHON) ../../utils/get_relpath.py $(BUILD_DIR))
 
 GLX_USED := no
 

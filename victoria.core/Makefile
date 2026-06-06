@@ -141,7 +141,6 @@ all: test scaffold $(OBJ_FILES) $(BUILD_DIR)/$(OUTPUT_FILE)
 
 # Look for if certain files are downloaded prior to building
 test:
-	@echo $(BINARY_COMMAND)
 ifeq ($(PLATFORM), linux)
 ifeq ("$(and $(USE_X11), $(USE_WAYLAND))","")
 	@echo Cannot compile as neither X11 nor Wayland is available on the system.

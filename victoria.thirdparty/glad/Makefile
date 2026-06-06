@@ -1,7 +1,7 @@
 TARGET := glad
-include ../utils/core.mk
-include ../utils/general.mk
-BUILD_DIR := $(shell $(PYTHON) ../utils/get_relpath.py $(BUILD_DIR))
+include ../../utils/core.mk
+include ../../utils/general.mk
+BUILD_DIR := $(shell $(PYTHON) ../../utils/get_relpath.py $(BUILD_DIR))
 
 INCLUDES += -Iinclude
 DEFINES += -DGLAD_API_CALL_EXPORT -DGLAD_API_CALL_EXPORT_BUILD

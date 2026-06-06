@@ -1,15 +1,16 @@
 #include "platform/windows/crash_handler_windows.h"
+#if PLATFORM_WINDOWS
 
-#include "core/string/print_string.h"
-#include "core/version.h"
+#	include "core/string/print_string.h"
+#	include "core/version.h"
 
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+#	define WIN32_LEAN_AND_MEAN
+#	include <windows.h>
 // break.
-#include <dbghelp.h>
-#include <psapi.h>
-#include <shlwapi.h>
-#include <signal.h>
+#	include <dbghelp.h>
+#	include <psapi.h>
+#	include <shlwapi.h>
+#	include <signal.h>
 
 // based on https://stackoverflow.com/questions/6205981/windows-c-stack-trace-from-a-running-app
 
@@ -89,13 +90,13 @@ DWORD CrashHandlerException(EXCEPTION_POINTERS *ep) {
 	frame.AddrStack.Mode = AddrModeFlat;
 	frame.AddrFrame.Mode = AddrModeFlat;
 
-#if defined(_M_X64)
+#	if defined(_M_X64)
 	frame.AddrPC.Offset = ctx->Rip;
 	frame.AddrStack.Offset = ctx->Rsp;
 	frame.AddrFrame.Offset = ctx->Rbp;
-#else
-#	error "Unsupported platform!"
-#endif
+#	else
+#		error "Unsupported platform!"
+#	endif
 
 	IMAGEHLP_LINE64 line = {};
 	line.SizeOfStruct = sizeof(IMAGEHLP_LINE64);
@@ -213,3 +214,5 @@ void CrashHandlerWindows::initialize() {
 	signal(SIGILL, _handle_crash);
 	signal(SIGABRT, _handle_crash);
 }
+
+#endif // PLATFORM_WINDOWS
