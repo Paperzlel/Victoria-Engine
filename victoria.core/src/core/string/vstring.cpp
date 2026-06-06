@@ -531,6 +531,10 @@ double String::to_float() const {
 	Vector<String> v(split("."));
 	ret += (double)(v[0].to_int());
 
+	if (v.size() == 1) {
+		v.push_back("0");
+	}
+
 	for (int i = 0; i < v[1].length(); i++) {
 		char c = v[1].get(i);
 		uint8_t n = (uint8_t)(c > 0 ? c : 48) - 48;

@@ -65,6 +65,10 @@ Ref<Resource> ResourceFormatImporterOBJ::_import(const String &p_path, int p_arg
 		// Split the string
 		Vector<String> sline(line.split(" "));
 
+		if (sline.is_empty()) {
+			continue;
+		}
+
 		int comment = sline[sline.size() - 1].find("#");
 		if (comment != -1) {
 			sline[sline.size() - 1].left(comment);

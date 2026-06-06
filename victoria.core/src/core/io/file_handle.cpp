@@ -48,7 +48,8 @@ String FileHandle::get_line() {
 
 	String ret;
 	ret.resize(offset); // offset is always size + 1 because of when the newline is detected
-	int len = get_buffer((uint8_t *)ret.ptrw(), offset - 1);
+	seek(get_position() - offset);
+	int len = get_buffer((uint8_t *)ret.ptrw(), offset);
 	if (len < offset - 1) {
 		ret.resize(len);
 	}

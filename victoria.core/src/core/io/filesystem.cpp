@@ -24,6 +24,7 @@ Ref<FileHandle> FileSystem::open_file(const String &p_path, FileAccessType p_fla
 		return Ref<FileHandle>();
 	}
 
+	s->seek(0);
 	return s;
 }
 
