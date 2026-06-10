@@ -25,7 +25,7 @@ void VBoxContainer::_resize() {
 
 		// Add separation and reposition child
 		if (child != children.front()->get()) {
-			cumulative_child_size.y += 4;
+			cumulative_child_size.y += separation;
 		}
 
 		// Update parent transform prior to adding
@@ -35,8 +35,7 @@ void VBoxContainer::_resize() {
 
 		c->set_position(Vector2i(parent_pos.x, cumulative_child_size.y));
 
-		// TODO: Add separation size
-		cumulative_child_size.y += size.y + 4;
+		cumulative_child_size.y += size.y + separation;
 	}
 
 	if (parent_size != get_size()) {
@@ -52,4 +51,15 @@ void VBoxContainer::_notification(int p_what) {
 	}
 }
 
-VBoxContainer::VBoxContainer() {}
+int VBoxContainer::get_separation() const {
+	return separation;
+}
+
+void VBoxContainer::set_separation(int p_separation) {
+	separation = p_separation;
+	_resize();
+}
+
+VBoxContainer::VBoxContainer() {
+	separation = 4;
+}
